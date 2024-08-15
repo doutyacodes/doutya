@@ -53,7 +53,7 @@ function SignUp() {
     console.log(collegeStudent)
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 pt-8 pb-8">
+        <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
             <Toaster/>
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
                 <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>

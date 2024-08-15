@@ -8,8 +8,18 @@ const GetUser = (token) => axios.get('/api/getUser', {
     }
   });
 
+const GetQuizData = (id, token) => {
+
+  return axios.get(`/api/getQuizData/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default{
     CreateNewUser,
     LoginUser,
-    GetUser
+    GetUser,
+    GetQuizData
 }

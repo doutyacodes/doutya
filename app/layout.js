@@ -14,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-[url('https://i.postimg.cc/2SGmwV5P/artistic-blurry-colorful-wallpaper-background-58702-8553.jpg')] bg-cover bg-center bg-no-repeat min-h-screen`}>
         <StoreProvider>
           <GlobalProvider>{children}</GlobalProvider>
         </StoreProvider>
