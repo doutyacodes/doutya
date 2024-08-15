@@ -125,36 +125,39 @@ function Results() {
                 <p>
                     Most Suitable Careers
                 </p>
-                <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
+                <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600'>
                     <div className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                        <p className='text-lg mb-3'>Entrepreneur</p>
+                        <p className='text-base'>Reasons:</p>
                         <p>
-                        Reasons:
                         You are innovative and thrive in fast-paced environments, making them well-suited for the dynamic and risk-taking world of entrepreneurship.
                         </p>
                     </div>     
-                    <div  className='bg-white px-3 md:px-4 lg:px-8 py-4 lg:py-5 text-black rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                    <div className='bg-white px-3 md:px-4 lg:px-8 py-4 lg:py-5 text-black rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                        <p className='text-lg mb-3'>Management Consultant</p>
+                        <p className='text-base'>Reasons:</p>
                         <p>
-                        Reasons:
                         You enjoy problem-solving and working on complex challenges, making them effective consultants in improving business strategies.
                         </p>
                     </div> 
                     <div className='bg-white px-3 md:px-4 lg:px-8 py-4 lg:py-5 text-black rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                        <p className='text-lg mb-3'>Marketing Manager</p>
+                        <p className='text-base'>Reasons:</p>
                         <p>
-                        Reasons:
                         You are creative and enjoy leading marketing campaigns, where their innovative ideas and persuasive skills are valuable.
                         </p>
                     </div> 
-                    <div  className='bg-white px-3 md:px-4 lg:px-8 py-4 lg:py-5 text-black rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                    <div className='bg-white px-3 md:px-4 lg:px-8 py-4 lg:py-5 text-black rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                        <p className='text-lg mb-3'>Journalist</p>
+                        <p className='text-base'>Reasons:</p>
                         <p>
-                        Journalist
-                        Reasons:
                         Your curiosity and passion for uncovering and sharing stories make them well-suited for investigative journalism.
                         </p>
                     </div> 
                     <div  className='bg-white px-3 md:px-4 lg:px-8 py-4 lg:py-5 text-black rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                        <p className='text-lg mb-3'>Lawyer</p>
+                        <p className='text-base'>Reasons:</p>
                         <p>
-                        Lawyer
-                        Reasons:
                         You enjoy debate and exploring different angles of an issue, making them effective in legal roles where argumentation and strategy are key.
                         </p>
                     </div>    
@@ -164,10 +167,12 @@ function Results() {
                 <p>
                     Least Suitable Careers
                 </p>
-                <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
-                    <div className='bg-white px-8 py-5 rounded-xl cursor-pointer'>
+                <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600'>
+                    <div className='bg-white px-8 py-5 rounded-xl cursor-pointer flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                        <p className='text-lg mb-3'>Accountant</p>
+                        <p className='text-base'>Reasons:</p>
                         <p>
-                            Innovative and visionary
+                        The routine and detail-oriented nature of accounting may be stifling for You, who prefer dynamic and intellectually stimulating work.
                         </p>
                     </div>     
                 </div>    
