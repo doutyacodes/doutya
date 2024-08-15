@@ -1,8 +1,5 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { StoreProvider } from "./StoreProvider";
-import GlobalProvider from "./QuizProvider";
-import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,10 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} bg-[url('https://i.postimg.cc/2SGmwV5P/artistic-blurry-colorful-wallpaper-background-58702-8553.jpg')] bg-cover bg-center bg-no-repeat min-h-screen`}>
-        <StoreProvider>
-          <GlobalProvider>{children}</GlobalProvider>
-        </StoreProvider>
-        <Toaster />
+        {children}
       </body>
     </html>
   );
