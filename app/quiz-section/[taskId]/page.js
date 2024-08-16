@@ -145,7 +145,7 @@ function Page({ params }) {
     <div className='h-screen'>
       {
         questions.length > 0 &&
-        <div className='flex flex-col gap-8 justify-center items-center mx-auto py-4 border-solid border-4 text-white rounded-2xl'>
+        <div className='flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4 border-solid border-4 text-white rounded-2xl'>
         <div>
           <p className='font-semibold text-4xl'>Question {currentQuestionIndex + 1}</p>
         </div>
