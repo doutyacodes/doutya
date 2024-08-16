@@ -1,39 +1,44 @@
 import { db } from '@/utils';
-import { ANSWERS, QUESTIONS, TASKS, USER_DETAILS, USER_TASKS } from '@/utils/schema';
+import { ANALYTICS_QUESTION, ANSWERS, OPTIONS, QUESTIONS, TASKS, USER_DETAILS, USER_TASKS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { eq, inArray } from 'drizzle-orm'; // Ensure these imports match your ORM version
 
 
 export async function GET(request, { params }) {
-    const { taskId } = params;
-    console.log("taskId", taskId);
+
+    // const authResult = await authenticate(req);
+    // if (!authResult.authenticated) {
+    //     return authResult.response;
+    //   }
+
+    const { quizId } = params;
     
-    if (!taskId) {
-        return NextResponse.json({ message: 'Invalid task_id' }, { status: 400 });
+    if (!quizId) {
+        return NextResponse.json({ message: 'Invalid QuizId' }, { status: 400 });
     }
-
+    
     try {
-        
-        const questionWithAnswers = await db
+        const quizWithOption = await db
             .select({
-                questionId: QUESTIONS.id,
-                questionText: QUESTIONS.question,
-                answerId: ANSWERS.id,
-                answerText: ANSWERS.answer_text,
-                isCorrect: ANSWERS.answer,
-            })
-            .from(QUESTIONS)
-            .leftJoin(ANSWERS, eq(QUESTIONS.id, ANSWERS.question_id))
-            .where(eq(QUESTIONS.task_id, taskId))
-            .execute();
+                questionId: ANALYTICS_QUESTION.id,
+                questionText: ANALYTICS_QUESTION.question_text,
+                answerId: OPTIONS.id,
+                answerText: OPTIONS.option_text,
+                analyticId: OPTIONS.analytic_id
 
-        if (questionWithAnswers.length === 0) {
+            })
+            .from(ANALYTICS_QUESTION)
+            .leftJoin(OPTIONS, eq(ANALYTICS_QUESTION.id, OPTIONS.question_id))
+            .where(eq(ANALYTICS_QUESTION.quiz_id, quizId))
+            .execute();
+            
+        if (quizWithOption.length === 0) {
             return NextResponse.json({ message: 'No questions found for the given Task id' }, { status: 404 });
         }
 
         // Grouping the answers by question
-        const result = questionWithAnswers.reduce((acc, curr) => {
-            const { questionId, questionText, answerId, answerText, isCorrect } = curr;
+        const result = quizWithOption.reduce((acc, curr) => {
+            const { questionId, questionText, answerId, answerText, analyticId } = curr;
             if (!acc[questionId]) {
                 acc[questionId] = {
                     id: questionId,
@@ -44,7 +49,7 @@ export async function GET(request, { params }) {
             acc[questionId].answers.push({
                 id: answerId,
                 text: answerText,
-                isCorrect: isCorrect,
+                analyticId: analyticId
             });
             return acc;
         }, {});

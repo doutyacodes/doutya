@@ -17,16 +17,26 @@ const GetQuizData = (id, token) => {
   });
 };
 
+const SaveQuizResult = (data, token) => {
+
+  return axios.post(`/api/quizResult`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 const InterestResult = (data) => axios.post('/api/resultTwo', data, {
   headers: {
     'Content-Type': 'application/json'
   }
-});
+})
 
 export default {
   CreateNewUser,
   LoginUser,
   GetUser,
   GetQuizData,
+  SaveQuizResult,
   InterestResult
 }
