@@ -58,23 +58,24 @@ function Page({ params }) {
         // setIsLoading(true)
         if(questions?.length > 0){
             // Shuffle choices when the component mounts or when the question changes
-            const choices = questions[currentQuestionIndex].answers.map(answer => answer.text);;
+            // const choices = questions[currentQuestionIndex].answers.map(answer => answer.text);
+            const choices = questions[currentQuestionIndex].answers
             setShuffledChoices(choices.sort(() => Math.random() - 0.5));
         }
 
         // setIsLoading(false)
     }, [currentQuestionIndex, questions]);
 
-    const handleChoiceSelect = (choice) => {
+    const handleChoiceSelect = (choice) => {      
         setSelectedChoice(choice);
     };
 
   const handleNext = () => {
 
     const updatedAnswers = [...answers, 
-                            { questionId: questions[currentQuestionIndex].id, choice: selectedChoice }
+                            { questionId: questions[currentQuestionIndex].id, optionId: selectedChoice.id, optionText: selectedChoice.text, analyticId: selectedChoice.analyticId }
                         ];
-
+    
     setAnswers(updatedAnswers);
 
     if (currentQuestionIndex < questions.length - 1) {
@@ -83,14 +84,32 @@ function Page({ params }) {
     } else {
 
      setQuizCompleted(true);
-
-      // Quiz finished, send data to API
-      console.log("Quiz completed:", updatedAnswers);
-
-        /* POST Api call */
-        // answers: updatedAnswers 
+     quizSubmit(updatedAnswers)// Quiz finished, send data to API
     }
   };
+
+  const quizSubmit = async (data) => {
+    setIsLoading(true);
+    const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+      try {
+        const resp = await GlobalApi.SaveQuizResult(data, token);
+        if (resp && resp.status === 201) {
+          // toast.success('Challenge created Challenge!');
+          console.log('Response:', resp.data);          
+          alert('Submitted results');
+        } else {
+          // toast.error('Failed to create Challenge.');
+          alert('Failed Submitted results');
+        }
+      } catch (error) {
+        console.error('Error creating Challenge:', error);
+        // toast.error('Error: Failed to create Challenge.');
+        alert('Error Error: Failed Submitted results');
+      } finally {
+        setIsLoading(false);
+      }
+    
+  }
 
   if(isLoading){
     return (
@@ -138,10 +157,10 @@ function Page({ params }) {
           {shuffledChoices.map((choice, index) => (
             <button
               key={index}
-              className={`py-2 px-4 ${selectedChoice === choice ? 'bg-green-500' : 'bg-slate-400'}`}
+              className={`py-2 px-4 ${selectedChoice?.id === choice.id ? 'bg-green-500' : 'bg-slate-400'}`}
               onClick={() => handleChoiceSelect(choice)}
             >
-              {choice}
+              {choice.text}
             </button>
           ))}
         </div>

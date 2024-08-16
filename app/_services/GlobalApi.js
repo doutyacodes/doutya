@@ -17,9 +17,19 @@ const GetQuizData = (id, token) => {
   });
 };
 
+const SaveQuizResult = (data, token) => {
+
+  return axios.post(`/api/quizResult`, data,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default{
     CreateNewUser,
     LoginUser,
     GetUser,
-    GetQuizData
+    GetQuizData,
+    SaveQuizResult
 }

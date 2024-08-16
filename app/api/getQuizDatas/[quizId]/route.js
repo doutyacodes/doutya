@@ -12,12 +12,14 @@ export async function GET(request, { params }) {
     //   }
 
     const { quizId } = params;
+    console.log("quizId", quizId);
     
     if (!quizId) {
         return NextResponse.json({ message: 'Invalid QuizId' }, { status: 400 });
     }
     
     try {
+        console.log("ANALingg");   
         const quizWithOption = await db
             .select({
                 questionId: ANALYTICS_QUESTION.id,
@@ -31,6 +33,7 @@ export async function GET(request, { params }) {
             .leftJoin(OPTIONS, eq(ANALYTICS_QUESTION.id, OPTIONS.question_id))
             .where(eq(ANALYTICS_QUESTION.quiz_id, quizId))
             .execute();
+            console.log("logg");
             
         if (quizWithOption.length === 0) {
             return NextResponse.json({ message: 'No questions found for the given Task id' }, { status: 404 });
@@ -55,6 +58,7 @@ export async function GET(request, { params }) {
         }, {});
 
         return NextResponse.json({ questions: Object.values(result) });
+        // return NextResponse.json({ quizWithOption });
 
     } catch (error) {
         console.error("Error fetching questions and answers:", error);

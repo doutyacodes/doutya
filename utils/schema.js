@@ -132,3 +132,32 @@ export const CHALLENGES = mysqlTable('challenges', {
     start_datetime: datetime('start_datetime').default(new Date()).notNull(),
     language_id: int('language_id').notNull(),
 });
+
+export const ANALYTICS_QUESTION = mysqlTable('analytics_question', {
+    id: int('id').primaryKey().autoincrement(),
+    question_text: varchar('question_text', { length: 300 }).notNull(),
+    quiz_id: int('quiz_id').notNull(),
+});
+
+export const OPTIONS = mysqlTable('options', {
+    id: int('id').primaryKey().autoincrement(),
+    option_text: varchar('option_text', { length: 300 }).notNull(),
+    analytic_id: int('analytic_id').notNull(),
+    question_id: int('question_id').notNull(),
+});
+
+export const USER_PROGRESS = mysqlTable('user_progress', {
+    id: int('id').primaryKey().autoincrement(),
+    user_id: int('user_id').notNull(),
+    question_id: int('question_id').notNull(),
+    option_id: int('option_id').notNull(),
+    analytic_id: int('analytic_id').notNull(),
+    created_at: datetime('created_at').notNull(),
+});
+
+export const PERSONALITY_SEQUENCE = mysqlTable('personality_sequence', {
+    id: int('id').primaryKey().autoincrement(),
+    type_sequence: varchar('type_sequence', { length: 4 }).notNull(), // Random four letters of alphabets
+    user_id: int('user_id').notNull(),
+    createddate: datetime('createddate').notNull(),
+});

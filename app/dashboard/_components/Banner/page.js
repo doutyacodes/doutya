@@ -17,7 +17,7 @@ function Banner() {
             <p className='ml-3 text-white pt-8 w-4/5'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae maiores molestias possimus optio nisi quos sint, quo facere est rem deserunt voluptas nam officia repellendus eos modi, architecto sit cupiditate. Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui, est! Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, amet.
             </p>
               {/* <img src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png" className='h-20 absolute top-0 right-3 cursor-pointer'/> */}
-              <Link href="/quiz-section/33">
+              <Link href="/quiz-section/1">
                 <img 
                   src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png" 
                   className="h-20 absolute top-0 right-3 cursor-pointer"
