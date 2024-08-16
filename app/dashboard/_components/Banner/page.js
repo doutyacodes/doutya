@@ -1,19 +1,47 @@
 import Link from 'next/link';
-import React , {useState} from 'react'
+import React, { useState } from 'react'
+import GlobalApi from '@/app/_services/GlobalApi';
 
 function Banner() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [interests, setInterests] = useState('');
+  const [responseContent, setResponseContent] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const openModal = () => {
     setIsModalOpen(true);
   };
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle the interests input here
+    setLoading(true);
+    console.log('Entered Interests:', interests);
+    try {
+      const resp = await GlobalApi.InterestResult({ interests });
+      setResponseContent(resp.data.result);
+      setInterests('');
+    } catch (err) {
+      console.log('Error:', err);
+    } finally {
+      setLoading(false);
+    }
     closeModal();
   };
+
+
+  const handleInputChange = (event) => {
+    setInterests(event.target.value);
+  };
+
+  const formatContent = (text) => {
+    return text.split('\n').map((line, index) => (
+        <p key={index}>{line}</p>
+    ));
+};
+
   return (
     <div className='mb-7 w-4/5 mx-auto'>
       <h2 className='text-white ml-9 mt-7 font-bold font-serif pb-6'>Personality</h2>
@@ -61,17 +89,21 @@ function Banner() {
                     type="text"
                     placeholder="Your interests"
                     className="border border-gray-300 p-2 rounded w-full mb-4"
+                    value={interests}
+                    onChange={handleInputChange}
                   />
                   <button
                     type="submit"
                     className="bg-cyan-400 text-white px-4 py-2 rounded-md"
+                    disabled={loading}
                   >
-                    Submit
+                    {loading ? 'Analyzing...' : 'Submit'}
                   </button>
                 </form>
                 <button
                   className="mt-4 text-red-500"
                   onClick={closeModal}
+                  disabled={loading}
                 >
                   Cancel
                 </button>
@@ -119,6 +151,15 @@ function Banner() {
             </p>
           </div>
         </div>
+      </div>
+      <div>
+        {/* Display the response content */}
+        {responseContent && (
+          <div className="border border-gray-300 p-4 rounded mt-4">
+            <h2 className="text-xl font-semibold mb-2 text-white">Result:</h2>
+            <p className='text-white'>{formatContent(responseContent)}</p>
+          </div>
+        )}
       </div>
 
     </div>
