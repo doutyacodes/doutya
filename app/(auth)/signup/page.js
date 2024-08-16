@@ -38,9 +38,11 @@ function SignUp() {
         try {
             const resp = await GlobalApi.CreateNewUser(data);
             if (resp) {
+                const token = resp.token;
+                localStorage.setItem('token', token);
                 reset();
                 toast.success("Successfully added to database!");
-                router.push('/login');
+                router.push('/dashboard');
             } else {
                 toast.error("Error: Failed to add data.");
             }
