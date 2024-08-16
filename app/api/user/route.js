@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { db } from "@/utils";
 import { USER_DETAILS } from "@/utils/schema";
+import jwt from 'jsonwebtoken';
+import { eq } from 'drizzle-orm/expressions';
+
+const SECRET_KEY = 'mySecrectKeyForProject';
 
 export async function POST(req, res) {
     const data = await req.json();
@@ -19,5 +23,17 @@ export async function POST(req, res) {
             yearOfPassing: data?.yearOfPassing,
             monthOfPassing: data?.monthOfPassing
         })
-    return NextResponse.json(result);
+
+    const user = await db
+        .select()
+        .from(USER_DETAILS)
+        .where(eq(USER_DETAILS.username, data?.username))
+        // .single();
+
+    const token = jwt.sign(
+        { id: user.id },
+        SECRET_KEY,
+        { expiresIn: '1h' }
+    );
+    return NextResponse.json({ user, token });
 }
