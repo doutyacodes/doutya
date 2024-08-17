@@ -168,7 +168,7 @@ function Results() {
                     Least Suitable Careers
                 </p>
                 <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600'>
-                    <div className='bg-white px-8 py-5 rounded-xl cursor-pointer flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                    <div className='bg-white px-8 py-5 rounded-xl cursor-pointer flex-1 transition-transform transform hover:scale-105'>
                         <p className='text-lg mb-3'>Accountant</p>
                         <p className='text-base'>Reasons:</p>
                         <p>
