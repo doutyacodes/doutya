@@ -162,6 +162,7 @@ export const PERSONALITY_SEQUENCE = mysqlTable('personality_sequence', {
     createddate: datetime('createddate').notNull(),
 });
 
+<<<<<<< HEAD
 export const RESULTS1=mysqlTable('result1',{
     id:int('id').primaryKey().notNull(),
     type_sequence:varchar('type_sequence',{length:4}).notNull(),
@@ -173,3 +174,35 @@ export const RESULTS1=mysqlTable('result1',{
     most_suitable_careers:text('most_suitable_careers').default(null),
     least_suitable_careers:text('least_suitable_careers').default(null)
 });
+=======
+export const QUIZZES = mysqlTable('quizzes', {
+    id: int('id').primaryKey().autoincrement(),
+    title: varchar('title', { length: 300 }).notNull(),
+    description: text('description').notNull(),
+});
+
+export const PERSONALITY_TYPES = mysqlTable('personality_types', {
+    id: int('id').primaryKey().autoincrement(),
+    type_code: varchar('type_code', { length: 10 }).notNull(),
+    type_name: varchar('type_name', { length: 50 }).notNull(),
+});
+
+export const PERSONALITY_QUESTIONS = mysqlTable('personality_questions', {
+    id: int('id').primaryKey().autoincrement(),
+    question_text: text('question_text').notNull(),
+    quiz_id: int('quiz_id').notNull().references(() => QUIZZES.id),
+    personality_types_id: int('personality_types_id').notNull().references(() => PERSONALITY_TYPES.id),
+});
+
+export const PERSONALITY_CHOICES = mysqlTable('personality_choices', {
+    id: int('id').primaryKey().autoincrement(),
+    choice_text: varchar('choice_text', { length: 50 }).notNull(),
+});
+
+export const CARRER_SEQUENCE = mysqlTable('carrer_sequence', {
+    id: int('id').primaryKey().autoincrement(),
+    type_sequence: varchar('type_sequence', { length: 4 }).notNull(), // Random four letters of alphabets
+    user_id: int('user_id').notNull(),
+    createddate: datetime('createddate').notNull(),
+});
+>>>>>>> ca32bf4dbc31dd7bfd1559842c60f7ef661ae8d6
