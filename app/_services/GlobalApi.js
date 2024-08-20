@@ -17,9 +17,13 @@ const GetQuizData = (id, token) => {
   });
 };
 
-const SaveQuizResult = (data, token) => {
+const SaveQuizResult = (data, token, quizId) => {
+  const payload = {
+    quizId,
+    results: data,
+  };
 
-  return axios.post(`/api/quizResult`, data, {
+  return axios.post(`/api/quizResult`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -36,9 +40,13 @@ const GetCareerQuiz = (id, token) => {
 };
 
 
-const SaveCareerQuizResult = (data, token) => {
+const SaveCareerQuizResult = (data, token, quizId) => {
+  const payload = {
+    quizId,
+    results: data,
+  };
 
-  return axios.post(`/api/CareerQuizResult`, data, {
+  return axios.post(`/api/CareerQuizResult`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -62,6 +70,14 @@ const GetUserSequence = (data) => axios.get('/api/user-sequence',{ params: data 
 const GetResults=(data)=>axios.get('/api/getResults',{ params: data });
 
 
+const GetDashboarCheck = (token) => {
+  return axios.get(`/api/getDashboardCheckData`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -73,5 +89,6 @@ export default {
   GetUserId,
   GetResults,
   GetCareerQuiz,
-  SaveCareerQuizResult
+  SaveCareerQuizResult,
+  GetDashboarCheck
 }

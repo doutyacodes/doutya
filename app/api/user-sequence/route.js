@@ -12,7 +12,7 @@ export async function GET(req) {
         }
         const result = await db.select({
             typeSequence: PERSONALITY_SEQUENCE.type_sequence
-        }).from(PERSONALITY_SEQUENCE).where(eq(PERSONALITY_SEQUENCE.user_id, userId));
+        }).from(PERSONALITY_SEQUENCE).where(eq(PERSONALITY_SEQUENCE.user_id, userId));
         if (result.length === 0) {
             return NextResponse.json({ error: 'User sequence not found' }, { status: 404 });
         }

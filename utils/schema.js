@@ -1,4 +1,4 @@
-import { date, datetime, decimal, float, int, mysqlEnum, mysqlTable, text, time, varchar } from "drizzle-orm/mysql-core";
+import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, text, time, varchar } from "drizzle-orm/mysql-core";
 
 export const USER_DETAILS= mysqlTable('user_details',{
     id:int('id').autoincrement().notNull().primaryKey(),
@@ -155,12 +155,12 @@ export const USER_PROGRESS = mysqlTable('user_progress', {
     created_at: datetime('created_at').notNull(),
 });
 
-export const PERSONALITY_SEQUENCE = mysqlTable('personality_sequence', {
-    id: int('id').primaryKey().autoincrement(),
-    type_sequence: varchar('type_sequence', { length: 4 }).notNull(), // Random four letters of alphabets
-    user_id: int('user_id').notNull(),
-    createddate: datetime('createddate').notNull(),
-});
+// export const PERSONALITY_SEQUENCE = mysqlTable('personality_sequence', {
+//     id: int('id').primaryKey().autoincrement(),
+//     type_sequence: varchar('type_sequence', { length: 4 }).notNull(), // Random four letters of alphabets
+//     user_id: int('user_id').notNull(),
+//     createddate: datetime('createddate').notNull(),
+// });
 
 export const RESULTS1=mysqlTable('result1',{
     id:int('id').primaryKey().notNull(),
@@ -197,9 +197,19 @@ export const PERSONALITY_CHOICES = mysqlTable('personality_choices', {
     choice_text: varchar('choice_text', { length: 50 }).notNull(),
 });
 
-export const CARRER_SEQUENCE = mysqlTable('carrer_sequence', {
+// export const CARRER_SEQUENCE = mysqlTable('carrer_sequence', {
+//     id: int('id').primaryKey().autoincrement(),
+//     type_sequence: varchar('type_sequence', { length: 4 }).notNull(), // Random four letters of alphabets
+//     user_id: int('user_id').notNull(),
+//     createddate: datetime('createddate').notNull(),
+// });
+
+export const QUIZ_SEQUENCES = mysqlTable('quiz_sequences', {
     id: int('id').primaryKey().autoincrement(),
     type_sequence: varchar('type_sequence', { length: 4 }).notNull(), // Random four letters of alphabets
     user_id: int('user_id').notNull(),
+    quiz_id: int('quiz_id').notNull(), // New column for quiz identification
     createddate: datetime('createddate').notNull(),
+    isCompleted: boolean('isCompleted').notNull().default(false), // New boolean column
+    isStarted: boolean('isStarted').notNull().default(false),     // New boolean column
 });

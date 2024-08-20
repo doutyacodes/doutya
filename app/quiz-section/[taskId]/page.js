@@ -14,13 +14,13 @@ function Page({ params }) {
   const [questions, setQuestions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter();
-  const taskId = params.taskId;
+  const quizId = params.taskId;
 
     useEffect(() =>{
         const getQuizData = async()=>{
             setIsLoading(true)
             try {
-                const resp = await GlobalApi.GetQuizData(taskId, "token");
+                const resp = await GlobalApi.GetQuizData(quizId, "token");
                 console.log('Response: of  GetQuizData',resp.data);
                 setQuestions(resp.data.questions); 
               } catch (error) {
@@ -40,8 +40,6 @@ function Page({ params }) {
             }, 1000);
         
             const timer = setTimeout(() => {
-
-                localStorage.setItem('isResult', 'true');
                 router.replace('/dashboard'); 
                 console.log("Route");
 
@@ -92,7 +90,8 @@ function Page({ params }) {
     setIsLoading(true);
     const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
       try {
-        const resp = await GlobalApi.SaveQuizResult(data, token);
+        const resp = await GlobalApi.SaveQuizResult(data, token, quizId);
+        
         if (resp && resp.status === 201) {
           // toast.success('Challenge created Challenge!');
           console.log('Response:', resp.data);          
@@ -102,7 +101,8 @@ function Page({ params }) {
           alert('Failed Submitted results');
         }
       } catch (error) {
-        console.error('Error creating Challenge:', error);
+        console.error('Error creating Submitting:', error);
+        console.error('Error creating Submiting:', error.message);
         // toast.error('Error: Failed to create Challenge.');
         alert('Error Error: Failed Submitted results');
       } finally {

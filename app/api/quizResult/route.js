@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { ANALYTICS_QUESTION, ANSWERS, OPTIONS, PERSONALITY_SEQUENCE, QUESTIONS, TASKS, USER_DETAILS, USER_PROGRESS, USER_TASKS } from '@/utils/schema';
+import { USER_PROGRESS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { eq, inArray } from 'drizzle-orm'; // Ensure these imports match your ORM version
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -15,38 +15,46 @@ export async function POST(req) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
-    const resultDataArray = await req.json(); 
+    console.log("userId", userId, "userData",userData);
+    
+    const { quizId, results } = await req.json(); // Directly destructuring to get quizId and results array
+
+    console.log("Quiz ID:", quizId);
+    // console.log("Results Array:", results);
     
     try {
-
+        console.log("userId", userId, "userData",userData);
             // Check if records already exist for this user
             const existingRecords = await db
-            .select()
-            .from(USER_PROGRESS)
-            .where(eq(USER_PROGRESS.user_id, userId))
-            .execute();
+                                    .select()
+                                    .from(USER_PROGRESS)
+                                    .where(eq(USER_PROGRESS.user_id, userId))
+                                    .execute();
     
             if (existingRecords.length > 0) {
                 // If records exist, return a response indicating the records are already created
                 return NextResponse.json({ message: 'Records already created for this user.' }, { status: 400 });
             }
 
-            const insertData = resultDataArray.map(data => ({
+            const insertData = results.map(data => ({
               user_id: userId,
               question_id: data.questionId,
               option_id: data.optionId,
               analytic_id: data.analyticId,
               created_at: new Date(),
             }));
+
+            console.log("logging the insert ", insertData);
+            
           
             // Assuming your ORM/DB client supports batch inserts:
             await db.insert(USER_PROGRESS).values(insertData);
           
             console.log(`Inserted ${insertData.length} records into USER_PROGRESS.`);
 
-            // Create sequence and insert into PERSONALITY_SEQUENCE
+            // Create sequence and insert into QUIZ_SEQUENCES
             try {
-                await createSequence(resultDataArray, userId);
+                await createSequence(results, userId, quizId);
                 return NextResponse.json({ message: 'Success' }, { status: 201 });
             } catch (createSequenceError) {
                 console.error("Error creating personality sequence:", createSequenceError);

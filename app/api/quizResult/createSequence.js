@@ -1,7 +1,7 @@
 import { db } from '@/utils';
-import { PERSONALITY_SEQUENCE } from "@/utils/schema";
+import { QUIZ_SEQUENCES } from "@/utils/schema";
 
-export const createSequence = async (resultDataArray, userId) => {
+export const createSequence = async (resultDataArray, userId, quizId) => {
     // Define which questions belong to each part
     const parts = {
         firstPart: [1, 2, 3], // questionId for the first part
@@ -68,9 +68,11 @@ export const createSequence = async (resultDataArray, userId) => {
     const personalityType = `${result.firstPart}${result.secondPart}${result.thirdPart}${result.fourthPart}`;
 
     try {
-        await db.insert(PERSONALITY_SEQUENCE).values({
+        await db.insert(QUIZ_SEQUENCES).values({
             type_sequence: personalityType,
             user_id: userId,
+            quiz_id: quizId,
+            isCompleted: true,
             createddate: new Date()
         });
     } catch (error) {

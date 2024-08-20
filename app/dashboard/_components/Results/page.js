@@ -12,7 +12,7 @@ function Results() {
                 const userId = await GlobalApi.GetUserId( token );
                 const userSequence = await GlobalApi.GetUserSequence(userId);
 
-                const data = await GlobalApi.GetResults(userSequence);
+                const data = await GlobalApi.GetResults(userSequence); 
                 setResultData(data.data[0]);
 
             } catch (err) {

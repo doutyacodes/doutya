@@ -10,34 +10,34 @@ export default function Dashboard() {
   const router = useRouter();
   const [isResult, setIsResult] = useState(false);
 
-  useEffect(() => {
-    const storedResult = localStorage.getItem('isResult');
-    console.log("result storedResult",storedResult );
+//   useEffect(() => {
+//     const storedResult = localStorage.getItem('isResult');
+//     console.log("result storedResult",storedResult );
     
-    if (storedResult === 'true') {
-        setIsResult(true);
-        // localStorage.removeItem('isResult');
-    }
-}, []);
+//     if (storedResult === 'true') {
+//         setIsResult(true);
+//         // localStorage.removeItem('isResult');
+//     }
+// }, []);
 
-  useEffect(() => {
-    if (isResult && resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [isResult]);
-console.log("tesResult",isResult);
+//   useEffect(() => {
+//     if (isResult && resultsRef.current) {
+//       resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+//     }
+//   }, [isResult]);
 
   return (
     <div>
       <Navbar/>
       <Banner/>
-      {
+      {/* {
         isResult && (
           <div ref={resultsRef}>
             <Results />
           </div>
         )
-      }
+      } */}
+      
       <br />
       <br />
     </div>

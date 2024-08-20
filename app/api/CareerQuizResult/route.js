@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { CARRER_SEQUENCE, PERSONALITY_QUESTIONS, PERSONALITY_TYPES, RIASEC_SEQUENCE } from '@/utils/schema';
+import { CARRER_SEQUENCE, PERSONALITY_QUESTIONS, PERSONALITY_TYPES, QUIZ_SEQUENCES, RIASEC_SEQUENCE } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
 
@@ -32,7 +32,11 @@ export async function POST(req) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
-    const resultDataArray = await req.json(); 
+    const { quizId, results } = await req.json();
+
+    console.log("Quiz ID:", quizId);
+    console.log("Results Array:", results);
+
     
     try {
         // Fetch data from database
@@ -55,7 +59,7 @@ export async function POST(req) {
         };
 
         // Calculate scores based on responses
-        resultDataArray.forEach(response => {
+        results.forEach(response => {
             const { questionId, optionId, personaTypeId } = response;
             const themeName = personalityTypes[personaTypeId];
 
@@ -100,9 +104,11 @@ export async function POST(req) {
 
         // Insert RIASEC sequence into the database
         try {
-            await db.insert(CARRER_SEQUENCE).values({
+            await db.insert(QUIZ_SEQUENCES).values({
                 type_sequence: riasecType,
                 user_id: userId,
+                quiz_id: quizId,
+                isCompleted: true,
                 createddate: new Date()
             });
         } catch (error) {

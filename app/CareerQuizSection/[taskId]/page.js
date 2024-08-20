@@ -16,14 +16,14 @@ function Page({ params }) {
   const [choices, setChoices] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter();
-  const taskId = params.taskId;
+  const quizId = params.taskId;
 
 
     useEffect(() =>{
         const getQuizData = async()=>{
             setIsLoading(true)
             try {
-                const resp = await GlobalApi.GetCareerQuiz(taskId, "token");
+                const resp = await GlobalApi.GetCareerQuiz(quizId, "token");
                 console.log('Response: of  GetQuizData',resp.data);
                 setQuestions(resp.data.questions); 
                 setChoices(resp.data.choices);
@@ -90,7 +90,7 @@ function Page({ params }) {
       setIsLoading(true);
       const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         try {
-          const resp = await GlobalApi.SaveCareerQuizResult(data, token);
+          const resp = await GlobalApi.SaveCareerQuizResult(data, token, quizId);
           if (resp && resp.status === 201) {
             toast.success('Quiz Completed successfully!');
             console.log('Response:', resp.data);          
