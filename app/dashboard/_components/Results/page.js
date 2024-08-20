@@ -1,20 +1,117 @@
-import React from 'react'
+import GlobalApi from '@/app/_services/GlobalApi'
+import React, { useEffect, useState } from 'react'
 
 function Results() {
-  return (
-    <div className='w-4/5 mx-auto'>
-      <p className='text-center text-white text-3xl'>Results</p>
-        <div className='flex flex-col text-white gap-5'>
-            <div className=''>
-                <p>
-                    Description
-                </p>
-                <div className='bg-white px-10 py-6 text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer'>
+    const [resultData, setResultData] = useState([]);
+    const [loading,setLoading]=useState(false);
+    const[error,setError]=useState('');
+    useEffect(() => {
+        async function fetchResults() {
+            try {
+                const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+                const userId = await GlobalApi.GetUserId( token );
+                const userSequence = await GlobalApi.GetUserSequence(userId);
+
+                const data = await GlobalApi.GetResults(userSequence);
+                setResultData(data.data[0]);
+
+            } catch (err) {
+                setError('Failed to fetch results.');
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchResults();
+    }, []);
+
+    useEffect(() => {
+        if (resultData) {
+            console.log('Result Data Updated:', resultData);
+        }
+    }, [resultData]);
+
+    const { description, strengths, weaknesses, opportunities, threats, careers, leastSuitableCareers } = resultData;
+    return (
+        <div className='w-4/5 mx-auto'>
+            <p className='text-center text-white text-3xl'>Results</p>
+            <div className='flex flex-col text-white gap-5'>
+                <div className=''>
                     <p>
-                    You are characterized by Your analytical, curious, and inventive nature. You are highly intellectual and are driven by a desire to understand and master complex systems and ideas. As extroverts, you are outgoing and sociable, preferring to spend time with others and engaging in lively discussions and activities. You are highly intuitive, relying on Your instincts and insights to guide Your decisions and actions. You are often drawn to careers that require strategic thinking and problem-solving, such as engineering, science, or entrepreneurship. In the workplace, you are known for Your ability to see the big picture and develop innovative solutions to complex problems. You are highly organized and value efficiency and productivity. In Your personal lives, you are independent and self-sufficient, often valuing Your personal space and autonomy. You may struggle with expressing Your emotions or understanding the emotional needs of others, as You tend to prioritize logic and rationality over feelings. However, you are deeply loyal and committed partners who value honesty and integrity in Your relationships. You are often seen as confident and self-assured, with a strong sense of purpose and direction. Overall, your personality type is characterized by a strong analytical mind, strategic thinking, and a desire for independence and mastery.
+                        Description
                     </p>
+                    <div className='bg-white px-10 py-6 text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer'>
+                        <p>
+                            {description}
+                        </p>
+                    </div>
+                </div>
+
+                <div className=''>
+                    <p>
+                        Strengths
+                    </p>
+                    <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
+                        {resultData.strengths.split('\r\n').map((strength, index) => (
+                            <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>{strength}</div>
+                        ))}
+                    </div>
+                </div>
+
+                <div>
+                    <p>
+                        Weaknesses
+                    </p>
+                    <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
+                        {resultData.weaknesses.split('\r\n').map((weakness, index) => (
+                            <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>{weakness}</div>
+                        ))}
+                    </div>
+
+                </div>
+                <div>
+                    <p>
+                        Opportunities
+                    </p>
+                    <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
+                        {resultData.opportunities.split('\r\n').map((opportunity, index) => (
+                            <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>{opportunity}</div>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <p>
+                        Threats
+                    </p>
+                    <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
+                        {resultData.threats.split('\r\n').map((threat, index) => (
+                            <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>{threat}</div>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <p>
+                        Most Suitable Careers
+                    </p>
+                    <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600'>
+                        
+                        {resultData.most_suitable_careers.split('\r\n').map((career, index) => (
+                            <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>{career}</div>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <p>
+                        Least Suitable Careers
+                    </p>
+                    <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600'>
+                        {resultData.least_suitable_careers.split('\r\n').map((least_career, index) => (
+                            <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>{least_career}</div>
+                        ))}
+                    </div>
                 </div>
             </div>
+<<<<<<< HEAD
+=======
 
             <div className=''>
                 <p>
@@ -177,9 +274,9 @@ function Results() {
                     </div>     
                 </div>    
             </div>
+>>>>>>> ca32bf4dbc31dd7bfd1559842c60f7ef661ae8d6
         </div>
-    </div>
-  )
+    )
 }
 
 export default Results

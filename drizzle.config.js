@@ -4,8 +4,8 @@ export default {
     dbCredentials: {
         host: "localhost",
         user: "root",
-        database: "doutya",
-        password: 'jinoJINO'
+        database: "project1",
+        password: ''
     }
 };
 
