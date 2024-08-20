@@ -161,3 +161,15 @@ export const PERSONALITY_SEQUENCE = mysqlTable('personality_sequence', {
     user_id: int('user_id').notNull(),
     createddate: datetime('createddate').notNull(),
 });
+
+export const RESULTS1=mysqlTable('result1',{
+    id:int('id').primaryKey().notNull(),
+    type_sequence:varchar('type_sequence',{length:4}).notNull(),
+    description:text('description').default(null),
+    strengths:text('strengths').default(null),
+    weaknesses:text('weaknesses').default(null),
+    opportunities:text('opportunities').default(null),
+    threats:text('threats').default(null),
+    most_suitable_careers:text('most_suitable_careers').default(null),
+    least_suitable_careers:text('least_suitable_careers').default(null)
+});

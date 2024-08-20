@@ -32,11 +32,24 @@ const InterestResult = (data) => axios.post('/api/resultTwo', data, {
   }
 })
 
+const GetUserId=(token)=>axios.get('/api/getUserId',{
+  headers: {
+    Authorization: `Bearer ${token}`,
+  }
+});
+
+const GetUserSequence = (data) => axios.get('/api/user-sequence',{ params: data });
+
+const GetResults=(data)=>axios.get('/api/getResults',{ params: data });
+
 export default {
   CreateNewUser,
   LoginUser,
   GetUser,
   GetQuizData,
   SaveQuizResult,
-  InterestResult
+  InterestResult,
+  GetUserSequence,
+  GetUserId,
+  GetResults
 }

@@ -55,7 +55,7 @@ function Banner() {
           <div className="border-t  border-cyan-400 "></div>
           <h1 className='text-white mt-4 text-2xl font-bold ml-3'>Test 1
           </h1>
-          <Link href="/quiz-section/33">
+          <Link href="/quiz-section/1">
             <img
               src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
               className="h-10 absolute top-80 ml-48 cursor-pointer mt-12"
