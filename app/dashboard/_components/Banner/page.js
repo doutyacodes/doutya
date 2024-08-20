@@ -140,7 +140,7 @@ function Banner() {
           <div className="border-t border-cyan-400"></div>
           <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 3</h1>
           <div className=" relative">
-            <Link href="/quiz-section/2">
+            <Link href="/CareerQuizSection/2">
               <img
                 src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
                 className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
