@@ -46,26 +46,6 @@ function Banner() {
       </h2>
       <div className="border-t border-cyan-400 "></div>
 
-<<<<<<< HEAD
-      <br />
-      <br />
-      <div className='-ml-10 grid grid-flow-col gap-10'>
-        <div className='border border-cyan-400 pb-3 rounded-sm w-64'>
-          <img className='rounded-md object-cover w-full h-36' src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg" alt="" />
-          <div className="border-t  border-cyan-400 "></div>
-          <h1 className='text-white mt-4 text-2xl font-bold ml-3'>Test 1
-          </h1>
-          <Link href="/quiz-section/1">
-            <img
-              src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-              className="h-10 absolute top-80 ml-48 cursor-pointer mt-12"
-              alt="Navigate to Quiz Section"
-            />
-          </Link>
-
-          <div className='relative'>
-            <p className='ml-3 text-white pt-8 w-4/5'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae maiores molestias possimus optio nisi quos sint, quo facere est rem deserunt voluptas
-=======
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Test 1 */}
         <div className=" border border-cyan-400 pb-3 rounded-sm w-full">
@@ -90,7 +70,6 @@ function Banner() {
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
               maiores molestias possimus optio nisi quos sint, quo facere est
               rem deserunt voluptas
->>>>>>> ca32bf4dbc31dd7bfd1559842c60f7ef661ae8d6
             </p>
           </div>
         </div>
