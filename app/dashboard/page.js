@@ -16,7 +16,7 @@ export default function Dashboard() {
     
     if (storedResult === 'true') {
         setIsResult(true);
-        localStorage.removeItem('isResult');
+        // localStorage.removeItem('isResult');
     }
 }, []);
 
