@@ -26,11 +26,31 @@ const SaveQuizResult = (data, token) => {
   });
 };
 
+const GetCareerQuiz = (id, token) => {
+
+  return axios.get(`/api/getPersonalityData/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+
+const SaveCareerQuizResult = (data, token) => {
+
+  return axios.post(`/api/CareerQuizResult`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 const InterestResult = (data) => axios.post('/api/resultTwo', data, {
   headers: {
     'Content-Type': 'application/json'
   }
 })
+
 
 export default {
   CreateNewUser,
@@ -38,5 +58,7 @@ export default {
   GetUser,
   GetQuizData,
   SaveQuizResult,
-  InterestResult
+  InterestResult,
+  GetCareerQuiz,
+  SaveCareerQuizResult
 }
