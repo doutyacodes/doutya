@@ -110,8 +110,6 @@ function Results() {
                     </div>
                 </div>
             </div>
-<<<<<<< HEAD
-=======
 
             <div className=''>
                 <p>
@@ -274,7 +272,6 @@ function Results() {
                     </div>     
                 </div>    
             </div>
->>>>>>> ca32bf4dbc31dd7bfd1559842c60f7ef661ae8d6
         </div>
     )
 }
