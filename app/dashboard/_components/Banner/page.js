@@ -1,11 +1,11 @@
-import Link from 'next/link';
-import React, { useState } from 'react'
-import GlobalApi from '@/app/_services/GlobalApi';
+import Link from "next/link";
+import React, { useState } from "react";
+import GlobalApi from "@/app/_services/GlobalApi";
 
 function Banner() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [interests, setInterests] = useState('');
-  const [responseContent, setResponseContent] = useState('');
+  const [interests, setInterests] = useState("");
+  const [responseContent, setResponseContent] = useState("");
   const [loading, setLoading] = useState(false);
 
   const openModal = () => {
@@ -18,68 +18,79 @@ function Banner() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    console.log('Entered Interests:', interests);
+    console.log("Entered Interests:", interests);
     try {
       const resp = await GlobalApi.InterestResult({ interests });
       setResponseContent(resp.data.result);
-      setInterests('');
+      setInterests("");
     } catch (err) {
-      console.log('Error:', err);
+      console.log("Error:", err);
     } finally {
       setLoading(false);
     }
     closeModal();
   };
 
-
   const handleInputChange = (event) => {
     setInterests(event.target.value);
   };
 
   const formatContent = (text) => {
-    return text.split('\n').map((line, index) => (
-        <p key={index}>{line}</p>
-    ));
-};
+    return text.split("\n").map((line, index) => <p key={index}>{line}</p>);
+  };
 
   return (
-    <div className='mb-7 w-4/5 mx-auto'>
-      <h2 className='text-white ml-9 mt-7 font-bold font-serif pb-6'>Personality</h2>
-      <div className="border-t  border-cyan-400 ml-9 w-10/12"></div>
+    <div className="mb-7 w-4/5 mx-auto ">
+      <h2 className="text-white   mt-7 font-bold font-serif pb-6">
+        Personality
+      </h2>
+      <div className="border-t border-cyan-400 "></div>
 
-      <br />
-      <br />
-      <div className='-ml-10 grid grid-flow-col gap-10'>
-        <div className='border border-cyan-400 pb-3 rounded-sm w-64'>
-          <img className='rounded-md object-cover w-full h-36' src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg" alt="" />
-          <div className="border-t  border-cyan-400 "></div>
-          <h1 className='text-white mt-4 text-2xl font-bold ml-3'>Test 1
-          </h1>
-          <Link href="/quiz-section/1">
-            <img
-              src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-              className="h-10 absolute top-80 ml-48 cursor-pointer mt-12"
-              alt="Navigate to Quiz Section"
-            />
-          </Link>
-
-          <div className='relative'>
-            <p className='ml-3 text-white pt-8 w-4/5'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae maiores molestias possimus optio nisi quos sint, quo facere est rem deserunt voluptas
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        {/* Test 1 */}
+        <div className=" border border-cyan-400 pb-3 rounded-sm w-full">
+          <img
+            className="rounded-md object-cover w-full h-36"
+            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
+            alt="Test 1 Image"
+          />
+          <div className="border-t border-cyan-400"></div>
+          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 1</h1>
+          <div className="relative">
+            <Link href="/quiz-section/1">
+              <img
+                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
+                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer "
+                alt="Navigate to Quiz Section"
+              />
+            </Link>
+          </div>
+          <div className="relative">
+            <p className="ml-3 text-white pt-8 w-4/5">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
+              maiores molestias possimus optio nisi quos sint, quo facere est
+              rem deserunt voluptas
             </p>
           </div>
-
         </div>
-        <div className='border border-cyan-400 pb-3 rounded-sm w-64'>
-          <img className='rounded-md object-cover w-full h-36' src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg" alt="" />
-          <div className="border-t  border-cyan-400 "></div>
-          <h1 className='text-white mt-4 text-2xl font-bold ml-3'>Test 2
-          </h1>
+
+        {/* Test 2 */}
+        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
           <img
-            src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-            className="h-10 absolute top-80 ml-48 cursor-pointer mt-12"
-            alt="Navigate to Quiz Section"
-            onClick={openModal}
+            className="rounded-md object-cover w-full h-36"
+            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
+            alt="Test 2 Image"
           />
+          <div className="border-t border-cyan-400"></div>
+          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 2</h1>
+          <div className=" relative">
+            <img
+              src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
+              className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
+              alt="Navigate to Quiz Section"
+              onClick={openModal}
+            />
+          </div>
           {isModalOpen && (
             <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
               <div className="bg-white p-6 rounded-md">
@@ -97,7 +108,7 @@ function Banner() {
                     className="bg-cyan-400 text-white px-4 py-2 rounded-md"
                     disabled={loading}
                   >
-                    {loading ? 'Analyzing...' : 'Submit'}
+                    {loading ? "Analyzing..." : "Submit"}
                   </button>
                 </form>
                 <button
@@ -110,60 +121,81 @@ function Banner() {
               </div>
             </div>
           )}
-          <div className='relative'>
-            <p className='ml-3 text-white pt-8 w-4/5'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae maiores molestias possimus optio nisi quos sint, quo facere est rem deserunt voluptas
+          <div className="relative">
+            <p className="ml-3 text-white pt-8 w-4/5">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
+              maiores molestias possimus optio nisi quos sint, quo facere est
+              rem deserunt voluptas
             </p>
           </div>
         </div>
-        <div className='border border-cyan-400 pb-3 rounded-sm w-64'>
-          <img className='rounded-md object-cover w-full h-36' src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg" alt="" />
-          <div className="border-t  border-cyan-400 "></div>
-          <h1 className='text-white mt-4 text-2xl font-bold ml-3'>Test 3
-          </h1>
-          <Link href="/CareerQuizSection/2">
-            <img
-              src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-              className="h-10 absolute top-80 ml-48 cursor-pointer mt-12"
-              alt="Navigate to Quiz Section"
-            />
-          </Link>
 
-          <div className='relative'>
-            <p className='ml-3 text-white pt-8 w-4/5'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae maiores molestias possimus optio nisi quos sint, quo facere est rem deserunt voluptas
+        {/* Test 3 */}
+        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
+          <img
+            className="rounded-md object-cover w-full h-36"
+            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
+            alt="Test 3 Image"
+          />
+          <div className="border-t border-cyan-400"></div>
+          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 3</h1>
+          <div className=" relative">
+            <Link href="/quiz-section/2">
+              <img
+                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
+                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
+                alt="Navigate to Quiz Section"
+              />
+            </Link>
+          </div>
+          <div className="relative">
+            <p className="ml-3 text-white pt-8 w-4/5">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
+              maiores molestias possimus optio nisi quos sint, quo facere est
+              rem deserunt voluptas
             </p>
           </div>
         </div>
-        <div className='border border-cyan-400 pb-3 rounded-sm w-64'>
-          <img className='rounded-md object-cover w-full h-36' src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg" alt="" />
-          <div className="border-t  border-cyan-400 "></div>
-          <h1 className='text-white mt-4 text-2xl font-bold ml-3'>Test 4
-          </h1>
-          <Link href="/quiz-section/1">
-            <img
-              src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-              className="h-10 absolute top-80 ml-48 cursor-pointer mt-12"
-              alt="Navigate to Quiz Section"
-            />
-          </Link>
 
-          <div className='relative'>
-            <p className='ml-3 text-white pt-8 w-4/5'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae maiores molestias possimus optio nisi quos sint, quo facere est rem deserunt voluptas
+        {/* Test 4 */}
+        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
+          <img
+            className="rounded-md object-cover w-full h-36"
+            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
+            alt="Test 4 Image"
+          />
+          <div className="border-t border-cyan-400"></div>
+          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 4</h1>
+          <div className=" relative">
+            <Link href="/quiz-section/1">
+              <img
+                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
+                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
+                alt="Navigate to Quiz Section"
+              />
+            </Link>
+          </div>
+          <div className="relative">
+            <p className="ml-3 text-white pt-8 w-4/5">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
+              maiores molestias possimus optio nisi quos sint, quo facere est
+              rem deserunt voluptas
             </p>
           </div>
         </div>
       </div>
+
       <div>
         {/* Display the response content */}
         {responseContent && (
           <div className="border border-gray-300 p-4 rounded mt-4">
             <h2 className="text-xl font-semibold mb-2 text-white">Result:</h2>
-            <p className='text-white'>{formatContent(responseContent)}</p>
+            <p className="text-white">{formatContent(responseContent)}</p>
           </div>
         )}
       </div>
-
     </div>
-  )
+  );
 }
 
 export default Banner;

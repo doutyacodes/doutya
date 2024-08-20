@@ -57,7 +57,8 @@ function SignUp() {
     return (
         <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
             <Toaster/>
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+            
+            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg ">
                 <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex gap-4 mb-4">
@@ -69,7 +70,7 @@ function SignUp() {
                                 {...register("gender")}
                             >
                                 <option value=''>Gender</option>
-                                <option value='Mr'>Mr</option>
+                                <option className=" font-serif" value='Mr'>Mr</option>
                                 <option value='Miss'>Miss</option>
                                 <option value='Mrs'>Mrs</option>
                             </select>
