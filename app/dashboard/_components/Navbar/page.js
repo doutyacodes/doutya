@@ -1,11 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
+import Link from 'next/link';
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    window.location.href = '/login';
   };
 
   return (
@@ -57,12 +72,21 @@ function Navbar() {
                 option3
               </option>
             </select>
-            <a
-              href="./login"
-              className="text-white hover:text-gray-300 font-bold"
-            >
-              Login
-            </a>
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="text-white hover:text-gray-300 font-bold"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="text-white hover:text-gray-300 font-bold"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </nav>
