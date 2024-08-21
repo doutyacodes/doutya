@@ -3,43 +3,28 @@ import React, { useEffect, useRef, useState } from 'react'
 import Navbar from './_components/Navbar/page'
 import Banner from './_components/Banner/page'
 import Results from './_components/Results/page'
-import { useRouter } from 'next/navigation'
+import Results2 from './_components/Result2/page'
 
 export default function Dashboard() {
-  const resultsRef = useRef(null);
-  const router = useRouter();
-  const [isResult, setIsResult] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [showQuiz2Results, setShowQuiz2Results] = useState(false);
 
-//   useEffect(() => {
-//     const storedResult = localStorage.getItem('isResult');
-//     console.log("result storedResult",storedResult );
-    
-//     if (storedResult === 'true') {
-//         setIsResult(true);
-//         // localStorage.removeItem('isResult');
-//     }
-// }, []);
+  const toggleResults = () => {
+    setShowResults(prevState => !prevState); 
+  };
 
-//   useEffect(() => {
-//     if (isResult && resultsRef.current) {
-//       resultsRef.current.scrollIntoView({ behavior: 'smooth' });
-//     }
-//   }, [isResult]);
+  const toggleQuiz2Results = () => {
+    setShowQuiz2Results(prevState => !prevState);
+  };
 
   return (
     <div>
       <Navbar/>
-      <Banner/>
-      {/* {
-        isResult && (
-          <div ref={resultsRef}>
-            <Results />
-          </div>
-        )
-      } */}
-      
+      <Banner onToggleResults={toggleResults} showResults={showResults} onToggleQuiz2Results={toggleQuiz2Results} showQuiz2Results={showQuiz2Results}/>
       <br />
       <br />
+      {showResults && <Results />} 
+      {showQuiz2Results && <Results2/>}
     </div>
   )
 }

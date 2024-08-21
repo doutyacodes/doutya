@@ -65,10 +65,6 @@ const GetUserId=(token)=>axios.get('/api/getUserId',{
   }
 });
 
-const GetUserSequence = (data) => axios.get('/api/user-sequence',{ params: data });
-
-const GetResults=(data)=>axios.get('/api/getResults',{ params: data });
-
 
 const GetDashboarCheck = (token) => {
   return axios.get(`/api/getDashboardCheckData`, {
@@ -78,6 +74,12 @@ const GetDashboarCheck = (token) => {
   });
 };
 
+const GetResult2=(token)=>axios.get('/api/getresult2',{
+  headers: {
+    Authorization: `Bearer ${token}`,
+  }
+});
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -85,10 +87,9 @@ export default {
   GetQuizData,
   SaveQuizResult,
   InterestResult,
-  GetUserSequence,
   GetUserId,
-  GetResults,
   GetCareerQuiz,
   SaveCareerQuizResult,
-  GetDashboarCheck
+  GetDashboarCheck,
+  GetResult2
 }
