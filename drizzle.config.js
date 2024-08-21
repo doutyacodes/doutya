@@ -1,13 +1,15 @@
-export default {
-    schema: "./utils/schema.js",
-    dialect: 'mysql',
-    dbCredentials: {
-        host: "localhost",
-        user: "root",
-        database: "project1",
-        password: ''
-    }
-};
+// export default {
+//     schema: "./utils/schema.js",
+//     dialect: 'mysql',
+//     dbCredentials: {
+//         host: "localhost",
+//         user: "root",
+// <<<<<<< main
+//         database: "project1",
+//         password: ''
+// >>>>>>> main
+//     }
+// };
 
 // export default {
 //     schema: "./utils/schema.js",
