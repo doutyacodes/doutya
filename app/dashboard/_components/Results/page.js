@@ -27,7 +27,7 @@ function Results() {
         }
     }, [resultData]);
 
-    const { description, strengths, weaknesses, opportunities, threats, careers, leastSuitableCareers } = resultData;
+    const { description, strengths, weaknesses, opportunities, threats, careers} = resultData;
     return (
         <div className='w-4/5 mx-auto'>
             <p className='text-center text-white text-3xl'>Results</p>
@@ -125,22 +125,6 @@ function Results() {
                             Loading
                         </div>
                     )}
-                    </div>
-                </div>
-                <div>
-                    <p>
-                        Least Suitable Careers
-                    </p>
-                    <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600'>
-                    {resultData.least_suitable_careers ? (
-                        resultData.least_suitable_careers.split('\r\n').map((least_career, index) => (
-                            <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>{least_career}</div>
-                        ))
-                    ) : (
-                        <div className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
-                            Loading
-                        </div>
-                    )}  
                     </div>
                 </div>
             </div>

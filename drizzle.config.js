@@ -4,10 +4,8 @@
 //     dbCredentials: {
 //         host: "localhost",
 //         user: "root",
-// <<<<<<< main
 //         database: "project1",
 //         password: ''
-// >>>>>>> main
 //     }
 // };
 
