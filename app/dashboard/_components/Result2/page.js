@@ -1,29 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import GlobalApi from '@/app/_services/GlobalApi';
+import countryList from 'react-select-country-list';
+import Select from 'react-select';
 
 export default function Results2() {
-    const [resultData, setResultData] = useState(null); // Initialize as null to indicate no data yet
+    const [resultData, setResultData] = useState(null);
+    const [selectedCountry, setSelectedCountry] = useState(null);
+    const options = countryList().getData();
 
     useEffect(() => {
-        async function fetchResults() {
-            try {
-                const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const data = await GlobalApi.GetResult2(token);
-                console.log(data);
-                setResultData(data);
-            } catch (err) {
-                // Handle error
-                console.error('Failed to fetch results:', err);
-            }
-        }
         fetchResults();
     }, []);
 
-    useEffect(() => {
-        if (resultData) {
-            console.log('Result Data Updated:', resultData.data.result);
+    const fetchResults = async (country = null) => {
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+            const countryParam = country ? `?country=${country.label}` : '';
+            const data = await GlobalApi.GetResult2(token, countryParam);
+            console.log(data);
+            setResultData(data);
+        } catch (err) {
+            console.error('Failed to fetch results:', err);
         }
-    }, [resultData]);
+    };
+
+    const handleCountryChange = (selectedOption) => {
+        setSelectedCountry(selectedOption);
+        fetchResults(selectedOption); 
+    };
 
     // Convert \r\n to <div> for block-level rendering
     const formatText = (text) => {
@@ -43,8 +47,19 @@ export default function Results2() {
                     <div
                         className='bg-white px-10 py-6 text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer'
                     >
-                        {formatText(resultData?.data?.result)}
+                        {resultData ? formatText(resultData?.data?.result) : 'Loading results...'}
                     </div>
+                </div>
+                <div className='mt-4'>
+                    <p>Want to check careers according to your specific country?</p>
+                    <Select
+                        options={options}
+                        value={selectedCountry}
+                        onChange={handleCountryChange}
+                        className='text-gray-800 rounded-md'
+                        placeholder="Select Country"
+                    />
+                    <br /><br />
                 </div>
             </div>
         </div>
