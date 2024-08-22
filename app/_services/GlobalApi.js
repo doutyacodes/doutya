@@ -91,9 +91,12 @@ const GetDashboarCheck = (token) => {
   });
 };
 
-const GetResult2=(token)=>axios.get('/api/getresult2',{
+const GetResult2=(token,countryParams)=>axios.get('/api/getresult2',{
   headers: {
     Authorization: `Bearer ${token}`,
+  },
+  params: {
+    country: countryParams, // Include countryParams in the query parameters
   }
 });
 

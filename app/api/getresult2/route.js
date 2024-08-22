@@ -9,6 +9,7 @@ import { ChatOpenAI } from "@langchain/openai"
 export async function GET(req)
 {
     console.log('got')
+    console.log(req)
     const authResult = await authenticate(req);
     if (!authResult.authenticated) {
         return authResult.response;
@@ -17,6 +18,12 @@ export async function GET(req)
     const userData = authResult.decoded_Data;
     
     const userId = userData.userId;
+
+    const url = new URL(req.url);
+    const country = url.searchParams.get('country') || 'your country';
+
+
+    console.log(country)
 
     const personality2 = await db.select({
         typeSequence: QUIZ_SEQUENCES.type_sequence
@@ -43,7 +50,7 @@ export async function GET(req)
     if (!process.env.OPENAI_API_KEY) {
         throw new Error("OPENAI_API_KEY is not set")
     }
-    const prompt=`What are the 5 best careers for the  ${type1} personality where (Extraversion (E) , Introversion (I),  Sensing (S) , Intuition (N), Thinking (T) , Feeling (F), Judging (J) , Perceiving (P)) with a ${type2} interest type where (Realistic (R)  , Investigative (I), Artistic (A), Social (S), Enterprising (E), Conventional (C), ) Show the reason for each of the careers. Don't include ${type1} and ${type2} in any line instead use "according to your personality".You can't disclose ${type1} and ${type2} in the answer.`
+    const prompt=`What are the 5 best careers in ${country} for the  ${type1} personality where (Extraversion (E) , Introversion (I),  Sensing (S) , Intuition (N), Thinking (T) , Feeling (F), Judging (J) , Perceiving (P)) with a ${type2} interest type where (Realistic (R)  , Investigative (I), Artistic (A), Social (S), Enterprising (E), Conventional (C), ) Show the reason for each of the careers. Don't include ${type1} and ${type2} in any line instead use "according to your personality".You can't disclose ${type1} and ${type2} in the answer.`
 
     const response = await chatModel.invoke(prompt)
 
