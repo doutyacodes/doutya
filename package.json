@@ -11,6 +11,8 @@
     "db:studio": "npx drizzle-kit studio"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.2",
+    "@heroicons/react": "^2.1.5",
     "@langchain/openai": "^0.2.6",
     "@radix-ui/react-toast": "^1.2.1",
     "@reduxjs/toolkit": "^2.2.7",

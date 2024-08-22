@@ -1,5 +1,6 @@
 "use client"
 import LoadingOverlay from '@/app/_components/LoadingOverlay';
+import QuizProgressAlert from '@/app/_components/QuizProgressAlert';
 import GlobalApi from '@/app/_services/GlobalApi';
 // import { Toaster } from '@/components/ui/toaster';
 import { useRouter } from 'next/navigation';
@@ -9,12 +10,12 @@ import toast, { Toaster } from 'react-hot-toast';
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState(null);
-  const [answers, setAnswers] = useState([]);
   const [quizCompleted, setQuizCompleted] = useState(false)
   const [secondsRemaining, setSecondsRemaining] = useState(5);
   const [questions, setQuestions] = useState([])
   const [choices, setChoices] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
+  const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
   const quizId = params.taskId;
 
@@ -23,10 +24,16 @@ function Page({ params }) {
         const getQuizData = async()=>{
             setIsLoading(true)
             try {
-                const resp = await GlobalApi.GetCareerQuiz(quizId, "token");
-                console.log('Response: of  GetQuizData',resp.data);
+                const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+                const resp = await GlobalApi.GetCareerQuiz(quizId, token);
                 setQuestions(resp.data.questions); 
                 setChoices(resp.data.choices);
+                setCurrentQuestionIndex(resp.data.quizProgress);
+
+                if (resp.data.quizProgress > 0) {
+                  setShowAlert(true);  // Set showAlert to true when resuming the quiz
+                }
+
               } catch (error) {
                 console.error('Error Fetching GetQuizData data:', error);
               }finally {
@@ -48,7 +55,6 @@ function Page({ params }) {
                 localStorage.setItem('isResult', 'true');
                 router.replace('/dashboard'); 
                 console.log("Route");
-
             }, 5000);
         
             return () => {
@@ -64,36 +70,49 @@ function Page({ params }) {
 
     const handleNext = () => {
 
-      const updatedAnswers = [...answers, 
-                                { questionId: questions[currentQuestionIndex].questionId,
-                                  optionId: selectedChoice.choiceId,
-                                  optionText: selectedChoice.choiceText,
-                                  personaTypeId: questions[currentQuestionIndex].personaTypeId
-                                }
-                              ];
-      
-      setAnswers(updatedAnswers);
+      const answer = 
+                { questionId: questions[currentQuestionIndex].questionId,
+                  optionId: selectedChoice.choiceId,
+                  optionText: selectedChoice.choiceText,
+                  personaTypeId: questions[currentQuestionIndex].personaTypeId
+                }
+      quizProgressSubmit(answer); 
 
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setSelectedChoice(null); // Resetting selected choice for the next question
       } else {
 
-      setQuizCompleted(true);
-      console.log("sumbitted ", updatedAnswers);
-      
-       quizSubmit(updatedAnswers)// Quiz finished, send data to API
+        setQuizCompleted(true);      
+        quizSubmit()// Quiz finished, send data to API
       }
     };
 
-    const quizSubmit = async (data) => {
+    const quizProgressSubmit = async (data) => {
+    
+        try {
+          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+          const resp = await GlobalApi.SaveCarrierQuizProgress(data, token, quizId);
+      
+          if (resp && resp.status === 201) {
+            console.log("Response:", resp.data);
+          } else {
+            console.error("Failed to save progress. Status code:", resp.status);
+            toast.error("There was a problem saving your progress. Please check your internet connection.");
+          }
+        } catch (error) {
+          console.error("Error submitting progress:", error.message);
+          toast.error("There was an error saving your progress. Please try again later.");
+        }
+    };
+    
+    const quizSubmit = async () => {
       setIsLoading(true);
       const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         try {
-          const resp = await GlobalApi.SaveCareerQuizResult(data, token, quizId);
+          const resp = await GlobalApi.SaveCareerQuizResult(token);
           if (resp && resp.status === 201) {
             toast.success('Quiz Completed successfully!');
-            console.log('Response:', resp.data);          
           } else {
             toast.error('Failed to submit quiz.');
             // alert('Failed Submitted results');
@@ -101,11 +120,10 @@ function Page({ params }) {
         } catch (error) {
           console.error('Error submitting quiz', error);
           // toast.error('Error: Failed to create Challenge.');
-          toast.error('Error Error: Failed Submitted quiz');
+          toast.error('Error Error: Failed to submit quiz.');
         } finally {
           setIsLoading(false);
         }
-      
     }
 
   if(isLoading){
@@ -140,10 +158,16 @@ function Page({ params }) {
 
   return (
     <div className='h-screen'>
-        <Toaster
-        position="top-center"
-        reverseOrder={false}
-        />
+      <Toaster
+      position="top-center"
+      reverseOrder={false}
+      />
+
+      {
+        showAlert && (
+          <QuizProgressAlert />
+        )
+      }
       {
         questions.length > 0 &&
         <div className='flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4 border-solid border-4 text-white rounded-2xl'>
