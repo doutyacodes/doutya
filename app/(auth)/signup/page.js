@@ -36,17 +36,24 @@ function SignUp() {
             data.university=encryptedUniversity;
         }
         try {
-            const resp = await GlobalApi.CreateNewUser(data);
-            if (resp) {
-                const token = resp.token;
+            const response = await GlobalApi.CreateNewUser(data);
+    
+            if (response.status === 201) {
+                console.log("Respons", response.data.data);
+                const { token, user } = response.data.data;
                 localStorage.setItem('token', token);
                 reset();
-                toast.success("Successfully added to database!");
+
+                toast.success("Successfully added to the database!");
                 router.push('/dashboard');
             } else {
-                toast.error("Error: Failed to add data.");
+                // Handle any other unexpected status codes
+                const errorMessage = response.data?.message || "Failed to add data.";
+                toast.error(`Error: ${errorMessage}`);
             }
         } catch (err) {
+            // Handle any errors that occurred during the API call
+            console.error('Error:', err);
             toast.error(`Error: ${err.message}`);
         }
     }
