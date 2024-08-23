@@ -1,7 +1,8 @@
 import { db } from '@/utils';
-import { CARRER_SEQUENCE, PERSONALITY_QUESTIONS, PERSONALITY_TYPES, QUIZ_SEQUENCES, RIASEC_SEQUENCE } from '@/utils/schema';
+import { CARRER_SEQUENCE, PERSONALITY_QUESTIONS, PERSONALITY_TYPES, QUIZ_SEQUENCES, RIASEC_SEQUENCE, USER_CAREER_PROGRESS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
+import { and, eq } from 'drizzle-orm';
 
 // Fetch personality types and return as a mapping from ID to type name
 const fetchPersonalityTypes = async () => {
@@ -32,22 +33,19 @@ export async function POST(req) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
-    const { quizId, results } = await req.json();
-
-    console.log("Quiz ID:", quizId);
-    console.log("Results Array:", results);
-
     
     try {
+        const savedProgress = await db
+                            .select()
+                            .from(USER_CAREER_PROGRESS)
+                            .where(eq(USER_CAREER_PROGRESS.user_id, userId),)
+
         // Fetch data from database
         const personalityTypes = await fetchPersonalityTypes();
         const questionsByType = await fetchQuestionsByType();
 
         // Initialize scores for each theme
         const scores = Object.fromEntries(Object.values(personalityTypes).map(type => [type, 0]));
-
-        console.log("scores", scores);
-        
 
         // Map optionId to score value
         const optionScores = {
@@ -59,36 +57,14 @@ export async function POST(req) {
         };
 
         // Calculate scores based on responses
-        results.forEach(response => {
-            const { questionId, optionId, personaTypeId } = response;
-            const themeName = personalityTypes[personaTypeId];
-
+        savedProgress.forEach(({ question_id, option_id, personality_type_id }) => {
+   
+            const themeName = personalityTypes[personality_type_id];
             // Ensure the question is valid and belongs to the specified persona type
-            if (themeName && questionsByType[personaTypeId]?.includes(questionId)) {
-                scores[themeName] += optionScores[optionId] || 0;
+            if (themeName && questionsByType[personality_type_id]?.includes(question_id)) {
+                scores[themeName] += optionScores[option_id] || 0;
             }
         });
-        console.log("scores check", scores);
-        // // Determine the RIASEC type sequence based on highest scores
-        // const sortedThemes = Object.entries(scores)
-        //     .sort(([, a], [, b]) => b - a)  // Sort by score in descending order
-        //     .map(([key]) => key[0]);  // Get the initial of each theme
-
-        // const topThemes = Object.entries(scores)
-        //     .sort(([, a], [, b]) => b - a)  // Sort by count in descending order
-        //     .map(([key]) => key);  // Get the theme name
-
-        //     console.log(topThemes);
-
-        // Create a list of themes with their counts
-        // const themesWithCounts = Object.entries(scores).map(([theme, count]) => ({ theme, count }));
-
-        // // Determine the RIASEC type sequence based on counts
-        // const riasecType = themesWithCounts
-        //     .filter(({ count }) => count > 0)  // Include only themes with counts greater than 0
-        //     .map(({ theme }) => theme[0])      // Get the initial of each theme
-        //     .join('');                        // Join the initials to form the sequence
-
 
         // Find the highest score
         const maxScore = Math.max(...Object.values(scores));
@@ -104,18 +80,23 @@ export async function POST(req) {
 
         // Insert RIASEC sequence into the database
         try {
-            await db.insert(QUIZ_SEQUENCES).values({
+
+            // Update the existing record with the new riasecType
+            await db.update(QUIZ_SEQUENCES)
+            .set({
                 type_sequence: riasecType,
-                user_id: userId,
-                quiz_id: quizId,
-                isCompleted: true,
-                createddate: new Date()
-            });
+                isCompleted: true, // Update the type_sequence field
+            })
+            .where(
+                and(
+                    eq(QUIZ_SEQUENCES.user_id, userId),
+                    eq(QUIZ_SEQUENCES.quiz_id, 2)
+                )
+            );
         } catch (error) {
             console.error("Error inserting RIASEC sequence:", error);
             throw error;
         }
-        console.log("riasecType", riasecType);
         
         return NextResponse.json({ message: 'RIASEC sequence successfully recorded' }, { status: 201 });
 

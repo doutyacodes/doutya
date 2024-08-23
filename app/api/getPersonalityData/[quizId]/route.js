@@ -1,16 +1,19 @@
 import { db } from '@/utils';
-import { ANALYTICS_QUESTION, ANSWERS, OPTIONS, PERSONALITY_CHOICES, PERSONALITY_QUESTIONS, QUESTIONS, TASKS, USER_DETAILS, USER_TASKS } from '@/utils/schema';
+import { ANALYTICS_QUESTION, ANSWERS, OPTIONS, PERSONALITY_CHOICES, PERSONALITY_QUESTIONS, QUESTIONS, QUIZ_SEQUENCES, TASKS, USER_CAREER_PROGRESS, USER_DETAILS, USER_TASKS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
-import { eq, inArray } from 'drizzle-orm'; // Ensure these imports match your ORM version
+import { and, eq, inArray, sql } from 'drizzle-orm'; // Ensure these imports match your ORM version
+import { authenticate } from '@/lib/jwtMiddleware';
 
 
-export async function GET(request, { params }) {
+export async function GET(req, { params }) {
 
-    // const authResult = await authenticate(req);
-    // if (!authResult.authenticated) {
-    //     return authResult.response;
-    //   }
+    const authResult = await authenticate(req);
+    if (!authResult.authenticated) {
+        return authResult.response;
+      }
 
+    const userData = authResult.decoded_Data;
+    const userId = userData.userId;
     const { quizId } = params;
 
     // const quizId  = 2;
@@ -19,6 +22,39 @@ export async function GET(request, { params }) {
     }
     
     try {
+
+        let totalAnswered = 0;
+
+        // Step 1: Check if isStarted is true in the QUIZ_SEQUENCES table
+        const quizSequence = await db
+                            .select({
+                                isStarted: QUIZ_SEQUENCES.isStarted
+                            })
+                            .from(QUIZ_SEQUENCES)
+                            .where(
+                                and(
+                                    eq(QUIZ_SEQUENCES.user_id, userId),
+                                    eq(QUIZ_SEQUENCES.quiz_id, quizId)
+                                )
+                            )
+                            .execute();
+                            
+        // Proceed only if a sequence exists and isStarted is true
+        if (quizSequence.length > 0 && quizSequence[0].isStarted) { 
+            // Geting the total no of saved quiz from USER_CAREER_PROGRESS if isStarted is true
+            const totalQuestionsAnswered = await db
+            .select({
+                countQuestionIds: sql`COUNT(${USER_CAREER_PROGRESS.question_id})`
+            })
+            .from(USER_CAREER_PROGRESS)
+            .where(eq(USER_CAREER_PROGRESS.user_id, userId))
+            .execute();
+
+            // The total number of questions answered
+            totalAnswered = totalQuestionsAnswered[0]?.countQuestionIds || 0;
+        }
+
+
         // Fetch questions for the given quizId
         const questions = await db
             .select({
@@ -44,6 +80,7 @@ export async function GET(request, { params }) {
             .execute();
 
         return NextResponse.json({
+            quizProgress: totalAnswered,
             questions: questions,
             choices: choices // Send choices separately
         });

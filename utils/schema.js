@@ -155,12 +155,14 @@ export const USER_PROGRESS = mysqlTable('user_progress', {
     created_at: datetime('created_at').notNull(),
 });
 
-// export const PERSONALITY_SEQUENCE = mysqlTable('personality_sequence', {
-//     id: int('id').primaryKey().autoincrement(),
-//     type_sequence: varchar('type_sequence', { length: 4 }).notNull(), // Random four letters of alphabets
-//     user_id: int('user_id').notNull(),
-//     createddate: datetime('createddate').notNull(),
-// });
+export const USER_CAREER_PROGRESS = mysqlTable('user_career_progress', {
+    id: int('id').primaryKey().autoincrement(),
+    user_id: int('user_id').notNull(),
+    question_id: int('question_id').notNull(),
+    option_id: int('option_id').notNull(),
+    personality_type_id: int('personality_type_id').notNull(),
+    created_at: datetime('created_at').notNull(),
+});
 
 export const RESULTS1=mysqlTable('result1',{
     id:int('id').primaryKey().notNull(),
@@ -196,13 +198,6 @@ export const PERSONALITY_CHOICES = mysqlTable('personality_choices', {
     id: int('id').primaryKey().autoincrement(),
     choice_text: varchar('choice_text', { length: 50 }).notNull(),
 });
-
-// export const CARRER_SEQUENCE = mysqlTable('carrer_sequence', {
-//     id: int('id').primaryKey().autoincrement(),
-//     type_sequence: varchar('type_sequence', { length: 4 }).notNull(), // Random four letters of alphabets
-//     user_id: int('user_id').notNull(),
-//     createddate: datetime('createddate').notNull(),
-// });
 
 export const QUIZ_SEQUENCES = mysqlTable('quiz_sequences', {
     id: int('id').primaryKey().autoincrement(),
