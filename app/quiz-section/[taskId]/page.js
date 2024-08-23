@@ -180,7 +180,7 @@ function Page({ params }) {
               onClick={handleNext}
               disabled={!selectedChoice}
             >
-              Select
+              Next
             </button>
           </div>
         </div>
