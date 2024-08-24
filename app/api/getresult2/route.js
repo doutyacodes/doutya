@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { QUIZ_SEQUENCES } from '@/utils/schema';
-import { eq } from 'drizzle-orm';
+import { eq,and } from 'drizzle-orm';
 import { db } from '@/utils';
 import { ChatOpenAI } from "@langchain/openai"
 
@@ -21,25 +21,32 @@ export async function GET(req)
     const url = new URL(req.url);
     const country = url.searchParams.get('country') || 'your country';
 
-
-    console.log(country)
-
     const personality2 = await db.select({
         typeSequence: QUIZ_SEQUENCES.type_sequence
             }).from(QUIZ_SEQUENCES)
-            .where(eq(QUIZ_SEQUENCES.user_id, userId))
-            .where(eq(QUIZ_SEQUENCES.quiz_id, 2))
+            .where(
+                and(
+                  eq(QUIZ_SEQUENCES.user_id, userId),
+                  eq(QUIZ_SEQUENCES.quiz_id, 1)
+                )
+            )
             .execute();
 
-    
+
     const type2=personality2[0].typeSequence
 
-    const personality1 = await db.select({
-        typeSequence: QUIZ_SEQUENCES.type_sequence
-            }).from(QUIZ_SEQUENCES)
-            .where(eq(QUIZ_SEQUENCES.user_id, userId))
-            .where(eq(QUIZ_SEQUENCES.quiz_id, 1))
-            .execute();
+    const personality1 = await db
+    .select({
+      typeSequence: QUIZ_SEQUENCES.type_sequence
+    })
+    .from(QUIZ_SEQUENCES)
+    .where(
+      and(
+        eq(QUIZ_SEQUENCES.user_id, userId),
+        eq(QUIZ_SEQUENCES.quiz_id, 1)
+      )
+    )
+    .execute();
 
     const type1=personality1[0].typeSequence
 
@@ -62,6 +69,5 @@ export async function GET(req)
 
     const response = await chatModel.invoke(prompt)
 
-    console.log(response.content)
     return NextResponse.json({result: response.content});
 }

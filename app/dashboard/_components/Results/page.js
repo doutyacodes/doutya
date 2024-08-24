@@ -9,7 +9,6 @@ function Results() {
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
                 const data = await GlobalApi.GetUserId(token);
-                console.log(data.data[0])
                 setResultData(data.data[0]);
 
             } catch (err) {
@@ -23,7 +22,7 @@ function Results() {
 
     useEffect(() => {
         if (resultData) {
-            console.log('Result Data Updated:', resultData);
+            console.log('Result Data Updated:');
         }
     }, [resultData]);
 
