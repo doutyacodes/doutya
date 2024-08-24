@@ -40,7 +40,7 @@ function Banner({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2R
         <div className='h-screen flex items-center justify-center text-white'>
             <div>
                 <div className='font-semibold'>
-                     <LoadingOverlay loadText={"Loading..."}/>;
+                     <LoadingOverlay loadText={"Loading..."}/>
                 </div>
             </div>
         </div>

@@ -17,6 +17,23 @@ function Page({ params }) {
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
   const quizId = params.taskId;
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
+
+  useEffect(() => {
+    const authCheck = ()=>{
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem("token");
+        if(!token){
+          router.push('/login');
+          setIsAuthenticated(false)
+        }else{
+          setIsAuthenticated(true)
+        }
+      }
+    };
+    authCheck()
+  }, [router]);
+
 
   useEffect(() => {
     const getQuizData = async () => {
@@ -137,12 +154,12 @@ function Page({ params }) {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !isAuthenticated) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
         <div>
           <div className="font-semibold">
-            <LoadingOverlay loadText={"Loading..."} />;
+            <LoadingOverlay loadText={"Loading..."} />
           </div>
         </div>
       </div>

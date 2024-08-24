@@ -26,7 +26,7 @@ function Login() {
         if (resp.data.token) {
           localStorage.setItem('token', resp.data.token);
         }
-        toast.success(resp.message);
+        toast.success("Logged in successfully");
         reset();
         router.push('/dashboard');
       } else {

@@ -4,10 +4,31 @@ import Navbar from './_components/Navbar/page'
 import Banner from './_components/Banner/page'
 import Results from './_components/Results/page'
 import Results2 from './_components/Result2/page'
+import { useRouter } from 'next/navigation'
+import LoadingOverlay from '../_components/LoadingOverlay'
 
 export default function Dashboard() {
   const [showResults, setShowResults] = useState(false);
   const [showQuiz2Results, setShowQuiz2Results] = useState(false);
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
+
+  useEffect(() => {
+    const authCheck = ()=>{
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem("token");
+        if(!token){
+          router.push('/login');
+          setIsAuthenticated(false)
+        }else{
+          setIsAuthenticated(true)
+        }
+      }
+    };
+    authCheck()
+  }, [router]);
+
+  
 
   const toggleResults = () => {
     setShowResults(prevState => !prevState); 
@@ -17,9 +38,23 @@ export default function Dashboard() {
     setShowQuiz2Results(prevState => !prevState);
   };
 
+  if(!isAuthenticated){
+    return (
+        <div className='h-screen flex items-center justify-center text-white'>
+            <div>
+                <div className='font-semibold'>
+                     <LoadingOverlay loadText={"Loading..."}/>
+                </div>
+            </div>
+        </div>
+    )
+  }
+
+  
+
   return (
     <div>
-      <Navbar/>
+      {/* <Navbar/> */}
       <Banner onToggleResults={toggleResults} showResults={showResults} onToggleQuiz2Results={toggleQuiz2Results} showQuiz2Results={showQuiz2Results}/>
       <br />
       <br />

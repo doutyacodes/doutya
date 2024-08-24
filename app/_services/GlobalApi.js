@@ -8,6 +8,24 @@ const GetUser = (token) => axios.get('/api/getUser', {
   }
 });
 
+const GetUserData = (token) => {
+
+  return axios.get('/api/getUserData', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const UpdateUser = (data, token) => {
+
+  return axios.put('/api/updateUser', data,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 const GetQuizData = (id, token) => {
 
   return axios.get(`/api/getQuizData/${id}`, {
@@ -113,5 +131,7 @@ export default {
   GetDashboarCheck,
   GetResult2,
   SaveQuizProgress,
-  SaveCarrierQuizProgress
+  SaveCarrierQuizProgress,
+  GetUserData,
+  UpdateUser
 }
