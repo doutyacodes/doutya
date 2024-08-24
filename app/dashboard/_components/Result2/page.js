@@ -82,7 +82,7 @@ export default function Results2() {
                         Loading results...
                     </div>
                 ) : resultData ? (
-                    resultData?.careers.map((career, index) => (
+                    resultData?.map((career, index) => (
                         <div
                             key={index}
                             className='bg-white px-10 py-6 text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer'

@@ -3,7 +3,7 @@ import { authenticate } from '@/lib/jwtMiddleware';
 import { QUIZ_SEQUENCES } from '@/utils/schema';
 import { eq,and } from 'drizzle-orm';
 import { db } from '@/utils';
-import { ChatOpenAI } from "@langchain/openai"
+import axios from 'axios';
 
 
 export async function GET(req)
@@ -50,13 +50,12 @@ export async function GET(req)
 
     const type1=personality1[0].typeSequence
 
-    const chatModel = new ChatOpenAI({
-        apiKey: process.env.OPENAI_API_KEY
-    })
-    if (!process.env.OPENAI_API_KEY) {
-        throw new Error("OPENAI_API_KEY is not set")
-    }
-    // const prompt=`What are the 5 best careers in ${country} for the  ${type1} personality where (Extraversion (E) , Introversion (I),  Sensing (S) , Intuition (N), Thinking (T) , Feeling (F), Judging (J) , Perceiving (P)) with a ${type2} interest type where (Realistic (R)  , Investigative (I), Artistic (A), Social (S), Enterprising (E), Conventional (C), ) Show the reason for each of the careers. Don't include ${type1} and ${type2} in any line instead use "according to your personality".You can't disclose ${type1} and ${type2} in the answer.`
+    // const chatModel = new ChatOpenAI({
+    //     apiKey: process.env.OPENAI_API_KEY
+    // })
+    // if (!process.env.OPENAI_API_KEY) {
+    //     throw new Error("OPENAI_API_KEY is not set")
+    // }
 
     const prompt=`Provide a list of the 5 best careers in ${country} for an individual with an ${type1} personality type and RIASEC interest types of ${type2}. For each career, include the following information:
       career_name: A brief title of the career.
@@ -67,7 +66,24 @@ export async function GET(req)
       user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
     Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`
 
-    const response = await chatModel.invoke(prompt)
 
-    return NextResponse.json({result: response.content});
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-4o-mini", // or 'gpt-4' if you have access
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 1500, // Adjust the token limit as needed
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    let responseText = response.data.choices[0].message.content.trim();
+    responseText = responseText.replace(/```json|```/g, "").trim();
+    // const response = await chatModel.invoke(prompt)
+    console.log(responseText)
+    return NextResponse.json({result: responseText});
 }
