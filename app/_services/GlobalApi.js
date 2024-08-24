@@ -100,6 +100,19 @@ const GetResult2=(token,countryParams)=>axios.get('/api/getresult2',{
   }
 });
 
+
+const SubmitFeedback=(token,data)=>axios.post('/api/feedback',data,{
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
+
+const CheckFeedback=(token)=>axios.get('/api/feedback',{
+  headers: {
+    Authorization: `Bearer ${token}`,
+  }
+});
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -113,5 +126,7 @@ export default {
   GetDashboarCheck,
   GetResult2,
   SaveQuizProgress,
-  SaveCarrierQuizProgress
+  SaveCarrierQuizProgress,
+  SubmitFeedback,
+  CheckFeedback
 }
