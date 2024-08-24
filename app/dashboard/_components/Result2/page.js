@@ -6,21 +6,24 @@ import Select from 'react-select';
 export default function Results2() {
     const [resultData, setResultData] = useState(null);
     const [selectedCountry, setSelectedCountry] = useState(null);
+    const [displayCountrySelect, setDisplayCountrySelect] = useState(false);
+    const [displayResults, setDisplayResults] = useState(false);
+    const [loading, setLoading] = useState(false); // Loading state
     const options = countryList().getData();
 
-    useEffect(() => {
-        fetchResults();
-    }, []);
-
     const fetchResults = async (country = null) => {
+        setLoading(true); // Start loading
         try {
             const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
             const countryParam = country ? `?country=${country.label}` : '';
             const data = await GlobalApi.GetResult2(token, countryParam);
             const parsedResult = JSON.parse(data.data.result);
             setResultData(parsedResult);
+            setDisplayResults(true);
         } catch (err) {
             console.error('Failed to fetch results:', err);
+        } finally {
+            setLoading(false); // Stop loading
         }
     };
 
@@ -28,11 +31,57 @@ export default function Results2() {
         setSelectedCountry(selectedOption);
         fetchResults(selectedOption); 
     };
+
+    const handleGlobalClick = () => {
+        fetchResults(''); // Fetch results globally
+    };
+
+    const handleCountryWiseClick = () => {
+        setDisplayCountrySelect(true);
+    };
+
     return (
         <div className='w-4/5 mx-auto'>
             <p className='text-center text-white text-3xl mb-8'>Results</p>
+            {!displayResults && (
+                <>
+                    <p className='text-center text-white mb-8'>
+                        Do you want to get the results globally or for a specific country?
+                    </p>
+                    <div className='flex justify-center gap-4 mb-8'>
+                        <button
+                            onClick={handleGlobalClick}
+                            className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'
+                        >
+                            Globally
+                        </button>
+                        <button
+                            onClick={handleCountryWiseClick}
+                            className='bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700'
+                        >
+                            Country Wise
+                        </button>
+                    </div>
+                </>
+            )}
             <div className='flex flex-col text-white gap-5'>
-                {resultData ? (
+                {displayCountrySelect && !displayResults && (
+                    <div className='mb-4'>
+                        <p>Select your country to view relevant careers:</p>
+                        <Select
+                            options={options}
+                            value={selectedCountry}
+                            onChange={handleCountryChange}
+                            className='text-gray-800 rounded-md'
+                            placeholder="Select Country"
+                        />
+                    </div>
+                )}
+                {loading ? (
+                    <div className='bg-white px-10 py-6 text-sm text-gray-600 rounded-xl'>
+                        Loading results...
+                    </div>
+                ) : resultData ? (
                     resultData?.careers.map((career, index) => (
                         <div
                             key={index}
@@ -51,21 +100,7 @@ export default function Results2() {
                             <p><strong>User Description:</strong> {career.user_description}</p>
                         </div>
                     ))
-                ) : (
-                    <div className='bg-white px-10 py-6 text-sm text-gray-600 rounded-xl'>
-                        Loading results...
-                    </div>
-                )}
-                <div className='mt-4'>
-                    <p>Want to check careers according to your specific country?</p>
-                    <Select
-                        options={options}
-                        value={selectedCountry}
-                        onChange={handleCountryChange}
-                        className='text-gray-800 rounded-md'
-                        placeholder="Select Country"
-                    />
-                </div>
+                ) : null}
                 <br /><br />
             </div>
         </div>
