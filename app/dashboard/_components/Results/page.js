@@ -10,7 +10,6 @@ function Results() {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
                 const data = await GlobalApi.GetUserId(token);
                 setResultData(data.data[0]);
-
             } catch (err) {
                 // setError('Failed to fetch results.');
             } finally {
@@ -25,6 +24,7 @@ function Results() {
             console.log('Result Data Updated:');
         }
     }, [resultData]);
+
 
     const { description, strengths, weaknesses, opportunities, threats, careers} = resultData;
     return (
@@ -127,6 +127,7 @@ function Results() {
                     </div>
                 </div>
             </div>
+            
         </div>
     )
 }
