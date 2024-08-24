@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import GlobalApi from '@/app/_services/GlobalApi';
 import countryList from 'react-select-country-list';
 import Select from 'react-select';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function Results2() {
     const [resultData, setResultData] = useState(null);
     const [selectedCountry, setSelectedCountry] = useState(null);
     const [displayCountrySelect, setDisplayCountrySelect] = useState(false);
     const [displayResults, setDisplayResults] = useState(false);
+    const [feedbackGiven, setFeedbackGiven] = useState(false);
+    const [rating, setRating] = useState(0);
     const [loading, setLoading] = useState(false); // Loading state
     const options = countryList().getData();
+    const [user_feedback, setUserFeedback] = useState('');
 
     const fetchResults = async (country = null) => {
         setLoading(true); // Start loading
@@ -19,7 +23,13 @@ export default function Results2() {
             const data = await GlobalApi.GetResult2(token, countryParam);
             const parsedResult = JSON.parse(data.data.result);
             setResultData(parsedResult);
+            console.log(parsedResult)
+            console.log(resultData)
             setDisplayResults(true);
+
+            const feedbackData = await GlobalApi.CheckFeedback(token);
+            console.log('trueor false',feedbackData.data.exists)
+            setFeedbackGiven(feedbackData.data.exists);
         } catch (err) {
             console.error('Failed to fetch results:', err);
         } finally {
@@ -29,7 +39,7 @@ export default function Results2() {
 
     const handleCountryChange = (selectedOption) => {
         setSelectedCountry(selectedOption);
-        fetchResults(selectedOption); 
+        fetchResults(selectedOption);
     };
 
     const handleGlobalClick = () => {
@@ -40,8 +50,20 @@ export default function Results2() {
         setDisplayCountrySelect(true);
     };
 
+    const handleFeedbackSubmit = async () => {
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+            await GlobalApi.SubmitFeedback(token, { rating, user_feedback });
+            setFeedbackGiven(true);
+            toast.success("Thank You for your feedback");
+        } catch (err) {
+            // Handle error
+        }
+    };
+
     return (
         <div className='w-4/5 mx-auto'>
+            <Toaster/>
             <p className='text-center text-white text-3xl mb-8'>Results</p>
             {!displayResults && (
                 <>
@@ -100,7 +122,39 @@ export default function Results2() {
                             <p><strong>User Description:</strong> {career.user_description}</p>
                         </div>
                     ))
+
                 ) : null}
+                {displayResults && !feedbackGiven && (
+                    <div className='bg-white p-5 rounded-lg text-gray-600'>
+                        <p className='text-center text-xl mb-4'>Give Your Feedback</p>
+                        <div className='flex justify-center mb-4'>
+                            {[...Array(10)].map((_, index) => (
+                                <span
+                                    key={index}
+                                    className={`cursor-pointer text-2xl ${index < rating ? 'text-yellow-500' : 'text-gray-400'}`}
+                                    onClick={() => setRating(index + 1)}
+                                >
+                                    ★
+                                </span>
+                            ))}
+                        </div>
+                        <textarea
+                            className='w-full p-3 rounded-lg border'
+                            placeholder='Write your feedback (optional)'
+                            onChange={(e) => setUserFeedback(e.target.value)}
+                        />
+                        <button
+                            className='w-full bg-blue-500 text-white py-2 rounded-lg mt-4'
+                            onClick={handleFeedbackSubmit}
+                        >
+                            Submit Feedback
+                        </button>
+                        {feedbackGiven && (
+                            <p className='text-center text-white'>Thank you for your feedback!</p>
+                        )}
+                    </div>
+
+                )}
                 <br /><br />
             </div>
         </div>

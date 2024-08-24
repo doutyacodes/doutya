@@ -5,6 +5,7 @@ import { eq,and } from 'drizzle-orm';
 import { db } from '@/utils';
 import axios from 'axios';
 
+export const maxDuration = 15;
 
 export async function GET(req)
 {
@@ -20,6 +21,8 @@ export async function GET(req)
 
     const url = new URL(req.url);
     const country = url.searchParams.get('country') || 'your country';
+
+    console.log(country)
 
     const personality2 = await db.select({
         typeSequence: QUIZ_SEQUENCES.type_sequence

@@ -208,3 +208,9 @@ export const QUIZ_SEQUENCES = mysqlTable('quiz_sequences', {
     isCompleted: boolean('isCompleted').notNull().default(false), // New boolean column
     isStarted: boolean('isStarted').notNull().default(false),     // New boolean column
 });
+
+export const FEEDBACK=mysqlTable('feedback',{
+    user_id:int('user_id').primaryKey().references(()=>USER_DETAILS.id).notNull(),
+    rating:int('rating').notNull(),
+    description:text('description').default(null)
+})
