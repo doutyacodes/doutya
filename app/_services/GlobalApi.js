@@ -131,6 +131,22 @@ const CheckFeedback=(token)=>axios.get('/api/feedback',{
   }
 });
 
+const SaveCarrerData = (token, data) => {
+  return axios.post(`/api/saveCareer`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetCarrerData = (token) => {
+  return axios.get(`/api/getCareer`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -148,5 +164,7 @@ export default {
   GetUserData,
   UpdateUser,
   SubmitFeedback,
-  CheckFeedback
+  CheckFeedback,
+  SaveCarrerData,
+  GetCarrerData
 }

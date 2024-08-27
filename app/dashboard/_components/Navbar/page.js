@@ -62,7 +62,10 @@ function Navbar() {
             <a href="#" className="text-white hover:text-gray-300">
               About Us
             </a>
-            <select className="bg-transparent text-white">
+            <a href="/dashboard/careers" className="text-white hover:text-gray-300">
+              Careers
+            </a>
+            {/* <select className="bg-transparent text-white">
               <option className="text-black" value="">
                 Solutions
               </option>
@@ -75,7 +78,7 @@ function Navbar() {
               <option className="text-black" value="">
                 option3
               </option>
-            </select>
+            </select> */}
             {/* {isLoggedIn ? (
               <button
                 onClick={handleLogout}

@@ -1,8 +1,8 @@
 import { db } from "@/utils";
-import { FEEDBACK } from "@/utils/schema";
+import { FEEDBACK, USER_CAREER } from "@/utils/schema";
 import { authenticate } from '@/lib/jwtMiddleware';
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export async function POST(req) {
     try {
@@ -53,7 +53,20 @@ export async function GET(req) {
 
         console.log(feedbackExists)
 
-        return NextResponse.json({ exists: feedbackExists }, { status: 200 });
+        // Query to get career_name for the user_id
+        const userCareerCount = await db.select({
+            count: sql`COUNT(*)`
+        })
+        .from(USER_CAREER)
+        .where(eq(USER_CAREER.user_id, userId));
+        
+        const careerCount = userCareerCount[0]?.count || 0;
+
+        return NextResponse.json({
+            exists: feedbackExists,
+            savedCareerCount: careerCount
+        }, { status: 200 });
+
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

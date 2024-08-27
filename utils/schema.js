@@ -1,4 +1,4 @@
-import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, text, time, varchar } from "drizzle-orm/mysql-core";
+import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, text, time, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 export const USER_DETAILS= mysqlTable('user_details',{
     id:int('id').autoincrement().notNull().primaryKey(),
@@ -214,3 +214,17 @@ export const FEEDBACK=mysqlTable('feedback',{
     rating:int('rating').notNull(),
     description:text('description').default(null)
 })
+
+export const USER_CAREER = mysqlTable('user_career', {
+    id: int('id').notNull().autoincrement().primaryKey(),
+    user_id: int('user_id').notNull(),
+    career_name: varchar('career_name', { length: 255 }).notNull(),
+    reason_for_recommendation: text('reason_for_recommendation'),
+    roadmap: text('roadmap'),
+    present_trends: text('present_trends'),
+    future_prospects: text('future_prospects'),
+    user_description: text('user_description'),
+    created_at: timestamp('created_at').defaultNow(),
+    type2: varchar('type2', { length: 255 }).notNull(),
+    type1: varchar('type1', { length: 255 }).notNull(),
+  });
