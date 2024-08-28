@@ -31,7 +31,7 @@ function page() {
         const getCareers = async () => {
             setIsLoading(true)
             try {
-                const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;                
+                const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null; 
                 const response = await GlobalApi.GetCarrerData(token);
                 if (response.status === 201) {  // Check for a 200 status code
                     setCarrerData(response.data);
@@ -89,6 +89,7 @@ function page() {
                                 <li key={idx}>{step.trim()}</li>
                             ))}
                         </ul>
+                        <p className='mb-4'><strong>Feedback:</strong> {career.feedback}</p>
                         <p className='mb-4'><strong>Present Trends:</strong> {career.present_trends}</p>
                         <p className='mb-4'><strong>Future Prospects:</strong> {career.future_prospects}</p>
                         <p><strong>User Description:</strong> {career.user_description}</p>

@@ -84,10 +84,17 @@ export default function Results2() {
        
         if (selectedCareers.length > 0) {
             const selectedCareerObjects = selectedCareers.map(index => resultData[index]);
+            
+            const payload = {
+                country: selectedCountry,
+                results: selectedCareerObjects,
+              };
+            
+            selectedCountry
             // Perform save operation with selectedCareerObjects
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const response = await GlobalApi.SaveCarrerData(token, selectedCareerObjects);
+                const response = await GlobalApi.SaveCarrerData(token, payload);
                         
                 if (response.status === 201) {
                     toast.success("Career Data Saved");

@@ -15,9 +15,10 @@ export async function POST(req) {
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
     const data = await req.json(); 
-
+    const {country, results} = data
+        
     try {
-        for (const career of data) {
+        for (const career of results) {
             const insertData = {
                 user_id: userId,
                 career_name: career.career_name,
@@ -26,8 +27,9 @@ export async function POST(req) {
                 present_trends: career.present_trends,
                 future_prospects: career.future_prospects,
                 user_description: career.user_description,
-                // type2: "",
-                // type1: ""
+                type2: "",
+                type1: "",
+                country: country?.label || null
             };
 
             // Insert the data into the USER_CAREER table

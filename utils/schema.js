@@ -227,4 +227,5 @@ export const USER_CAREER = mysqlTable('user_career', {
     created_at: timestamp('created_at').defaultNow(),
     type2: varchar('type2', { length: 255 }).notNull(),
     type1: varchar('type1', { length: 255 }).notNull(),
+    country: text('country'),
   });
