@@ -21,8 +21,10 @@ export async function GET(req)
 
     const url = new URL(req.url);
     const country = url.searchParams.get('country') || 'your country';
+    const industry = url.searchParams.get('industry') || null;
 
-    console.log(country)
+    console.log("country", industry)
+    console.log("industry", industry)
 
     const personality2 = await db.select({
         typeSequence: QUIZ_SEQUENCES.type_sequence
@@ -53,14 +55,8 @@ export async function GET(req)
 
     const type1=personality1[0].typeSequence
 
-    // const chatModel = new ChatOpenAI({
-    //     apiKey: process.env.OPENAI_API_KEY
-    // })
-    // if (!process.env.OPENAI_API_KEY) {
-    //     throw new Error("OPENAI_API_KEY is not set")
-    // }
-
-    const prompt=`Provide a list of the 5 best careers in ${country} for an individual with an ${type1} personality type and RIASEC interest types of ${type2}. For each career, include the following information:
+    const prompt=`Provide a list of the 5 best careers in ${industry ? `the ${industry} industry in ` : ''}${country} for an individual with an ${type1} personality 
+    type and RIASEC interest types of ${type2}. For each career, include the following information:
       career_name: A brief title of the career.
       reason_for_recommendation: Why this career is suitable for someone with these interests.
       roadmap: Detailed steps and milestones required to achieve this career (as an array).
@@ -69,7 +65,7 @@ export async function GET(req)
       user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
     Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`
 
-
+    
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {

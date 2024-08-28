@@ -17,14 +17,32 @@ export default function Results2() {
     const [loading, setLoading] = useState(false); // Loading state
     const options = countryList().getData();
     const [user_feedback, setUserFeedback] = useState('');
+    const [step, setStep] = useState(1);
+    const [industries, setIndustries] = useState([])
+    const [industrySelect, setIndustrySelect] = useState(null)
     const router = useRouter();
+    
+    const handleStayClick = () => {
+      setStep(0); // Hide everything if "Stay" is clicked
+    };
+  
+    const handleContinueClick = () => {
+      setStep(2); // Show industry options if "Continue" is clicked
+    };
 
-    const fetchResults = async (country = null) => {
+    const handleOptionSelect = async(e) => {
+        setIndustrySelect(e.target.innerText); 
+        const selectedIndustry = e.target.innerText
+        fetchResults(selectedIndustry)
+    };
+
+    const fetchResults = async (selectedIndustry, country = null ) => {
         setLoading(true); // Start loading
         try {
             const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
             const countryParam = country ? `?country=${country.label}` : '';
-            const data = await GlobalApi.GetResult2(token, countryParam);
+            const industryParam = selectedIndustry ? selectedIndustry: '';            
+            const data = await GlobalApi.GetResult2(token, countryParam, industryParam);
             const parsedResult = JSON.parse(data.data.result);
             setResultData(parsedResult);
             setDisplayResults(true);
@@ -90,7 +108,6 @@ export default function Results2() {
                 results: selectedCareerObjects,
               };
             
-            selectedCountry
             // Perform save operation with selectedCareerObjects
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
@@ -115,6 +132,33 @@ export default function Results2() {
         
         
     }
+
+    useEffect(()=>{
+
+        const fetchIndustry = async () => {
+            setLoading(true); // Start loading
+            try {
+                const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+                const params = {
+                    country: selectedCountry,
+                  };
+                const data = await GlobalApi.GetIndustry(token, params);
+                const parsedResult = JSON.parse(data.data.result);
+                
+                setIndustries(parsedResult);
+                // setDisplayResults(true);
+    
+            } catch (err) {
+                console.error('Failed to fetch results:', err);
+            } finally {
+                setLoading(false); // Stop loading
+            }
+        };
+        // if(step === 2){
+            fetchIndustry()
+        // }
+
+    }, [])
 
     return (
         <div className='w-4/5 mx-auto'>
@@ -154,6 +198,46 @@ export default function Results2() {
                         />
                     </div>
                 )}
+                {resultData && (
+                    <>
+                        {step === 1 && (
+                                <div className="bg-[#252525] px-10 py-6 rounded-lg text-white">
+                                <p className="text-center mb-4">Do you wish to continue with advanced results?</p>
+                                <div className="flex justify-center gap-4">
+                                    <button
+                                    className="bg-white text-[#341e44] px-4 py-2 rounded-lg hover:bg-gray-100"
+                                    onClick={handleStayClick}
+                                    >
+                                    Stay
+                                    </button>
+                                    <button
+                                    className="bg-[#c17ffd] text-[#341e44] px-4 py-2 rounded-lg hover:bg-[#a05cc3]"
+                                    onClick={handleContinueClick}
+                                    >
+                                    Continue
+                                    </button>
+                                </div>
+                                </div>
+                            )}
+                        {step === 2 && (
+                            <div className="bg-[#252525] p-6 rounded-lg text-white mt-6">
+                                <p className="text-center mb-4">Please select an industry from below.</p>
+                                <div className="flex flex-col gap-4">
+                                    {
+                                        industries.map((industry, index) => (
+                                            
+                                                <button onClick={handleOptionSelect} className="bg-white text-[#341e44] px-4 py-2 rounded-lg hover:bg-gray-100">
+                                                    {industry.industry_name}
+                                                </button>
+                                            
+                                        ))
+                                    }
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
+                
                 {loading ? (
                     <div className='bg-white px-10 py-6 text-sm text-gray-600 rounded-xl'>
                         Loading results...

@@ -109,14 +109,26 @@ const GetDashboarCheck = (token) => {
   });
 };
 
-const GetResult2=(token,countryParams)=>axios.get('/api/getresult2',{
+const GetResult2=(token,countryParams,industryParam)=>axios.get('/api/getresult2',{
   headers: {
     Authorization: `Bearer ${token}`,
   },
   params: {
-    country: countryParams, // Include countryParams in the query parameters
+    country: countryParams,
+    industry: industryParam
   }
 });
+
+const GetIndustry = (token, params) => {
+
+  return axios.get(`/api/getIndustry`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: params,
+  });
+};
+
 
 
 const SubmitFeedback=(token,data)=>axios.post('/api/feedback',data,{
@@ -166,5 +178,6 @@ export default {
   SubmitFeedback,
   CheckFeedback,
   SaveCarrerData,
-  GetCarrerData
+  GetCarrerData,
+  GetIndustry
 }
