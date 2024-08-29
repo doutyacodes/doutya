@@ -66,7 +66,7 @@ export default function Results2() {
     useEffect(()=>{
 
         const fetchIndustry = async () => {
-            setLoading(true); // Start loading
+            // setLoading(true); // Start loading
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
                 const params = {
@@ -81,7 +81,7 @@ export default function Results2() {
             } catch (err) {
                 console.error('Failed to fetch results:', err);
             } finally {
-                setLoading(false); // Stop loading
+                // setLoading(false); // Stop loading
             }
         };
         // if(step === 2){
