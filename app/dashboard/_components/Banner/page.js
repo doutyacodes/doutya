@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import GlobalApi from "@/app/_services/GlobalApi";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 
-function Banner({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2Results }) {
+function Banner({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2Results , onToggleQuiz3Results,showQuiz3Results}) {
   const [loading, setLoading] = useState(false);
   const [dashboardData, setDashboardData] = useState([]);
 
@@ -135,8 +135,8 @@ function Banner({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2R
           </div>
           <div className="text-center mt-4">
             {getQuizStatus(3).isCompleted ? (
-                <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={onToggleQuiz2Results}>
-                {showQuiz2Results ? 'Hide Results' : 'View Results'}
+                <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={onToggleQuiz3Results}>
+                {showQuiz3Results ? 'Hide Results' : 'View Results'}
                 </button>
             ) : (
               <button 
@@ -157,7 +157,7 @@ function Banner({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2R
             alt="Test 3 Image"
           />
           <div className="border-t border-cyan-400"></div>
-          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 2</h1>
+          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 3</h1>
           <div className="relative">
           {!getQuizStatus(2).isCompleted ? (
             <Link href="CareerQuizSection/2">
