@@ -112,6 +112,53 @@ function Banner({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2R
           <div className="border-t border-cyan-400"></div>
           <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 2</h1>
           <div className="relative">
+          {!getQuizStatus(3).isCompleted ? (
+            <Link href="strengthsQuiz/3">
+              <img
+                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
+                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
+                alt="Navigate to Quiz Section"
+              />
+            </Link>
+          ) : (
+            <img
+              src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
+              className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
+              alt="Quiz Completed"
+            />
+          )}
+          </div>
+          <div className="relative">
+            <p className="ml-3 text-white pt-8 w-4/5">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae maiores molestias possimus optio nisi quos sint, quo facere est rem deserunt voluptas
+            </p>
+          </div>
+          <div className="text-center mt-4">
+            {getQuizStatus(3).isCompleted ? (
+                <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={onToggleQuiz2Results}>
+                {showQuiz2Results ? 'Hide Results' : 'View Results'}
+                </button>
+            ) : (
+              <button 
+                className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
+                disabled
+              >
+                View Results
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Test 3 */}
+        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
+          <img
+            className="rounded-md object-cover w-full h-36"
+            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
+            alt="Test 3 Image"
+          />
+          <div className="border-t border-cyan-400"></div>
+          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 2</h1>
+          <div className="relative">
           {!getQuizStatus(2).isCompleted ? (
             <Link href="CareerQuizSection/2">
               <img
@@ -148,47 +195,6 @@ function Banner({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2R
             )}
           </div>
         </div>
-
-        {/* Test 3 */}
-        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
-          <img
-            className="rounded-md object-cover w-full h-36"
-            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-            alt="Test 4 Image"
-          />
-          <div className="border-t border-cyan-400"></div>
-          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 3</h1>
-          <div className="relative">
-
-            <img
-              src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-              className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-              alt="Quiz Completed"
-            />
-
-          </div>
-          <div className="relative">
-            <p className="ml-3 text-white pt-8 w-4/5">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae maiores molestias possimus optio nisi quos sint, quo facere est rem deserunt voluptas
-            </p>
-          </div>
-          <div className="text-center mt-4">
-            {getQuizStatus(3).isCompleted ? (
-              <Link href={`/results/1`}>
-                <button className="bg-green-500 text-white px-4 py-2 rounded-md">
-                  View Results
-                </button>
-              </Link>
-            ) : (
-              <button 
-                className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
-                disabled
-              >
-                View Results
-              </button>
-            )}
-          </div>
-          </div>
 
         {/* Test 4 */}
         <div className="border border-cyan-400 pb-3 rounded-sm w-full">

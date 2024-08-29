@@ -17,7 +17,7 @@ function Page({ params }) {
   const [isLoading, setIsLoading] = useState(false)
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
-  const quizId = params.taskId;
+  const quizId = params.quizId;
   const [isAuthenticated, setIsAuthenticated] = useState(true)
 
   useEffect(() => {
@@ -41,7 +41,7 @@ function Page({ params }) {
             setIsLoading(true)
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const resp = await GlobalApi.GetCareerQuiz(quizId, token);
+                const resp = await GlobalApi.GetStrengthsQuiz(quizId, token);
                 setQuestions(resp.data.questions); 
                 setChoices(resp.data.choices);
                 setCurrentQuestionIndex(resp.data.quizProgress);
@@ -68,7 +68,6 @@ function Page({ params }) {
         
             const timer = setTimeout(() => {
                 router.replace('/dashboard'); 
-                console.log("Route");
             }, 5000);
         
             return () => {
@@ -88,7 +87,7 @@ function Page({ params }) {
                 { questionId: questions[currentQuestionIndex].questionId,
                   optionId: selectedChoice.choiceId,
                   optionText: selectedChoice.choiceText,
-                  personaTypeId: questions[currentQuestionIndex].personaTypeId
+                  strengthTypeId: questions[currentQuestionIndex].strengthTypeId
                 }
       quizProgressSubmit(answer); 
 
@@ -106,7 +105,7 @@ function Page({ params }) {
     
         try {
           const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-          const resp = await GlobalApi.SaveCarrierQuizProgress(data, token, quizId);
+          const resp = await GlobalApi.SaveStrengthQuizProgress(data, token, quizId);
       
           if (resp && resp.status === 201) {
             console.log("Response:", resp.data);
@@ -124,7 +123,7 @@ function Page({ params }) {
       setIsLoading(true);
       const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         try {
-          const resp = await GlobalApi.SaveCareerQuizResult(token);
+          const resp = await GlobalApi.SaveStrengthQuizResult(token);
           if (resp && resp.status === 201) {
             toast.success('Quiz Completed successfully!');
           } else {

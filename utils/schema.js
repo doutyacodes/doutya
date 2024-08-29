@@ -201,7 +201,7 @@ export const PERSONALITY_CHOICES = mysqlTable('personality_choices', {
 
 export const QUIZ_SEQUENCES = mysqlTable('quiz_sequences', {
     id: int('id').primaryKey().autoincrement(),
-    type_sequence: varchar('type_sequence', { length: 6 }).notNull(), // Random four letters of alphabets
+    type_sequence: text('type_sequence').notNull(),
     user_id: int('user_id').notNull(),
     quiz_id: int('quiz_id').notNull(), // New column for quiz identification
     createddate: datetime('createddate').notNull(),
@@ -229,3 +229,30 @@ export const USER_CAREER = mysqlTable('user_career', {
     type1: varchar('type1', { length: 255 }).notNull(),
     country: text('country'),
   });
+
+export const STRENGTH_TYPES = mysqlTable('strength_types', {
+    id: int('id').primaryKey().autoincrement(),
+    type_code: varchar('type_code', { length: 10 }).notNull(),
+    type_name: varchar('type_name', { length: 50 }).notNull(),
+});
+
+export const STRENGTH_QUESTIONS = mysqlTable('strength_questions', {
+    id: int('id').primaryKey().autoincrement(),
+    question_text: text('question_text').notNull(),
+    quiz_id: int('quiz_id').notNull().references(() => QUIZZES.id),
+    strength_types_id: int('strength_types_id').notNull().references(() => STRENGTH_TYPES.id),
+});
+
+export const STRENGTH_CHOICES = mysqlTable('strength_choices', {
+    id: int('id').primaryKey().autoincrement(),
+    choice_text: varchar('choice_text', { length: 50 }).notNull(),
+});
+
+export const STRENGTH_QUIZ_PROGRESS = mysqlTable('strength_quiz_progress', {
+    id: int('id').primaryKey().autoincrement(),
+    user_id: int('user_id').notNull(),
+    question_id: int('question_id').notNull(),
+    option_id: int('option_id').notNull(),
+    strength_type_id: int('strength_type_id').notNull(),
+    created_at: datetime('created_at').notNull(),
+});

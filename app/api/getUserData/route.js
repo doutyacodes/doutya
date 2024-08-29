@@ -24,7 +24,7 @@ export async function GET(req) {
   
         if (!user) {
             return NextResponse.json(
-            { message: "User not found after registration" },
+            { message: "User not found" },
             { status: 404 } // Not Found
             );
         }

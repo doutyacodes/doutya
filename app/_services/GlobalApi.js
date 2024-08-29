@@ -159,6 +159,37 @@ const GetCarrerData = (token) => {
   });
 };
 
+const GetStrengthsQuiz = (id, token) => {
+
+  return axios.get(`/api/getStrengthsQuizData/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const SaveStrengthQuizProgress = (data, token, quizId) => {
+  const payload = {
+    quizId,
+    results: data,
+  };
+
+  return axios.post(`/api/strengthQuizProgress`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const SaveStrengthQuizResult = (token) => {
+
+  return axios.post(`/api/StrengthQuizResult`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -179,5 +210,8 @@ export default {
   CheckFeedback,
   SaveCarrerData,
   GetCarrerData,
-  GetIndustry
+  GetIndustry,
+  GetStrengthsQuiz,
+  SaveStrengthQuizProgress,
+  SaveStrengthQuizResult
 }
