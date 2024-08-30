@@ -15,8 +15,8 @@
 //     dbCredentials: {
 //         host: "localhost",
 //         user: "root",
-//         database: "doutya",
-//         password: ''
+//         database: "latest",
+//         password: 'Rambeer#2387'
 //     }
 // };
 
