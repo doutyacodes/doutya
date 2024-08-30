@@ -256,3 +256,9 @@ export const STRENGTH_QUIZ_PROGRESS = mysqlTable('strength_quiz_progress', {
     strength_type_id: int('strength_type_id').notNull(),
     created_at: datetime('created_at').notNull(),
 });
+
+export const USER_RESULTS=mysqlTable('user_results',{
+    id: int('id').primaryKey().autoincrement(),
+    user_id:int('user_id').primaryKey().references(()=>USER_DETAILS.id).notNull(),
+    result2:text('result2').default(null),
+})

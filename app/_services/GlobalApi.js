@@ -190,15 +190,6 @@ const SaveStrengthQuizResult = (token) => {
   });
 };
 
-const GetResult3=(token,countryParams,industryParam)=>axios.get('/api/getresult3',{
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  params: {
-    country: countryParams,
-    industry: industryParam
-  }
-});
 
 export default {
   CreateNewUser,
@@ -224,5 +215,4 @@ export default {
   GetStrengthsQuiz,
   SaveStrengthQuizProgress,
   SaveStrengthQuizResult,
-  GetResult3
 }
