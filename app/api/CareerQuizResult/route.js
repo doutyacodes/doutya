@@ -45,15 +45,13 @@ export async function POST(req) {
         const questionsByType = await fetchQuestionsByType();
 
         // Initialize scores for each theme
-        const scores = Object.fromEntries(Object.values(personalityTypes).map(type => [type, 0]));
+        const scores = Object.fromEntries(Object.values(personalityTypes).map(type => [type, 0]));        
 
         // Map optionId to score value
         const optionScores = {
-            1: 0,  // Strongly Disagree
             2: 0,  // Disagree
             3: 0,  // Neutral
             4: 1,  // Agree
-            5: 1   // Strongly Agree
         };
 
         // Calculate scores based on responses

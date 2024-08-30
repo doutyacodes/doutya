@@ -41,6 +41,7 @@ export default function Results2() {
         try {
             const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
             const countryParam = country ? `?country=${country.label}` : '';
+            // const countryParam = country ? country.label : ''; 
             const industryParam = selectedIndustry ? selectedIndustry: '';            
             const data = await GlobalApi.GetResult2(token, countryParam, industryParam);
             const parsedResult = JSON.parse(data.data.result);

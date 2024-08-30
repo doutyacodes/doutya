@@ -23,7 +23,7 @@ export async function GET(req)
     const country = url.searchParams.get('country') || 'your country';
     const industry = url.searchParams.get('industry') || null;
 
-    console.log("country", industry)
+    console.log("country", country)
     console.log("industry", industry)
 
     const personality3 = await db.select({
