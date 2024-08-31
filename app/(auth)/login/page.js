@@ -6,6 +6,20 @@ import { useRouter } from 'next/navigation';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
 
+function calculateAge(birthDateString) {
+  const birthDate = new Date(birthDateString); 
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age;
+}
+
+
 function Login() {
   const router = useRouter();
   const {
@@ -22,13 +36,19 @@ function Login() {
       const resp = await GlobalApi.LoginUser(data);
       console.log('response',resp);
       if (resp.status === 200) {
-        console.log(resp.data.token)
+        const birth_date = resp.data.birth_date;
+        const age = calculateAge(birth_date);
+
         if (resp.data.token) {
           localStorage.setItem('token', resp.data.token);
         }
         toast.success("Logged in successfully");
         reset();
-        router.push('/dashboard');
+        if (age < 14) {
+          router.push('/dashboard_kids');
+        } else {
+          router.push('/dashboard');
+        }
       } else {
         toast.error('Invalid username or password');
       }
