@@ -18,6 +18,16 @@ function SignUp() {
         reset,
         setError
     } = useForm();
+    const calculateAge = (birthDateString) => {
+        const birthDate = new Date(birthDateString);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    };
     const onSubmit = async(data) => {
         if (data.password !== data.confirmPassword) {
             setError("confirmPassword", {
@@ -40,12 +50,19 @@ function SignUp() {
     
             if (response.status === 201) {
                 console.log("Respons", response.data.data);
-                const { token, user } = response.data.data;
+                const { token} = response.data.data;
                 localStorage.setItem('token', token);
                 reset();
 
+                const age = calculateAge(data.birth_date);
+
                 toast.success("Successfully added to the database!");
-                router.push('/dashboard');
+
+                if (age < 14) {
+                    router.push('/dashboard_kids');
+                } else {
+                    router.push('/dashboard');
+                }
             } else {
                 // Handle any other unexpected status codes
                 const errorMessage = response.data?.message || "Failed to add data.";
