@@ -44,7 +44,7 @@ function Login() {
         }
         toast.success("Logged in successfully");
         reset();
-        if (age < 14) {
+        if (age < 13) {
           router.push('/dashboard_kids');
         } else {
           router.push('/dashboard');

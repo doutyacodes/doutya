@@ -145,6 +145,12 @@ export const OPTIONS = mysqlTable('options', {
     analytic_id: int('analytic_id').notNull(),
     question_id: int('question_id').notNull(),
 });
+export const OPTIONS_KIDS = mysqlTable('options_kids', {
+    id: int('id').primaryKey().autoincrement(),
+    option_text: varchar('option_text', { length: 300 }).notNull(),
+    analytic_id: int('analytic_id').notNull(),
+    question_id: int('question_id').notNull(),
+});
 
 export const USER_PROGRESS = mysqlTable('user_progress', {
     id: int('id').primaryKey().autoincrement(),
@@ -188,6 +194,12 @@ export const PERSONALITY_TYPES = mysqlTable('personality_types', {
 });
 
 export const PERSONALITY_QUESTIONS = mysqlTable('personality_questions', {
+    id: int('id').primaryKey().autoincrement(),
+    question_text: text('question_text').notNull(),
+    quiz_id: int('quiz_id').notNull().references(() => QUIZZES.id),
+    personality_types_id: int('personality_types_id').notNull().references(() => PERSONALITY_TYPES.id),
+});
+export const PERSONALITY_QUESTIONS_KIDS = mysqlTable('personality_questions_kids', {
     id: int('id').primaryKey().autoincrement(),
     question_text: text('question_text').notNull(),
     quiz_id: int('quiz_id').notNull().references(() => QUIZZES.id),
@@ -262,3 +274,9 @@ export const USER_RESULTS=mysqlTable('user_results',{
     user_id:int('user_id').primaryKey().references(()=>USER_DETAILS.id).notNull(),
     result2:text('result2').default(null),
 })
+
+export const ANALYTICS_QUESTION_KIDS = mysqlTable('analytics_question_kids', {
+    id: int('id').primaryKey().autoincrement(),
+    question_text: varchar('question_text', { length: 300 }).notNull(),
+    quiz_id: int('quiz_id').notNull(),
+});
