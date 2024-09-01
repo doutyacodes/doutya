@@ -58,7 +58,7 @@ function SignUp() {
 
                 toast.success("Successfully added to the database!");
 
-                if (age < 14) {
+                if (age < 13) {
                     router.push('/dashboard_kids');
                 } else {
                     router.push('/dashboard');

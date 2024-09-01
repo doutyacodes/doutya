@@ -34,7 +34,14 @@ const GetQuizData = (id, token) => {
     },
   });
 };
+const GetQuizDataKids = (id, token) => {
 
+  return axios.get(`/api/getQuizDataKids/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 const SaveQuizProgress = (data, token, quizId) => {
   const payload = {
     quizId,
@@ -60,6 +67,14 @@ const SaveQuizResult = (token) => {
 const GetCareerQuiz = (id, token) => {
 
   return axios.get(`/api/getPersonalityData/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+const GetCareerQuizKids = (id, token) => {
+
+  return axios.get(`/api/getPersonalityDataKids/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -190,6 +205,12 @@ const SaveStrengthQuizResult = (token) => {
   });
 };
 
+const GetUserAge=(token)=>axios.get('/api/getUserAge',{
+  headers: {
+    Authorization: `Bearer ${token}`,
+  }
+});
+
 
 export default {
   CreateNewUser,
@@ -215,4 +236,7 @@ export default {
   GetStrengthsQuiz,
   SaveStrengthQuizProgress,
   SaveStrengthQuizResult,
+  GetQuizDataKids,
+  GetCareerQuizKids,
+  GetUserAge
 }
