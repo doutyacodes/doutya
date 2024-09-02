@@ -5,20 +5,7 @@ import { useForm } from "react-hook-form"
 import { useRouter } from 'next/navigation';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
-
-function calculateAge(birthDateString) {
-  const birthDate = new Date(birthDateString); 
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDifference = today.getMonth() - birthDate.getMonth();
-
-  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-
-  return age;
-}
-
+import { calculateAge } from "@/lib/ageCalculate";
 
 function Login() {
   const router = useRouter();
@@ -45,8 +32,10 @@ function Login() {
         toast.success("Logged in successfully");
         reset();
         if (age < 13) {
+          localStorage.setItem('dashboardUrl', '/dashboard_kids');
           router.push('/dashboard_kids');
         } else {
+          localStorage.setItem('dashboardUrl', '/dashboard');
           router.push('/dashboard');
         }
       } else {

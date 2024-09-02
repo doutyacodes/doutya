@@ -11,6 +11,7 @@ import GlobalApi from "@/app/_services/GlobalApi";
 import { encryptText } from "@/utils/encryption";
 import toast, { Toaster } from "react-hot-toast";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
+import { calculateAge } from "@/lib/ageCalculate";
 
 function page() {
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
@@ -47,13 +48,16 @@ function page() {
     setError,
   } = useForm();
 
-  // useEffect(() => {
-  //     const subscription = watch((value, { name, type }) => {
-  //         console.log("Form values:", value); // Log all form data
-  //         console.log("Changed field:", name, "Type of change:", type); // Log which field changed
-  //     });
-  //     return () => subscription.unsubscribe(); // Cleanup the subscription
-  // }, [watch]);
+  useEffect(() => {
+    if(userData){
+      const age = calculateAge(userData.birth_date);      
+    if (age < 13) {
+        localStorage.setItem('dashboardUrl', '/dashboard_kids');
+    } else {
+        localStorage.setItem('dashboardUrl', '/dashboard');
+    }
+    }
+  }, [userData]);
 
   const getUserData = async () => {
     setIsLoading(true);

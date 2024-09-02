@@ -20,6 +20,7 @@ function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('dashboardUrl');
     setIsLoggedIn(false);
     window.location.href = '/login';
   };

@@ -6,6 +6,7 @@ import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { calculateAge } from "@/lib/ageCalculate";
 
 function SignUp() {
     const [isCollegeStudent, setIsCollegeStudent] = useState(false);
@@ -18,16 +19,7 @@ function SignUp() {
         reset,
         setError
     } = useForm();
-    const calculateAge = (birthDateString) => {
-        const birthDate = new Date(birthDateString);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDifference = today.getMonth() - birthDate.getMonth();
-        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
-    };
+
     const onSubmit = async(data) => {
         if (data.password !== data.confirmPassword) {
             setError("confirmPassword", {
@@ -59,8 +51,10 @@ function SignUp() {
                 toast.success("Successfully added to the database!");
 
                 if (age < 13) {
+                    localStorage.setItem('dashboardUrl', '/dashboard_kids');
                     router.push('/dashboard_kids');
                 } else {
+                    localStorage.setItem('dashboardUrl', '/dashboard');
                     router.push('/dashboard');
                 }
             } else {
