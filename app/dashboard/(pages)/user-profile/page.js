@@ -1,4 +1,8 @@
 "use client";
+
+import { X, Edit3, Save, User, HelpCircle } from "lucide-react";
+
+
 import React, { useEffect, useState } from "react";
 import { FiX } from "react-icons/fi";
 import { FiEdit3 } from "react-icons/fi";
@@ -12,6 +16,8 @@ import { encryptText } from "@/utils/encryption";
 import toast, { Toaster } from "react-hot-toast";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import { calculateAge } from "@/lib/ageCalculate";
+
+
 
 function page() {
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
@@ -48,6 +54,14 @@ function page() {
     setError,
   } = useForm();
 
+  // useEffect(() => {
+  //     const subscription = watch((value, { name, type }) => {
+  //         console.log("Form values:", value); // Log all form data
+  //         console.log("Changed field:", name, "Type of change:", type); // Log which field changed
+  //     });
+  //     return () => subscription.unsubscribe(); // Cleanup the subscription
+  // }, [watch]);
+
   useEffect(() => {
     if(userData){
       const age = calculateAge(userData.birth_date);      
@@ -82,7 +96,7 @@ function page() {
     getUserData();
   }, []);
 
-  // Set the form fields with the response data
+  
   useEffect(() => {
     const yearMonth =
       userData.yearOfPassing && userData.monthOfPassing
@@ -136,7 +150,7 @@ function page() {
         toast.success("User Data Updated");
         getUserData();
       } else {
-        // Handle any other unexpected status codes
+        
         const errorMessage = response.data?.message || "Failed to add data.";
         toast.error(`Error: ${errorMessage}`);
       }
@@ -179,304 +193,227 @@ function page() {
   }
 
   return (
-    <div className="container mx-auto bg-white rounded">
+    <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="flex flex-col text-white gap-5 py-5">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-12">
-            <div className="border-b border-gray-900/10 pb-12">
-              <div className="flex justify-between">
-                <div className="">
-                  <h2 className="text-2xl font-semibold leading-7 text-edit">
-                    Profile
-                  </h2>
-                  <p className="mt-1 text-sm leading-6 text-gray-600">
-                    Welcome to your profile! Here you can view and manage your
-                    personal details, account settings, and preferences.
-                  </p>
-                </div>
-                <div className="gap-x-6">
-                  {isEditing ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setisEditing(false);
-                        setIsEditable(false);
-                      }}
-                      className="rounded-md  px-2 py-2 font-semibold text-white shadow-sm bg-edit hover:bg-edit2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 h-9 w-9"
-                    >
-                      {/* Cross Icon */}
-                      <FiX />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsEditable(true);
-                        setisEditing(true);
-                      }}
-                      className="rounded-md  px-2 py-2 font-semibold text-white shadow-sm bg-edit hover:bg-edit2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 h-9 w-9"
-                    >
-                      {/* Edit Icon */}
-                      <FiEdit3 />
-                    </button>
-                  )}
-                </div>
+      <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div className="md:flex">
+          <div className="md:flex-shrink-0 bg-gradient-to-b from-purple-600 to-indigo-700 p-8 text-white">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="relative w-32 h-32 rounded-full border-4 border-white overflow-hidden">
+                {userData.profilePicture ? (
+                  <img
+                    src={userData.profilePicture}
+                    alt="User Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                  src="/assets/images/avatardef.png"
+                  alt="User Avatar"
+                  className="w-full h-full object-cover"
+                />
+                )}
               </div>
-
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-1">
-                  <label
-                    htmlFor="gender"
-                    className="block text-sm font-medium leading-6 text-gray-900 "
-                  >
+              <h2 className="text-2xl font-bold">{userData.name || "Loading..."}</h2>
+              <p className="text-indigo-200">{userData.username || "Username"}</p>
+              <div className="flex items-center mt-2 text-sm">
+                <span className="bg-green-500 rounded-full w-3 h-3 mr-2"></span>
+                Verified Profile
+              </div>
+            </div>
+          </div>
+          <div className="p-8 w-full">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+              <button
+                onClick={() => setIsEditable(!isEditable)}
+                className={`p-2 rounded-full transition-colors duration-200 ${
+                  isEditable
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-indigo-500 hover:bg-indigo-600"
+                }`}
+              >
+                {isEditable ? (
+                  <X className="w-5 h-5 text-white" />
+                ) : (
+                  <Edit3 className="w-5 h-5 text-white" />
+                )}
+              </button>
+            </div>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
                     Gender
                   </label>
-                  <div className="mt-2 w-full">
-                    <select
-                      disabled={!isEditable}
-                      id="gender"
-                      name="gender"
-                      autoComplete="gender"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...register("gender")}
-                    >
-        
-                      <option value="" className="">select</option>
-                      <option>Mr</option>
-                      <option>Miss</option>
-                      <option>Mrs</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                  <select
+                    {...register("gender")}
+                    disabled={!isEditable}
+
+                    id="gender"
+                    name="gender"
+                    autoComplete="gender"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   >
+                    <option value="">Select</option>
+                    <option value="Mr">Mr</option>
+                    <option value="Miss">Miss</option>
+                    <option value="Mrs">Mrs</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                     Name
                   </label>
-                  <div className="mt-2">
-                    <input
-                      disabled={!isEditable}
-                      {...register("name")}
-                      id="name"
+                  <input
+                   id="name"
                       name="name"
-                      type="text"
-                      className="mt-1 block w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                    type="text"
+                    {...register("name", { required: "Name is required" })}
+                    disabled={!isEditable}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
+                  />
+                  {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
                 </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="username"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                     Username
                   </label>
-                  <div className="mt-2">
-                    <input
-                      disabled={!isEditable}
-                      {...register("username")}
-                      id="username"
+                  <input
+                   id="username"
                       name="username"
-                      type="text"
-                      className="mt-1 block w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm "
-                    />
-                    {errors.username && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.username.message}
-                      </p>
-                    )}
-                  </div>
+                    type="text"
+                    {...register("username", { required: "Username is required" })}
+                    disabled={!isEditable}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
+                  />
+                  {errors.username && <p className="mt-2 text-sm text-red-600">{errors.username.message}</p>}
                 </div>
-
-                {/* <div className='sm:col-span-6'> */}
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                     Password
                   </label>
                   <input
-                    disabled={!isEditable}
                     type="password"
                     {...register("password", {
-                      required: "Password is required",
                       minLength: {
                         value: 6,
                         message: "Password must be at least 6 characters long",
                       },
                       pattern: {
                         value: /(?=.*[!@#$%^&*])/,
-                        message:
-                          "Password must contain at least one special character",
+                        message: "Password must contain at least one special character",
                       },
                     })}
-                    className="mt-1 block w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    required
+                    disabled={!isEditable}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   />
-                  {errors.password && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.password.message}
-                    </p>
-                  )}
+                  {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
                 </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                     Confirm Password
                   </label>
                   <input
-                    disabled={!isEditable}
                     type="password"
                     {...register("confirmPassword")}
-                    className={`mt-1 block w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
-                      errors.confirmPassword ? "border-red-500" : ""
-                    }`}
-                    required
+                    disabled={!isEditable}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   />
-                  {errors.confirmPassword && (
-                    <p className="mt-2 text-sm text-red-600">
-                      {errors.confirmPassword.message}
-                    </p>
-                  )}
+                  {errors.confirmPassword && <p className="mt-2 text-sm text-red-600">{errors.confirmPassword.message}</p>}
                 </div>
-
-                <div className="sm:col-span-2"></div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="mobile"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                <div>
+                  <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">
                     Mobile Number
                   </label>
                   <input
-                    disabled={!isEditable}
-                    type="number"
+                    type="tel"
                     {...register("mobile", {
-                      minLength: {
-                        value: 10,
-                        message: "Number should contain 10 digits",
+                      required: "Mobile number is required",
+                      pattern: {
+                        value: /^[0-9]{10}$/,
+                        message: "Please enter a valid 10-digit mobile number",
                       },
                     })}
-                    className="mt-1 block w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    style={{
-                      // WebkitAppearance: "none",
-                      MozAppearance: "textfield",
-                    }}
-                    required
+                    disabled={!isEditable}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   />
-                  {errors.mobile && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.mobile.message}
-                    </p>
-                  )}
+                  {errors.mobile && <p className="mt-2 text-sm text-red-600">{errors.mobile.message}</p>}
                 </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="dob"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                <div>
+                  <label htmlFor="birth_date" className="block text-sm font-medium text-gray-700">
                     Date of Birth
                   </label>
                   <input
-                    disabled={!isEditable}
                     type="date"
-                    {...register("birth_date")}
-                    className="mt-1 block w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    required
+                    {...register("birth_date", { required: "Date of birth is required" })}
+                    disabled={!isEditable}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   />
+                  {errors.birth_date && <p className="mt-2 text-sm text-red-600">{errors.birth_date.message}</p>}
                 </div>
-
-                <div className="sm:col-span-6">
-                  <label
-                    htmlFor="collegeStudent"
-                    className="block text-sm font-medium text-gray-700 mr-4"
-                  >
-                    Are you a college student?
-                  </label>
-                  <div className="space-x-4">
-                    <label className="mt-1 block w-full px-3 py-2">
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700">Are you a college student?</label>
+                  <div className="mt-2 space-x-6">
+                    <label className="inline-flex items-center">
                       <input
-                        disabled={!isEditable}
                         type="radio"
                         {...register("student")}
                         value="no"
-                        // checked={collegeStudent === 'yes'}
                         onChange={() => setIsCollegeStudent(false)}
-                        className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-                      />
-                      <span className="ml-2 text-gray-700 mr-5">No</span>
-                      <input
                         disabled={!isEditable}
+                        className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+                      />
+                      <span className="ml-2">No</span>
+                    </label>
+                    <label className="inline-flex items-center">
+                      <input
                         type="radio"
                         {...register("student")}
                         value="yes"
-                        // checked={collegeStudent === 'yes'}
                         onChange={() => setIsCollegeStudent(true)}
-                        className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                        disabled={!isEditable}
+                        className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                       />
-                      <span className="ml-2 text-gray-700 ">Yes</span>
+                      <span className="ml-2">Yes</span>
                     </label>
                   </div>
                 </div>
-
                 {isCollegeStudent ? (
                   <>
-                    <div className="sm:col-span-2">
-                      <label
-                        htmlFor="college"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                    <div>
+                      <label htmlFor="college" className="block text-sm font-medium text-gray-700">
                         College
                       </label>
                       <input
-                        disabled={!isEditable}
                         type="text"
                         {...register("college")}
-                        className="mt-1 block w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        disabled={!isEditable}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                       />
                     </div>
-
-                    <div className="sm:col-span-2">
-                      <label
-                        htmlFor="university"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                    <div>
+                      <label htmlFor="university" className="block text-sm font-medium text-gray-700">
                         University
                       </label>
                       <input
-                        disabled={!isEditable}
                         type="text"
                         {...register("university")}
-                        className="mt-1 block w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        disabled={!isEditable}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                       />
                     </div>
-
-                    <div className="sm:col-span-2">
-                      <label
-                        htmlFor="yearMonthOfPassing"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Year&Month of Passing
+                    <div>
+                    <label htmlFor="yearMonthOfPassing" className="block text-sm font-medium text-gray-700">
+                        Year and Month of Passing
                       </label>
                       <input
-                        id="yearMonthOfPassing"
+                      id="yearMonthOfPassing"
                         name="yearMonthOfPassing"
-                        disabled={!isEditable}
                         type="month"
                         {...register("yearMonthOfPassing")}
-                        className="mt-1 block w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        disabled={!isEditable}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                       />
                     </div>
 
@@ -487,7 +424,7 @@ function page() {
                       >
                         Current Enrollment
                       </label>
-                      <div className="mt-2 w-full">
+                      <div className="mt-2 w-1/2">
                         <select
                           disabled={!isEditable}
                           id="currentEnrollment"
@@ -506,7 +443,7 @@ function page() {
                       </div>
                     </div>
                   </>
-                ) : (
+                ) :  (
                   <div className="sm:col-span-2">
                     <label
                       htmlFor="highestDegree"
@@ -514,7 +451,7 @@ function page() {
                     >
                       Highest Degree
                     </label>
-                    <div className="mt-2 w-full">
+                    <div className="mt-2 w-1/2">
                       <select
                         disabled={!isEditable}
                         id="highestDegree"
@@ -534,23 +471,22 @@ function page() {
                   </div>
                 )}
               </div>
-            </div>
+
+              {isEditable && (
+                <div className="flex justify-center">
+                  <button
+                    type="submit"
+                    disabled={isSubmit}
+                    className="mt-6 inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-indigo-400"
+                  >
+                    <Save className="mr-2 h-5 w-5" />
+                    Save Changes
+                  </button>
+                </div>
+              )}
+            </form>
           </div>
-          <div className="mt-6 flex items-center justify-end gap-x-6">
-            <button
-              disabled={!isEditable || isSubmit}
-              type="submit"
-              onClick={() => setisEditing(false)}
-              className={`rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                !isEditable || isSubmit
-                  ? "bg-gray-400 text-gray-600 cursor-not-allowed" // Disabled styling
-                  : "bg-edit text-white hover:bg-edit2 focus-visible:outline-indigo-600"
-              }`}
-            >
-              Update Changes
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );
