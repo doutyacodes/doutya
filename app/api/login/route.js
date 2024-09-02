@@ -9,16 +9,13 @@ export async function POST(req) {
   try {
     console.log('got')
     const data = await req.json();
-    console.log(data)
     const username=data.username;
-    console.log(username)
     const [existingUser] = await db
       .select()
       .from(USER_DETAILS)
       .where(eq(USER_DETAILS.username, username))
       .execute();
 
-    console.log(existingUser)
 
     if (!existingUser) {
       console.log('not')
@@ -33,7 +30,6 @@ export async function POST(req) {
         process.env.JWT_SECRET_KEY,
         // { expiresIn: '1h' }
       );
-      console.log(existingUser.birth_date)
       return NextResponse.json({ token,birth_date:existingUser.birth_date }, { status: 200 }, { message: 'Loggedin successfully.' });
     } else {
       return NextResponse.json({ message: 'Invalid username or password' }, { status: 401 });

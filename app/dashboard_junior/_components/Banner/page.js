@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import GlobalApi from "@/app/_services/GlobalApi";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 
-function Bannerkids({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2Results}) {
+function BannerJunior({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2Results}) {
   const [loading, setLoading] = useState(false);
   const [dashboardData, setDashboardData] = useState([]);
   const [userAge, setUserAge] = useState(null);
@@ -108,7 +108,7 @@ function Bannerkids({  onToggleResults, showResults ,onToggleQuiz2Results,showQu
        
 
         {/* Test 2 */}
-        {/* <div className="border border-cyan-400 pb-3 rounded-sm w-full">
+        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
           <img
             className="rounded-md object-cover w-full h-36"
             src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
@@ -152,7 +152,7 @@ function Bannerkids({  onToggleResults, showResults ,onToggleQuiz2Results,showQu
               </button>
             )}
           </div>
-        </div> */}
+        </div>
 
         {/* Test 3 */}
         {/* <div className="border border-cyan-400 pb-3 rounded-sm w-full">
@@ -241,4 +241,4 @@ function Bannerkids({  onToggleResults, showResults ,onToggleQuiz2Results,showQu
   );
 }
 
-export default Bannerkids;
+export default BannerJunior;

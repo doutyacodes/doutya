@@ -50,13 +50,18 @@ function SignUp() {
 
                 toast.success("Successfully added to the database!");
 
-                if (age < 13) {
+                if (age <= 9) {
                     localStorage.setItem('dashboardUrl', '/dashboard_kids');
                     router.push('/dashboard_kids');
-                } else {
+                  } 
+                  else if(age <= 13){
+                    localStorage.setItem('dashboardUrl', '/dashboard_kids');
+                    router.push('/dashboard_junior');
+                  }
+                  else {
                     localStorage.setItem('dashboardUrl', '/dashboard');
                     router.push('/dashboard');
-                }
+                  }
             } else {
                 // Handle any other unexpected status codes
                 const errorMessage = response.data?.message || "Failed to add data.";

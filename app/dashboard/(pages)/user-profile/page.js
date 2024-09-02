@@ -65,9 +65,14 @@ function page() {
   useEffect(() => {
     if(userData){
       const age = calculateAge(userData.birth_date);      
-    if (age < 13) {
+    if (age <= 9) {
         localStorage.setItem('dashboardUrl', '/dashboard_kids');
-    } else {
+    } 
+    else if(age<=13)
+    {
+      localStorage.setItem('dashboardUrl', '/dashboard_junior');
+    }
+    else {
         localStorage.setItem('dashboardUrl', '/dashboard');
     }
     }
