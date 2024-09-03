@@ -17,8 +17,6 @@ import toast, { Toaster } from "react-hot-toast";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import { calculateAge } from "@/lib/ageCalculate";
 
-
-
 function page() {
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
@@ -346,7 +344,18 @@ function page() {
                   </label>
                   <input
                     type="date"
-                    {...register("birth_date", { required: "Date of birth is required" })}
+                    {...register("birth_date", {
+                      required: "Date of birth is required",
+                      validate: {
+                        notTooYoung: (value) => {
+                          const today = new Date();
+                          const selectedDate = new Date(value);
+                          const minAllowedDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
+                          return selectedDate <= minAllowedDate || "Age must be a minimum of 5 years.";
+                        }
+                      }
+                    })}
+                    max={new Date().toISOString().split("T")[0]}
                     disabled={!isEditable}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   />

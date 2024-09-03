@@ -113,6 +113,6 @@ export async function GET(req)
           .execute();
   }
 
-    console.log(responseText)
+    // console.log(responseText)
     return NextResponse.json({result: responseText});
 }

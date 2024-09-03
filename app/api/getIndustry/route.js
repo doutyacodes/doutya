@@ -54,6 +54,6 @@ export async function GET(req)
     let responseText = response.data.choices[0].message.content.trim();
     responseText = responseText.replace(/```json|```/g, "").trim();
     // const response = await chatModel.invoke(prompt)
-    console.log(responseText)
+    // console.log(responseText)
     return NextResponse.json({result: responseText});
 }

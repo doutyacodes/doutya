@@ -41,7 +41,6 @@ function SignUp() {
             const response = await GlobalApi.CreateNewUser(data);
     
             if (response.status === 201) {
-                console.log("Respons", response.data.data);
                 const { token} = response.data.data;
                 localStorage.setItem('token', token);
                 reset();
@@ -166,14 +165,26 @@ function SignUp() {
                         {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile.message}</p>}
                     </div>
 
-                    <div className="mb-4">
-                        <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                    <div>
+                        <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
+                            Date of Birth
+                        </label>
                         <input
                             type="date"
-                            {...register("birth_date")}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            required
-                        />
+                            {...register("dob", {
+                            required: "Date of birth is required",
+                            validate: {
+                                notTooYoung: (value) => {
+                                    const today = new Date();
+                                    const selectedDate = new Date(value);
+                                    const minAllowedDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
+                                    return selectedDate <= minAllowedDate || "Age must be a minimum of 5 years.";
+                                }
+                            }
+                            })}
+                            max={new Date().toISOString().split("T")[0]}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"                        />
+                        {errors.dob && <p className="mt-2 text-sm text-red-600">{errors.dob.message}</p>}
                     </div>
 
                     <div className="mb-4 flex items-center">

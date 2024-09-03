@@ -68,7 +68,6 @@ function Page({ params }) {
         
             const timer = setTimeout(() => {
                 router.replace('/dashboard_kids'); 
-                console.log("Route");
             }, 5000);
         
             return () => {
@@ -109,7 +108,7 @@ function Page({ params }) {
           const resp = await GlobalApi.SaveCarrierQuizProgress(data, token, quizId);
       
           if (resp && resp.status === 201) {
-            console.log("Response:", resp.data);
+            console.log("Response");
           } else {
             console.error("Failed to save progress. Status code:", resp.status);
             toast.error("There was a problem saving your progress. Please check your internet connection.");

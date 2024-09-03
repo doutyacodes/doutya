@@ -21,7 +21,6 @@ function Login() {
   const onSubmit = async (data) => {
     try {
       const resp = await GlobalApi.LoginUser(data);
-      console.log('response',resp);
       if (resp.status === 200) {
         const birth_date = resp.data.birth_date;
         const age = calculateAge(birth_date);

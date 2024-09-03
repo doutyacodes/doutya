@@ -47,11 +47,7 @@ export async function GET(req) {
             .where(eq( FEEDBACK.user_id, userId))
             // .limit(1); // Assuming `first` returns a single result or null
 
-        console.log(feedback)
-
         const feedbackExists = feedback.length > 0 ? true : false;
-
-        console.log(feedbackExists)
 
         // Query to get career_name for the user_id
         const userCareerCount = await db.select({

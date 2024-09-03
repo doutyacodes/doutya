@@ -120,7 +120,7 @@ function page() {
               console.log('Career saved successfully');
           } else {
               // Handle the case where the response was not successful
-              console.error('Failed to save career:', response);
+              console.error('Failed to save career');
           }
       } catch (error) {
           console.error('Failed to save career data:', error); // Log the error for debugging purposes

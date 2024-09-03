@@ -15,7 +15,6 @@ function Banner({  onToggleResults, showResults ,onToggleQuiz2Results,showQuiz2R
       try {
         const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetDashboarCheck(token);
-        console.log('Response: of  GetQuizData', resp.data);
         setDashboardData(resp.data); 
       } catch (error) {
         console.error('Error Fetching data:', error);

@@ -109,7 +109,7 @@ function Page({ params }) {
       );
 
       if (resp && resp.status === 201) {
-        console.log("Response:", resp.data);
+        console.log("Response");
       } else {
         console.error("Failed to save progress. Status code:", resp.status);
         toast.error(

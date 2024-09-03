@@ -14,14 +14,11 @@ function Bannerkids({  onToggleResults, showResults ,onToggleQuiz2Results,showQu
       try {
         const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetDashboarCheck(token);
-        console.log('Response: of  GetQuizData', resp.data);
         setDashboardData(resp.data); 
 
         const userResp = await GlobalApi.GetUserAge(token);
         const birthDate = new Date(userResp.data.birth_date);
-        console.log('birthdate',birthDate)
         const age = new Date().getFullYear() - birthDate.getFullYear();
-        console.log(age)
         setUserAge(age);
       } catch (error) {
         console.error('Error Fetching data:', error);
