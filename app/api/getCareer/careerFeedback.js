@@ -10,7 +10,7 @@ export const careerFeedback = async(type1, type2, career_name, country) =>{
         const response = await axios.post(
           "https://api.openai.com/v1/chat/completions",
           {
-            model: "gpt-4",
+            model: "gpt-4o-mini", // or 'gpt-4' if you have access
             messages: [{ role: "user", content: FINAL_PROMPT }],
             max_tokens: 1500,
           },
