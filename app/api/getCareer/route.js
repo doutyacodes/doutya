@@ -2,7 +2,7 @@ import { db } from '@/utils'; // Ensure this path is correct
 import { QUIZ_SEQUENCES, USER_CAREER } from '@/utils/schema'; // Ensure this path is correct
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware'; // Ensure this path is correct
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { careerFeedback } from './careerFeedback';
 
 export async function GET(req) {
@@ -21,7 +21,8 @@ export async function GET(req) {
         const data = await db
             .select()
             .from(USER_CAREER)
-            .where(eq(USER_CAREER.user_id, userId)) 
+            .where(eq(USER_CAREER.user_id, userId))
+            .orderBy(desc(USER_CAREER.created_at))
             .execute();
 
         const personalityTypes = await db.select({

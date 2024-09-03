@@ -211,6 +211,18 @@ const GetUserAge=(token)=>axios.get('/api/getUserAge',{
   }
 });
 
+const SaveInterestedCareer = (token, careerName) => {
+  const payload = {
+    career: careerName,
+  };
+
+  return axios.post(`/api/saveInterestedCareer`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 
 export default {
   CreateNewUser,
@@ -238,5 +250,6 @@ export default {
   SaveStrengthQuizResult,
   GetQuizDataKids,
   GetCareerQuizKids,
-  GetUserAge
+  GetUserAge,
+  SaveInterestedCareer
 }

@@ -26,7 +26,7 @@ export const careerFeedback = async(type1, type2, career_name, country) =>{
     
         let responseText = response.data.choices[0].message.content.trim();
         responseText = responseText.replace(/```json|```/g, "").trim();
-        console.log("responseText",responseText);
+        // console.log("responseText",responseText);
         
         return { result: responseText };
     
