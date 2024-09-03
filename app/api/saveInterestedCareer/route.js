@@ -63,7 +63,7 @@ export async function POST(req)
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini", // or 'gpt-4' if you have access
+        model: "gpt-4o-mini", 
         messages: [{ role: "user", content: prompt }],
         max_tokens: 1500, // Adjust the token limit as needed
       },
