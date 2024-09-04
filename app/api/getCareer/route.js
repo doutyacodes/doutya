@@ -39,13 +39,14 @@ export async function GET(req) {
        // Generate feedback for each record asynchronously
         const resultData = await Promise.all(data.map(async (record) => {
             const { result: feedback } = await careerFeedback(type1, type2, record.career_name, record.country);
-            console.log("feedback",feedback);
+            // console.log("feedback",feedback);
 
             // Extract the feedback text from the JSON object
             let feedbackText = '';
             try {
                 const feedbackObject = JSON.parse(feedback);
-                feedbackText = feedbackObject.Feedback || ''; // Extract only the text
+                // console.log(feedbackObject)
+                feedbackText = feedbackObject.feedback || ''; // Extract only the text
             } catch (error) {
                 console.error('Error parsing feedback JSON:', error);
                 feedbackText = 'No feedback provided'; // Default message in case of error
