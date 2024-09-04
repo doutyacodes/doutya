@@ -52,17 +52,9 @@ export default function Dashboard() {
 
   return (
     <div style={styles.dashboardContainer}>
+      
       <Navbarkids />
       <Bannerkids onToggleResults={toggleResults} showResults={showResults} onToggleQuiz2Results={toggleQuiz2Results} showQuiz2Results={showQuiz2Results} />
-
-      {/* Animated Image for Kids */}
-      <img
-        src="https://cdn.prod.website-files.com/6047c2070742bf6f0e9457e6/60d1f12db8b1d09fda86ebb1_Quiz.jpeg"
-        alt="Kids Animation"
-        style={styles.animatedImage}
-      />
-
-      {/* Adding keyframes manually using a <style> tag */}
       <style jsx>{`
         @keyframes bounce {
           0%, 20%, 50%, 80%, 100% {
