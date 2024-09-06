@@ -22,11 +22,15 @@ function page() {
 
   const [showRoadMapDetails, setShowRoadMapDetails] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [showFinalRoadMap, setShowFinalRoadMap]=useState(true);
-
   const [activeTab, setActiveTab] = useState('roadmap'); // Single state for active tab
-
+  const [showFinalRoadMap, setShowFinalRoadMap] = useState(true);
+  const [country,setCountry]=useState('');
   const router = useRouter();
+
+  const handleRoadmapClick = () => {
+    setShowRoadmap(!showRoadmap); // Toggles the visibility
+    setShowFeedback(false);
+  };
 
   const handleShowRoadMapDetails = () => {
     setShowRoadMapDetails(!showRoadMapDetails);
@@ -73,7 +77,6 @@ function page() {
   const handleCareerClick = (career) => {
     setSelectedCareer(career);
   };
-
   const getCareers = async () => {
     setIsLoading(true)
     try {
@@ -101,15 +104,24 @@ function page() {
     getCareers()
   }, [])
 
+  const handleAddCareerClick = () => {
+    if (carrerData.length >= 5) {
+      toast.error('You can only add up to 5 careers.');
+      return;
+    }
+    setShowDialogue(true); // Show the dialog if career limit is not reached
+  };
 
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-      const response = await GlobalApi.SaveInterestedCareer(token, careerName);
+      const response = await GlobalApi.SaveInterestedCareer(token, careerName,country);
 
       if (response && response.status === 201) { // Check for a successful response
         console.log('Career saved successfully');
+        setCareerName('');  // Clear the careerName field
+        setCountry(''); 
       } else {
         // Handle the case where the response was not successful
         console.error('Failed to save career');
@@ -127,7 +139,7 @@ function page() {
       // Call getCareers regardless of the outcome of the API call
       getCareers();
       setShowDialogue(false)
-      setIsLoading(false)
+      setIsLoading(false)  
     }
   }
 
@@ -154,6 +166,8 @@ function page() {
         getCareers={getCareers}
         setCareerName={setCareerName}
         careerName={careerName}
+        setCountry={setCountry}
+        country={country}
         handleSubmit={handleSubmit}
       />
       {/* } */}
@@ -174,7 +188,7 @@ function page() {
         }
 
         <div className='w-48 h-48 p-5 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95'
-          onClick={() => setShowDialogue(true)}>
+          onClick={handleAddCareerClick}>
           <PlusIcon className='text-gray-600 font-thin h-20 w-20' />
         </div>
       </div>
@@ -236,42 +250,106 @@ function page() {
             {activeTab === 'roadmap' && (
               <>
                 <div className="flex gap-1">
-                  <button className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black font-bold py-2 px-4 w-1/2" 
-                  onClick={() => { 
-                    setShowFeedback(false);
-                    setShowFinalRoadMap(true);
-                  }}
+                  <button className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black font-bold py-2 px-4 w-1/2"
+                    onClick={() => {
+                      setShowFeedback(false);
+                      setShowFinalRoadMap(true);
+                    }}
                   >
                     Roadmap
                   </button>
                   <button className="bg-green-500 text-black font-bold py-2 px-4 w-1/2"
-                  onClick={handleFeedbackClick}
+                    onClick={handleFeedbackClick}
                   >
                     Feedback
                   </button>
                 </div>
                 {showFinalRoadMap && (
-                <div className='bg-white'>
-                  <button className='bg-green-500 text-black font-bold w-80 rounded-full py-2 px-4 mt-14 ml-96 mb-8' onClick={handleShowRoadMapDetails}>
-                    {showRoadMapDetails ? 'Hide Roadmap' : 'Get Roadmap'}
-                  </button>
-                  {showRoadMapDetails && (
-                    <>
-                      <h3 className='text-lg font-semibold text-gray-800 mb-2 ml-11'>Roadmap:</h3>
-                      <ul className='list-disc ml-11 mb-4 text-black'>
-                        {selectedCareer.roadmap.split('.,').map((step, idx) => (
-                          <li key={idx}>{step.trim()}</li>
-                        ))}
-                      </ul>
-                    </>
-                  )};
-                </div>
+                  <div className='bg-white'>
+                    <button className='bg-green-500 text-black font-bold w-80 rounded-full py-2 px-4 mt-14 ml-96 mb-8' onClick={handleShowRoadMapDetails}>
+                      {showRoadMapDetails ? 'Hide Roadmap' : 'Get Roadmap'}
+                    </button>
+                    {showRoadMapDetails && (
+                      <>
+                        <h3 className='text-lg font-semibold text-gray-800 mb-2 ml-11'>Roadmap:</h3>
+                        <ul className='list-disc ml-11 mb-4 text-black'>
+                          {selectedCareer.roadmap.split('.,').map((step, idx) => (
+                            <li key={idx}>{step.trim()}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )};
+                  </div>
                 )}
               </>
             )}
             {showFeedback && (
               <div className="bg-white">
-                <h3 className='text-lg font-semibold text-gray-800 mb-2 text-center mt-5'>Why this career suits you?</h3>
+                <h3 className='text-2xl font-semibold text-gray-800 text-center mt-5 mb-5 '>Why this career suits you?</h3>
+                <div className="bg-blue-300 p-4 rounded-lg mb-6 ml-6 mr-6">
+                  <div className="flex">
+                    <div className='text-black font-bold text-xl mt-12 ml-32'>
+                      Your strengths
+                    </div>
+                    <div className='bg-white h-40 w-2/3 ml-12 mt-10 rounded-3xl text-black'>
+                      {selectedCareer?.strengths ? (
+                        selectedCareer.strengths.split('\r\n').map((strength, index) => (
+                          <div
+                            key={index}
+                            className="rounded-xl ml-4 grid grid-flow-col"
+                          >
+                            {strength}
+                          </div>
+                        ))
+                      ) : (
+                        <p>No strengths available</p> // Fallback when no strengths are provided
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex">
+                    <div className='text-black font-bold text-xl mt-12 ml-32'>
+                      Things To
+                      improve
+                    </div>
+                    <div className='bg-white h-40 w-2/3 ml-4 mt-10 rounded-3xl text-black'>
+                      {selectedCareer.feedback}
+                    </div>
+                  </div>
+                </div>
+
+                <h3 className='text-2xl font-semibold text-gray-800 text-center mt-5 mb-5 '>What needs to be changed?</h3>
+                <div className="bg-purple-300 p-4 rounded-lg mb-6 ml-6 mr-6">
+                  <div className="flex">
+                    <div className='text-black font-bold text-xl mt-12 ml-32'>
+                      Your weakness
+                    </div>
+                    <div className='bg-white h-40 w-2/3 ml-12 mt-10 rounded-3xl text-black'>
+                      {selectedCareer?.weaknesses ? (
+                        selectedCareer.weaknesses.split('\r\n').map((weakness, index) => (
+                          <div
+                            key={index}
+                            className="rounded-xl ml-4 grid grid-flow-col"
+                          >
+                            {weakness}
+                          </div>
+                        ))
+                      ) : (
+                        <p>No weakness available</p> // Fallback when no strengths are provided
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex">
+                    <div className='text-black font-bold text-xl mt-12 ml-32'>
+                      Things To
+                      change
+                    </div>
+                    <div className='bg-white h-40 w-2/3 ml-4 mt-10 rounded-3xl text-black'>
+                      {selectedCareer.feedback}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </>

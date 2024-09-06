@@ -124,23 +124,21 @@ const GetDashboarCheck = (token) => {
   });
 };
 
-const GetResult2=(token,countryParams,industryParam)=>axios.get('/api/getresult2',{
+const GetResult2=(token,industryParam)=>axios.get('/api/getresult2',{
   headers: {
     Authorization: `Bearer ${token}`,
   },
   params: {
-    country: countryParams,
     industry: industryParam
   }
 });
 
-const GetIndustry = (token, params) => {
+const GetIndustry = (token) => {
 
   return axios.get(`/api/getIndustry`, {
     headers: {
       Authorization: `Bearer ${token}`,
-    },
-    params: params,
+    }
   });
 };
 
@@ -211,9 +209,10 @@ const GetUserAge=(token)=>axios.get('/api/getUserAge',{
   }
 });
 
-const SaveInterestedCareer = (token, careerName) => {
+const SaveInterestedCareer = (token, careerName,country) => {
   const payload = {
     career: careerName,
+    country: country
   };
 
   return axios.post(`/api/saveInterestedCareer`, payload, {

@@ -7,9 +7,13 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { calculateAge } from "@/lib/ageCalculate";
+import countryList from 'react-select-country-list';
+import Select from 'react-select';
 
 function SignUp() {
     const [isCollegeStudent, setIsCollegeStudent] = useState(false);
+    const [countryOptions] = useState(countryList().getData());
+    const [selectedCountry, setSelectedCountry] = useState(null); 
     const router = useRouter();
     const {
         register,
@@ -30,55 +34,55 @@ function SignUp() {
         }
         const encryptedPassword = encryptText(data.password);
         data.password = encryptedPassword;
-        if(data.college!="" && data.university!="")
-        {
-            const encryptedCollege=encryptText(data.college);
-            const  encryptedUniversity=encryptText(data.university);
-            data.college=encryptedCollege;
-            data.university=encryptedUniversity;
+
+       
+        if (isCollegeStudent && data.college && data.university) {
+            data.college = encryptText(data.college);
+            data.university = encryptText(data.university);
         }
+        data.country = selectedCountry?.label;
         try {
             const response = await GlobalApi.CreateNewUser(data);
     
             if (response.status === 201) {
-                const { token} = response.data.data;
+                const { token } = response.data.data;
                 localStorage.setItem('token', token);
                 reset();
 
-                const age = calculateAge(data.birth_date);
+              
+                const age = calculateAge(data.dob);
 
                 toast.success("Successfully added to the database!");
 
+              
                 if (age <= 9) {
                     localStorage.setItem('dashboardUrl', '/dashboard_kids');
                     router.push('/dashboard_kids');
-                  } 
-                  else if(age <= 13){
-                    localStorage.setItem('dashboardUrl', '/dashboard_kids');
+                } 
+                else if (age <= 13) {
+                    localStorage.setItem('dashboardUrl', '/dashboard_junior');
                     router.push('/dashboard_junior');
-                  }
-                  else {
+                } 
+                else {
                     localStorage.setItem('dashboardUrl', '/dashboard');
                     router.push('/dashboard');
-                  }
+                }
             } else {
-                // Handle any other unexpected status codes
                 const errorMessage = response.data?.message || "Failed to add data.";
                 toast.error(`Error: ${errorMessage}`);
             }
+            console.log(data)
         } catch (err) {
-            // Handle any errors that occurred during the API call
             console.error('Error:', err);
             toast.error(`Error: ${err.message}`);
         }
     }
 
     const collegeStudent = watch("student");
-    console.log(collegeStudent)
 
     return (
         <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
-            <Toaster/>
+            <Toaster />
             
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg ">
                 <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
@@ -165,6 +169,16 @@ function SignUp() {
                         {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile.message}</p>}
                     </div>
 
+                    <div className="mb-4">
+                        <label htmlFor="country" className="block text-sm font-medium text-gray-700">Select Your Country</label>
+                        <Select
+                            options={countryOptions} 
+                            value={selectedCountry}
+                            onChange={setSelectedCountry} 
+                            className="mt-1 block w-full"
+                        />
+                    </div>
+
                     <div>
                         <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
                             Date of Birth
@@ -186,7 +200,7 @@ function SignUp() {
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"                        />
                         {errors.dob && <p className="mt-2 text-sm text-red-600">{errors.dob.message}</p>}
                     </div>
-
+                    <br />
                     <div className="mb-4 flex items-center">
                         <label htmlFor="collegeStudent" className="block text-sm font-medium text-gray-700 mr-4">Are you a college student?</label>
                         <div className="flex items-center space-x-4">
@@ -195,7 +209,6 @@ function SignUp() {
                                     type="radio"
                                     {...register("student")}
                                     value="no"
-                                    // checked={collegeStudent === 'yes'}
                                     onChange={() => setIsCollegeStudent(false)}
                                     className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                                 />
@@ -204,7 +217,6 @@ function SignUp() {
                                     type="radio"
                                     {...register("student")}
                                     value="yes"
-                                    // checked={collegeStudent === 'yes'}
                                     onChange={() => setIsCollegeStudent(true)}
                                     className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                                 />
@@ -213,7 +225,7 @@ function SignUp() {
                         </div>
                     </div>
 
-                    {isCollegeStudent ? (
+                    {isCollegeStudent && (
                         <>
                             <div className="mb-4">
                                 <label htmlFor="college" className="block text-sm font-medium text-gray-700">College</label>
@@ -223,7 +235,6 @@ function SignUp() {
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                 />
                             </div>
-
                             <div className="mb-4">
                                 <label htmlFor="university" className="block text-sm font-medium text-gray-700">University</label>
                                 <input
@@ -232,67 +243,22 @@ function SignUp() {
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                 />
                             </div>
-
-                            <div className="mb-4">
-                                <label htmlFor="yearOfPassing" className="block text-sm font-medium text-gray-700">Year of Passing</label>
-                                <input
-                                    type="number"
-                                    {...register("yearOfPassing")}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                />
-                            </div>
-
-                            <div className="mb-4">
-                                <label htmlFor="monthOfPassing" className="block text-sm font-medium text-gray-700">Month of Passing</label>
-                                <input
-                                    type="month"
-                                    {...register("monthOfPassing")}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                />
-                            </div>
-
-                            <div className="mb-4">
-                                <label htmlFor="currentEnrollment" className="block text-sm font-medium text-gray-700">Current Enrollment</label>
-                                <select
-                                    id="currentEnrollment"
-                                    name="currentEnrollment"
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    {...register("education")}
-                                >
-                                    <option value="">select</option>
-                                    <option>High School</option>
-                                    <option>Associate Degree</option>
-                                    <option>Bachelor's Degree</option>
-                                    <option>Master's Degree</option>
-                                    <option>Doctorate</option>
-                                </select>
-                            </div>
                         </>
-                    ) : (
-                        <div className="mb-4">
-                            <label htmlFor="highestDegree" className="block text-sm font-medium text-gray-700">Highest Degree</label>
-                            <select
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                {...register("education")}
-                            >
-                                <option>High School</option>
-                                <option>Associate Degree</option>
-                                <option>Bachelor's Degree</option>
-                                <option>Master's Degree</option>
-                                <option>Doctorate</option>
-                            </select>
-                        </div>
                     )}
 
-                    <button
-                        type="submit"
-                        className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
-                        Sign Up
-                    </button>
+                    <div className="mb-4">
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+                        >
+                            Submit
+                        </button>
+                    </div>
                 </form>
-                <br />
-                <span className='text-emerald-600'>Already have an account? <Link className='text-gray-500 hover:text-black' href="/login">Login</Link></span>
+                <div className="flex justify-between">
+                    <Link href="/login" className="text-sm text-gray-500">Already Registered? Log In</Link>
+                    <Link href="/" className="text-sm text-gray-500">Forgot Password?</Link>
+                </div>
             </div>
         </div>
     )

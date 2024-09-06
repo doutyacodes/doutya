@@ -13,7 +13,8 @@ export const USER_DETAILS= mysqlTable('user_details',{
     college:text('college').default(null),
     university:text('university').default(null),
     yearOfPassing:varchar('yearOfPassing',{length:150}).default(null),
-    monthOfPassing:varchar('monthOfPassing',{length:150}).default(null)
+    monthOfPassing:varchar('monthOfPassing',{length:150}).default(null),
+    country:varchar('country',{length:30}).default(null)
 });
 
 // Define the schema for the 'page' table
@@ -275,6 +276,9 @@ export const USER_RESULTS=mysqlTable('user_results',{
     id: int('id').primaryKey().autoincrement(),
     user_id:int('user_id').primaryKey().references(()=>USER_DETAILS.id).notNull(),
     result2:text('result2').default(null),
+    quiz_id:int('quiz_id'),
+    type: mysqlEnum('type', ['basic', 'advance']).default('basic'),
+    country: varchar('country', 255).default(null),
 })
 
 export const ANALYTICS_QUESTION_KIDS = mysqlTable('analytics_question_kids', {

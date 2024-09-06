@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
-import { QUIZ_SEQUENCES, USER_CAREER } from '@/utils/schema';
+import { QUIZ_SEQUENCES, USER_CAREER,USER_DETAILS } from '@/utils/schema';
 import { eq,and } from 'drizzle-orm';
 import { db } from '@/utils';
 import axios from 'axios';
 import { validateCareer } from './validateCareer';
 import { handleCareerData } from '../utils/handleCareerData';
+import { calculateAge } from '@/lib/ageCalculate';
 
 export async function POST(req)
 {
@@ -17,7 +18,18 @@ export async function POST(req)
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
 
-    const { career } = await req.json();
+    const user_data=await db
+                   .select({
+                    birth_date:USER_DETAILS.birth_date,
+                    education: USER_DETAILS.education
+                  })
+                   .from(USER_DETAILS)
+                   .where(eq(USER_DETAILS.id, userId))
+    const birth_date=user_data[0].birth_date
+    const age=calculateAge(birth_date)
+    const education=user_data[0].education
+
+    const { career ,country} = await req.json();
 
     // Call the validation function
     try {
@@ -44,7 +56,9 @@ export async function POST(req)
     const type1 = personalityTypes.find(pt => pt.quizId === 1)?.typeSequence;
     const type2 = personalityTypes.find(pt => pt.quizId === 2)?.typeSequence;
 
-    const prompt = `Provide detailed information for the career named "${career}" based on the following criteria:
+    console.log(type1,type2)
+
+    const prompt = `Provide detailed information for the career named "${career}" in '${country}' based on the following criteria:
 
     - Personality Type: ${type1}
     - RIASEC Interest Types: ${type2}
@@ -52,7 +66,7 @@ export async function POST(req)
     For this career, include the following information:
     - career_name: A brief title of the career.
     - reason_for_recommendation: Why this career is suitable for someone with these interests.
-    - roadmap: Detailed steps and milestones required to achieve this career (as an array).
+    - roadmap: Detailed steps and milestones required to achieve this career (as an array) keeping in mind the user's age is '${age}' and education level is '${education}'.
     - present_trends: Current trends and opportunities in the field.
     - future_prospects: Predictions and potential growth in this career.
     - user_description: Describe the personality traits, strengths, and preferences of the user that make this career a good fit.
@@ -75,6 +89,8 @@ export async function POST(req)
         },
       }
     );
+
+
 
     let responseText = response.data.choices[0].message.content.trim();
     responseText = responseText.replace(/```json|```/g, "").trim();
@@ -113,6 +129,18 @@ export async function POST(req)
     //     { status: 500 } // Internal Server Error
     //   );
     // }
+    const insertData = {
+      user_id: userId,
+      career_name: parsedData.career_name,
+      reason_for_recommendation: parsedData.reason_for_recommendation,
+      roadmap: parsedData.roadmap.join(', '),
+      present_trends: parsedData.present_trends,
+      future_prospects: parsedData.future_prospects,
+      user_description: parsedData.user_description,
+      type2: "", // Ensure these are set if needed
+      type1: "",
+      country: country,
+    };
 
     try {
       await handleCareerData(userId, null, [parsedData]);
