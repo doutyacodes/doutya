@@ -115,8 +115,6 @@ export async function GET(req) {
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
 
-  // console.log(responseText)
-
   // Store the new result in the user_results table
   await db
     .insert(USER_RESULTS)
@@ -130,5 +128,5 @@ export async function GET(req) {
     .execute();
 
   // return NextResponse.json({ result: responseText });
-  return NextResponse.json({ careers: JSON.parse(responseText) });
+  return NextResponse.json({ result: responseText });
 }
