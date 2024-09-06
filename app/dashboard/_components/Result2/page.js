@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import GlobalApi from '@/app/_services/GlobalApi';
-import countryList from 'react-select-country-list';
-import Select from 'react-select';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
@@ -9,13 +7,10 @@ export default function Results2() {
     const [resultData, setResultData] = useState(null)
     const [selectedCareers, setSelectedCareers] = useState([]);
     const [prevSelectCount, setPrevSelectCount] = useState(null);
-    const [selectedCountry, setSelectedCountry] = useState(null);
-    const [displayCountrySelect, setDisplayCountrySelect] = useState(false);
     const [displayResults, setDisplayResults] = useState(false);
     const [feedbackGiven, setFeedbackGiven] = useState(false);
     const [rating, setRating] = useState(0);
     const [loading, setLoading] = useState(false); // Loading state
-    const options = countryList().getData();
     const [user_feedback, setUserFeedback] = useState('');
     const [step, setStep] = useState(1);
     const [industries, setIndustries] = useState([])
@@ -36,15 +31,25 @@ export default function Results2() {
         fetchResults(selectedIndustry)
     };
 
-    const fetchResults = async (selectedIndustry, country = null ) => {
+   useEffect(()=>{
+    fetchResults('');
+   },[]);
+
+   useEffect(() => {
+    if (resultData) {
+        console.log('Updated resultData:', resultData);
+    }
+}, [resultData]);
+
+    const fetchResults = async (selectedIndustry) => {
         setLoading(true); // Start loading
         try {
             const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-            const countryParam = country ? `${country.label}` : '';
-            console.log('countryyyy',countryParam)
+            // const countryParam = country ? `${country.label}` : '';
+            // console.log('countryyyy',countryParam)
             // const countryParam = country ? country.label : ''; 
             const industryParam = selectedIndustry ? selectedIndustry: '';            
-            const data = await GlobalApi.GetResult2(token, countryParam, industryParam);
+            const data = await GlobalApi.GetResult2(token, industryParam);
             const parsedResult = JSON.parse(data.data.result);
             setResultData(parsedResult);
             setDisplayResults(true);
@@ -59,18 +64,18 @@ export default function Results2() {
         }
     };
 
-    const handleCountryChange = (selectedOption) => {
-        setSelectedCountry(selectedOption);
-        fetchResults(industrySelect,selectedOption);
-    };
+    // const handleCountryChange = (selectedOption) => {
+    //     setSelectedCountry(selectedOption);
+    //     fetchResults(industrySelect,selectedOption);
+    // };
 
-    const handleGlobalClick = () => {
-        fetchResults(''); // Fetch results globally
-    };
+    // const handleGlobalClick = () => {
+    //     fetchResults(''); // Fetch results globally
+    // };
 
-    const handleCountryWiseClick = () => {
-        setDisplayCountrySelect(true);
-    };
+    // const handleCountryWiseClick = () => {
+    //     setDisplayCountrySelect(true);
+    // };
 
     const handleFeedbackSubmit = async () => {
         try {
@@ -141,10 +146,10 @@ export default function Results2() {
             // setLoading(true); // Start loading
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const params = {
-                    country: selectedCountry,
-                  };
-                const data = await GlobalApi.GetIndustry(token, params);
+                // const params = {
+                //     country: selectedCountry,
+                //   };
+                const data = await GlobalApi.GetIndustry(token);
                 const parsedResult = JSON.parse(data.data.result);
                 
                 setIndustries(parsedResult);
@@ -166,40 +171,8 @@ export default function Results2() {
         <div className='w-4/5 mx-auto'>
             <Toaster/>
             <p className='text-center text-white text-3xl mb-8'>Results</p>
-            {!displayResults && (
-                <>
-                    <p className='text-center text-white mb-8'>
-                        Do you want to get the results globally or for a specific country?
-                    </p>
-                    <div className='flex justify-center gap-4 mb-8'>
-                        <button
-                            onClick={handleGlobalClick}
-                            className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'
-                        >
-                            Globally
-                        </button>
-                        <button
-                            onClick={handleCountryWiseClick}
-                            className='bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700'
-                        >
-                            Country Wise
-                        </button>
-                    </div>
-                </>
-            )}
+            
             <div className='flex flex-col text-white gap-5'>
-                {displayCountrySelect && !displayResults && (
-                    <div className='mb-4'>
-                        <p>Select your country to view relevant careers:</p>
-                        <Select
-                            options={options}
-                            value={selectedCountry}
-                            onChange={handleCountryChange}
-                            className='text-gray-800 rounded-md'
-                            placeholder="Select Country"
-                        />
-                    </div>
-                )}
                 {resultData && (
                     <>
                         {step === 1 && (
