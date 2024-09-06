@@ -36,6 +36,7 @@ export async function POST(req) {
                 await db.insert(QUIZ_SEQUENCES).values({
                     user_id: userId,
                     quiz_id: quizId,
+                    type_sequence: '',
                     isStarted: true,
                     isCompleted: false,
                     createddate: new Date()

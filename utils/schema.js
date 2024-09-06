@@ -215,7 +215,7 @@ export const PERSONALITY_CHOICES = mysqlTable('personality_choices', {
 
 export const QUIZ_SEQUENCES = mysqlTable('quiz_sequences', {
     id: int('id').primaryKey().autoincrement(),
-    type_sequence: text('type_sequence').notNull(),
+    type_sequence: text('type_sequence').notNull().default(''),
     user_id: int('user_id').notNull(),
     quiz_id: int('quiz_id').notNull(), // New column for quiz identification
     createddate: datetime('createddate').notNull(),
