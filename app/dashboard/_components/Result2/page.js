@@ -40,7 +40,7 @@ export default function Results2() {
         setLoading(true); // Start loading
         try {
             const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-            const countryParam = country ? `?country=${country.label}` : '';
+            const countryParam = country ? `${country.label}` : '';
             console.log('countryyyy',countryParam)
             // const countryParam = country ? country.label : ''; 
             const industryParam = selectedIndustry ? selectedIndustry: '';            
@@ -61,7 +61,7 @@ export default function Results2() {
 
     const handleCountryChange = (selectedOption) => {
         setSelectedCountry(selectedOption);
-        fetchResults(selectedOption);
+        fetchResults(industrySelect,selectedOption);
     };
 
     const handleGlobalClick = () => {
