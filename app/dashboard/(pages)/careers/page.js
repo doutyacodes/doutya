@@ -7,8 +7,10 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import AddCareer from '../../_components/AddCareer/AddCareer';
+import {Chip} from "@nextui-org/chip";
 import Tests from '../../_components/TestTab/Tests';
 import Contests from '../../_components/ContestTab/Contests';
+
 
 
 function page() {
@@ -291,31 +293,40 @@ function page() {
                     <div className='text-black font-bold text-xl mt-12 ml-32'>
                       Your strengths
                     </div>
-                    <div className='bg-white h-40 w-2/3 ml-12 mt-10 rounded-3xl text-black'>
-                      {selectedCareer?.strengths ? (
-                        selectedCareer.strengths.split('\r\n').map((strength, index) => (
+                    <div className='bg-white h-40 w-2/3 ml-12 mt-10 rounded-3xl text-black p-4 overflow-auto'>
+                    {selectedCareer?.strengths ? (
+                      <div className="grid grid-cols-2 gap-2">
+                        {selectedCareer.strengths.split('\r\n').map((strength, index) => (
                           <div
                             key={index}
+
+                            className="rounded-xl bg-pink-300 p-2"
+
                             className="rounded-xl ml-4 grid grid-flow-col bg-orange-300"
+
                           >
                             {strength}
                           </div>
-                        ))
-                      ) : (
-                        <p>No strengths available</p> // Fallback when no strengths are provided
-                      )}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p>No strengths available</p>
+                    )}
                   </div>
 
-                  <div className="flex">
-                    <div className='text-black font-bold text-xl mt-12 ml-32'>
-                      Things To
-                      improve
-                    </div>
-                    <div className='bg-white h-40 w-2/3 ml-4 mt-10 rounded-3xl text-black'>
-                      {selectedCareer.feedback}
-                    </div>
                   </div>
+
+                    <div className="flex">
+                      <div className='text-black font-bold text-xl mt-12 ml-32'>
+                        Things To Improve
+                      </div>
+                      <div className='bg-white h-40 w-2/3 ml-4 mt-10 rounded-3xl text-black overflow-hidden'>
+                        <div className="p-4 overflow-auto">
+                          {selectedCareer.feedback}
+                        </div>
+                      </div>
+                    </div>
+
                 </div>
 
                 <h3 className='text-2xl font-semibold text-gray-800 text-center mt-5 mb-5 '>What needs to be changed?</h3>
@@ -324,31 +335,36 @@ function page() {
                     <div className='text-black font-bold text-xl mt-12 ml-32'>
                       Your weakness
                     </div>
-                    <div className='bg-white h-40 w-2/3 ml-12 mt-10 rounded-3xl text-black'>
-                      {selectedCareer?.weaknesses ? (
-                        selectedCareer.weaknesses.split('\r\n').map((weakness, index) => (
-                          <div
-                            key={index}
-                            className="rounded-xl ml-4 grid grid-flow-col"
-                          >
-                            {weakness}
+                      <div className='bg-white h-40 w-2/3 ml-12 mt-10 rounded-3xl text-black p-4 overflow-auto'>
+                        {selectedCareer?.weaknesses ? (
+                          <div className="grid grid-cols-2 gap-2">
+                            {selectedCareer.weaknesses.split('\r\n').map((weakness, index) => (
+                              <div
+                                key={index}
+                                className="rounded-xl bg-pink-300 p-2"
+                              >
+                                {weakness}
+                              </div>
+                            ))}
                           </div>
-                        ))
-                      ) : (
-                        <p>No weakness available</p> // Fallback when no strengths are provided
-                      )}
-                    </div>
+                        ) : (
+                          <p>No weakness available</p>
+                        )}
+                      </div>
+
+
                   </div>
 
                   <div className="flex">
-                    <div className='text-black font-bold text-xl mt-12 ml-32'>
-                      Things To
-                      change
+                      <div className='text-black font-bold text-xl mt-12 ml-32'>
+                        Things To Improve
+                      </div>
+                      <div className='bg-white h-40 w-2/3 ml-4 mt-10 rounded-3xl text-black overflow-hidden'>
+                        <div className="p-4 overflow-auto">
+                          {selectedCareer.feedback}
+                        </div>
+                      </div>
                     </div>
-                    <div className='bg-white h-40 w-2/3 ml-4 mt-10 rounded-3xl text-black'>
-                      {selectedCareer.feedback}
-                    </div>
-                  </div>
                 </div>
               </div>
             )}

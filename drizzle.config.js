@@ -4,7 +4,7 @@
 //     dbCredentials: {
 //         host: "localhost",
 //         user: "root",
-//         database: "project1",
+//         database: "doutyadatabase",
 //         password: ''
 //     }
 // };
