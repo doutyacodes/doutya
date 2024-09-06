@@ -13,7 +13,8 @@ export const USER_DETAILS= mysqlTable('user_details',{
     college:text('college').default(null),
     university:text('university').default(null),
     yearOfPassing:varchar('yearOfPassing',{length:150}).default(null),
-    monthOfPassing:varchar('monthOfPassing',{length:150}).default(null)
+    monthOfPassing:varchar('monthOfPassing',{length:150}).default(null),
+    country:varchar('country',{length:30}).default(null)
 });
 
 // Define the schema for the 'page' table
@@ -95,6 +96,7 @@ export const TASKS = mysqlTable('tasks', {
 export const CHALLENGES = mysqlTable('challenges', {
     challenge_id: int('challenge_id').primaryKey().autoincrement(),
     page_id: int('page_id').notNull(),
+    career_group_id: int('career_group_id').references(() => CAREER_GROUP.id),
     title: varchar('title', { length: 100 }).notNull(),
     description: text('description').notNull(),
     challenge_type: mysqlEnum('challenge_type', ['ordered', 'unordered']).notNull(),
@@ -230,16 +232,17 @@ export const FEEDBACK=mysqlTable('feedback',{
 export const USER_CAREER = mysqlTable('user_career', {
     id: int('id').notNull().autoincrement().primaryKey(),
     user_id: int('user_id').notNull(),
-    career_name: varchar('career_name', { length: 255 }).notNull(),
-    reason_for_recommendation: text('reason_for_recommendation'),
-    roadmap: text('roadmap'),
-    present_trends: text('present_trends'),
-    future_prospects: text('future_prospects'),
-    user_description: text('user_description'),
+    // career_name: varchar('career_name', { length: 255 }).notNull(),
+    career_group_id: int('career_group_id').notNull().references(() => CAREER_GROUP.id),
+    reason_for_recommendation: text('reason_for_recommendation').default(null),
+    roadmap: text('roadmap').default(null),
+    present_trends: text('present_trends').default(null),
+    future_prospects: text('future_prospects').default(null),
+    user_description: text('user_description').default(null),
     created_at: timestamp('created_at').defaultNow(),
     type2: varchar('type2', { length: 255 }).notNull(),
     type1: varchar('type1', { length: 255 }).notNull(),
-    country: text('country'),
+    country: text('country').default(null),
   });
 
 export const STRENGTH_TYPES = mysqlTable('strength_types', {
@@ -276,7 +279,6 @@ export const USER_RESULTS=mysqlTable('user_results',{
     quiz_id:int('quiz_id'),
     type: mysqlEnum('type', ['basic', 'advance']).default('basic'),
     country: varchar('country', 255).default(null),
-    globally: mysqlEnum('globally', ['yes', 'no'])
 })
 
 export const ANALYTICS_QUESTION_KIDS = mysqlTable('analytics_question_kids', {
@@ -284,3 +286,52 @@ export const ANALYTICS_QUESTION_KIDS = mysqlTable('analytics_question_kids', {
     question_text: varchar('question_text', { length: 300 }).notNull(),
     quiz_id: int('quiz_id').notNull(),
 });
+
+export const CAREER_GROUP = mysqlTable('career_group', {
+    id: int('id').notNull().autoincrement().primaryKey(),
+    career_name: varchar('career_name', { length: 255 }).notNull().unique(),
+    created_at: timestamp('created_at').defaultNow(),
+  });
+
+// Define the `user_progress` table schema
+export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
+    id: int('id').primaryKey().autoincrement(),  // AUTO_INCREMENT primary key
+    question_id: int('question_id').notNull(),  // Foreign key to questions table
+    answer_id: int('answer_id').notNull(),  // Foreign key to answers table
+    user_id: int('user_id').notNull(),  // Foreign key to users table
+    marks: decimal('marks', 10, 3).notNull(),  // Decimal column with precision (10, 3)
+    created_at: timestamp('created_at').defaultNow(),  // Creation timestamp with default current timestamp
+    challenge_id: int('challenge_id').notNull(),  // Foreign key to challenge table
+    task_id: int('task_id').notNull()  // Foreign key to tasks table
+  });
+
+  export const USER_TASKS = mysqlTable('user_tasks', {
+    id: int('id').primaryKey().autoincrement(),
+    task_id: int('task_id').notNull(),
+    user_id: int('user_id').notNull(),
+    reward_points: int('reward_points').default(0),
+    approved: mysqlEnum('approved', ['nill', 'yes', 'no']).notNull(),
+    entry_points: int('entry_points').default(0).notNull(),
+    rejected: mysqlEnum('rejected', ['no', 'yes']).notNull(),
+    start_date: datetime('start_date').default(new Date()).notNull(),
+    start_time: time('start_time').default(null),
+    end_date: datetime('end_date').default(null),
+    end_time: time('end_time').default(null),
+    steps: int('steps').default(0),
+    approved_by: varchar('approved_by', { length: 100 }).default(null),
+    completed: mysqlEnum('completed', ['no', 'yes']).notNull(),
+    arena: mysqlEnum('arena', ['no', 'yes']).notNull(),
+    challenge_id: int('challenge_id').notNull(),
+    image: varchar('image', { length: 150 }).default(null),
+    video: varchar('video', { length: 150 }).default(null),
+    day: int('day').default(0).notNull(),
+    started: mysqlEnum('started', ['no', 'yes']).notNull(),
+  });
+
+  export const TEMP_LEADER = mysqlTable('temp_leader', {
+    id: int('id').primaryKey().autoincrement(),
+    marks: decimal('marks', 10, 3).notNull(),
+    userId: int('user_id').notNull(),
+    challengeId: int('challenge_id').notNull(),
+    taskId: int('task_id').notNull(),
+  });

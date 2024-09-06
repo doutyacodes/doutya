@@ -13,7 +13,7 @@ export async function POST(req) {
       name: data?.name,
       gender: data?.gender,
       mobile: data?.mobile,
-      birth_date: new Date(data?.birth_date),
+      birth_date: new Date(data?.dob),
       password: data?.password,
       username: data?.username,
       education: data?.education,
@@ -22,6 +22,7 @@ export async function POST(req) {
       university: data?.university,
       yearOfPassing: data?.yearOfPassing,
       monthOfPassing: data?.monthOfPassing,
+      country:data?.country
     });
     console.log("Got daat result ", result);
     if (!result) {
