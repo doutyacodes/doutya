@@ -265,7 +265,7 @@ function page() {
                         selectedCareer.strengths.split('\r\n').map((strength, index) => (
                           <div
                             key={index}
-                            className="rounded-xl ml-4 grid grid-flow-col"
+                            className="rounded-xl ml-4 grid grid-flow-col bg-orange-300"
                           >
                             {strength}
                           </div>

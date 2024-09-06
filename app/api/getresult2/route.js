@@ -50,11 +50,12 @@ export async function GET(req) {
       )
       .execute();
     }
-  if (existingResult.length > 0 && existingResult[0].result2 !== null) {
-    // If result2 is already present, return it
-    console.log('Returning cached result');
-    return NextResponse.json({ result: existingResult[0].result2 });
-  }
+    console.log(existingResult)
+    if (industry==null && existingResult.length > 0 && existingResult[0].result2 !== null) {
+      // If result2 is already present, return it
+      console.log('Returning cached result');
+      return NextResponse.json({ result: existingResult[0].result2 });
+    }
 
   // Get quiz sequences
   const personality2 = await db.select({
@@ -128,5 +129,6 @@ export async function GET(req) {
     })
     .execute();
 
-  return NextResponse.json({ result: responseText });
+  // return NextResponse.json({ result: responseText });
+  return NextResponse.json({ careers: JSON.parse(responseText) });
 }

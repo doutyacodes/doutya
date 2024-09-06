@@ -63,7 +63,6 @@ export default function Results2() {
             setLoading(false); // Stop loading
         }
     };
-
     // const handleCountryChange = (selectedOption) => {
     //     setSelectedCountry(selectedOption);
     //     fetchResults(industrySelect,selectedOption);
