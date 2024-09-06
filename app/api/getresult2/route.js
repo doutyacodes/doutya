@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
-import { QUIZ_SEQUENCES, USER_RESULTS } from '@/utils/schema';
+import { QUIZ_SEQUENCES, USER_DETAILS, USER_RESULTS } from '@/utils/schema';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/utils';
 import axios from 'axios';
@@ -16,47 +16,40 @@ export async function GET(req) {
 
   const userData = authResult.decoded_Data;
   const userId = userData.userId;
-  
+
   const url = new URL(req.url);
-  const country = url.searchParams.get('country') || null;
+
+  const country_db = await db.select({
+    country: USER_DETAILS.country
+  })
+    .from(USER_DETAILS)
+    .where(
+      eq(USER_DETAILS.id, userId)
+    )
+    .execute();
+  console.log(country_db)
+  const country=country_db[0].country
   const industry = url.searchParams.get('industry') || null;
 
   console.log("country", country);
   console.log("industry", industry);
 
-  // Check if data already exists for the given user and country or globally
-  let existingResult;
-  if(country==null)
-  {
-    existingResult = await db
-    .select({
-      result2: USER_RESULTS.result2
-    })
-    .from(USER_RESULTS)
-    .where(
-      and(
-        eq(USER_RESULTS.user_id, userId),
-        eq(USER_RESULTS.globally, 'yes') // Globally check based on the country value
-      )
-    )
-    .execute();
-  }
-  else{
-    existingResult = await db
-    .select({
-      result2: USER_RESULTS.result2
-    })
-    .from(USER_RESULTS)
-    .where(
-      and(
-        eq(USER_RESULTS.user_id, userId),
-        eq(USER_RESULTS.country, country), // Check for specific country
-      )
-    )
-    .execute();
-  }
   
-
+  let existingResult=[];
+  if (industry == null) {
+    existingResult = await db
+      .select({
+        result2: USER_RESULTS.result2
+      })
+      .from(USER_RESULTS)
+      .where(
+          and(
+          eq(USER_RESULTS.user_id, userId),
+          eq(USER_RESULTS.type,'basic')
+          )
+      )
+      .execute();
+    }
   if (existingResult.length > 0 && existingResult[0].result2 !== null) {
     // If result2 is already present, return it
     console.log('Returning cached result');
@@ -65,16 +58,16 @@ export async function GET(req) {
 
   // Get quiz sequences
   const personality2 = await db.select({
-      typeSequence: QUIZ_SEQUENCES.type_sequence
+    typeSequence: QUIZ_SEQUENCES.type_sequence
   })
-  .from(QUIZ_SEQUENCES)
-  .where(
+    .from(QUIZ_SEQUENCES)
+    .where(
       and(
         eq(QUIZ_SEQUENCES.user_id, userId),
         eq(QUIZ_SEQUENCES.quiz_id, 1)
       )
-  )
-  .execute();
+    )
+    .execute();
 
   const type2 = personality2[0].typeSequence;
 
@@ -94,7 +87,7 @@ export async function GET(req) {
   const type1 = personality1[0].typeSequence;
 
   // Define the prompt for GPT
-  const prompt = `Provide a list of the 5 best careers in ${industry ? `the ${industry} industry in ` : ''}${country || 'your country'} for an individual with an ${type1} personality 
+  const prompt = `Provide a list of the 5 best careers in ${industry ? `the ${industry} industry in ` : ''}${country} for an individual with an ${type1} personality 
     type and RIASEC interest types of ${type2}. For each career, include the following information:
       career_name: A brief title of the career.
       reason_for_recommendation: Why this career is suitable for someone with these interests.
@@ -121,6 +114,8 @@ export async function GET(req) {
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
 
+  // console.log(responseText)
+
   // Store the new result in the user_results table
   await db
     .insert(USER_RESULTS)
@@ -128,8 +123,8 @@ export async function GET(req) {
       user_id: userId,
       result2: responseText,
       quiz_id: 2,
-      country: country || null,  // Null if no country is specified
-      globally: country === null ? 'yes' : 'no' // Globally yes if no country, no otherwise
+      type: industry == null ? 'basic' : 'advance',
+      country: country,
     })
     .execute();
 
