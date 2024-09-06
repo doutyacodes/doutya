@@ -21,6 +21,7 @@ function page() {
   const [showRoadMapDetails, setShowRoadMapDetails] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [showFinalRoadMap, setShowFinalRoadMap] = useState(true);
+  const [country,setCountry]=useState('');
   const router = useRouter();
 
   const handleRoadmapClick = () => {
@@ -63,7 +64,6 @@ function page() {
   const handleCareerClick = (career) => {
     setSelectedCareer(career);
   };
-
   const getCareers = async () => {
     setIsLoading(true)
     try {
@@ -90,15 +90,24 @@ function page() {
     getCareers()
   }, [])
 
+  const handleAddCareerClick = () => {
+    if (carrerData.length >= 5) {
+      toast.error('You can only add up to 5 careers.');
+      return;
+    }
+    setShowDialogue(true); // Show the dialog if career limit is not reached
+  };
 
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-      const response = await GlobalApi.SaveInterestedCareer(token, careerName);
+      const response = await GlobalApi.SaveInterestedCareer(token, careerName,country);
 
       if (response && response.status === 201) { // Check for a successful response
         console.log('Career saved successfully');
+        setCareerName('');  // Clear the careerName field
+        setCountry(''); 
       } else {
         // Handle the case where the response was not successful
         console.error('Failed to save career');
@@ -116,7 +125,7 @@ function page() {
       // Call getCareers regardless of the outcome of the API call
       getCareers();
       setShowDialogue(false)
-      setIsLoading(false)
+      setIsLoading(false)  
     }
   }
 
@@ -143,6 +152,8 @@ function page() {
         getCareers={getCareers}
         setCareerName={setCareerName}
         careerName={careerName}
+        setCountry={setCountry}
+        country={country}
         handleSubmit={handleSubmit}
       />
       {/* } */}
@@ -163,7 +174,7 @@ function page() {
         }
 
         <div className='w-48 h-48 p-5 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95'
-          onClick={() => setShowDialogue(true)}>
+          onClick={handleAddCareerClick}>
           <PlusIcon className='text-gray-600 font-thin h-20 w-20' />
         </div>
       </div>

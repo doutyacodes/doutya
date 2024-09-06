@@ -211,9 +211,10 @@ const GetUserAge=(token)=>axios.get('/api/getUserAge',{
   }
 });
 
-const SaveInterestedCareer = (token, careerName) => {
+const SaveInterestedCareer = (token, careerName,country) => {
   const payload = {
     career: careerName,
+    country: country
   };
 
   return axios.post(`/api/saveInterestedCareer`, payload, {

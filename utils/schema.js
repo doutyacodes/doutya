@@ -273,6 +273,10 @@ export const USER_RESULTS=mysqlTable('user_results',{
     id: int('id').primaryKey().autoincrement(),
     user_id:int('user_id').primaryKey().references(()=>USER_DETAILS.id).notNull(),
     result2:text('result2').default(null),
+    quiz_id:int('quiz_id'),
+    type: mysqlEnum('type', ['basic', 'advance']).default('basic'),
+    country: varchar('country', 255).default(null),
+    globally: mysqlEnum('globally', ['yes', 'no'])
 })
 
 export const ANALYTICS_QUESTION_KIDS = mysqlTable('analytics_question_kids', {
