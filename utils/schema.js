@@ -234,15 +234,15 @@ export const USER_CAREER = mysqlTable('user_career', {
     user_id: int('user_id').notNull(),
     // career_name: varchar('career_name', { length: 255 }).notNull(),
     career_group_id: int('career_group_id').notNull().references(() => CAREER_GROUP.id),
-    reason_for_recommendation: text('reason_for_recommendation'),
-    roadmap: text('roadmap'),
-    present_trends: text('present_trends'),
-    future_prospects: text('future_prospects'),
-    user_description: text('user_description'),
+    reason_for_recommendation: text('reason_for_recommendation').default(null),
+    roadmap: text('roadmap').default(null),
+    present_trends: text('present_trends').default(null),
+    future_prospects: text('future_prospects').default(null),
+    user_description: text('user_description').default(null),
     created_at: timestamp('created_at').defaultNow(),
     type2: varchar('type2', { length: 255 }).notNull(),
     type1: varchar('type1', { length: 255 }).notNull(),
-    country: text('country'),
+    country: text('country').default(null),
   });
 
 export const STRENGTH_TYPES = mysqlTable('strength_types', {
