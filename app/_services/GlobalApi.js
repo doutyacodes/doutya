@@ -223,6 +223,110 @@ const SaveInterestedCareer = (token, careerName) => {
   });
 };
 
+const GetContests = (token) => {
+
+  return axios.get(`/api/getContests/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetContestData = (id, token) => {
+
+  return axios.get(`/api/getContestData/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const SaveContestProgress = (data, token, taskId) => {
+  const payload = {
+    taskId,
+    results: data,
+  };
+
+  return axios.post(`/api/saveContestProgress`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const UpdateContestData = (token, taskId) => {
+  const payload = {
+    taskId,
+  };
+
+  return axios.post(`/api/updateContestData`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetContestResultData = (token) => {
+
+  return axios.get(`/api/getContestResultData/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetTests = (id, token) => {
+
+  return axios.get(`/api/getTests/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetTestsData = (id, token) => {
+
+  return axios.get(`/api/getTestData/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const SaveTestProgress = (data, token, taskId) => {
+  const payload = {
+    taskId,
+    results: data,
+  };
+
+  return axios.post(`/api/saveTestProgress`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const UpdateTestData = (token, taskId) => {
+  const payload = {
+    taskId,
+  };
+
+  return axios.post(`/api/updateTestData`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetTestResultData = (token) => {
+
+  return axios.get(`/api/getTestResultData/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 
 export default {
   CreateNewUser,
@@ -251,5 +355,16 @@ export default {
   GetQuizDataKids,
   GetCareerQuizKids,
   GetUserAge,
-  SaveInterestedCareer
+  SaveInterestedCareer,
+  GetTests,
+  GetTestsData,
+  SaveTestProgress,
+  UpdateTestData,
+  GetTestResultData,
+
+  GetContests,
+  GetContestData,
+  SaveContestProgress,
+  UpdateContestData,
+  GetContestResultData,
 }

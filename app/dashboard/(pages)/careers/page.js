@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import AddCareer from '../../_components/AddCareer/AddCareer';
+import Tests from '../../_components/TestTab/Tests';
+import Contests from '../../_components/ContestTab/Contests';
 
 
 function page() {
@@ -17,15 +19,14 @@ function page() {
   const [selectedCareer, setSelectedCareer] = useState(null);
   const [showDialogue, setShowDialogue] = useState(false)
   const [careerName, setCareerName] = useState('');
-  const [showRoadmap, setShowRoadmap] = useState(false);
+
   const [showRoadMapDetails, setShowRoadMapDetails] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [showFinalRoadMap, setShowFinalRoadMap]=useState(true);
-  const router = useRouter();
 
-  const handleRoadmapClick = () => {
-    setShowRoadmap(!showRoadmap); // Toggles the visibility
-  };
+  const [activeTab, setActiveTab] = useState('roadmap'); // Single state for active tab
+
+  const router = useRouter();
 
   const handleShowRoadMapDetails = () => {
     setShowRoadMapDetails(!showRoadMapDetails);
@@ -59,6 +60,16 @@ function page() {
     }
   }, [carrerData])
 
+  
+
+  // useEffect(() => {
+  //   // Set the first career as the default selected
+  //   if (carrerData.length > 0) {
+  //     setSelectedCareer(carrerData[0]);
+  //   }
+  // }, [])
+
+
   const handleCareerClick = (career) => {
     setSelectedCareer(career);
   };
@@ -69,6 +80,7 @@ function page() {
       const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
       const response = await GlobalApi.GetCarrerData(token);
       if (response.status === 201) {  // Check for a 200 status code
+        console.log(response.data)
         setCarrerData(response.data);
       } else {
         toast.error('Failed to fetch career data. Please try again later.');
@@ -170,28 +182,12 @@ function page() {
 
       <div className='flex flex-col text-white gap-5'>
         {selectedCareer && (
-          // <div
-          //   className={'relative bg-white px-10 py-6 text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer mb-4 '}
-          // >
-          //   <h2 className='text-xl font-bold text-blue-600 mb-4'>{selectedCareer.career_name}</h2>
-          //   <p className='mb-4'><strong>Reason for Recommendation:</strong> {selectedCareer.reason_for_recommendation}</p>
-          //   <h3 className='text-lg font-semibold text-gray-800 mb-2'>Roadmap:</h3>
-          //   <ul className='list-disc ml-5 mb-4'>
-          //     {selectedCareer.roadmap.split('.,').map((step, idx) => (
-          //       <li key={idx}>{step.trim()}</li>
-          //     ))}
-          //   </ul>
-          //   <p className='mb-4'><strong>Feedback:</strong> {selectedCareer.feedback}</p>
-          //   <p className='mb-4'><strong>Present Trends:</strong> {selectedCareer.present_trends}</p>
-          //   <p className='mb-4'><strong>Future Prospects:</strong> {selectedCareer.future_prospects}</p>
-          //   <p><strong>User Description:</strong> {selectedCareer.user_description}</p>
-          // </div>
           <>
             <div className='bg-teal-400 h-24 rounded-sm'>
               <h2 className='text-center text-2xl mt-10 text-black font-bold'>{selectedCareer.career_name}</h2>
             </div>
             <div className="flex gap-8">
-              <button className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white font-bold py-2 px-4 rounded-full w-80" onClick={handleRoadmapClick}>
+              {/* <button className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white font-bold py-2 px-4 rounded-full w-80" onClick={handleRoadmapClick}>
                 ROADMAP
               </button>
               <button className="bg-green-500 text-white font-bold py-2 px-4 rounded-full w-80">
@@ -202,9 +198,42 @@ function page() {
               </button>
               <button className="bg-green-500 text-white font-bold py-2 px-4 rounded-full w-80">
                 COMMUNITY
+              </button> */}
+
+              <button
+                className={`${activeTab === 'roadmap' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
+                onClick={() => {setActiveTab('roadmap')}}
+              >
+                ROADMAP
               </button>
+              <button
+                className={`${activeTab === 'contests' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
+                onClick={() => setActiveTab('contests')}
+              >
+                CONTESTS
+              </button>
+              <button
+                className={`${activeTab === 'tests' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
+                onClick={() => setActiveTab('tests')}
+              >
+                TESTS
+              </button>
+              <button
+                className={`${activeTab === 'feedback' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
+                onClick={() => setActiveTab('feedback')}
+              >
+                FEEDBACK
+              </button>
+              <button
+                className={`${activeTab === 'community' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
+                onClick={() => setActiveTab('community')}
+              >
+                COMMUNITY
+              </button>
+
             </div>
-            {showRoadmap && (
+            
+            {activeTab === 'roadmap' && (
               <>
                 <div className="flex gap-1">
                   <button className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black font-bold py-2 px-4 w-1/2" 
@@ -247,7 +276,28 @@ function page() {
             )}
           </>
         )}
-        <br /><br />
+
+        {/* {
+          activeTab === 'tests' && (
+            <div className=''>
+
+            </div>
+          )
+        } */}
+
+        {
+          activeTab === 'tests' && (
+            <Tests selectedCareer={selectedCareer}/>
+          )
+        }
+
+        {
+          activeTab === 'contests' && (
+            <Contests selectedCareer={selectedCareer}/>
+          )
+        }
+
+
       </div>
     </div>
   )
