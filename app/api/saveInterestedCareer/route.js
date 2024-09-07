@@ -10,6 +10,7 @@ import { calculateAge } from '@/lib/ageCalculate';
 
 export async function POST(req)
 {
+  console.log('got')
     const authResult = await authenticate(req);
     if (!authResult.authenticated) {
         return authResult.response;
@@ -30,7 +31,7 @@ export async function POST(req)
     const education=user_data[0].education
 
     const { career ,country} = await req.json();
-
+    console.log(career,country)
     // Call the validation function
     try {
       const validationResult = await validateCareer(career);

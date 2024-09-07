@@ -302,8 +302,6 @@ function page() {
 
                             className="rounded-xl bg-pink-300 p-2"
 
-                            className="rounded-xl ml-4 grid grid-flow-col bg-orange-300"
-
                           >
                             {strength}
                           </div>
