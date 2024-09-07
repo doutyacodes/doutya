@@ -56,9 +56,9 @@ export async function handleCareerData(userId, country, results) {
                 user_description: career.user_description,
                 type2: "",
                 type1: "",
-                country: country?.label || null
+                country: country
             };
-
+            
             await db.insert(USER_CAREER).values(insertData).execute();
         }
     } catch (error) {

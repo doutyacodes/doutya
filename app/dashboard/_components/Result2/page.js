@@ -63,18 +63,6 @@ export default function Results2() {
             setLoading(false); // Stop loading
         }
     };
-    // const handleCountryChange = (selectedOption) => {
-    //     setSelectedCountry(selectedOption);
-    //     fetchResults(industrySelect,selectedOption);
-    // };
-
-    // const handleGlobalClick = () => {
-    //     fetchResults(''); // Fetch results globally
-    // };
-
-    // const handleCountryWiseClick = () => {
-    //     setDisplayCountrySelect(true);
-    // };
 
     const handleFeedbackSubmit = async () => {
         try {
@@ -88,29 +76,33 @@ export default function Results2() {
     };
 
     const handleCareerClick = (index) => {
-
-        if(prevSelectCount < 3){
+        if(prevSelectCount < 5){
             if (selectedCareers.includes(index)) {
                 // If already selected, deselect it
                 setSelectedCareers(selectedCareers.filter(careerIndex => careerIndex !== index));
-            } else if (selectedCareers.length < 3 - prevSelectCount) {
+            } else if (selectedCareers.length < 5 - prevSelectCount) {
                 // Add to selected list if less than 3 are selected
                 setSelectedCareers([...selectedCareers, index]);
             } else {
                 // Show a message or do nothing if already 3 selected
-                toast.error(`You can only select up to ${3 - prevSelectCount} careers.`)
+                toast.error(`You can only select up to ${5 - prevSelectCount} careers.`)
             }
         }
-
     };
 
     const handleSaveResult = async()=>{
        
         if (selectedCareers.length > 0) {
+            console.log("Greater than");
+            
             const selectedCareerObjects = selectedCareers.map(index => resultData[index]);
             
-            const payload = {
-                country: selectedCountry,
+            // const payload = {
+            //     country: selectedCountry,
+            //     results: selectedCareerObjects,
+            //   };
+
+              const payload = {
                 results: selectedCareerObjects,
               };
             

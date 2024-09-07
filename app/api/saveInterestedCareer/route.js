@@ -116,34 +116,11 @@ export async function POST(req)
     //   user_description: parsedData.user_description,
     //   type2: "", // Ensure these are set if needed
     //   type1: "",
-    //   country: null,
+    //   country: country,
     // };
 
-    // try {
-    //   // Insert the data into the USER_CAREER table
-    //   await db.insert(USER_CAREER).values(insertData);
-    //   return NextResponse.json({ message: 'Careers saved successfully' }, { status: 201 });
-    // } catch (error) {
-    //   return NextResponse.json(
-    //     { message: error.message || "An unexpected error occurred" },
-    //     { status: 500 } // Internal Server Error
-    //   );
-    // }
-    const insertData = {
-      user_id: userId,
-      career_name: parsedData.career_name,
-      reason_for_recommendation: parsedData.reason_for_recommendation,
-      roadmap: parsedData.roadmap.join(', '),
-      present_trends: parsedData.present_trends,
-      future_prospects: parsedData.future_prospects,
-      user_description: parsedData.user_description,
-      type2: "", // Ensure these are set if needed
-      type1: "",
-      country: country,
-    };
-
     try {
-      await handleCareerData(userId, null, [parsedData]);
+      await handleCareerData(userId, country, [parsedData]);
       return NextResponse.json({ message: 'Careers saved successfully' }, { status: 201 });
     } catch (error) {
       console.log("error", error);
