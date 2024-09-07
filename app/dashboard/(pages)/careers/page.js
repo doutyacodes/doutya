@@ -300,7 +300,7 @@ function page() {
                           <div
                             key={index}
 
-                            className="rounded-xl bg-pink-300 p-2"
+                            // className="rounded-xl bg-pink-300 p-2"
 
                           >
                             {strength}
