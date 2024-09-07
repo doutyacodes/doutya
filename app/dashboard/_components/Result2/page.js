@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import html2canvas from 'html2canvas';
 
 export default function Results2() {
     const [resultData, setResultData] = useState(null)
@@ -16,6 +17,7 @@ export default function Results2() {
     const [industries, setIndustries] = useState([])
     const [industrySelect, setIndustrySelect] = useState(null)
     const router = useRouter();
+    const resultsRef = useRef();
     
     const handleStayClick = () => {
       setStep(0); // Hide everything if "Stay" is clicked
@@ -130,6 +132,16 @@ export default function Results2() {
         
         
     }
+    const downloadResultsAsImage = async () => {
+        if (resultsRef.current) {
+            const canvas = await html2canvas(resultsRef.current); // Capture the section as a canvas
+            const imgData = canvas.toDataURL('image/png'); // Convert the canvas to an image
+            const link = document.createElement('a');
+            link.href = imgData;
+            link.download = 'results.png'; // Specify the image filename
+            link.click();
+        }
+    };
 
     useEffect(()=>{
 
@@ -162,6 +174,7 @@ export default function Results2() {
         <div className='w-4/5 mx-auto'>
             <Toaster/>
             <p className='text-center text-white text-3xl mb-8'>Results</p>
+            <button className='bg-orange-300 p-4 rounded-xl mb-5 text-black hover:bg-orange-700 hover:text-white' onClick={downloadResultsAsImage}>Download Results</button>
             
             <div className='flex flex-col text-white gap-5'>
                 {resultData && (
@@ -203,7 +216,7 @@ export default function Results2() {
                         )}
                     </>
                 )}
-                
+                <div ref={resultsRef}>
                 {loading ? (
                     <div className='bg-white px-10 py-6 text-sm text-gray-600 rounded-xl'>
                         Loading results...
@@ -233,6 +246,7 @@ export default function Results2() {
                         </div>
                     ))
                 ) : null}
+                </div>
                     {(resultData && prevSelectCount < 3) && (
                         <div>
                             <button
