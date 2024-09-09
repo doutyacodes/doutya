@@ -35,9 +35,9 @@ export default function Results2() {
         handleOptionSelect
     };
 
-//    useEffect(()=>{
-//     fetchResults('');
-//    },[]);
+   useEffect(()=>{
+    fetchResults('');
+   },[]);
 
    useEffect(() => {
     if (resultData) {
@@ -50,16 +50,23 @@ export default function Results2() {
         try {
             const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
             const industryParam = selectedIndustry ? selectedIndustry: '';            
-            const data = await GlobalApi.GetResult2(token, industryParam);
-            const parsedResult = JSON.parse(data.data.result);
-            setResultData(parsedResult);
-            setDisplayResults(true);
+            const response = await GlobalApi.GetResult2(token, industryParam);
 
+            if (response.status === 200) {
+                const parsedResult = JSON.parse(response.data.result);
+                setResultData(parsedResult);
+                setDisplayResults(true);
+                setStep(2)
+              } else if (response.status === 204) {
+                // No data found, redirect or go to another step
+                console.log("fetchIndustry")
+                setStep(1)
+                fetchIndustry()
+              }
             const userStatusData = await GlobalApi.CheckFeedback(token);
             setFeedbackGiven(userStatusData.data.exists);
             setPrevSelectCount(userStatusData.data.savedCareerCount);
 
-            setStep(2)
         } catch (err) {
             console.error('Failed to fetch results:', err);
         } finally {
@@ -144,46 +151,43 @@ export default function Results2() {
         }
     };
 
-    useEffect(()=>{
+    const fetchIndustry = async () => {
+        setLoading(true); // Start loading
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+            // const params = {
+            //     country: selectedCountry,
+            //   };
+            const data = await GlobalApi.GetIndustry(token);
+            const parsedResult = JSON.parse(data.data.result);
 
-        const fetchIndustry = async () => {
-            setLoading(true); // Start loading
-            try {
-                const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                // const params = {
-                //     country: selectedCountry,
-                //   };
-                const data = await GlobalApi.GetIndustry(token);
-                const parsedResult = JSON.parse(data.data.result);
+            console.log("parsedResult", parsedResult);
 
-                console.log("parsedResult", parsedResult);
-    
-                setIndustries(parsedResult);
-                // setDisplayResults(true);
-    
-            } catch (err) {
-                console.error('Failed to fetch results:', err);
-            } finally {
-                setLoading(false); // Stop loading
-            }
-        };
-        // if(step === 2){
-            fetchIndustry()
-        // }
+            setIndustries(parsedResult);
+            // setDisplayResults(true);
 
-    }, [])
+        } catch (err) {
+            console.error('Failed to fetch results:', err);
+        } finally {
+            setLoading(false); // Stop loading
+        }
+    };
 
-    // if (loading) {
-    //     return (
-    //       <div className="h-full flex items-center justify-center text-white">
-    //         <div>
-    //           <div className="font-semibold">
-    //             <LoadingOverlay loadText={"Loading..."} />
-    //           </div>
-    //         </div>
-    //       </div>
-    //     );
-    //   }
+    // useEffect(()=>{
+    //     fetchIndustry()
+    // }, [])
+
+    if (loading) {
+        return (
+          <div className="h-full flex items-center justify-center text-white">
+            <div>
+              <div className="font-semibold">
+                <LoadingOverlay loadText={"Loading..."} />
+              </div>
+            </div>
+          </div>
+        );
+      }
     
 
     return (

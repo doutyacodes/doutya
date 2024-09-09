@@ -29,35 +29,60 @@ export async function GET(req) {
     .execute();
   console.log(country_db)
   const country = country_db[0].country
+  
   const industry = url.searchParams.get('industry') || null;
 
   console.log("country", country);
   console.log("industry", industry);
 
   
-  let existingResult=[];
-  if (industry == null) {
-    existingResult = await db
-      .select({
-        result2: USER_RESULTS.result2
-      })
-      .from(USER_RESULTS)
-      .where(
-          and(
-          eq(USER_RESULTS.user_id, userId),
-          eq(USER_RESULTS.type,'basic')
+  // let existingResult=[];
+  // if (industry == null) {
+  //   existingResult = await db
+  //     .select({
+  //       result2: USER_RESULTS.result2
+  //     })
+  //     .from(USER_RESULTS)
+  //     .where(
+  //         and(
+  //         eq(USER_RESULTS.user_id, userId),
+  //         eq(USER_RESULTS.type,'basic')
+  //         )
+  //     )
+  //     .execute();
+  //   }
+
+    if (industry == null) {
+      const existingResult = await db
+          .select({
+            result2: USER_RESULTS.result2
+          })
+          .from(USER_RESULTS)
+          .where(
+              and(
+              eq(USER_RESULTS.user_id, userId),
+              )
           )
-      )
-      .execute();
-    }
+          .execute();
 
-    console.log(existingResult)
+          console.log(existingResult)
 
-    if (industry==null && existingResult.length > 0 && existingResult[0].result2 !== null) {
-      // If result2 is already present, return it
-      console.log('Returning cached result');
-      return NextResponse.json({ result: existingResult[0].result2 });
-    }
+          if (existingResult.length > 0 && existingResult[0].result2 !== null) {
+            // If result2 is already present, return it
+            console.log('Returning cached result');
+            return NextResponse.json({ result: existingResult[0].result2 }, { status: 200 });
+          } else if (existingResult.length === 0){
+            return new NextResponse(null, { status: 204 });
+          }
+
+        }
+   
+
+    // if (industry==null && existingResult.length > 0 && existingResult[0].result2 !== null) {
+    //   // If result2 is already present, return it
+    //   console.log('Returning cached result');
+    //   return NextResponse.json({ result: existingResult[0].result2 });
+    // }
 
   // Get quiz sequences
   // const personality2 = await db.select({
@@ -153,5 +178,5 @@ export async function GET(req) {
     .execute();
 
   // return NextResponse.json({ result: responseText });
-  return NextResponse.json({ result: responseText });
+  return NextResponse.json({ result: responseText }, { status: 200 });
 }

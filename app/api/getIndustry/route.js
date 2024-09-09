@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
-import { QUIZ_SEQUENCES } from '@/utils/schema';
+import { QUIZ_SEQUENCES, USER_DETAILS } from '@/utils/schema';
 import { eq,and } from 'drizzle-orm';
 import { db } from '@/utils';
 import axios from 'axios';
@@ -14,12 +14,25 @@ export async function GET(req)
       }
 
     const userData = authResult.decoded_Data;
-    
     const userId = userData.userId;
 
-    const {country}  = req.query || 'your country';
-    console.log('Country:', country);
-  
+    const country_db = await db.select({
+      country: USER_DETAILS.country
+    })
+      .from(USER_DETAILS)
+      .where(
+        eq(USER_DETAILS.id, userId)
+      )
+      .execute();
+    console.log(country_db)
+    
+    let country;
+    if(!country_db[0].country){
+       country  =  'your country';
+    } else {
+       country = country_db[0].country
+    }
+    
     const personalityTypes = await db.select({
       typeSequence: QUIZ_SEQUENCES.type_sequence,
       quizId : QUIZ_SEQUENCES.quiz_id
