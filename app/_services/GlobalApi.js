@@ -327,6 +327,16 @@ const GetTestResultData = (token) => {
 };
 
 
+const GetLeaderboardData = (id, token) => {
+
+  return axios.get(`/api/getLeaderboardData/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -366,4 +376,6 @@ export default {
   SaveContestProgress,
   UpdateContestData,
   GetContestResultData,
+
+  GetLeaderboardData,
 }

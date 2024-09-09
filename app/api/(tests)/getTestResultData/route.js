@@ -33,11 +33,7 @@ export async function GET(request) {
 
         // Step 2: Fetch results from TEMP_LEADER table for the user and the challenge IDs
         const results = await db
-            .select({
-                marks: TEMP_LEADER.marks,
-                challengeId: TEMP_LEADER.challengeId,
-                taskId: TEMP_LEADER.taskId
-            })
+            .select()
             .from(TEMP_LEADER)
             .where(
                 and(
@@ -54,7 +50,7 @@ export async function GET(request) {
         // Step 3: Calculate the percentage for each result
         const resultsWithPercentage = await Promise.all(
             results.map(async (result) => {
-                const { marks, taskId, challengeId } = result;
+                const { marks, userId, taskId, challengeId } = result;
 
                 // Find the challenge that corresponds to this challengeId
                 const challenge = challengeIdsResult.find(c => c.challengeId === challengeId);
@@ -80,9 +76,12 @@ export async function GET(request) {
                 const percentage = (marks / totalMarks) * 100;
 
                 return {
+                    userId,
+                    taskId,
                     decryptedTaskName,
                     challengeId,
-                    percentage: percentage.toFixed(2) // Format to 2 decimal places
+                    percentage: percentage.toFixed(2), // Format to 2 decimal places
+                    marks
                 };
             })
         );

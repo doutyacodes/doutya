@@ -28,7 +28,7 @@ export async function GET(req) {
     )
     .execute();
   console.log(country_db)
-  const country=country_db[0].country
+  const country = country_db[0].country
   const industry = url.searchParams.get('industry') || null;
 
   console.log("country", country);
@@ -50,7 +50,9 @@ export async function GET(req) {
       )
       .execute();
     }
+
     console.log(existingResult)
+
     if (industry==null && existingResult.length > 0 && existingResult[0].result2 !== null) {
       // If result2 is already present, return it
       console.log('Returning cached result');
@@ -58,19 +60,19 @@ export async function GET(req) {
     }
 
   // Get quiz sequences
-  const personality2 = await db.select({
-    typeSequence: QUIZ_SEQUENCES.type_sequence
-  })
-    .from(QUIZ_SEQUENCES)
-    .where(
-      and(
-        eq(QUIZ_SEQUENCES.user_id, userId),
-        eq(QUIZ_SEQUENCES.quiz_id, 1)
-      )
-    )
-    .execute();
+  // const personality2 = await db.select({
+  //   typeSequence: QUIZ_SEQUENCES.type_sequence
+  // })
+  //   .from(QUIZ_SEQUENCES)
+  //   .where(
+  //     and(
+  //       eq(QUIZ_SEQUENCES.user_id, userId),
+  //       eq(QUIZ_SEQUENCES.quiz_id, 1)
+  //     )
+  //   )
+  //   .execute();
 
-  const type2 = personality2[0].typeSequence;
+  // const type2 = personality2[0].typeSequence;
 
   const personality1 = await db
     .select({
@@ -86,17 +88,40 @@ export async function GET(req) {
     .execute();
 
   const type1 = personality1[0].typeSequence;
+  const type3 = null
 
-  // Define the prompt for GPT
-  const prompt = `Provide a list of the 5 best careers in ${industry ? `the ${industry} industry in ` : ''}${country} for an individual with an ${type1} personality 
-    type and RIASEC interest types of ${type2}. For each career, include the following information:
-      career_name: A brief title of the career.
-      reason_for_recommendation: Why this career is suitable for someone with these interests.
-      roadmap: Detailed steps and milestones required to achieve this career (as an array).
-      present_trends: Current trends and opportunities in the field.
-      future_prospects: Predictions and potential growth in this career.
-      user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
-    Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`;
+  // // Define the prompt for GPT
+  // const prompt = `Provide a list of the 5 best careers in ${industry ? `the ${industry} industry in ` : ''}${country} for an individual with an ${type1} personality 
+  //   type and RIASEC interest types of ${type2}. For each career, include the following information:
+  //     career_name: A brief title of the career.
+  //     reason_for_recommendation: Why this career is suitable for someone with these interests.
+  //     roadmap: Detailed steps and milestones required to achieve this career (as an array).
+  //     present_trends: Current trends and opportunities in the field.
+  //     future_prospects: Predictions and potential growth in this career.
+  //     user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
+  //   Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`;
+
+    const prompt = `Provide a list of the 6 best careers in the ${industry} sector ${
+      country ? "in " + country : ""
+    } for an individual with an ${type1} personality type ${
+      type3 ? " and Gallup Strengths types of " + type3 : ""
+    } with 3 normal careers, 1 trending career and 1 off beat career. For each career, include the following information:
+        career_name: A brief title of the career?.
+        reason_for_recommendation: Why this career is suitable for someone with these interests${
+          country
+            ? " and explain the reason this career is suitable in " +
+              country
+            : ""
+        }.
+        roadmap: Detailed steps and milestones required to achieve this career (as an array).
+        present_trends: Current trends and opportunities in the field${
+          country ? " in " + country : ""
+        }.
+        future_prospects: Predictions and potential growth in this career${
+          country ? " in " + country : ""
+        }.
+        user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
+        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Give it as a single JSON data without any wrapping other than []`;
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",

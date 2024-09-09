@@ -29,13 +29,25 @@ export async function GET(req)
 
     const type1 = personalityTypes.find(pt => pt.quizId === 1)?.typeSequence;
     const type2 = personalityTypes.find(pt => pt.quizId === 2)?.typeSequence;
+    const type3 = null
   
-    const prompt = `Provide a list of the 5 best indsutries ${
-      country ? "in " + country : ""
-    } for an individual with an ${type1} personality type and RIASEC interest types of ${type2}. For each industry, include the following information:
-        industry_name: A brief title of the industry?.
+    // const prompt = `Provide a list of the 5 best indsutries ${
+    //   country ? "in " + country : ""
+    // } for an individual with an ${type1} personality type and RIASEC interest types of ${type2}. For each industry, include the following information:
+    //     industry_name: A brief title of the industry?.
         
-        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.Give it as a single JSON data without any wrapping other than []`
+    //     Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.Give it as a single JSON data without any wrapping other than []`
+
+
+        const prompt = `Provide a list of the 3 normal, 3 trending, and 3 off-beat sectors ${
+          country ? "in " + country : ""
+        } for an individual with RIASEC interest types of ${type2}${
+          type3 ? " and Gallup Strengths types of " + type3 : ""
+        }. For each industry, include the following information:
+            industry_name: A brief title of the industry?.
+            
+            Ensure that the response is valid JSON, using the specified field names, but do not include the terms 'RIASEC' in the data.Give it as a single JSON data without any wrapping other than []`;
+
    
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
@@ -54,6 +66,6 @@ export async function GET(req)
     let responseText = response.data.choices[0].message.content.trim();
     responseText = responseText.replace(/```json|```/g, "").trim();
     // const response = await chatModel.invoke(prompt)
-    // console.log(responseText)
+    console.log(responseText)
     return NextResponse.json({result: responseText});
 }
