@@ -1,4 +1,4 @@
-import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, text, time, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, primaryKey, text, time, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 export const USER_DETAILS= mysqlTable('user_details',{
     id:int('id').autoincrement().notNull().primaryKey(),
@@ -335,3 +335,61 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
     challengeId: int('challenge_id').notNull(),
     taskId: int('task_id').notNull(),
   });
+
+
+
+    export const SUBJECTS = mysqlTable('subjects', {
+        subject_id: int('subject_id').primaryKey().autoincrement(),
+        subject_name: varchar('subject_name', { length: 255 }).notNull(),
+    });
+
+    export const CAREER_SUBJECCTS = mysqlTable('career_subjects', {
+        career_id: int('career_id')
+            .notNull()
+            .references(() => USER_CAREER.id, /* { onDelete: 'cascade' } */),  // Foreign key reference to Careers table
+        subject_id: int('subject_id')
+            .notNull()
+            .references(() => SUBJECTS.subject_id, /* { onDelete: 'cascade' } */),  // Foreign key reference to Subjects table
+    }, (table) => {
+        return {
+            pk: primaryKey(table.career_id, table.subject_id)  // Composite primary key
+        };
+    });
+
+    export const TESTS = mysqlTable('tests', {
+        test_id: int('test_id').autoincrement().primaryKey(),
+        subject_id: int('subject_id').notNull().references(() => SUBJECTS.subject_id),
+        test_date: date('test_date').notNull(),
+        age_group: int('age_group').notNull(),
+    });
+
+    export const USER_TESTS = mysqlTable('user_tests', {
+        user_test_id: int('user_test_id').autoincrement().primaryKey(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id),
+        test_id: int('test_id').notNull().references(() => TESTS.test_id),
+        score: int('score').notNull(),
+        stars_awarded: int('stars_awarded').notNull(),
+    });
+    
+    export const STAR_CRITERIA = mysqlTable('star_criteria', {
+        criteria_id: int('criteria_id').autoincrement().primaryKey(),
+        test_id: int('test_id').notNull().references(() => TESTS.test_id),
+        min_score: int('min_score').notNull(),
+        stars: int('stars').notNull(),
+    });
+    
+    export const TEST_QUESTIONS = mysqlTable('test_questions', {
+        id: int('id').primaryKey().autoincrement(),
+        timer: int('timer').notNull(),
+        question: text('question').notNull(),
+        test_id: int('test_id').notNull().references(() => TESTS.test_id),
+    });
+    
+    export const TEST_ANSWERS = mysqlTable('test_answers', {
+        id: int('id').primaryKey().autoincrement(),
+        test_questionId: int('question_id').notNull().references(() => TEST_QUESTIONS.id),
+        test_id: int('test_id').notNull().references(() => TESTS.test_id),
+        answer_text: text('answer_text').notNull(),
+        answer: mysqlEnum('answer', ['no', 'yes']).notNull(),
+        test_marks: decimal('task_marks', { precision: 10, scale: 2 }),
+    });

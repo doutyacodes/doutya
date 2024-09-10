@@ -45,13 +45,17 @@ export async function POST(req) {
         const questionsByType = await fetchQuestionsByType();
 
         // Initialize scores for each theme
-        const scores = Object.fromEntries(Object.values(personalityTypes).map(type => [type, 0]));        
+        const scores = Object.fromEntries(Object.values(personalityTypes).map(type => [type, 0])); 
+        
+        console.log("scores", scores)
 
         // Map optionId to score value
         const optionScores = {
+            1: 0,  // Strongly Disagree
             2: 0,  // Disagree
             3: 0,  // Neutral
             4: 1,  // Agree
+            5: 2   // Strongly Agree
         };
 
         // Calculate scores based on responses
@@ -64,8 +68,12 @@ export async function POST(req) {
             }
         });
 
+        // Log the individual scores for each type
+            console.log("Scores After Calculations:", scores);
         // Find the highest score
         const maxScore = Math.max(...Object.values(scores));
+
+        console.log("maxScore", maxScore)
 
         // Get themes with the highest score
         const highestScoredThemes = Object.entries(scores)
@@ -75,7 +83,8 @@ export async function POST(req) {
         // Join the initials to form the sequence
         const riasecType = highestScoredThemes.join('');
 
-
+        console.log("riasecType", riasecType)
+        
         // Insert RIASEC sequence into the database
         try {
 
