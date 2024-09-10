@@ -367,8 +367,8 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         user_test_id: int('user_test_id').autoincrement().primaryKey(),
         user_id: int('user_id').notNull().references(() => USER_DETAILS.id),
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
-        score: int('score').nullable(),
-        stars_awarded: int('stars_awarded').nullable(),
+        score: int('score').default(null),
+        stars_awarded: int('stars_awarded').default(null),
         completed: mysqlEnum('completed', ['no', 'yes']).notNull(),
     });
     

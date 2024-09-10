@@ -22,14 +22,7 @@ function Tests({selectedCareer}) {
                     
                     const results = response.data.tasks
                     console.log(results)
-
-                    const decryptedResults = results.map(result => (
-                        {
-                        ...result,
-                        task_name: decryptText(result.task_name),
-                    }));
-                    console.log("decryptedResults", decryptedResults)
-                    setTestData(decryptedResults);
+                    setTestData(results);
 
                 } else {
                     toast.error('Failed to fetch Test data. Please try again later.');
