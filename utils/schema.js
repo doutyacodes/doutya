@@ -343,7 +343,7 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         subject_name: varchar('subject_name', { length: 255 }).notNull(),
     });
 
-    export const CAREER_SUBJECCTS = mysqlTable('career_subjects', {
+    export const CAREER_SUBJECTS = mysqlTable('career_subjects', {
         career_id: int('career_id')
             .notNull()
             .references(() => USER_CAREER.id, /* { onDelete: 'cascade' } */),  // Foreign key reference to Careers table
@@ -367,8 +367,9 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         user_test_id: int('user_test_id').autoincrement().primaryKey(),
         user_id: int('user_id').notNull().references(() => USER_DETAILS.id),
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
-        score: int('score').notNull(),
-        stars_awarded: int('stars_awarded').notNull(),
+        score: int('score').nullable(),
+        stars_awarded: int('stars_awarded').nullable(),
+        completed: mysqlEnum('completed', ['no', 'yes']).notNull(),
     });
     
     export const STAR_CRITERIA = mysqlTable('star_criteria', {
@@ -392,4 +393,16 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         answer_text: text('answer_text').notNull(),
         answer: mysqlEnum('answer', ['no', 'yes']).notNull(),
         test_marks: decimal('task_marks', { precision: 10, scale: 2 }),
+    });
+
+
+
+    // Define the `user_progress` table schema
+    export const TEST_PROGRESS = mysqlTable('test_progress', {
+        id: int('id').primaryKey().autoincrement(), 
+        test_questionId: int('question_id').notNull().references(() => TEST_QUESTIONS.id),
+        test_answerId: int('answer_id').notNull().references(() => TEST_ANSWERS.id),
+        user_id: int('user_id').notNull(), 
+        created_at: timestamp('created_at').defaultNow(),
+        test_id: int('test_id').notNull().references(() => TESTS.test_id),
     });

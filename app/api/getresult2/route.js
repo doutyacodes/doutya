@@ -85,19 +85,19 @@ export async function GET(req) {
     // }
 
   // Get quiz sequences
-  // const personality2 = await db.select({
-  //   typeSequence: QUIZ_SEQUENCES.type_sequence
-  // })
-  //   .from(QUIZ_SEQUENCES)
-  //   .where(
-  //     and(
-  //       eq(QUIZ_SEQUENCES.user_id, userId),
-  //       eq(QUIZ_SEQUENCES.quiz_id, 1)
-  //     )
-  //   )
-  //   .execute();
+  const personality2 = await db.select({
+    typeSequence: QUIZ_SEQUENCES.type_sequence
+  })
+    .from(QUIZ_SEQUENCES)
+    .where(
+      and(
+        eq(QUIZ_SEQUENCES.user_id, userId),
+        eq(QUIZ_SEQUENCES.quiz_id, 1)
+      )
+    )
+    .execute();
 
-  // const type2 = personality2[0].typeSequence;
+  const type2 = personality2[0].typeSequence;
 
   const personality1 = await db
     .select({
@@ -128,7 +128,7 @@ export async function GET(req) {
 
     const prompt = `Provide a list of the 6 best careers in the ${industry} sector ${
       country ? "in " + country : ""
-    } for an individual with an ${type1} personality type ${
+    } for an individual with an ${type1} personality type and RIASEC interest types of ${type2} ${
       type3 ? " and Gallup Strengths types of " + type3 : ""
     } with 3 normal careers, 1 trending career and 1 off beat career. For each career, include the following information:
         career_name: A brief title of the career?.
