@@ -292,9 +292,8 @@ const GetTestsData = (id, token) => {
   });
 };
 
-const SaveTestProgress = (data, token, taskId) => {
+const SaveTestProgress = (data, token) => {
   const payload = {
-    taskId,
     results: data,
   };
 
@@ -305,9 +304,9 @@ const SaveTestProgress = (data, token, taskId) => {
   });
 };
 
-const UpdateTestData = (token, taskId) => {
+const UpdateTestData = (token, testId) => {
   const payload = {
-    taskId,
+    testId,
   };
 
   return axios.post(`/api/updateTestData`, payload, {

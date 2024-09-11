@@ -1,8 +1,8 @@
 import { db } from '@/utils';
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
-import { and, eq, sum } from 'drizzle-orm';
-import { QUIZ_PROGRESS, TEMP_LEADER, USER_TASKS } from '@/utils/schema';
+import { eq, and, sum, count, lte } from 'drizzle-orm';
+import { STAR_PERCENT, TEST_PROGRESS, TEST_QUESTIONS, USER_TESTS } from '@/utils/schema'; // Import relevant tables
 
 
 export async function POST(req) {
@@ -13,45 +13,85 @@ export async function POST(req) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
-    console.log("userId", userId)
-    const { taskId } = await req.json();
-    console.log("taskId", taskId)
-    try {
-        // Sum all the marks from the QUIZ_PROGRESS table for this userId and taskId
-        const quizResults = await db
-        .select({
-            totalMarks: sum(QUIZ_PROGRESS.marks),  // Sum the marks
-            challengeId: QUIZ_PROGRESS.challenge_id
-        })
-        .from(QUIZ_PROGRESS)
-        .where(
-            and(
-                eq(QUIZ_PROGRESS.user_id, userId),
-                eq(QUIZ_PROGRESS.task_id, taskId)
-            )
-        )
-   console.log("quizResults", quizResults);
-   
-        const totalMarks = quizResults[0]?.totalMarks || 0;
-        const challengeId = quizResults[0]?.challengeId;
+    const { testId } = await req.json();
 
-        // Insert the total marks into the TEMP_LEADER table
-        await db.insert(TEMP_LEADER).values({
-            marks: totalMarks,
-            userId: userId,
-            challengeId: challengeId,  // Pass the challengeId from the request
-            taskId: taskId
-        });
+    try {
+         // 1. Get the sum of marks from TEST_PROGRESS table for the given user and test
+        const quizResults = await db
+            .select({
+                totalMarks: sum(TEST_PROGRESS.marks)
+            })
+            .from(TEST_PROGRESS)
+            .where(
+                and(
+                    eq(TEST_PROGRESS.user_id, userId),
+                    eq(TEST_PROGRESS.test_id, testId)
+                )
+            );
+
+        const totalMarks = quizResults[0]?.totalMarks || 0;
+
+        // 2. Get the number of questions for the given testId from TEST_QUESTIONS
+        const questionCountResults = await db
+                                    .select({
+                                        questionCount: count(TEST_QUESTIONS.id)  // Count the number of questions
+                                    })
+                                    .from(TEST_QUESTIONS)
+                                    .where(eq(TEST_QUESTIONS.test_id, testId));
+                                    
+        const questionCount = questionCountResults[0]?.questionCount || 0;
+
+        // 3. Multiply the number of questions by 1000 to get the total possible marks
+        const totalPossibleMarks = questionCount * 1000;
+
+        // 4. Calculate the percentage
+        const percentage = totalPossibleMarks > 0 ? (totalMarks / totalPossibleMarks) * 100 : 0;
+
+        const result = await db
+                    .select({
+                        stars: STAR_PERCENT.stars
+                    })
+                    .from(STAR_PERCENT)
+                    .where(
+                        and(
+                            lte(STAR_PERCENT.min_percentage, percentage)
+                        )
+                    )
+                    .orderBy(STAR_PERCENT.min_percentage, 'desc') // Sort descending to get the highest applicable stars
+                    .limit(1); // Only get the top result
+
+        // const result = await db
+        //             .select({
+        //                 stars: STAR_PERCENT.stars
+        //             })
+        //             .from(STAR_PERCENT)
+        //             .where(
+        //                 db.raw('min_percentage <= ?', [percentage])
+        //             )
+        //             .orderBy(STAR_PERCENT.min_percentage, 'desc') // Sort descending to get the highest applicable stars
+        //             .limit(1); // Only get the top result
+        let stars;
+        if (result.length > 0) {
+            stars = result[0].stars;
+            console.log(`Stars for percentage ${percentage}: ${stars}`);
+            
+        } else {
+            console.log('No matching stars found.');
+            stars = 0
+        }
+
 
         // Update the existing record with the new sequence
-        await db.update(USER_TASKS)
+        await db.update(USER_TESTS)
         .set({
+            score: Math.round(percentage),
+            stars_awarded: stars,
             completed: 'yes', // Update the type_sequence field
         })
         .where(
             and(
-                eq(USER_TASKS.user_id, userId),
-                eq(USER_TASKS.task_id, taskId)
+                eq(USER_TESTS.user_id, userId),
+                eq(USER_TESTS.test_id, testId)
             )
         );
         

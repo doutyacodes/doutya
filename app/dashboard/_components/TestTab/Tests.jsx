@@ -42,6 +42,7 @@ function Tests({selectedCareer}) {
         getTests()
     }, [selectedCareer])
 
+
     const handleQuizNavigation = (testId) => {
         router.push(`/testsSection/${testId}`);
     };
@@ -112,7 +113,7 @@ function Tests({selectedCareer}) {
                                 // Show "Take Quiz" button if the task is not completed
                                 <button
                                     className="bg-white text-purple-600 font-bold py-2 px-6 rounded-full shadow hover:bg-gray-100 transition-colors duration-200"
-                                    onClick={() => handleQuizNavigation(test.task_id)}
+                                    onClick={() => handleQuizNavigation(test.test_id)}
                                 >
                                     Take Quiz
                                 </button>

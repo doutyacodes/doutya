@@ -388,21 +388,26 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
     
     export const TEST_ANSWERS = mysqlTable('test_answers', {
         id: int('id').primaryKey().autoincrement(),
-        test_questionId: int('question_id').notNull().references(() => TEST_QUESTIONS.id),
+        test_questionId: int('test_questionId').notNull().references(() => TEST_QUESTIONS.id),
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
         answer_text: text('answer_text').notNull(),
         answer: mysqlEnum('answer', ['no', 'yes']).notNull(),
         test_marks: decimal('task_marks', { precision: 10, scale: 2 }),
     });
 
-
-
     // Define the `user_progress` table schema
     export const TEST_PROGRESS = mysqlTable('test_progress', {
         id: int('id').primaryKey().autoincrement(), 
         test_questionId: int('question_id').notNull().references(() => TEST_QUESTIONS.id),
-        test_answerId: int('answer_id').notNull().references(() => TEST_ANSWERS.id),
-        user_id: int('user_id').notNull(), 
+        test_answerId: int('answer_id'),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id), 
         created_at: timestamp('created_at').defaultNow(),
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
+        marks: decimal('marks', 10, 3).notNull(),
+    });
+    
+    export const STAR_PERCENT = mysqlTable('star_percent', {
+        id: int('id').primaryKey().autoincrement(),
+        min_percentage: decimal('min_percentage', 5, 2).notNull(),
+        stars: int('stars').notNull(),
     });

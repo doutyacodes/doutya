@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { QUIZ_PROGRESS, QUIZ_SEQUENCES, STRENGTH_QUIZ_PROGRESS, USER_CAREER_PROGRESS, USER_TASKS } from '@/utils/schema';
+import { QUIZ_PROGRESS, QUIZ_SEQUENCES, STRENGTH_QUIZ_PROGRESS, TEST_PROGRESS, USER_CAREER_PROGRESS, USER_TASKS, USER_TESTS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq, inArray } from 'drizzle-orm'; // Ensure these imports match your ORM version
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -14,33 +14,28 @@ export async function POST(req) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
-    const { quizId, results } = await req.json(); // Directly destructuring to get quizId and results array
-    const { questionId, answerId, marks, taskId, challengeId } = results
+    const { results } = await req.json(); // Directly destructuring to get quizId and results array
+    const { questionId, answerId, marks, testId } = results
 
     try {
         try {
             // Check if the record already exists
             const existingUserTask = await db
                 .select()
-                .from(USER_TASKS)
+                .from(USER_TESTS)
                 .where(
                     and(
-                        eq(USER_TASKS.user_id, userId),
-                        eq(USER_TASKS.task_id, taskId)
+                        eq(USER_TESTS.user_id, userId),
+                        eq(USER_TESTS.test_id, testId)
                     )
                 );                
         
             if (existingUserTask.length === 0) {
                 // Record doesn't exist, so insert it
-                await db.insert(USER_TASKS).values({
+                await db.insert(USER_TESTS).values({
                     user_id: userId,
-                    task_id: taskId,
-                    approved: 'yes',
-                    rejected: 'no',
+                    test_id: testId,
                     completed: 'no',
-                    // arena: 'no',
-                    challenge_id: challengeId,
-                    started: 'yes',
                 });
                 console.log("Inserted successfully");
             } else {
@@ -54,12 +49,12 @@ export async function POST(req) {
         // questionId, optionId, personaTypeId
         const existingRecords = await db
                                 .select()
-                                .from(QUIZ_PROGRESS)
+                                .from(TEST_PROGRESS)
                                 .where(
                                     and(
-                                    eq(QUIZ_PROGRESS.user_id, userId),
-                                    eq(QUIZ_PROGRESS.question_id, questionId),
-                                    eq(QUIZ_PROGRESS.task_id, taskId),
+                                    eq(TEST_PROGRESS.user_id, userId),
+                                    eq(TEST_PROGRESS.test_questionId, questionId),
+                                    eq(TEST_PROGRESS.test_id, testId),
                                     )
                                 )
                                 .execute();
@@ -71,14 +66,13 @@ export async function POST(req) {
         try {
             const insertData = {
                 user_id: userId,
-                question_id: questionId,
-                answer_id: answerId,
+                test_questionId: questionId,
+                test_answerId: answerId,
                 marks: marks,
-                challenge_id: challengeId,
-                task_id: taskId
+                test_id: testId
             };
 
-            await db.insert(QUIZ_PROGRESS).values(insertData);
+            await db.insert(TEST_PROGRESS).values(insertData);
         } catch (error) {
             console.error("Error adding progress:", error);
             throw error;

@@ -27,7 +27,7 @@ function Page({ params }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
-  const testId = params.taskId;
+  const testId = params.testId;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   useEffect(() => {
@@ -55,8 +55,6 @@ function Page({ params }) {
         setQuestions(resp.data.questions);
         setTimer(resp.data.timer * 1000);
         setTimerValue(resp.data.timer); /* This wont change */
-        setChallengeId(resp.data.challengeId);
-
 
         if (resp.data.quizProgress > 0) {
           setShowAlert(true); // Set showAlert to true when resuming the quiz
@@ -116,8 +114,7 @@ function Page({ params }) {
       questionId: questions[currentQuestionIndex].id,
       answerId: choice.id,
       marks: earnedMarks,
-      taskId: testId,
-      challengeId: challengeId
+      testId: testId,
     };
     quizProgressSubmit(answer);
     setProgressSubmitted(true);
@@ -154,7 +151,7 @@ function Page({ params }) {
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      const resp = await GlobalApi.SaveTestProgress(data, token, testId);
+      const resp = await GlobalApi.SaveTestProgress(data, token);
 
       if (resp && resp.status === 201) {
         console.log("Response");
@@ -206,9 +203,8 @@ function Page({ params }) {
     const answer = {
       questionId: questions[currentQuestionIndex].id,
       answerId: selectedChoice ? selectedChoice.id : 0,
-      taskId: testId,
+      testId: testId,
       marks: 0,
-      challengeId: challengeId
     };
     quizProgressSubmit(answer);
     handleNext();

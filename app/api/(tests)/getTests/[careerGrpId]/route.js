@@ -37,16 +37,16 @@ export async function GET(req, { params }) {
             .where(eq(USER_TESTS.user_id, userId)); 
 
 
-        // Map userTasks by task_id for easy lookup
+        // Map userTasks by test_id for easy lookup
         const userTestMap = userTests.reduce((map, userTest) => {
-            map[userTest.test_id] = userTask.completed;
+            map[userTest.test_id] = userTest.completed;
             return map;
         }, {});
 
         // Combine tasks with user task status
         const testsWithStatus = tests.map(test => ({
             ...test,
-            completed: userTestMap[test.task_id] || 'no' // Default to 'no' if no status found
+            completed: userTestMap[test.test_id] || 'no' // Default to 'no' if no status found
         }));
 
         // Return the tasks with their completion status
