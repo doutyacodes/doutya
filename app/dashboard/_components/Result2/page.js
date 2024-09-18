@@ -107,11 +107,6 @@ export default function Results2() {
             
             const selectedCareerObjects = selectedCareers.map(index => resultData[index]);
             
-            // const payload = {
-            //     country: selectedCountry,
-            //     results: selectedCareerObjects,
-            //   };
-
               const payload = {
                 results: selectedCareerObjects,
               };

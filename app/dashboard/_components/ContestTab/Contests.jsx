@@ -50,7 +50,7 @@ function Tests({selectedCareer}) {
     }, [])
 
     const handleQuizNavigation = (testId) => {
-        router.push(`/testsSection/${testId}`);
+        router.push(`/contestSection/${testId}`);
     };
 
     const handleResultsNavigation = () => {

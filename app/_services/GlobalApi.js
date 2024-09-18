@@ -336,6 +336,25 @@ const GetLeaderboardData = (id, token) => {
 };
 
 
+const UpdateMileStoneStatus = (data, token) => {
+
+  return axios.put('/api/updateMileStoneStatus', data,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetFeedBackData = (id, token) => {
+
+  return axios.get(`/api/getFeedBackData/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -377,4 +396,8 @@ export default {
   GetContestResultData,
 
   GetLeaderboardData,
+
+  UpdateMileStoneStatus,
+
+  GetFeedBackData
 }

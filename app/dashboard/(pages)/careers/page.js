@@ -10,38 +10,25 @@ import AddCareer from '../../_components/AddCareer/AddCareer';
 import {Chip} from "@nextui-org/chip";
 import Tests from '../../_components/TestTab/Tests';
 import Contests from '../../_components/ContestTab/Contests';
-
+import RoadMap from '../../_components/RoadMapTab/RoadMap';
+import Feedback from '../../_components/FeedbackTab/Feedback';
 
 
 function page() {
 
   const [carrerData, setCarrerData] = useState([])
   const [isLoading, setIsLoading] = useState(false);
+  const [roadMapLoading, setRoadMapLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(true)
   const [selectedCareer, setSelectedCareer] = useState(null);
   const [showDialogue, setShowDialogue] = useState(false)
   const [careerName, setCareerName] = useState('');
 
-  const [showRoadMapDetails, setShowRoadMapDetails] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [activeTab, setActiveTab] = useState('roadmap'); // Single state for active tab
-  const [showFinalRoadMap, setShowFinalRoadMap] = useState(true);
   const [country,setCountry]=useState('');
   const router = useRouter();
 
-  const handleRoadmapClick = () => {
-    setShowRoadmap(!showRoadmap); // Toggles the visibility
-    setShowFeedback(false);
-  };
-
-  const handleShowRoadMapDetails = () => {
-    setShowRoadMapDetails(!showRoadMapDetails);
-  }
-
-  const handleFeedbackClick = () => {
-    setShowFinalRoadMap(false);
-    setShowFeedback(true);
-  };
 
   useEffect(() => {
     const authCheck = () => {
@@ -115,7 +102,8 @@ function page() {
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true)
+    setRoadMapLoading(true)
+    setShowDialogue(false)
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
       const response = await GlobalApi.SaveInterestedCareer(token, careerName,country);
@@ -141,7 +129,7 @@ function page() {
       // Call getCareers regardless of the outcome of the API call
       getCareers();
       setShowDialogue(false)
-      setIsLoading(false)  
+      setRoadMapLoading(false)  
     }
   }
 
@@ -171,6 +159,7 @@ function page() {
         setCountry={setCountry}
         country={country}
         handleSubmit={handleSubmit}
+        roadMapLoading = {roadMapLoading}
       />
       {/* } */}
 
@@ -189,6 +178,18 @@ function page() {
           ))
         }
 
+        {
+          roadMapLoading &&(
+            <div
+              className={`w-48 h-48 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95`}
+            >
+              <p className='text-center text-sm font-bold text-blue-900 mb-4'>
+                Career is being added. Please wait...
+              </p>
+            </div>
+          )
+        }
+
         <div className='w-48 h-48 p-5 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95'
           onClick={handleAddCareerClick}>
           <PlusIcon className='text-gray-600 font-thin h-20 w-20' />
@@ -203,19 +204,6 @@ function page() {
               <h2 className='text-center text-2xl mt-10 text-black font-bold'>{selectedCareer.career_name}</h2>
             </div>
             <div className="flex gap-8">
-              {/* <button className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white font-bold py-2 px-4 rounded-full w-80" onClick={handleRoadmapClick}>
-                ROADMAP
-              </button>
-              <button className="bg-green-500 text-white font-bold py-2 px-4 rounded-full w-80">
-                CONTESTS
-              </button>
-              <button className="bg-green-500 text-white font-bold py-2 px-4 rounded-full w-80">
-                TESTS
-              </button>
-              <button className="bg-green-500 text-white font-bold py-2 px-4 rounded-full w-80">
-                COMMUNITY
-              </button> */}
-
               <button
                 className={`${activeTab === 'roadmap' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
                 onClick={() => {setActiveTab('roadmap')}}
@@ -251,38 +239,7 @@ function page() {
             
             {activeTab === 'roadmap' && (
               <>
-                <div className="flex gap-1">
-                  <button className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black font-bold py-2 px-4 w-1/2"
-                    onClick={() => {
-                      setShowFeedback(false);
-                      setShowFinalRoadMap(true);
-                    }}
-                  >
-                    Roadmap
-                  </button>
-                  <button className="bg-green-500 text-black font-bold py-2 px-4 w-1/2"
-                    onClick={handleFeedbackClick}
-                  >
-                    Feedback
-                  </button>
-                </div>
-                {showFinalRoadMap && (
-                  <div className='bg-white'>
-                    <button className='bg-green-500 text-black font-bold w-80 rounded-full py-2 px-4 mt-14 ml-96 mb-8' onClick={handleShowRoadMapDetails}>
-                      {showRoadMapDetails ? 'Hide Roadmap' : 'Get Roadmap'}
-                    </button>
-                    {showRoadMapDetails && (
-                      <>
-                        <h3 className='text-lg font-semibold text-gray-800 mb-2 ml-11'>Roadmap:</h3>
-                        <ul className='list-disc ml-11 mb-4 text-black'>
-                          {selectedCareer.roadmap.split('.,').map((step, idx) => (
-                            <li key={idx}>{step.trim()}</li>
-                          ))}
-                        </ul>
-                      </>
-                    )};
-                  </div>
-                )}
+                <RoadMap selectedCareer={selectedCareer} roadMapLoading={roadMapLoading}/>
               </>
             )}
             {showFeedback && (
@@ -369,14 +326,6 @@ function page() {
           </>
         )}
 
-        {/* {
-          activeTab === 'tests' && (
-            <div className=''>
-
-            </div>
-          )
-        } */}
-
         {
           activeTab === 'tests' && (
             <Tests selectedCareer={selectedCareer}/>
@@ -389,6 +338,11 @@ function page() {
           )
         }
 
+        {
+          activeTab === 'feedback' && (
+            <Feedback selectedCareer={selectedCareer}/>
+          )
+        }
 
       </div>
     </div>

@@ -19,7 +19,7 @@ export async function GET(request) {
         const challengeIdsResult = await db
         .select({
             challengeId: CHALLENGES.challenge_id,
-            questions: CHALLENGES.questions  // Assuming this stores the number of questions
+            questions: CHALLENGES.questions 
         })
         .from(CHALLENGES)
         .where(isNull(CHALLENGES.career_group_id))  // Ensure career_group_id is  null

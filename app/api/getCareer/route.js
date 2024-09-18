@@ -1,9 +1,9 @@
 import { db } from '@/utils'; // Ensure this path is correct
-import { CAREER_GROUP, QUIZ_SEQUENCES, USER_CAREER, RESULTS1 } from '@/utils/schema'; // Ensure this path is correct
+import { CAREER_GROUP, QUIZ_SEQUENCES, USER_CAREER, MILESTONES, MILESTONE_CATEGORIES, USER_MILESTONES, RESULTS1, USER_DETAILS } from '@/utils/schema'; // Ensure this path is correct
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware'; // Ensure this path is correct
-import { desc, eq, and } from 'drizzle-orm';
-import { careerFeedback } from './careerFeedback';
+import { desc, eq, and, inArray } from 'drizzle-orm';
+import { formattedAge } from '@/lib/formattedAge';
 
 export async function GET(req) {
     // Authenticate the request
@@ -16,7 +16,22 @@ export async function GET(req) {
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
 
+
+
     try {
+
+        const user_data = await db
+                        .select({
+                        birth_date:USER_DETAILS.birth_date,
+                        })
+                        .from(USER_DETAILS)
+                        .where(eq(USER_DETAILS.id, userId))
+
+        const birth_date=user_data[0].birth_date
+        const age = formattedAge(birth_date)
+        // console.log("birth_date", age);
+        // return NextResponse.json({ message: 'Careers GOt successfully' }, { status: 201 });
+
         // Fetch data for the given userId
         // const data = await db
         //     .select()
@@ -44,7 +59,7 @@ export async function GET(req) {
                 careerGrpId: CAREER_GROUP.id,
                 careerName: CAREER_GROUP.career_name, // This gets the career name from the CAREER_GROUP table
                 reasonForRecommendation: USER_CAREER.reason_for_recommendation,
-                roadmap: USER_CAREER.roadmap,
+                // roadmap: USER_CAREER.roadmap,
                 presentTrends: USER_CAREER.present_trends,
                 futureProspects: USER_CAREER.future_prospects,
                 userDescription: USER_CAREER.user_description,
@@ -68,22 +83,37 @@ export async function GET(req) {
         const type1 = personalityTypes.find(pt => pt.quizId === 1)?.typeSequence;
         const type2 = personalityTypes.find(pt => pt.quizId === 2)?.typeSequence;
 
+        const userCareerIds = data.map(record => record.id);
+       
+        // Fetch user milestones
+        const userMilestones = await db
+        .select({
+            userCareerId: USER_MILESTONES.user_career_id,
+            milestoneId: USER_MILESTONES.milestone_id,
+            // milestoneTitle: MILESTONES.title,
+            milestoneDescription: MILESTONES.description,
+            // milestoneHowTo: MILESTONES.how_to,
+            milestoneCategoryName: MILESTONE_CATEGORIES.name,
+            milestoneCompletionStatus: MILESTONES.completion_status,
+            milestoneDateAchieved: MILESTONES.date_achieved,
+            milestoneAge: MILESTONES.milestone_age,
+        })
+        .from(USER_MILESTONES)
+        .innerJoin(MILESTONES, eq(USER_MILESTONES.milestone_id, MILESTONES.id))
+        .innerJoin(MILESTONE_CATEGORIES, eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id))
+        .where(
+            and(
+                inArray(USER_MILESTONES.user_career_id, userCareerIds) ,// Use inArray here,
+                eq(MILESTONES.milestone_age, age)
+            )
+        )
+
+
+
+        // console.log("userMilestones", userMilestones)
 
         // Generate feedback for each record asynchronously
         const resultData = await Promise.all(data.map(async (record) => {
-            const { result: feedback } = await careerFeedback(type1, type2, userId, record.career_name, record.country);
-            // console.log("feedback",feedback);
-
-            // Extract the feedback text from the JSON object
-            let feedbackText = '';
-            try {
-                const feedbackObject = JSON.parse(feedback);
-                // console.log(feedbackObject)
-                feedbackText = feedbackObject.feedback || ''; // Extract only the text
-            } catch (error) {
-                console.error('Error parsing feedback JSON:', error);
-                feedbackText = 'No feedback provided'; // Default message in case of error
-            }
 
             //extracts the strengths and weaknesses of the user
             const type_sequences = await db
@@ -102,23 +132,24 @@ export async function GET(req) {
             const results = await db.select().from(RESULTS1).where(eq(RESULTS1.type_sequence, type));
             const strengths=results[0].strengths
             const weaknesses=results[0].weaknesses
-
-            // Create an object with the record data and the generated feedback
+                
+            // Filter milestones associated with this user career
+            const milestonesForCareer = userMilestones.filter(m => m.userCareerId === record.id);
             return {
                 id: record.id,
                 user_id: record.userId,
                 career_group_id: record.careerGrpId,
                 career_name: record.careerName,
                 reason_for_recommendation: record.reasonForRecommendation,
-                roadmap: record.roadmap,
-                present_trends: record.present_trends,
-                future_prospects: record.future_prospects,
-                user_description: record.user_description,
-                created_at: record.created_at,
-                feedback: feedbackText, 
-                strengths:strengths,
-                weaknesses: weaknesses
+                present_trends: record.presentTrends,
+                future_prospects: record.futureProspects,
+                user_description: record.userDescription,
+                created_at: record.createdAt,
+                strengths: strengths,
+                weaknesses: weaknesses,
+                milestones: milestonesForCareer
             };
+
         }));
 
         // Respond with the fetched data

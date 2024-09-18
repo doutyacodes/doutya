@@ -27,7 +27,8 @@ function Page({ params }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
-  const testId = params.testId;
+  const testId = params.taskId;
+  // const { testId } = router.query;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   useEffect(() => {
@@ -44,13 +45,14 @@ function Page({ params }) {
     };
     authCheck();
   }, [router]);
-
   useEffect(() => {
     const getQuizData = async () => {
       setIsLoading(true);
       try {
         const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
+          console.log("test Id froionmsection", testId);
+          
         const resp = await GlobalApi.GetTestsData(testId, token);
         setQuestions(resp.data.questions);
         setTimer(resp.data.timer * 1000);

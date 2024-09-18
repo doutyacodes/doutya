@@ -44,6 +44,8 @@ function Tests({selectedCareer}) {
 
 
     const handleQuizNavigation = (testId) => {
+        console.log("the testId", testId);
+        
         router.push(`/testsSection/${testId}`);
     };
 
@@ -65,7 +67,9 @@ function Tests({selectedCareer}) {
 
   return (
     <div>
-        <div className="grid grid-cols-1 gap-6 mt-4 bg-white p-10 rounded-lg">
+        {testData && testData.length > 0 ? (
+
+            <div className="grid grid-cols-1 gap-6 mt-4 bg-white p-10 rounded-lg">
             {
                 testData &&
                 testData?.map((test, index) => (
@@ -82,11 +86,11 @@ function Tests({selectedCareer}) {
                             <div className="flex flex-col gap-1 text-sm">
                                 <p>
                                 <span className="font-semibold">Posted:</span>{' '}
-                                {new Date(test.created_date).toLocaleDateString()}
+                                {new Date(test.test_date).toLocaleDateString()}
                                 </p>
                                 <p>
                                 <span className="font-semibold">Deadline:</span>{' '}
-                                {new Date(test.start_date).toLocaleDateString()}
+                                {new Date(test.test_date).toLocaleDateString()}
                                 </p>
                             </div>
                         </div>
@@ -113,7 +117,7 @@ function Tests({selectedCareer}) {
                                 // Show "Take Quiz" button if the task is not completed
                                 <button
                                     className="bg-white text-purple-600 font-bold py-2 px-6 rounded-full shadow hover:bg-gray-100 transition-colors duration-200"
-                                    onClick={() => handleQuizNavigation(test.test_id)}
+                                    onClick={() => handleQuizNavigation(test.testId)}
                                 >
                                     Take Quiz
                                 </button>
@@ -121,7 +125,14 @@ function Tests({selectedCareer}) {
                         </div>
                     </div>
             ))}
-        </div>
+            </div>
+
+        ) : (
+            <div className="flex items-center justify-center h-[300px] bg-white p-10 rounded-lg shadow-lg">
+                <p className="text-gray-600 text-lg font-semibold">No tests found. Please check back later.</p>
+            </div>
+        )}
+            
     </div>
   )
 }

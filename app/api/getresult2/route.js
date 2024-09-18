@@ -147,7 +147,7 @@ export async function GET(req) {
         }.
         user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
         Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Give it as a single JSON data without any wrapping other than []`;
-
+        
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
