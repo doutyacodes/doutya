@@ -336,6 +336,62 @@ const GetLeaderboardData = (id, token) => {
   });
 };
 
+const getActivities = (id, token) => {
+
+  return axios.get(`/api/getActivity/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const updateActivityStatus = (token,activityId,status) => {
+  const payload = {
+    activityId,    
+    status,   
+  };
+
+  return axios.post(`/api/updateActivityStatus`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,   
+    },
+  });
+};
+
+const getChallenges = (id, token) => {
+
+  return axios.get(`/api/getChallenge/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const submitChallenge = (formData,token) => {
+  return axios.post(`/api/submitChallenge`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    }
+  });
+};
+const getChallengesByStatus = (status, token) => {
+  return axios.get(`/api/getChallengesStatus`,{
+      headers: {
+          Authorization: `Bearer ${token}`,
+      },
+      params: {
+        status, 
+    },
+  });
+};
+const getLastSubmittedChallenge = (token) => {
+  return axios.get(`/api/getLastSubmittedChallenge`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 export default {
   CreateNewUser,
@@ -378,4 +434,10 @@ export default {
   GetContestResultData,
 
   GetLeaderboardData,
+  getActivities,
+  updateActivityStatus,
+  getChallenges,
+  submitChallenge,
+  getChallengesByStatus,
+  getLastSubmittedChallenge,
 }

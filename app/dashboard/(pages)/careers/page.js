@@ -10,7 +10,8 @@ import AddCareer from '../../_components/AddCareer/AddCareer';
 import {Chip} from "@nextui-org/chip";
 import Tests from '../../_components/TestTab/Tests';
 import Contests from '../../_components/ContestTab/Contests';
-
+import Activity from '../../_components/Activities/activity';
+import Challenge from '../../_components/Challenges/page';
 
 
 function page() {
@@ -235,10 +236,16 @@ function page() {
                 TESTS
               </button>
               <button
-                className={`${activeTab === 'feedback' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
-                onClick={() => setActiveTab('feedback')}
+                className={`${activeTab === 'activities' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
+                onClick={() => setActiveTab('activities')}
               >
-                FEEDBACK
+                Activities
+              </button>
+              <button
+                className={`${activeTab === 'challenges' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
+                onClick={() => setActiveTab('challenges')}
+              >
+                Challenges
               </button>
               <button
                 className={`${activeTab === 'community' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-green-500'} text-white font-bold py-2 px-4 rounded-full w-80`}
@@ -388,7 +395,16 @@ function page() {
             <Contests selectedCareer={selectedCareer}/>
           )
         }
-
+        {
+          activeTab === 'activities' && (
+            <Activity selectedCareer={selectedCareer}/>
+          )
+        }
+        {
+          activeTab === 'challenges' && (
+            <Challenge selectedCareer={selectedCareer}/>
+          )
+        }
 
       </div>
     </div>

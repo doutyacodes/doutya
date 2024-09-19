@@ -93,47 +93,47 @@ export const TASKS = mysqlTable('tasks', {
 
 
 // Define the schema for the 'challenges' table
-export const CHALLENGES = mysqlTable('challenges', {
-    challenge_id: int('challenge_id').primaryKey().autoincrement(),
-    page_id: int('page_id').notNull(),
-    career_group_id: int('career_group_id').references(() => CAREER_GROUP.id),
-    title: varchar('title', { length: 100 }).notNull(),
-    description: text('description').notNull(),
-    challenge_type: mysqlEnum('challenge_type', ['ordered', 'unordered']).notNull(),
-    frequency: mysqlEnum('frequency', [
-        'challenges', 'daily', 'bootcamp', 'contest', 'treasure', 'referral', 
-        'streak', 'refer', 'quiz', 'food', 'experience'
-    ]).notNull(),
-    start_date: datetime('start_date').notNull(),
-    start_time: time('start_time').notNull(),
-    end_date: datetime('end_date').notNull(),
-    end_time: time('end_time').notNull(),
-    entry_points: int('entry_points').notNull(),
-    reward_points: int('reward_points').notNull(),
-    level: int('level').default(1).notNull(),
-    created_by: varchar('created_by', { length: 100 }).notNull(),
-    created_date: datetime('created_date').notNull(),
-    participants_count: int('participants_count').default(0).notNull(),
-    removed_date: datetime('removed_date'),
-    removed_by: varchar('removed_by', { length: 100 }),
-    arena: mysqlEnum('arena', ['no', 'yes']).notNull(),
-    district_id: int('district_id'),
-    visit: mysqlEnum('visit', ['no', 'yes']).notNull(),
-    active: mysqlEnum('active', ['no', 'yes']).notNull(),
-    days: int('days').default(0).notNull(),
-    referral_count: int('referral_count').default(0).notNull(),
-    open_for: mysqlEnum('open_for', ['everyone', 'location', 'specific']).notNull(),
-    like_based: mysqlEnum('like_based', ['no', 'yes']).notNull(),
-    live: mysqlEnum('live', ['no', 'yes']).notNull(),
-    questions: int('questions').default(0).notNull(),
-    exp_type: mysqlEnum('exp_type', ['biriyani', 'arts', 'breakfast', 'entertainment']).notNull(),
-    rewards: mysqlEnum('rewards', ['no', 'yes']).notNull(),
-    dep_id: int('dep_id').notNull(),
-    page_type: mysqlEnum('page_type', ['job','internship','tests','language','compatibility']).notNull(),
-    rounds: int('rounds').notNull(),
-    start_datetime: datetime('start_datetime').default(new Date()).notNull(),
-    language_id: int('language_id').notNull(),
-});
+// export const CHALLENGES = mysqlTable('challenges', {
+//     challenge_id: int('challenge_id').primaryKey().autoincrement(),
+//     page_id: int('page_id').notNull(),
+//     career_group_id: int('career_group_id').references(() => CAREER_GROUP.id),
+//     title: varchar('title', { length: 100 }).notNull(),
+//     description: text('description').notNull(),
+//     challenge_type: mysqlEnum('challenge_type', ['ordered', 'unordered']).notNull(),
+//     frequency: mysqlEnum('frequency', [
+//         'challenges', 'daily', 'bootcamp', 'contest', 'treasure', 'referral', 
+//         'streak', 'refer', 'quiz', 'food', 'experience'
+//     ]).notNull(),
+//     start_date: datetime('start_date').notNull(),
+//     start_time: time('start_time').notNull(),
+//     end_date: datetime('end_date').notNull(),
+//     end_time: time('end_time').notNull(),
+//     entry_points: int('entry_points').notNull(),
+//     reward_points: int('reward_points').notNull(),
+//     level: int('level').default(1).notNull(),
+//     created_by: varchar('created_by', { length: 100 }).notNull(),
+//     created_date: datetime('created_date').notNull(),
+//     participants_count: int('participants_count').default(0).notNull(),
+//     removed_date: datetime('removed_date'),
+//     removed_by: varchar('removed_by', { length: 100 }),
+//     arena: mysqlEnum('arena', ['no', 'yes']).notNull(),
+//     district_id: int('district_id'),
+//     visit: mysqlEnum('visit', ['no', 'yes']).notNull(),
+//     active: mysqlEnum('active', ['no', 'yes']).notNull(),
+//     days: int('days').default(0).notNull(),
+//     referral_count: int('referral_count').default(0).notNull(),
+//     open_for: mysqlEnum('open_for', ['everyone', 'location', 'specific']).notNull(),
+//     like_based: mysqlEnum('like_based', ['no', 'yes']).notNull(),
+//     live: mysqlEnum('live', ['no', 'yes']).notNull(),
+//     questions: int('questions').default(0).notNull(),
+//     exp_type: mysqlEnum('exp_type', ['biriyani', 'arts', 'breakfast', 'entertainment']).notNull(),
+//     rewards: mysqlEnum('rewards', ['no', 'yes']).notNull(),
+//     dep_id: int('dep_id').notNull(),
+//     page_type: mysqlEnum('page_type', ['job','internship','tests','language','compatibility']).notNull(),
+//     rounds: int('rounds').notNull(),
+//     start_datetime: datetime('start_datetime').default(new Date()).notNull(),
+//     language_id: int('language_id').notNull(),
+// });
 
 export const ANALYTICS_QUESTION = mysqlTable('analytics_question', {
     id: int('id').primaryKey().autoincrement(),
@@ -406,3 +406,56 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         created_at: timestamp('created_at').defaultNow(),
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
     });
+
+    export const ACTIVITIES = mysqlTable('activities', {
+        id:int('id').notNull().primaryKey().autoincrement(),
+        activity_id: int('activity_id').notNull(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id),  
+        career_id: int('career_id').notNull().references(() => CAREER_GROUP.id),  
+        step: int('step').notNull(),
+        activity_text: text('activity_text').notNull(),
+        created_at: timestamp('created_at').defaultNow(),
+      });
+
+      export const USER_ACTIVITIES = mysqlTable('user_activities', {
+        id:int('id').notNull().primaryKey().autoincrement(),
+        user_id: int('user_id').notNull(),  
+        activity_id: int('activity_id').notNull(), 
+        status: mysqlEnum('status', ['active', 'completed', 'skipped']).notNull(),
+        updated_at: timestamp('updated_at').defaultNow(),
+      });
+      export const SCHOOL = mysqlTable('school', {
+        id: int('id').notNull().primaryKey().autoincrement(),
+        title: varchar('title', 255).notNull(),
+        image: varchar('image', 255),
+        bgImg: varchar('bgImg', 255),
+      });
+
+      export const CHALLENGES = mysqlTable('challenges', {
+        id: int('id').notNull().primaryKey().autoincrement(), 
+        age: int('age').notNull(),                            
+        country: varchar('country', 255).notNull(),           
+        career_id: int('career_id').notNull(),                
+        week: int('week').notNull(),                          
+        created_at: timestamp('created_at').defaultNow().notNull(), 
+        challenge: varchar('challenge', 255).notNull(),       
+        verification: varchar('verification', 255).notNull(), 
+      });
+      export const Moderator = mysqlTable('Moderator', {
+        id: int('id').notNull().primaryKey().autoincrement(),   
+        school_id: int('school_id').notNull().references(() => SCHOOL.id),
+        title: varchar('title', 255).notNull(),                 
+        name: varchar('name', 255).notNull(),                   
+      });
+
+      export const CHALLENGE_PROGRESS = mysqlTable('challenge_progress', {
+        id: int('id').notNull().primaryKey().autoincrement(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id),
+        challenge_id:int('challenge_id').notNull().references(()=>CHALLENGES.id),
+        image: varchar('image', 255).notNull(),
+        status: mysqlEnum('status', ['pending', 'approved', 'rejected']).notNull(),
+        created_at: timestamp('created_at').defaultNow(),
+        age: int('age').notNull(),
+        school_id: int('school_id').notNull(),
+        week: int('week').notNull()
+      });

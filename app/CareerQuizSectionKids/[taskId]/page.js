@@ -67,7 +67,7 @@ function Page({ params }) {
             }, 1000);
         
             const timer = setTimeout(() => {
-                router.replace('/dashboard_kids'); 
+                router.replace('/dashboard_junior'); 
             }, 5000);
         
             return () => {

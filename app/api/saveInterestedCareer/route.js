@@ -10,7 +10,6 @@ import { calculateAge } from '@/lib/ageCalculate';
 
 export async function POST(req)
 {
-  console.log('got')
     const authResult = await authenticate(req);
     if (!authResult.authenticated) {
         return authResult.response;
@@ -34,7 +33,9 @@ export async function POST(req)
     console.log(career,country)
     // Call the validation function
     try {
+      console.log('hello')
       const validationResult = await validateCareer(career);
+      console.log(validationResult)
 
       if (!validationResult.isValid) {        
           return NextResponse.json({ message: validationResult.message }, { status: 400 });

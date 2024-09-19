@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 export async function validateCareer(career) {
+    console.log('validate')
     const validationPrompt = `Is "${career}" a valid career name? If yes, provide a brief description of this career and whether it has associated information available. Respond with JSON containing "is_valid" and "description" fields.`;
 
     let validationResponseText;
@@ -23,6 +24,7 @@ export async function validateCareer(career) {
 
         validationResponseText = validationResponse.data.choices[0].message.content.trim();
         validationResponseText = validationResponseText.replace(/```json|```/g, "").trim();
+        console.log(validationResponseText)
 
     } catch (error) {
         throw new Error("Failed to validate career name");
