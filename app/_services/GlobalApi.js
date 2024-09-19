@@ -1,5 +1,8 @@
 const { default: axios } = require('axios')
 
+// Set a global timeout of 35 seconds (35000 milliseconds)
+// axios.defaults.timeout = 35000; // 35 seconds
+
 const CreateNewUser = (data) => axios.post('/api/user', data)
 const LoginUser = (data) => axios.post('/api/login', data);
 const GetUser = (token) => axios.get('/api/getUser', {
@@ -9,7 +12,6 @@ const GetUser = (token) => axios.get('/api/getUser', {
 });
 
 const GetUserData = (token) => {
-
   return axios.get('/api/getUserData', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -219,6 +221,7 @@ const SaveInterestedCareer = (token, careerName,country) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    timeout: 35000 // 35 seconds timeout
   });
 };
 
