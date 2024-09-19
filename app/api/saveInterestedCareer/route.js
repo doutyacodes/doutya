@@ -18,18 +18,20 @@ export async function POST(req)
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
 
-    const user_data=await db
-                   .select({
-                    birth_date:USER_DETAILS.birth_date,
-                    education: USER_DETAILS.education
-                  })
-                   .from(USER_DETAILS)
-                   .where(eq(USER_DETAILS.id, userId))
-    const birth_date=user_data[0].birth_date
-    const age=calculateAge(birth_date)
-    const education=user_data[0].education
+    const user_data = await db
+                      .select({
+                        birth_date:USER_DETAILS.birth_date,
+                        education: USER_DETAILS.education
+                      })
+                      .from(USER_DETAILS)
+                      .where(eq(USER_DETAILS.id, userId))
 
-    const { career ,country} = await req.json();
+    const birth_date=user_data[0].birth_date
+    const age=calculateAge(birth_date)   
+    console.log("calculateAge", age) 
+    // const age = 6
+    const education=user_data[0].education
+    const { career,country} = await req.json();
     console.log(career,country)
     // Call the validation function
     try {
@@ -60,6 +62,77 @@ export async function POST(req)
 
     console.log(type1,type2)
 
+   
+    // const prompt = `Provide detailed information for the career named "${career}" in '${country}' based on the following criteria:
+
+    // - Personality Type: ${type1}
+    // - RIASEC Interest Types: ${type2}
+    
+    // For this career, include the following information:
+    // - career_name: A brief title of the career.
+    // - reason_for_recommendation: Why this career is suitable for someone with these interests.
+    // - present_trends: Current trends and opportunities in the field.
+    // - future_prospects: Predictions and potential growth in this career.
+    // - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full text format.
+    // - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old until the age of 20-year-old aspiring to be a ${career} and education level is '${education}' in ${country}. 
+    
+    // The roadmap should be broken down into intervals of every **6 months**, starting from the initial age (${age}), and include the following types of milestones for each interval:
+    // Make sure to use the names exactly as provided and not to deviate from these names:
+    //   1. Educational Milestones
+    //   2. Physical Milestones
+    //   3. Mental Milestones
+    //   4. Certification Milestones
+    
+    // Ensure that for each 6-month period, **each type** has at least one milestone, including **Certification Milestones**. 
+    // For each milestone, provide:
+    // - age: The numeric age value (e.g., 6, 6.5, 7, 7.5).
+    // - milestones: An object containing:
+    //   - Title: A short title of the milestone.
+    //   - Description: A brief description of the milestone.
+    //   - HowTo: Instructions or guidance on how to achieve the milestone.
+    
+    // Ensure the roadmap uses correct **half-year age intervals** (e.g., 6, 6.5, 7, 7.5, etc.) and that Certification Milestones are included and meaningful.
+    
+    // Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.
+    // `;
+    
+    // const prompt = `Provide detailed information for the career named "${career}" in '${country}' based on the following criteria:
+
+    // - Personality Type: ${type1}
+    // - RIASEC Interest Types: ${type2}
+
+    // For this career, include the following information:
+    // - career_name: A brief title of the career.
+    // - reason_for_recommendation: Why this career is suitable for someone with these interests.
+    // - present_trends: Current trends and opportunities in the field.
+    // - future_prospects: Predictions and potential growth in this career.
+    // - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full text format.
+    // - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old until the age of 20-year-old aspiring to be a ${career} and education level is '${education}' in ${country}. 
+
+    // The roadmap should be broken down into intervals of every **6 months**, starting from the initial age (${age}), and include the following types of milestones for each interval:
+    // Make sure to use the names exactly as provided and not to deviate from these names:
+    //   1. Educational Milestones
+    //   2. Physical Milestones
+    //   3. Mental Milestones
+    //   4. Certification Milestones
+
+    // Each of these milestone types should have **at least three milestones**, and each milestone should be separated with a '|' symbol. 
+
+    // Ensure that the roadmap uses correct **half-year age intervals** (e.g., 6, 6.5, 7, 7.5, etc.) and that Certification Milestones are included and meaningful.
+
+    // The structure should follow this format for each age interval:
+    // {
+    //   "age": <age>,
+    //   "milestones": {
+    //     "Educational Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+    //     "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+    //     "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+    //     "Certification Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
+    //   }
+    // }
+
+    // Ensure that the response is valid JSON, using the specified field names.`;
+
     const prompt = `Provide detailed information for the career named "${career}" in '${country}' based on the following criteria:
 
     - Personality Type: ${type1}
@@ -68,13 +141,36 @@ export async function POST(req)
     For this career, include the following information:
     - career_name: A brief title of the career.
     - reason_for_recommendation: Why this career is suitable for someone with these interests.
-    - roadmap: Detailed steps and milestones required to achieve this career (as an array) keeping in mind the user's age is '${age}' and education level is '${education}'.
     - present_trends: Current trends and opportunities in the field.
     - future_prospects: Predictions and potential growth in this career.
-    - user_description: Describe the personality traits, strengths, and preferences of the user that make this career a good fit.
+    - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full text format.
+    - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old until the age of 20-year-old aspiring to be a ${career} and education level is '${education}' in ${country}. 
 
-    Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`
+    The roadmap should be broken down into intervals of every **6 months**, starting from the initial age (${age}), and include the following types of milestones for each interval:
+    Make sure to use the names exactly as provided and not to deviate from these names:
+      1. Educational Milestones
+      2. Physical Milestones
+      3. Mental Milestones
+      4. Certification Milestones
 
+    Each of these milestone types should have **at least three milestones**. If you have more milestones, please include them as well. Each milestone should be separated with a '|' symbol. 
+
+    Certification Milestones should include specific relevant certifications that are recognized in the field of ${career}. For example, certifications might include professional qualifications, licensure, or industry-recognized certifications that would enhance the individual's qualifications for this career.
+
+    Ensure that the roadmap uses correct **half-year age intervals** (e.g., 6, 6.5, 7, 7.5, etc.) and that Certification Milestones are included and meaningful.
+
+    The structure should follow this format for each age interval:
+    {
+      "age": <age>,
+      "milestones": {
+        "Educational Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+        "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+        "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+        "Certification Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
+      }
+    }
+
+    Ensure that the response is valid JSON, using the specified field names.`;
 
     
     const response = await axios.post(
@@ -82,7 +178,7 @@ export async function POST(req)
       {
         model: "gpt-4o-mini", 
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 1500, // Adjust the token limit as needed
+        max_tokens: 5000,
       },
       {
         headers: {
@@ -97,6 +193,7 @@ export async function POST(req)
     let responseText = response.data.choices[0].message.content.trim();
     responseText = responseText.replace(/```json|```/g, "").trim();
 
+    console.log("responseText", responseText)
     let parsedData;
     
     try {
@@ -108,18 +205,7 @@ export async function POST(req)
       );
     }
 
-    // const insertData = {
-    //   user_id: userId,
-    //   career_name: parsedData.career_name,
-    //   reason_for_recommendation: parsedData.reason_for_recommendation,
-    //   roadmap: parsedData.roadmap.join(', '),
-    //   present_trends: parsedData.present_trends,
-    //   future_prospects: parsedData.future_prospects,
-    //   user_description: parsedData.user_description,
-    //   type2: "", // Ensure these are set if needed
-    //   type1: "",
-    //   country: country,
-    // };
+    // console.log([parsedData])
 
     try {
       await handleCareerData(userId, country, [parsedData]);

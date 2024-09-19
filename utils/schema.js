@@ -235,7 +235,7 @@ export const USER_CAREER = mysqlTable('user_career', {
     // career_name: varchar('career_name', { length: 255 }).notNull(),
     career_group_id: int('career_group_id').notNull().references(() => CAREER_GROUP.id),
     reason_for_recommendation: text('reason_for_recommendation').default(null),
-    roadmap: text('roadmap').default(null),
+    // roadmap: text('roadmap').default(null),
     present_trends: text('present_trends').default(null),
     future_prospects: text('future_prospects').default(null),
     user_description: text('user_description').default(null),
@@ -243,6 +243,7 @@ export const USER_CAREER = mysqlTable('user_career', {
     type2: varchar('type2', { length: 255 }).notNull(),
     type1: varchar('type1', { length: 255 }).notNull(),
     country: text('country').default(null),
+    feedback: text('feedback').default(null),
   });
 
 export const STRENGTH_TYPES = mysqlTable('strength_types', {
@@ -337,22 +338,23 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
   });
 
 
-
     export const SUBJECTS = mysqlTable('subjects', {
         subject_id: int('subject_id').primaryKey().autoincrement(),
-        subject_name: varchar('subject_name', { length: 255 }).notNull(),
+        subject_name: varchar('subject_name', { length: 255 }).notNull().unique(),
+        min_age: int('min_age').notNull(),
+        max_age: int('max_age').notNull(),
     });
 
     export const CAREER_SUBJECTS = mysqlTable('career_subjects', {
         career_id: int('career_id')
             .notNull()
-            .references(() => USER_CAREER.id, /* { onDelete: 'cascade' } */),  // Foreign key reference to Careers table
+            .references(() => CAREER_GROUP.id, /* { onDelete: 'cascade' } */),  // Reference to CAREER_GROUP now
         subject_id: int('subject_id')
             .notNull()
-            .references(() => SUBJECTS.subject_id, /* { onDelete: 'cascade' } */),  // Foreign key reference to Subjects table
+            .references(() => SUBJECTS.subject_id, /* { onDelete: 'cascade' } */),  // Foreign key to Subjects table
     }, (table) => {
         return {
-            pk: primaryKey(table.career_id, table.subject_id)  // Composite primary key
+            pk: primaryKey(table.career_id, table.subject_id),  // Composite primary key
         };
     });
 
@@ -388,21 +390,19 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
     
     export const TEST_ANSWERS = mysqlTable('test_answers', {
         id: int('id').primaryKey().autoincrement(),
-        test_questionId: int('question_id').notNull().references(() => TEST_QUESTIONS.id),
+        test_questionId: int('test_questionId').notNull().references(() => TEST_QUESTIONS.id),
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
         answer_text: text('answer_text').notNull(),
         answer: mysqlEnum('answer', ['no', 'yes']).notNull(),
         test_marks: decimal('task_marks', { precision: 10, scale: 2 }),
     });
 
-
-
     // Define the `user_progress` table schema
     export const TEST_PROGRESS = mysqlTable('test_progress', {
         id: int('id').primaryKey().autoincrement(), 
         test_questionId: int('question_id').notNull().references(() => TEST_QUESTIONS.id),
-        test_answerId: int('answer_id').notNull().references(() => TEST_ANSWERS.id),
-        user_id: int('user_id').notNull(), 
+        test_answerId: int('answer_id'),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id), 
         created_at: timestamp('created_at').defaultNow(),
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
     });

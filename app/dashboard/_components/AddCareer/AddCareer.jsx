@@ -5,9 +5,8 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import GlobalApi from '@/app/_services/GlobalApi'
 
-function AddCareer({ isOpen, onClose, setCareerName, careerName,setCountry,country, handleSubmit}) {
-    const [open, setOpen] = useState(true)
-    const [loading, setLoading] = useState(false)
+function AddCareer({ isOpen, onClose, setCareerName, careerName,setCountry,country, handleSubmit, roadMapLoading}) {
+    // const [loading, setLoading] = useState(false)
 
     return (
         <Dialog open={isOpen} onClose={onClose} className="relative z-10">
@@ -51,49 +50,49 @@ function AddCareer({ isOpen, onClose, setCareerName, careerName,setCountry,count
                                 </div>
                             </div>
                         </div>
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button
-                        type="button"
-                        onClick={handleSubmit}
-                        disabled={loading}
-                        className={`inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto 
-                        ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500'}`}
-                    >
-                        {loading ? (
-                            <svg
-                                className="animate-spin h-5 w-5 text-white"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                ></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
-                                ></path>
-                            </svg>
-                        ) : (
-                            'Submit'
-                        )}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        disabled={loading} // Disable Cancel button too if needed
-                        className={`inline-flex w-full justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-gray-300 sm:w-auto 
-                        ${loading ? 'bg-gray-200 cursor-not-allowed text-gray-500' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
-                    >
-                        Cancel
-                    </button>
-                </div>
+                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <button
+                            type="button"
+                            onClick={handleSubmit}
+                            disabled={roadMapLoading}
+                            className={`inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto 
+                            ${roadMapLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500'}`}
+                        >
+                            {roadMapLoading ? (
+                                <svg
+                                    className="animate-spin h-5 w-5 text-white"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+                                    ></path>
+                                </svg>
+                            ) : (
+                                'Submit'
+                            )}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            disabled={roadMapLoading} // Disable Cancel button too if needed
+                            className={`inline-flex w-full justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-gray-300 sm:w-auto 
+                            ${roadMapLoading ? 'bg-gray-200 cursor-not-allowed text-gray-500' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                        >
+                            Cancel
+                        </button>
+                    </div>
                     </DialogPanel>
                 </div>
             </div>

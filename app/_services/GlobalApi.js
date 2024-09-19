@@ -1,5 +1,8 @@
 const { default: axios } = require('axios')
 
+// Set a global timeout of 35 seconds (35000 milliseconds)
+// axios.defaults.timeout = 35000; // 35 seconds
+
 const CreateNewUser = (data) => axios.post('/api/user', data)
 const LoginUser = (data) => axios.post('/api/login', data);
 const GetUser = (token) => axios.get('/api/getUser', {
@@ -9,7 +12,6 @@ const GetUser = (token) => axios.get('/api/getUser', {
 });
 
 const GetUserData = (token) => {
-
   return axios.get('/api/getUserData', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -219,6 +221,7 @@ const SaveInterestedCareer = (token, careerName,country) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    timeout: 35000 // 35 seconds timeout
   });
 };
 
@@ -292,9 +295,8 @@ const GetTestsData = (id, token) => {
   });
 };
 
-const SaveTestProgress = (data, token, taskId) => {
+const SaveTestProgress = (data, token) => {
   const payload = {
-    taskId,
     results: data,
   };
 
@@ -305,9 +307,9 @@ const SaveTestProgress = (data, token, taskId) => {
   });
 };
 
-const UpdateTestData = (token, taskId) => {
+const UpdateTestData = (token, testId) => {
   const payload = {
-    taskId,
+    testId,
   };
 
   return axios.post(`/api/updateTestData`, payload, {
@@ -393,6 +395,25 @@ const getLastSubmittedChallenge = (token) => {
   });
 };
 
+const UpdateMileStoneStatus = (data, token) => {
+
+  return axios.put('/api/updateMileStoneStatus', data,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetFeedBackData = (id, token) => {
+
+  return axios.get(`/api/getFeedBackData/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -434,10 +455,17 @@ export default {
   GetContestResultData,
 
   GetLeaderboardData,
+<<<<<<< HEAD
   getActivities,
   updateActivityStatus,
   getChallenges,
   submitChallenge,
   getChallengesByStatus,
   getLastSubmittedChallenge,
+=======
+
+  UpdateMileStoneStatus,
+
+  GetFeedBackData
+>>>>>>> ba54a3271e391d263c3c2ec89edc30d795a81786
 }

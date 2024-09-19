@@ -4,6 +4,7 @@ import GlobalApi from '@/app/_services/GlobalApi';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast'
 import ResultTab from '../../_components/(Results)/ResultTab/ResultTab';
+import TestResultTab from '../../_components/(Results)/ResultTab/TestResultTab';
 import LeaderBoard from '../../_components/(Results)/ResultTab/LeaderBoard';
 import LoadingOverlay from '@/app/_components/LoadingOverlay';
 
@@ -85,20 +86,7 @@ const ResultsPage = () => {
         {/* Results Section */}
         {activeTab === 'tests' && (
             <div>
-                {
-                  !selectedTest ? (
-                    <ResultTab
-                      resultData={resultData}
-                      setSelectedTest = {setSelectedTest}
-                      selectedTest = {selectedTest}
-                    />
-                  ):
-                  (
-                    <LeaderBoard
-                    setSelectedTest = {setSelectedTest}
-                    selectedTest = {selectedTest} />
-                  )
-                }
+                <TestResultTab resultData={resultData}/>
             </div>
         )}
 
