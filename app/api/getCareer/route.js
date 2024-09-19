@@ -6,6 +6,7 @@ import { desc, eq, and, inArray } from 'drizzle-orm';
 import { formattedAge } from '@/lib/formattedAge';
 
 export async function GET(req) {
+    console.log('gottt')
     // Authenticate the request
     const authResult = await authenticate(req);
     if (!authResult.authenticated) {
@@ -72,6 +73,8 @@ export async function GET(req) {
             .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id)) // Join on the career_group_id
             .where(eq(USER_CAREER.user_id, userId))
             .execute();
+
+        console.log(data)
 
         const personalityTypes = await db.select({
             typeSequence: QUIZ_SEQUENCES.type_sequence,

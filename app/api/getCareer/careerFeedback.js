@@ -12,7 +12,6 @@ export const careerFeedback = async (type1, type2, userId, career_name, country)
                    .from(USER_DETAILS)
                    .where(eq(USER_DETAILS.id, userId))
   const age=calculateAge(birth_date[0].birth_date)
-  console.log(age)
 
   const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career, such as time management, organizational skills, and other relevant skills. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output as a single paragraph without additional wrapping other than {}.`;
 
