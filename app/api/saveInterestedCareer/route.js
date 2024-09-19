@@ -28,7 +28,8 @@ export async function POST(req)
                       .where(eq(USER_DETAILS.id, userId))
 
     const birth_date=user_data[0].birth_date
-    const age=calculateAge(birth_date)    
+    const age=calculateAge(birth_date)   
+    console.log("calculateAge", age) 
     // const age = 6
     const education=user_data[0].education
     const { career,country} = await req.json();
@@ -191,7 +192,7 @@ export async function POST(req)
     let responseText = response.data.choices[0].message.content.trim();
     responseText = responseText.replace(/```json|```/g, "").trim();
 
-    // console.log("responseText", responseText)
+    console.log("responseText", responseText)
     let parsedData;
     
     try {

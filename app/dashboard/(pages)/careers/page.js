@@ -117,7 +117,7 @@ function page() {
   const handleSubmit = async () => {
     setRoadMapLoading(true)
     setShowDialogue(false)
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -149,7 +149,7 @@ function page() {
       getCareers();
       setShowDialogue(false)
       setRoadMapLoading(false)  
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
