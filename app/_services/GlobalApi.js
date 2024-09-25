@@ -455,17 +455,10 @@ export default {
   GetContestResultData,
 
   GetLeaderboardData,
-<<<<<<< HEAD
   getActivities,
   updateActivityStatus,
   getChallenges,
   submitChallenge,
   getChallengesByStatus,
   getLastSubmittedChallenge,
-=======
-
-  UpdateMileStoneStatus,
-
-  GetFeedBackData
->>>>>>> ba54a3271e391d263c3c2ec89edc30d795a81786
 }

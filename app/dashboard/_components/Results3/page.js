@@ -150,9 +150,9 @@ export default function Results2() {
                                 </div>
                             )}
                         {step === 2 && (
-                            <div className="bg-[#252525] p-6 rounded-lg text-white mt-6">
+                            <div  className="bg-white sm:col-span-6 md:col-span-4 col-span-12 text-[#341e44] px-4 py-2 rounded-lg hover:bg-gray-100">
                                 <p className="text-center mb-4">Please select an industry from below.</p>
-                                <div className="flex flex-col gap-4">
+                                <div className="grid grid-cols-12 gap-4">
                                     {
                                         industries.map((industry, index) => (
                                             

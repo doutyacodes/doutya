@@ -1,11 +1,12 @@
 "use client";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import QuizProgressAlert from "@/app/_components/QuizProgressAlert";
 import GlobalApi from "@/app/_services/GlobalApi";
-// import { Toaster } from '@/components/ui/toaster';
-import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 import toast, { Toaster } from "react-hot-toast";
+import GreenSlider from "@/app/dashboard/_components/GreenSlider";
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -47,7 +48,7 @@ function Page({ params }) {
         setCurrentQuestionIndex(resp.data.quizProgress);
 
         if (resp.data.quizProgress > 0) {
-          setShowAlert(true); // Set showAlert to true when resuming the quiz
+          setShowAlert(true);
         }
       } catch (error) {
         console.error("Error Fetching GetQuizData data:", error);
@@ -60,7 +61,6 @@ function Page({ params }) {
 
   useEffect(() => {
     if (quizCompleted) {
-      // setIsLoading(true)
       const interval = setInterval(() => {
         setSecondsRemaining((prevSeconds) => prevSeconds - 1);
       }, 1000);
@@ -91,10 +91,10 @@ function Page({ params }) {
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedChoice(null); // Resetting selected choice for the next question
+      setSelectedChoice(null);
     } else {
       setQuizCompleted(true);
-      quizSubmit(); // Quiz finished, send data to API
+      quizSubmit();
     }
   };
 
@@ -130,11 +130,9 @@ function Page({ params }) {
         toast.success("Quiz Completed successfully!");
       } else {
         toast.error("Failed to submit quiz.");
-        // alert('Failed Submitted results');
       }
     } catch (error) {
       console.error("Error submitting quiz", error);
-      // toast.error('Error: Failed to create Challenge.');
       toast.error("Error Error: Failed to submit quiz.");
     } finally {
       setIsLoading(false);
@@ -172,61 +170,53 @@ function Page({ params }) {
   return (
     <div className="h-screen">
       <Toaster position="top-center" reverseOrder={false} />
-
+      <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
+        <p className="text-white uppercase font-bold text-center">
+          Interest Recognition Test
+        </p>
+      </div>
       {showAlert && <QuizProgressAlert />}
-      {questions.length > 0 && (
-        <div className="mt-4 pt-5 flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">
-          <div>
-            <p className="font">{currentQuestionIndex + 1}/30</p>
-          </div>
-          <div>
-            <p className="font-bold p-2 text-xl md:text-3xl">
-              {questions[currentQuestionIndex].questionText}
-            </p>
-          </div>
+      <div className="justify-center flex items-center px-4">
+        {questions.length > 0 && (
+          <div className="mt-4 pt-7 flex flex-col gap-8 justify-center items-center mx-auto   text-white rounded-2xl p-[1px] bg-[#0097b2]">
+            <div className="">
+              <p className="font-extrabold text-center">
+                {" "}
+                {currentQuestionIndex + 1}/30
+              </p>
+            </div>
+            <div className="bg-[#1b143a] p-3 rounded-2xl">
+              <div>
+                <p className="font-bold p-2 text-xl text-center">
+                  {questions[currentQuestionIndex].questionText}
+                </p>
+              </div>
 
-          {/* <div className='flex flex-col gap-2 w-full text-white'>
-          {questions[currentQuestionIndex]?.choices.map((choice, index) => (
-            <button
-              key={index}
-              className={`py-2 px-4 ${selectedChoice?.choiceId === choice.choiceId ? 'bg-green-500' : 'bg-slate-400'}`}
-              onClick={() => handleChoiceSelect(choice)}
-            >
-              {choice.choiceText}
-            </button>
-          ))}
-        </div> */}
+              <div className="sm:w-full px-10 justify-center items-center flex">
+              <div className="flex flex-col gap-2 w-full text-white mt-16">
+                <GreenSlider
+                  choices={choices}
+                  selectedChoice={selectedChoice}
+                  onChange={handleChoiceSelect}
+                />
+              </div>
+              </div>
 
-          <div className="flex flex-col gap-2 w-full text-white">
-            {choices.map((choice, index) => (
-              <button
-                key={index}
-                className={`py-2 px-4 rounded-md hover:cursor-pointer
-                  hover:bg-purple-300 hover:text-black transition duration-300 ease-in-out ${
-                    selectedChoice?.choiceId === choice.choiceId
-                      ? "bg-green-500"
-                      : "bg-slate-400"
+              <div className="w-full justify-center items-center flex my-5">
+                <button
+                  className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
+                    selectedChoice ? "" : "opacity-50 cursor-not-allowed"
                   }`}
-                onClick={() => handleChoiceSelect(choice)}
-              >
-                {choice.choiceText}
-              </button>
-            ))}
+                  onClick={handleNext}
+                  disabled={!selectedChoice}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </div>
-
-          <div>
-            <button
-              className={`bg-green-600 py-2 px-5 rounded-lg text-white ${
-                selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-              }`}
-              onClick={handleNext}
-              disabled={!selectedChoice}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

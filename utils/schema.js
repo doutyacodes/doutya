@@ -459,3 +459,22 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         school_id: int('school_id').notNull(),
         week: int('week').notNull()
       });
+      export const MILESTONE_CATEGORIES = mysqlTable('milestone_categories', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        name: varchar('name', { length: 255 }).notNull().unique(),
+      });
+
+    export const MILESTONES = mysqlTable('milestones', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        category_id: int('category_id').notNull().references(() => MILESTONE_CATEGORIES.id),
+        description: text('description').default(null),
+        completion_status: boolean('completion_status').default(false),
+        date_achieved: timestamp('date_achieved').default(null),
+        milestone_age: decimal('milestone_age', { precision: 3, scale: 1 }).default(null),
+    });
+
+    export const USER_MILESTONES = mysqlTable('user_milestones', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        user_career_id: int('user_career_id').notNull().references(() => USER_CAREER.id),
+        milestone_id: int('milestone_id').notNull().references(() => MILESTONES.id),
+    });

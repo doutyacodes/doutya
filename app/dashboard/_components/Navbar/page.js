@@ -1,7 +1,8 @@
 "use client";
-import React, { useState ,useEffect} from "react";
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import Image from "next/image";
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -12,17 +13,17 @@ function Navbar() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       setIsLoggedIn(true);
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('dashboardUrl');
+    localStorage.removeItem("token");
+    localStorage.removeItem("dashboardUrl");
     setIsLoggedIn(false);
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   return (
@@ -31,41 +32,41 @@ function Navbar() {
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <img
-              src="https://i.postimg.cc/pT86s6Zp/doutya-logo-removebg-preview.png"
-              alt="Logo"
-              className="h-8 w-8 mr-2"
+            <Image
+              src={"/assets/images/logo-full.png"}
+              width={150}
+              height={150}
             />
-            <span className="text-white text-xl font-bold">
-              Pers<span className="text-blue-400">Analytics</span>
-            </span>
           </div>
 
           {/* Search Bar */}
-          <div className="flex-1 mx-4 relative">
+          {/* <div className="flex-1 mx-4">
             <input
               type="text"
-              placeholder="Search...                                                           🔍"
-              className="w-full md:w-96 px-4 py-2 rounded-full bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 lg:ml-44"
+              placeholder="Search...                 "
+              className="w-full px-4 py-2 rounded-full bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 max-sm:hidden"
             />
-          </div>
+          </div> */}
 
           {/* Menu Button */}
-          <button className="md:hidden text-white" onClick={toggleSidebar}>
+          {/* <button className="md:hidden text-white" onClick={toggleSidebar}>
             ☰
-          </button>
+          </button> */}
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-6">
-            <a href="/dashboard" className="text-white hover:text-gray-300">
+          <div className=" md:flex items-center space-x-6 text-sm lg:text-base text-nowrap">
+            {/* <a href="/dashboard" className="text-white hover:text-gray-300">
               Dashboard
             </a>
             <a href="#" className="text-white hover:text-gray-300">
               About Us
             </a>
-            <a href="/dashboard/careers" className="text-white hover:text-gray-300">
+            <a
+              href="/dashboard/careers"
+              className="text-white hover:text-gray-300"
+            >
               Careers
-            </a>
+            </a> */}
             {/* <select className="bg-transparent text-white">
               <option className="text-black" value="">
                 Solutions
@@ -103,34 +104,37 @@ function Navbar() {
                   <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
-                    <img alt="" src="/assets/images/avatar.png" className="h-8 w-8 rounded-full" />
+                    <img
+                      alt=""
+                      src="/assets/images/avatar.png"
+                      className="h-8 w-8 rounded-full"
+                    />
                   </MenuButton>
                 </div>
                 <MenuItems
                   transition
                   className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                 >
-                    <MenuItem key={'Your Profile'}>
-                      <a
-                        href={'dashboard/user-profile'}
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                      >
-                        {'Your Profile'}
-                      </a>
-                    </MenuItem>
+                  <MenuItem key={"Your Profile"}>
+                    <a
+                      href={"dashboard/user-profile"}
+                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                    >
+                      {"Your Profile"}
+                    </a>
+                  </MenuItem>
 
-                    <MenuItem key={'Sign Out'}>
-                      <a
-                        onClick={handleLogout}
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                      >
-                        {'Sign Out'}
-                      </a>
-                    </MenuItem>
+                  <MenuItem key={"Sign Out"}>
+                    <a
+                      onClick={handleLogout}
+                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                    >
+                      {"Sign Out"}
+                    </a>
+                  </MenuItem>
                 </MenuItems>
               </Menu>
             </div>
-
           </div>
         </div>
       </nav>
@@ -164,6 +168,10 @@ function Navbar() {
           </div>
         </div>
       </div>
+      {/* <div className="h-1 bg-[#00be61] mb-3" />
+      <div className=" mx-auto w-full px-6 fixed z-30 bottom-5">
+        <div className="py-4 w-full bg-red-500"></div>
+      </div> */}
     </div>
   );
 }

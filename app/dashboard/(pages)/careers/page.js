@@ -12,7 +12,7 @@ import Contests from '../../_components/ContestTab/Contests';
 import Activity from '../../_components/Activities/activity';
 import Challenge from '../../_components/Challenges/page';
 import Feedback from "../../_components/FeedbackTab/Feedback";
-import RoadMap from "../../_components/RoadMap"; // Ensure the correct import
+import RoadMap from "../../_components/RoadMapTab/RoadMap";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -73,18 +73,28 @@ function Page() {
     setIsLoading(true);
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      console.log("checkinggggg");
+
+      if (!token) {
+        // If there's no token, it means the user hasn't done anything yet, so we just return early.
+        setIsLoading(false);
+        return;
+      }
+  
       const response = await GlobalApi.GetCarrerData(token);
-      if (response.status === 201) {
+      if (response.status === 201 && response.data && response.data.length > 0) {
         setCareerData(response.data);
       } else {
-        toast.error("Failed to fetch career data. Please try again later.");
+        toast.error("No career data available at the moment.");
       }
     } catch (err) {
+      console.log(err);
       toast.error("Failed to fetch career data. Please try again later.");
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   useEffect(() => {
     getCareers();
