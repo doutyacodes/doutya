@@ -461,4 +461,7 @@ export default {
   submitChallenge,
   getChallengesByStatus,
   getLastSubmittedChallenge,
+
+  UpdateMileStoneStatus,
+  GetFeedBackData
 }

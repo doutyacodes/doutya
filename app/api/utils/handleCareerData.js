@@ -52,7 +52,7 @@ export async function handleCareerData(userId, country, results) {
             const userCareerId = result[0].insertId;
 
             // Iterate over each milestone data
-            if (Array.isArray(career.roadmap)) {
+            if (Array.isArray(career.roadmap)) {                
                 for (const milestoneData of career.roadmap) {
                     if (milestoneData && typeof milestoneData.age === 'number' && milestoneData.milestones) {
                         const milestoneAge = milestoneData.age;

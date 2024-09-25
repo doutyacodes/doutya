@@ -24,12 +24,9 @@ export async function validateCareer(career) {
 
         validationResponseText = validationResponse.data.choices[0].message.content.trim();
         validationResponseText = validationResponseText.replace(/```json|```/g, "").trim();
-<<<<<<< HEAD
         console.log(validationResponseText)
-=======
         // console.log("validationResponseText", validationResponseText);
         
->>>>>>> ba54a3271e391d263c3c2ec89edc30d795a81786
 
     } catch (error) {
         throw new Error("Failed to validate career name");

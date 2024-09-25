@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import GlobalApi from "@/app/_services/GlobalApi";
-import toast, { Toaster } from "react-hot-toast";
+import toast, { LoaderIcon, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import html2canvas from "html2canvas";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
@@ -19,6 +19,9 @@ export default function Results2() {
   const [user_feedback, setUserFeedback] = useState("");
   const [step, setStep] = useState(1);
   const [industries, setIndustries] = useState([]);
+
+  const [saveResultloading, setSaveResultLoading] = useState(false); // Loading state
+
   // const [industrySelect, setIndustrySelect] = useState(null)
   const router = useRouter();
   const resultsRef = useRef();
@@ -124,6 +127,7 @@ export default function Results2() {
   };
 
   const handleSaveResult = async () => {
+    setSaveResultLoading(true)
     if (selectedCareers.length > 0) {
       console.log("Greater than");
 
@@ -153,8 +157,10 @@ export default function Results2() {
         } else {
           toast.error("Failed to save career data. Please try again later.");
         }
+      } finally {
+        setSaveResultLoading(false)
       }
-    } else {
+     } else {
       toast.error("Please select atleast one result to continue");
     }
   };
@@ -447,10 +453,20 @@ export default function Results2() {
               {resultData && prevSelectCount < 3 && (
                 <div>
                   <button
-                    className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4"
+                    className={`w-full bg-blue-500 text-white py-2 rounded-lg mt-4 flex justify-center items-center ${
+                      saveResultloading ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                     onClick={handleSaveResult}
+                    disabled={saveResultloading}
                   >
-                    Save Results
+                    {saveResultloading ? (
+                      <>
+                        <LoaderIcon className="w-5 h-5 text-white animate-spin mr-2" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Results"
+                    )}
                   </button>
                 </div>
               )}

@@ -55,7 +55,7 @@ function Navbar() {
 
           {/* Navigation Links */}
           <div className=" md:flex items-center space-x-6 text-sm lg:text-base text-nowrap">
-            {/* <a href="/dashboard" className="text-white hover:text-gray-300">
+            <a href="/dashboard" className="text-white hover:text-gray-300">
               Dashboard
             </a>
             <a href="#" className="text-white hover:text-gray-300">
@@ -66,7 +66,7 @@ function Navbar() {
               className="text-white hover:text-gray-300"
             >
               Careers
-            </a> */}
+            </a>
             {/* <select className="bg-transparent text-white">
               <option className="text-black" value="">
                 Solutions

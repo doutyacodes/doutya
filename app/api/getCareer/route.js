@@ -36,7 +36,9 @@ export async function GET(req) {
 
     const birth_date = user_data[0].birth_date;
     const age = formattedAge(birth_date);
-    // console.log("birth_date", age);
+    // const age = 8
+    // // console.log("birth_date", age);
+
     // return NextResponse.json({ message: 'Careers GOt successfully' }, { status: 201 });
 
     // Fetch data for the given userId
@@ -79,7 +81,7 @@ export async function GET(req) {
       .where(eq(USER_CAREER.user_id, userId))
       .execute();
 
-    console.log(data);
+    // console.log(data);
 
     const personalityTypes = await db
       .select({
@@ -94,6 +96,9 @@ export async function GET(req) {
     const type2 = personalityTypes.find((pt) => pt.quizId === 2)?.typeSequence;
 
     const userCareerIds = data.map((record) => record.id);
+
+    // console.log("userCareerIds", userCareerIds);
+    
 
     // Fetch user milestones
     const userMilestones = await db
@@ -121,7 +126,7 @@ export async function GET(req) {
         )
       );
 
-    // console.log("userMilestones", userMilestones)
+    console.log("userMilestones", userMilestones)
 
     // Generate feedback for each record asynchronously
     const resultData = await Promise.all(

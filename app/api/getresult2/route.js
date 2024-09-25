@@ -129,7 +129,6 @@ export async function GET(req) {
         }.
         type:normal or off beat or trending.
         match:percentage of the how the user compatible with the particular career.
-        roadmap: Detailed steps and milestones required to achieve this career (as an array).
         present_trends: Current trends and opportunities in the field${
           country ? " in " + country : ""
         }.
@@ -138,6 +137,9 @@ export async function GET(req) {
         }.
         user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
         Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Give it as a single JSON data without any wrapping other than []`;
+
+        // roadmap: Detailed steps and milestones required to achieve this career (as an array).
+
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
