@@ -130,6 +130,8 @@ export async function GET(req) {
         type:normal or off beat or trending.
         match:percentage of the how the user compatible with the particular career.
         roadmap: Detailed steps and milestones required to achieve this career (as an array).
+        expenses:price range to complete this career in ${country} and the price should in the ${country} currency in a small description.
+        opportunities:job opportunities in ${country} and also the country which have most opportunities.
         present_trends: Current trends and opportunities in the field${
           country ? " in " + country : ""
         }.
