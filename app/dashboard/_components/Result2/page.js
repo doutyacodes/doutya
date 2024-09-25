@@ -224,9 +224,9 @@ export default function Results2() {
       )}
       {singleCareer?.career_name && (
         <div className="bg-[#009be8] h-20 my-4  ">
-            <div className="justify-between items-center flex flex-row px-4 mx-auto h-full max-w-[1280px]">
-          <div className="justify-between items-center flex gap-4">
-          <ChevronsLeft className="text-white text-lg" />
+          <div className="justify-between items-center flex flex-row px-4 mx-auto h-full max-w-[1280px]">
+            <div className="justify-between items-center flex gap-4">
+              <ChevronsLeft className="text-white text-lg" />
               <button
                 onClick={() => {
                   setCareerIndex(null);
@@ -310,11 +310,18 @@ export default function Results2() {
                                                           ? "border-4 border-blue-500 shadow-2xl"
                                                           : ""
                                                       }`}
-                                                      style={{backgroundColor:career?.type=="normal" ? "#0097b2" :career?.type=="off beat" ? "#800080":"#5dbb49" }}
+                          style={{
+                            backgroundColor:
+                              career?.type == "normal"
+                                ? "#0097b2"
+                                : career?.type == "off beat"
+                                ? "#800080"
+                                : "#5dbb49",
+                          }}
                           onClick={() => handleCareerClick(index)}
                         >
                           <p className="text-xl text-center text-white py-4 uppercase font-bold">
-                          {career?.type=="normal" ? "BASIC" :career.type}
+                            {career?.type == "normal" ? "BASIC" : career.type}
                           </p>
                           <div className="w-full bg-[#191235] p-3  rounded-xl text-white min-h-[72vh] space-y-6">
                             {selectedCareers.includes(index) && (
@@ -326,7 +333,7 @@ export default function Results2() {
                             </h2>
                             <div className="p-4 bg-[#0097b2] rounded-md">
                               <p className="text-center font-bold">
-                                Match -  {career.match} %
+                                Match - {career.match} %
                               </p>
                             </div>
                             <p className="text-white">
@@ -410,25 +417,31 @@ export default function Results2() {
                               </p>
                             </div>
                           </div>
-
+                        </>
+                      )}
+                      {singleCareer?.expenses && (
+                        <>
                           <div className="bg-[#ff0000] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md">
                             <p className="text-white font-bold text-lg uppercase text-center py-3">
-                              Future Prospects
+                              Expenses
                             </p>
                             <div className="bg-[#1c143b] p-3 min-h-[150px] justify-center items-center flex">
                               <p className="text-justify text-sm flex-grow overflow-hidden text-ellipsis">
-                                {singleCareer?.future_prospects}
+                                {singleCareer?.expenses}
                               </p>
                             </div>
                           </div>
-
+                        </>
+                      )}
+                      {singleCareer?.opportunities && (
+                        <>
                           <div className="bg-[#5ce1e6] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md">
                             <p className="text-white font-bold text-lg uppercase text-center py-3">
-                              Future Prospects
+                              opportunities
                             </p>
                             <div className="bg-[#1c143b] p-3 min-h-[150px] justify-center items-center flex">
                               <p className="text-justify text-sm flex-grow overflow-hidden text-ellipsis">
-                                {singleCareer?.future_prospects}
+                                {singleCareer?.opportunities}
                               </p>
                             </div>
                           </div>
