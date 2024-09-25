@@ -116,11 +116,11 @@ export async function GET(req) {
   //     user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
   //   Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`;
 
-  const prompt = `Provide a list of the 5 best careers in the ${industry} sector ${
+  const prompt = `Provide a list of the 6 best careers in the ${industry} sector ${
     country ? "in " + country : ""
   } for an individual with an ${type1} personality type and RIASEC interest types of ${type2} ${
     type3 ? " and Gallup Strengths types of " + type3 : ""
-  } with 2 normal careers, 1 trending career and 2 off beat career. For each career, include the following information:
+  } with 2 normal careers, 2 trending career and 2 off beat career. For each career, include the following information:
         career_name: A brief title of the career?.
         reason_for_recommendation: Why this career is suitable for someone with these interests${
           country
@@ -141,25 +141,23 @@ export async function GET(req) {
         user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
         Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Give it as a single JSON data without any wrapping other than []`;
 
-        const response = await axios.post(
-          "https://api.openai.com/v1/chat/completions",
-          {
-            model: "gpt-4o-mini", // or 'gpt-4' if you have access
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 2000, // Adjust the token limit as needed
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            timeout: 10000, // 10 seconds timeout
-          }
-        );
-        
+  const response = await axios.post(
+    "https://api.openai.com/v1/chat/completions",
+    {
+      model: "gpt-4o-mini", // or 'gpt-4' if you have access
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 3000, // Adjust the token limit as needed
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
-console.log(responseText)
+
   // Store the new result in the user_results table
   await db
     .insert(USER_RESULTS)
