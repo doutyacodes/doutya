@@ -55,7 +55,7 @@ function Navbar() {
 
           {/* Navigation Links */}
           <div className=" md:flex items-center space-x-6 text-sm lg:text-base text-nowrap">
-            <a href="/dashboard" className="text-white hover:text-gray-300">
+            {/* <a href="/dashboard" className="text-white hover:text-gray-300">
               Dashboard
             </a>
             <a href="#" className="text-white hover:text-gray-300">
@@ -66,7 +66,7 @@ function Navbar() {
               className="text-white hover:text-gray-300"
             >
               Careers
-            </a>
+            </a> */}
             {/* <select className="bg-transparent text-white">
               <option className="text-black" value="">
                 Solutions
@@ -116,12 +116,20 @@ function Navbar() {
                   className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                 >
                   <MenuItem key={"Your Profile"}>
-                    <a
+                    <Link
                       href={"dashboard/user-profile"}
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                     >
                       {"Your Profile"}
-                    </a>
+                    </Link>
+                  </MenuItem>
+                  <MenuItem key={"Your Profile"}>
+                    <Link
+              href="/dashboard/careers"
+              className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                    >
+                      {"Careers"}
+                    </Link>
                   </MenuItem>
 
                   <MenuItem key={"Sign Out"}>
