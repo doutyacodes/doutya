@@ -141,20 +141,22 @@ export async function GET(req) {
         user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
         Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Give it as a single JSON data without any wrapping other than []`;
 
-  const response = await axios.post(
-    "https://api.openai.com/v1/chat/completions",
-    {
-      model: "gpt-4o-mini", // or 'gpt-4' if you have access
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 2000, // Adjust the token limit as needed
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+        const response = await axios.post(
+          "https://api.openai.com/v1/chat/completions",
+          {
+            model: "gpt-4",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 2000,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            timeout: 10000, // 10 seconds timeout
+          }
+        );
+        
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
 
