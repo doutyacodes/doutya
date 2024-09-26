@@ -5,6 +5,9 @@ import { eq,and } from 'drizzle-orm';
 import { db } from '@/utils';
 import axios from 'axios';
 
+export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+
 export async function GET(req)
 {
     console.log('got')

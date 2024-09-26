@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+
 export async function validateCareer(career) {
     console.log('validate')
     const validationPrompt = `Is "${career}" a valid career name? If yes, provide a brief description of this career and whether it has associated information available. Respond with JSON containing "is_valid" and "description" fields.`;

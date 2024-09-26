@@ -5,6 +5,10 @@ import { CAREER_SUBJECTS, SUBJECTS } from '@/utils/schema';
 import axios from 'axios';
 import { and, eq, inArray } from 'drizzle-orm';
 
+
+export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+
 // Function to fetch subjects from OpenAI
 const fetchSubjectsFromOpenAI = async (careerName, country) => {
     console.log("careerName, country", careerName, country);

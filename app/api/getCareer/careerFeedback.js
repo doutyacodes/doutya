@@ -4,6 +4,9 @@ import { USER_DETAILS } from '@/utils/schema';
 import { desc, eq, and } from 'drizzle-orm';
 import { calculateAge } from '@/lib/ageCalculate';
 
+
+export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
 // export async function GET(req)
 export const careerFeedback = async (type1, type2, userId, career_name, country) => {
 

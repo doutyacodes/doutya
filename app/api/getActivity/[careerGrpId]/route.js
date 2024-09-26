@@ -6,6 +6,9 @@ import { calculateAge } from '@/lib/ageCalculate';
 import { eq, and } from 'drizzle-orm';
 import axios from 'axios';
 
+export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+
 export async function GET(req, { params }) {
 
     const authResult = await authenticate(req);

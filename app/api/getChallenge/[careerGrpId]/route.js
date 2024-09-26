@@ -6,6 +6,10 @@ import { CAREER_GROUP, USER_DETAILS, CHALLENGES, CHALLENGE_PROGRESS } from '@/ut
 import { calculateAge } from '@/lib/ageCalculate';
 import { eq, and , isNull} from 'drizzle-orm';
 
+
+export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+
 export async function GET(req, { params }) {
 
     const authResult = await authenticate(req);
