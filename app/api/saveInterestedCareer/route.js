@@ -8,6 +8,9 @@ import { validateCareer } from './validateCareer';
 import { handleCareerData } from '../utils/handleCareerData';
 import { calculateAge } from '@/lib/ageCalculate';
 
+export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+
 export async function POST(req)
 {
     const authResult = await authenticate(req);

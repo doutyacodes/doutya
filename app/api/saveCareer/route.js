@@ -7,6 +7,9 @@ import { QUIZ_SEQUENCES, USER_DETAILS } from "@/utils/schema";
 import { calculateAge } from "@/lib/ageCalculate";
 import axios from "axios";
 
+export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+
 export async function POST(req) {
 
     const authResult = await authenticate(req);
