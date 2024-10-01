@@ -19,6 +19,41 @@ export default function Results2() {
   const [user_feedback, setUserFeedback] = useState("");
   const [step, setStep] = useState(1);
   const [industries, setIndustries] = useState([]);
+  const [selected, setSelected] = useState([]);
+  const prevSelectCounts = 0; // Adjust according to your actual logic
+  const careerIndexes = 1; // Example index, adjust dynamically
+  const maxSelections = 5;
+
+  // Load selected careers from localStorage on mount
+  useEffect(() => {
+    const storedCareers = JSON.parse(localStorage.getItem('selectedCareers')) || [];
+    setSelectedCareers(storedCareers);
+  }, []);
+
+  // Save selected careers to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('selectedCareers', JSON.stringify(selectedCareers));
+  }, [selectedCareers]);
+
+  const handleSelect = (index) => {
+    if (prevSelectCount < maxSelections) {
+      if (selectedCareers.includes(index)) {
+        // Deselect the career
+        setSelectedCareers(selectedCareers.filter((careerIndex) => careerIndex !== index));
+      } else if (selectedCareers.length < maxSelections - prevSelectCount) {
+        // Select the career
+        setSelectedCareers([...selectedCareers, index]);
+      } else {
+        // Max selections reached
+        toast.error(`You can only select up to ${maxSelections - prevSelectCount} careers.`);
+      }
+    }
+  };
+
+  const isSelected = selectedCareers.includes(careerIndex);
+
+
+
 
   const [saveResultloading, setSaveResultLoading] = useState(false); // Loading state
 
@@ -449,17 +484,19 @@ export default function Results2() {
                       )}
                     </div>
                     <div className="flex justify-center items-center">
-                      <button
-                        className="text-white font-bold text-center bg-green-600 py-4 px-7 uppercase rounded-lg"
-                        onClick={() => {
-                          handleCareerClick(careerIndex);
-                          setCareerIndex(null);
-                          setSingleCareer(null);
-                        }}
-                      >
-                        Select this career
-                      </button>
-                    </div>
+      <button
+        className={`text-white font-bold text-center py-4 px-7 uppercase rounded-lg ${
+          isSelected ? 'bg-red-600' : 'bg-green-600'
+        }`}
+        onClick={() => {
+          handleCareerClick(careerIndex);
+          setCareerIndex(null);
+          setSingleCareer(null);
+        }}
+      >
+        {isSelected ? 'Deselect' : 'Select this career'}
+      </button>
+    </div>
                   </div>
                 ) : null}
               </div>
