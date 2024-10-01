@@ -66,13 +66,13 @@ function Banner({
   }
 
   return (
-    <div className="mb-7 w-4/5 mx-auto mt-18">
+    <div className="mb-7 w-full px-10 mt-18">
       <h2 className="text-white mt-7 font-bold font-serif pb-6">
         Personality
       </h2>
       <div className="border-t border-cyan-400"></div>
 
-      <div className="mt-8 sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 hidden">
+      <div className="mt-8 sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 hidden w-full">
         <div className="border border-cyan-400 pb-3 rounded-sm w-full">
           <img
             className="rounded-md object-cover w-full h-36"
@@ -80,7 +80,7 @@ function Banner({
             alt="Test 4 Image"
           />
           <div className="border-t border-cyan-400"></div>
-          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 1</h1>
+          <h1 className="text-white mt-4 text-2xl font-bold ml-7">Personality Test</h1>
           <div className="relative">
             {!getQuizStatus(1).isCompleted ? (
               <Link href="/quiz-section/1">
@@ -99,10 +99,8 @@ function Banner({
             )}
           </div>
           <div className="relative">
-            <p className="ml-3 text-white pt-8 w-4/5">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-              maiores molestias possimus optio nisi quos sint, quo facere est
-              rem deserunt voluptas
+            <p className="mx-auto text-white pt-8 w-4/5 text-justify">
+            Begin your journey of self-discovery with the Personality Test! Uncover your unique traits to build a foundation for finding your ideal career path.
             </p>
           </div>
           <div className="text-center mt-4">
@@ -132,7 +130,7 @@ function Banner({
             alt="Test 3 Image"
           />
           <div className="border-t border-cyan-400"></div>
-          <h1 className="text-white mt-4 text-2xl font-bold ml-3">Test 2</h1>
+          <h1 className="text-white mt-4 text-2xl font-bold ml-7">Interest Test</h1>
           <div className="relative">
             {!getQuizStatus(2).isCompleted ? (
               <Link href="CareerQuizSection/2">
@@ -151,10 +149,8 @@ function Banner({
             )}
           </div>
           <div className="relative">
-            <p className="ml-3 text-white pt-8 w-4/5">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-              maiores molestias possimus optio nisi quos sint, quo facere est
-              rem deserunt voluptas
+            <p className="mx-auto text-white pt-8 w-4/5 text-justify">
+              Explore your interests in the next phase! Uncover your passions and combine them with your personality profile to find career paths that truly resonate with you.
             </p>
           </div>
           <div className="text-center mt-4">
