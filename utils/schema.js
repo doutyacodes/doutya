@@ -8,7 +8,7 @@ export const USER_DETAILS= mysqlTable('user_details',{
     birth_date:date('birth_date').default(null),
     password:varchar('password',{length:150}).default(null),
     username:varchar('username',{length:150}).default(null),
-    education:varchar('education',{length:200}).default(null),
+    education:varchar('education',{length:200}).default(`Bachelor's Degree`),
     student:mysqlEnum('student',['yes','no']).notNull(),
     college:text('college').default(null),
     university:text('university').default(null),

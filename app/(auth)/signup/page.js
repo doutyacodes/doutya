@@ -74,7 +74,27 @@ function SignUp() {
             console.log(data)
         } catch (err) {
             console.error('Error:', err);
-            toast.error(`Error: ${err.message}`);
+    
+            // Handle specific errors for username and mobile number
+            if (err.response?.status === 400 && err.response?.data?.message) {
+                const errorMsg = err.response.data.message;
+                if (errorMsg.includes('Username')) {
+                    console.log('got errr')
+                    setError("username", {
+                        type: "manual",
+                        message: "Username already exists"
+                    });
+                } else if (errorMsg.includes('Phone number')) {
+                    setError("mobile", {
+                        type: "manual",
+                        message: "Phone number already exists"
+                    });
+                } else {
+                    toast.error(`Error: ${errorMsg}`);
+                }
+            } else {
+                toast.error(`Error: ${err.message}`);
+            }
         }
     }
 
@@ -112,7 +132,7 @@ function SignUp() {
                         </div>
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+                        <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username (Don't include space in your username)</label>
                         <input
                             type="text"
                             {...register("username")}
@@ -120,6 +140,7 @@ function SignUp() {
                             required
                         />
                     </div>
+                    {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>}
                     <div className="mb-4">
                         <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
                         <input
