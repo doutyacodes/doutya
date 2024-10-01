@@ -377,21 +377,25 @@ const submitChallenge = (formData,token) => {
     }
   });
 };
-const getChallengesByStatus = (status, token) => {
+const getChallengesByStatus = (status, id, token) => {
   return axios.get(`/api/getChallengesStatus`,{
       headers: {
           Authorization: `Bearer ${token}`,
       },
       params: {
-        status, 
+        status,
+        id
     },
   });
 };
-const getLastSubmittedChallenge = (token) => {
+const getLastSubmittedChallenge = (id,token) => {
   return axios.get(`/api/getLastSubmittedChallenge`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    params:{
+      id
+    }
   });
 };
 

@@ -1,6 +1,6 @@
-import { db } from '@/utils'; 
-import { CHALLENGE_PROGRESS, CHALLENGES } from '@/utils/schema'; 
-import { eq , and} from 'drizzle-orm'; 
+import { db } from '@/utils';
+import { CHALLENGE_PROGRESS, CHALLENGES } from '@/utils/schema';
+import { eq, and } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
 
@@ -15,7 +15,8 @@ export async function GET(req) {
     const userId = userData.userId;
 
     const { searchParams } = new URL(req.url);
-    const status = searchParams.get('status'); 
+    const status = searchParams.get('status');
+    const career_id = searchParams.get('id')
 
     try {
         // Fetch challenges based on status and userId by joining the tables
@@ -32,10 +33,11 @@ export async function GET(req) {
             .innerJoin(CHALLENGE_PROGRESS, and(
                 eq(CHALLENGE_PROGRESS.challenge_id, CHALLENGES.id),
                 eq(CHALLENGE_PROGRESS.user_id, userId),
-                eq(CHALLENGE_PROGRESS.status, status)
+                eq(CHALLENGE_PROGRESS.status, status),
+                eq(CHALLENGES.career_id, career_id) 
             ))
-            .orderBy(CHALLENGES.week); 
-        
+            .orderBy(CHALLENGES.week);
+
 
         // If no challenges are found, return an empty array
         if (challenges.length === 0) {
