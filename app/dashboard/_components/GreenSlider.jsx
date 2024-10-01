@@ -2,7 +2,7 @@ import React from 'react';
 import { Slider } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-const GreenSlider = ({ choices, selectedChoice, onChange }) => {
+const GreenSlider = ({ choices, selectedChoice, onChange, key }) => {
   const isSmallScreen = useMediaQuery('(max-width:600px)');
 
   const handleChange = (event, value) => {
@@ -12,7 +12,8 @@ const GreenSlider = ({ choices, selectedChoice, onChange }) => {
   return (
     <div className="flex flex-col items-center">
       <Slider
-        defaultValue={0}
+        key={key}
+        defaultValue={null}
         min={0}
         max={choices.length - 1}
         step={1}

@@ -195,12 +195,13 @@ function Page({ params }) {
               <div className="sm:w-full px-10 justify-center items-center flex">
               <div className="flex flex-col gap-2 w-full text-white mt-16">
                 <GreenSlider
+                  key={currentQuestionIndex}
                   choices={choices}
                   selectedChoice={selectedChoice}
                   onChange={handleChoiceSelect}
                 />
               </div>
-              </div>
+            </div>
 
               <div className="w-full justify-center items-center flex my-5">
                 <button
