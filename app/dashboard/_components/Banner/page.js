@@ -51,6 +51,8 @@ function Banner({
     return quiz ? { isCompleted: quiz.isCompleted } : { isCompleted: false };
   };
 
+  const isTest1Completed = getQuizStatus(1).isCompleted
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
@@ -136,7 +138,7 @@ function Banner({
               <Link href="CareerQuizSection/2">
                 <img
                   src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                  className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
+                  className={`h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 ${isTest1Completed ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
                   alt="Navigate to Quiz Section"
                 />
               </Link>
@@ -262,7 +264,7 @@ function Banner({
                   <Link href="CareerQuizSection/2">
                     <img
                       src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                      className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
+                      className={`h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 ${isTest1Completed ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
                       alt="Navigate to Quiz Section"
                     />
                   </Link>

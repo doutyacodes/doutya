@@ -51,7 +51,7 @@ export default function Activity({ selectedCareer }) {
             }
         };
         fetchActivities();
-    }, [selectedCareer, token]);
+    }, [view,selectedCareer, token]);
 
     // Handle marking an activity as completed
     const handleComplete = async (activity) => {
