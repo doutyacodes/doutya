@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import React, { useEffect, useState, useRef  } from "react";
 import GlobalApi from "@/app/_services/GlobalApi";
@@ -6,9 +7,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Updated Swiper CSS path
 import "swiper/css/pagination"; // For pagination styles
 import "swiper/css/navigation"; // For navigation styles
-
 import SwiperCore, { Pagination, Navigation } from "swiper";
-
+import MobileNavigation from "../Navbar/button.jsx";
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
 
 // Install Swiper modules
@@ -64,12 +66,20 @@ function Banner({
       </div>
     );
   }
+  const MobileNavigation = dynamic(() => import('../Navbar/button.jsx'), { ssr: false });
 
   return (
     <div className="mb-7 w-full px-10 mt-18">
+
+
+      
       <h2 className="text-white mt-7 font-bold font-serif pb-6">
         Personality
       </h2>
+
+      
+            
+
       <div className="border-t border-cyan-400"></div>
 
       <div className="mt-8 sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 hidden w-full">
@@ -311,18 +321,13 @@ function Banner({
         ))}
       </div>
       </div>
+
+      <MobileNavigation />
     </div>
   );
 }
 
 export default Banner;
-
-
-
-
-
-
-
 
 
 
