@@ -40,8 +40,7 @@ export default function Challenge({ selectedCareer }) {
             setChallenges(response.data.challenges);
 
             // Fetch the last submitted challenge for the current user
-            const lastSubmissionResponse = await GlobalApi.getLastSubmittedChallenge(token);
-            console.log('lasttt',lastSubmissionResponse)
+            const lastSubmissionResponse = await GlobalApi.getLastSubmittedChallenge(selectedCareer.career_group_id,token);
             setLastSubmittedChallenge(lastSubmissionResponse.data.lastSubmittedChallenge);
 
             const lastChallenge = lastSubmissionResponse.data.lastSubmittedChallenge;
@@ -54,7 +53,7 @@ export default function Challenge({ selectedCareer }) {
                 const currentDate = new Date();
                 const diffTime = Math.abs(currentDate - submissionDate);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
+                console.log(diffDays)
                 if (diffDays >= 7) {
                     setCurrentWeek(lastSubmittedWeek + 1);
                     setShowWaitMessage(false);
@@ -83,7 +82,7 @@ export default function Challenge({ selectedCareer }) {
     const fetchChallengesByStatus = async (status) => {
         setFetching(true);
         try {
-            const response = await GlobalApi.getChallengesByStatus(status, token);
+            const response = await GlobalApi.getChallengesByStatus(status, selectedCareer.career_group_id,token);
             setChallenges(response.data.challenges); // Update challenges based on status
         } catch (error) {
             console.error(`Error fetching ${status} challenges:`, error);
