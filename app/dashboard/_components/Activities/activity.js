@@ -42,7 +42,7 @@ export default function Activity({ selectedCareer }) {
                 try {
                     const response = await GlobalApi.getActivities(selectedCareer.career_group_id, token);
                     console.log('response', response.data.activities);
-                    setActivities(response.data.activities);  // Assuming response contains activities with status
+                    setActivities(response.data.activities);
                 } catch (error) {
                     console.error('Error fetching activities:', error);
                 } finally {
@@ -51,7 +51,7 @@ export default function Activity({ selectedCareer }) {
             }
         };
         fetchActivities();
-    }, [view,selectedCareer, token]);
+    }, [view, selectedCareer, token]);
 
     // Handle marking an activity as completed
     const handleComplete = async (activity) => {
@@ -95,19 +95,20 @@ export default function Activity({ selectedCareer }) {
             const nextStep = currentStep + 1;
             setCurrentStep(nextStep);
             const careerStepKey = `currentStep_${selectedCareer.career_group_id}`;
-            localStorage.setItem(careerStepKey, nextStep); 
+            localStorage.setItem(careerStepKey, nextStep);
         }
     };
 
     // Filter activities based on the selected view
     let filteredActivities = [];
     if (view === 'active') {
-        filteredActivities = activities.filter(a => a.step === currentStep && a.status === 'active');
+        filteredActivities = activities.filter(a => a.step === currentStep);
     } else if (view === 'completed') {
         filteredActivities = activities.filter(a => a.status.status === 'completed');
     } else if (view === 'incomplete') {
         filteredActivities = activities.filter(a => a.status.status === 'skipped');
     }
+    console.log('filter', filteredActivities)
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -145,7 +146,7 @@ export default function Activity({ selectedCareer }) {
             ) : filteredActivities.length > 0 ? (
                 <div className='p-4 bg-orange-200 mt-7 ml-6 mr-6'>
                     <h2 className='font-bold text-xl mb-4 text-black text-center'>
-                        {view === 'active' ? `Month ${currentStep}`:null}
+                        {view === 'active' ? `Month ${currentStep}` : null}
                     </h2>
                     <ul>
                         {filteredActivities.map((activity, index) => (
@@ -171,18 +172,18 @@ export default function Activity({ selectedCareer }) {
                                 {view === 'active' && (
                                     <div className='flex gap-2'>
                                         <button
-                                            className="bg-red-500 text-white px-2 py-1 w-24 rounded-3xl"
+                                            className={`${activity.status === 'skipped' ? 'bg-gray-500' : 'bg-red-500'} text-white px-2 py-1 w-24 rounded-3xl`}
                                             onClick={() => handleSkip(activity)}
                                             disabled={activity.status !== 'active'}
                                         >
-                                            Skip
+                                            {activity.status === 'skipped' ? 'Skipped' : 'Skip'}
                                         </button>
                                         <button
                                             className={`px-2 py-1 ${activity.status === 'completed' ? 'bg-black' : 'bg-green-600'} text-white rounded-3xl`}
                                             onClick={() => handleComplete(activity)}
                                             disabled={activity.status !== 'active'}
                                         >
-                                            Mark as complete
+                                            {activity.status === 'completed' ? 'Completed' : 'Mark as complete'}
                                         </button>
                                     </div>
                                 )}

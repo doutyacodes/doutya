@@ -4,7 +4,7 @@ import { authenticate } from '@/lib/jwtMiddleware';
 import axios from 'axios';
 import { CAREER_GROUP, USER_DETAILS, CHALLENGES, CHALLENGE_PROGRESS } from '@/utils/schema';
 import { calculateAge } from '@/lib/ageCalculate';
-import { eq, and , isNull} from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 
 
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
@@ -41,24 +41,39 @@ export async function GET(req, { params }) {
         .where(eq(CAREER_GROUP.id, careerGrpId))
     const career = career_name[0].career_name
 
-    const existingChallenges = await db
-    .select({
-        week: CHALLENGES.week,
-        challenge: CHALLENGES.challenge,
-        verification: CHALLENGES.verification,
-        id: CHALLENGES.id
-    })
-    .from(CHALLENGES)
-    .leftJoin(CHALLENGE_PROGRESS, eq(CHALLENGE_PROGRESS.challenge_id, CHALLENGES.id))
-    .where(
-        and(
-            eq(CHALLENGES.age, age),
-            eq(CHALLENGES.career_id, careerGrpId),
-            isNull(CHALLENGE_PROGRESS.id)  
-        )
-    );
-      
-    console.log(existingChallenges)
+        const existingChallenges = await db
+        .select({
+            week: CHALLENGES.week,
+            challenge: CHALLENGES.challenge,
+            verification: CHALLENGES.verification,
+            id: CHALLENGES.id
+        })
+        .from(CHALLENGES)
+        .leftJoin(CHALLENGE_PROGRESS, eq(CHALLENGE_PROGRESS.challenge_id, CHALLENGES.id))
+        .where(
+            and(
+                eq(CHALLENGES.age, age),
+                eq(CHALLENGES.career_id, careerGrpId),
+                isNull(CHALLENGE_PROGRESS.id)  
+            )
+        );
+
+    //     console.log(existingChallenges)
+    // const existingChallenges = await db
+    //     .select({
+    //         week: CHALLENGES.week,
+    //         challenge: CHALLENGES.challenge,
+    //         verification: CHALLENGES.verification,
+    //         id: CHALLENGES.id
+    //     })
+    //     .from(CHALLENGES)
+    //     .where(
+    //         and(
+    //             eq(CHALLENGES.age, age),
+    //             eq(CHALLENGES.career_id, careerGrpId)
+    //         )
+    //     );
+    // console.log('existinggg',existingChallenges)
     if (existingChallenges.length > 0) {
         return NextResponse.json({ challenges: existingChallenges }, { status: 200 });
     }
@@ -82,9 +97,8 @@ export async function GET(req, { params }) {
         let responseText = response.data.choices[0].message.content.trim();
         responseText = responseText.replace(/```json|```/g, "").trim();
         console.log(responseText)
-
         const challengesList = JSON.parse(responseText);
-        console.log(challengesList)
+        // console.log('challengeee list:\n', challengesList)
 
         for (const challenge of challengesList) {
             await db.insert(CHALLENGES).values({

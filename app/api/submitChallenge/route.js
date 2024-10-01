@@ -22,7 +22,7 @@ export async function POST(req) {
     const id=formData.get('id')
     const week = formData.get('week');
 
-    console.log(id)
+    console.log('iddd',id)
     const file_name=file.name
 
     if (!file) {
