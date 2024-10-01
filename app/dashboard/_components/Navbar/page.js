@@ -117,7 +117,7 @@ function Navbar() {
                 >
                   <MenuItem key={"Your Profile"}>
                     <Link
-                      href={"dashboard/user-profile"}
+                      href={"/dashboard/user-profile"}
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                     >
                       {"Your Profile"}

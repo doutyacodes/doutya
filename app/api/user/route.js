@@ -2,11 +2,30 @@ import { NextResponse } from "next/server";
 import { db } from "@/utils";
 import { USER_DETAILS } from "@/utils/schema";
 import jwt from "jsonwebtoken";
-import { eq } from "drizzle-orm/expressions";
+import { eq, or } from "drizzle-orm/expressions";
 
 export async function POST(req) {
   try {
     const data = await req.json();
+
+    // Check if username or mobile number already exists
+    const existingUser = await db
+      .select()
+      .from(USER_DETAILS)
+      .where(or(
+        eq(USER_DETAILS.username, data?.username),
+        eq(USER_DETAILS.mobile, data?.mobile)
+      ));
+    
+    if (existingUser.length > 0) {
+      const message = existingUser[0].username === data?.username
+        ? "Username already exists"
+        : "Phone number already exists";
+      return NextResponse.json(
+        { message },
+        { status: 400 } // Bad Request
+      );
+    }
 
     // Insert user details into the database
     const result = await db.insert(USER_DETAILS).values({
@@ -22,9 +41,9 @@ export async function POST(req) {
       university: data?.university,
       yearOfPassing: data?.yearOfPassing,
       monthOfPassing: data?.monthOfPassing,
-      country:data?.country
+      country: data?.country
     });
-    console.log("Got daat result ", result);
+
     if (!result) {
       return NextResponse.json(
         { message: "User registration failed" },
@@ -43,13 +62,13 @@ export async function POST(req) {
         { status: 404 } // Not Found
       );
     }
-    console.log("user", user);
+
     // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, birth_date: user.birth_date },
       process.env.JWT_SECRET_KEY
     );
-    console.log("token", token);
+
     return NextResponse.json(
       {
         data: { user, token },

@@ -47,8 +47,10 @@ export async function POST(req)
       }
 
       // console.log("Career description:", validationResult.description);
+      console.log('done')
 
     } catch (error) {
+      console.log('catching error')
         return NextResponse.json({ message: error.message || "An unexpected error occurred" }, { status: 500 });
     }
       

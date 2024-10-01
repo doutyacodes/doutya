@@ -67,6 +67,7 @@ function Page() {
 
   const handleCareerClick = (career) => {
     setSelectedCareer(career);
+    setActiveTab("roadmap");
   };
 
   const getCareers = async () => {

@@ -2,7 +2,7 @@
 
 import { X, Edit3, Save, User, HelpCircle } from "lucide-react";
 
-
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { FiX } from "react-icons/fi";
 import { FiEdit3 } from "react-icons/fi";
@@ -23,7 +23,7 @@ function page() {
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserdata] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
-  const [isEditing,setisEditing]=useState(false);
+  const [isEditing, setisEditing] = useState(false);
 
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -61,18 +61,17 @@ function page() {
   // }, [watch]);
 
   useEffect(() => {
-    if(userData){
-      const age = calculateAge(userData.birth_date);      
-    if (age <= 9) {
+    if (userData) {
+      const age = calculateAge(userData.birth_date);
+      if (age <= 9) {
         localStorage.setItem('dashboardUrl', '/dashboard_kids');
-    } 
-    else if(age<=13)
-    {
-      localStorage.setItem('dashboardUrl', '/dashboard_junior');
-    }
-    else {
+      }
+      else if (age <= 13) {
+        localStorage.setItem('dashboardUrl', '/dashboard_junior');
+      }
+      else {
         localStorage.setItem('dashboardUrl', '/dashboard');
-    }
+      }
     }
   }, [userData]);
 
@@ -94,14 +93,14 @@ function page() {
     getUserData();
   }, []);
 
-  
+
   useEffect(() => {
     const yearMonth =
       userData.yearOfPassing && userData.monthOfPassing
         ? `${userData.yearOfPassing}-${userData.monthOfPassing.padStart(
-            2,
-            "0"
-          )}`
+          2,
+          "0"
+        )}`
         : "";
     reset({
       name: userData.name,
@@ -148,7 +147,7 @@ function page() {
         toast.success("User Data Updated");
         getUserData();
       } else {
-        
+
         const errorMessage = response.data?.message || "Failed to add data.";
         toast.error(`Error: ${errorMessage}`);
       }
@@ -193,6 +192,11 @@ function page() {
   return (
     <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
+      <Link href={typeof window !== 'undefined' ? localStorage.getItem('dashboardUrl') : '/login'}>
+        <button className="text-white bg-green-600 -mt-20 mb-7 ml-20 p-3 rounded-xl">
+          Back to Dashboard
+        </button>
+      </Link>
       <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
         <div className="md:flex">
           <div className="md:flex-shrink-0 bg-gradient-to-b from-purple-600 to-indigo-700 p-8 text-white">
@@ -206,10 +210,10 @@ function page() {
                   />
                 ) : (
                   <img
-                  src="/assets/images/avatardef.png"
-                  alt="User Avatar"
-                  className="w-full h-full object-cover"
-                />
+                    src="/assets/images/avatardef.png"
+                    alt="User Avatar"
+                    className="w-full h-full object-cover"
+                  />
                 )}
               </div>
               <h2 className="text-2xl font-bold">{userData.name || "Loading..."}</h2>
@@ -225,11 +229,10 @@ function page() {
               <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
               <button
                 onClick={() => setIsEditable(!isEditable)}
-                className={`p-2 rounded-full transition-colors duration-200 ${
-                  isEditable
-                    ? "bg-red-500 hover:bg-red-600"
-                    : "bg-indigo-500 hover:bg-indigo-600"
-                }`}
+                className={`p-2 rounded-full transition-colors duration-200 ${isEditable
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-indigo-500 hover:bg-indigo-600"
+                  }`}
               >
                 {isEditable ? (
                   <X className="w-5 h-5 text-white" />
@@ -264,8 +267,8 @@ function page() {
                     Name
                   </label>
                   <input
-                   id="name"
-                      name="name"
+                    id="name"
+                    name="name"
                     type="text"
                     {...register("name", { required: "Name is required" })}
                     disabled={!isEditable}
@@ -278,8 +281,8 @@ function page() {
                     Username
                   </label>
                   <input
-                   id="username"
-                      name="username"
+                    id="username"
+                    name="username"
                     type="text"
                     {...register("username", { required: "Username is required" })}
                     disabled={!isEditable}
@@ -413,11 +416,11 @@ function page() {
                       />
                     </div>
                     <div>
-                    <label htmlFor="yearMonthOfPassing" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="yearMonthOfPassing" className="block text-sm font-medium text-gray-700">
                         Year and Month of Passing
                       </label>
                       <input
-                      id="yearMonthOfPassing"
+                        id="yearMonthOfPassing"
                         name="yearMonthOfPassing"
                         type="month"
                         {...register("yearMonthOfPassing")}
@@ -452,7 +455,7 @@ function page() {
                       </div>
                     </div>
                   </>
-                ) :  (
+                ) : (
                   <div className="sm:col-span-2">
                     <label
                       htmlFor="highestDegree"
