@@ -229,8 +229,7 @@ const SaveInterestedCareer = (token, careerName,country) => {
   return axios.post(`/api/saveInterestedCareers`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
-    },
-    timeout: 35000 // 35 seconds timeout
+    }
   });
 };
 

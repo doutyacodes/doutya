@@ -14,6 +14,10 @@ import { eq, and } from "drizzle-orm";
 import { formattedAge } from "@/lib/formattedAge";
 import { fetchAndSaveRoadmap } from "@/app/api/utils/fetchAndSaveRoadmap";
 
+
+export const maxDuration = 80;
+export const dynamic = 'force-dynamic';
+
 export async function GET(req, { params }) {
   // Authenticate the request
   const authResult = await authenticate(req);
@@ -112,24 +116,26 @@ export async function GET(req, { params }) {
       const loadingResponse = { message: "Generating data, please wait..." };
 
       // Trigger the data generation asynchronously
-      fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2)
-      .then(async () => {
-          // After data is generated, update the status to "completed"
-          await db
-              .update(USER_CAREER_STATUS)
-              .set({ roadmap_status: 'completed' })
-              .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
-              .execute();
-      })
-      .catch(async (err) => {
-          console.error("Error during roadmap generation:", err);
-          // In case of an error, reset the status to "not_started"
-          await db
-              .update(USER_CAREER_STATUS)
-              .set({ roadmap_status: 'not_started' })
-              .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
-              .execute();
-      });
+      // Start the background roadmap generation process
+      fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2);
+      // fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2)
+      // .then(async () => {
+      //     // After data is generated, update the status to "completed"
+      //     await db
+      //         .update(USER_CAREER_STATUS)
+      //         .set({ roadmap_status: 'completed' })
+      //         .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+      //         .execute();
+      // })
+      // .catch(async (err) => {
+      //     console.error("Error during roadmap generation:", err);
+      //     // In case of an error, reset the status to "not_started"
+      //     await db
+      //         .update(USER_CAREER_STATUS)
+      //         .set({ roadmap_status: 'not_started' })
+      //         .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+      //         .execute();
+      // });
       
       // Respond with a 202 Accepted status if you want to signify processing
       return NextResponse.json(loadingResponse, { status: 202 });

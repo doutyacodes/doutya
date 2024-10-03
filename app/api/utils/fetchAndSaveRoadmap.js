@@ -1,15 +1,12 @@
-import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { db } from "@/utils"; // Ensure this path is correct
 import {
     MILESTONES,
     USER_MILESTONES,
-    MILESTONE_CATEGORIES
+    MILESTONE_CATEGORIES,
+    USER_CAREER_STATUS
 } from "@/utils/schema"; // Ensure this path is correct
 import { eq } from "drizzle-orm";
-
-export const maxDuration = 40; // This function can run for a maximum of 5 seconds
-export const dynamic = 'force-dynamic';
 
 export async function fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2) {
     console.log("userCareerID:",userCareerID, "age:",age, "education:",education, "career:",career, "type1:",type1, "type2:",type2);
@@ -129,6 +126,14 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
                         throw new Error("Invalid milestone data encountered.");
                     }
                 }
+
+                // After successful data generation, update the status to "completed"
+                await db
+                    .update(USER_CAREER_STATUS)
+                    .set({ roadmap_status: 'completed' })
+                    .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+                    .execute();
+
             } else {
                 console.error("Career roadmap is not an array or is missing.");
                 throw new Error("Career roadmap is not an array or is missing.");
@@ -136,10 +141,24 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
 
         } catch (error) {
             console.error("Error processing milestones data:", error);
+
+             // Reset the status to "not_started" in case of an error
+             await db
+             .update(USER_CAREER_STATUS)
+             .set({ roadmap_status: 'not_started' })
+             .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+             .execute();
+
             throw new Error("Error processing milestones data:", error);
         }
     } catch (error) {
         console.error("Error fetching or saving roadmap:", error);
+         // Reset the status to "not_started" in case of an error
+         await db
+         .update(USER_CAREER_STATUS)
+         .set({ roadmap_status: 'not_started' })
+         .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+         .execute();
         // Log the error without returning a response
         throw error; // Rethrow the error to be caught by the caller
     }

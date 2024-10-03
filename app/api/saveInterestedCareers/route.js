@@ -6,9 +6,6 @@ import { db } from '@/utils';
 import { validateCareer } from './validateCareer';
 import { saveCareer } from '../utils/saveCareer';
 
-export const maxDuration = 40;
-export const dynamic = 'force-dynamic';
-
 export async function POST(req) {
     const authResult = await authenticate(req);
     if (!authResult.authenticated) {
