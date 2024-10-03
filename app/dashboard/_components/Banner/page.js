@@ -1,4 +1,6 @@
 
+
+
 import Link from "next/link";
 import React, { useEffect, useState, useRef  } from "react";
 import GlobalApi from "@/app/_services/GlobalApi";
@@ -9,6 +11,7 @@ import "swiper/css/pagination"; // For pagination styles
 import "swiper/css/navigation"; // For navigation styles
 import { Pagination, Navigation } from "swiper/modules"; 
 import dynamic from 'next/dynamic';
+
 
 function Banner({
   onToggleResults,
@@ -41,14 +44,17 @@ function Banner({
     getQuizData();
   }, []);
 
+
   const getQuizStatus = (quizId) => {
     const quiz = dashboardData.find((q) => q.quiz_id === quizId);
     // return quiz ? { isCompleted: quiz.isCompleted, isStarted: quiz.isStarted } : { isCompleted: false, isStarted: false };
     return quiz ? { isCompleted: quiz.isCompleted } : { isCompleted: false };
   };
 
+
   const isTest1Completed = getQuizStatus(1).isCompleted;
 
+  
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
@@ -64,16 +70,11 @@ function Banner({
 
   return (
     <div className="mb-7 w-full px-10 mt-18">
-
-
-      
       <h2 className="text-white mt-7 font-bold font-serif pb-6">
         Personality
       </h2>
 
       
-            
-
       <div className="border-t border-cyan-400"></div>
 
       <div className="mt-8 sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 hidden w-full">
@@ -126,7 +127,7 @@ function Banner({
           </div>
         </div>
 
-        {/* Test 2 */}
+        {/* Interest Test */}
         <div className="border border-cyan-400 pb-3 rounded-sm w-full">
           <img
             className="rounded-md object-cover w-full h-36"
@@ -181,26 +182,25 @@ function Banner({
 
       {/* Mobile view: Swiper carousel */}
       <div className="mt-8 sm:hidden">
-      <Swiper
-          modules={[Pagination, Navigation]}
+        <Swiper
+          modules={[Navigation]}
           spaceBetween={10}
           slidesPerView={1}
-          pagination={{ clickable: true }}
-          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Track active slide
+          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
           className="pb-12"
         >
-          {/* Test 1 - Mobile */}
+          {/* Personality Test - Mobile */}
           <SwiperSlide>
             <div className="border border-cyan-400 pb-3 rounded-sm h-auto w-full">
               <img
                 className="rounded-md object-cover w-full h-48"
                 src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-                alt="Test 4 Image"
+                alt="Personality Test Image"
               />
               <div className="border-t border-cyan-400"></div>
               <h1 className="text-white mt-4 text-2xl font-bold ml-3">
-                Test 1
+                Personality Test
               </h1>
               <div className="relative">
                 {!getQuizStatus(1).isCompleted ? (
@@ -221,9 +221,7 @@ function Banner({
               </div>
               <div className="relative">
                 <p className="ml-3 text-white pt-8 w-4/5">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-                  maiores molestias possimus optio nisi quos sint, quo facere
-                  est rem deserunt voluptas
+                  Begin your journey of self-discovery with the Personality Test! Uncover your unique traits to build a foundation for finding your ideal career path.
                 </p>
               </div>
               <div className="text-center mt-4">
@@ -246,17 +244,17 @@ function Banner({
             </div>
           </SwiperSlide>
 
-          {/* Test 2 - Mobile */}
+          {/* Interest Test - Mobile */}
           <SwiperSlide>
             <div className="border border-cyan-400 pb-3 rounded-sm h-auto w-full">
               <img
                 className="rounded-md object-cover w-full h-48"
                 src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-                alt="Test 3 Image"
+                alt="Interest Test Image"
               />
               <div className="border-t border-cyan-400"></div>
               <h1 className="text-white mt-4 text-2xl font-bold ml-3">
-                Test 2
+                Interest Test
               </h1>
               <div className="relative">
                 {!getQuizStatus(2).isCompleted ? (
@@ -277,9 +275,7 @@ function Banner({
               </div>
               <div className="relative">
                 <p className="ml-3 text-white pt-8 w-4/5">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-                  maiores molestias possimus optio nisi quos sint, quo facere
-                  est rem deserunt voluptas
+                  Explore your interests in the next phase! Uncover your passions and combine them with your personality profile to find career paths that truly resonate with you.
                 </p>
               </div>
               <div className="text-center mt-4">
@@ -301,18 +297,20 @@ function Banner({
               </div>
             </div>
           </SwiperSlide>
-
-          
         </Swiper>
-        <div className="flex justify-center space-x-2 gap-2 mt-7">
-        {paginationDots.map((_, index) => (
-          <div
-            key={index}
-            className={`h-3 w-3 rounded-full cursor-pointer ${activeIndex === index ? 'bg-green-400' : 'bg-gray-400'}`}
-            onClick={() => swiperRef.current?.slideTo(index)} // Navigate to slide on dot click
-          ></div>
-        ))}
-      </div>
+
+        {/* Custom pagination dots */}
+        <div className="flex justify-center space-x-2 gap-2 mt-4 mb-16">
+          {paginationDots.map((_, index) => (
+            <div
+              key={index}
+              className={`h-3 w-3 rounded-full cursor-pointer ${
+                activeIndex === index ? 'bg-green-400' : 'bg-gray-400'
+              }`}
+              onClick={() => swiperRef.current?.slideTo(index)}
+            ></div>
+          ))}
+        </div>
       </div>
 
       <MobileNavigation />
@@ -321,11 +319,3 @@ function Banner({
 }
 
 export default Banner;
-
-
-
-
-
-
-
-//ww

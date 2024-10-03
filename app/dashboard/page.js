@@ -54,7 +54,7 @@ export default function Dashboard() {
   
 
   return (
-    <div>
+    <div className='md:pb-16 pb-24'>
       {/* <Navbar/> */}
       <Banner onToggleResults={toggleResults} showResults={showResults} onToggleQuiz2Results={toggleQuiz2Results} showQuiz2Results={showQuiz2Results}/>
       <br />
