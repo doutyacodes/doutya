@@ -7,11 +7,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Updated Swiper CSS path
 import "swiper/css/pagination"; // For pagination styles
 import "swiper/css/navigation"; // For navigation styles
-import SwiperCore, { Pagination, Navigation } from "swiper";
+import { Pagination, Navigation } from "swiper/modules"; 
 import dynamic from 'next/dynamic';
-
-// Install Swiper modules
-SwiperCore.use([Pagination, Navigation]);
 
 function Banner({
   onToggleResults,
@@ -25,7 +22,7 @@ function Banner({
   const swiperRef = useRef(null);
 
   // Custom pagination dots
-  const paginationDots = [0, 1, ]; // Number of slides
+  const paginationDots = [0, 1]; // Number of slides
 
   useEffect(() => {
     const getQuizData = async () => {
@@ -50,7 +47,7 @@ function Banner({
     return quiz ? { isCompleted: quiz.isCompleted } : { isCompleted: false };
   };
 
-  const isTest1Completed = getQuizStatus(1).isCompleted
+  const isTest1Completed = getQuizStatus(1).isCompleted;
 
   if (loading) {
     return (
@@ -184,14 +181,13 @@ function Banner({
 
       {/* Mobile view: Swiper carousel */}
       <div className="mt-8 sm:hidden">
-        <Swiper
+      <Swiper
+          modules={[Pagination, Navigation]}
           spaceBetween={10}
           slidesPerView={1}
-          pagination={{ clickable: true }} 
-          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Track the active slide
-        onSwiper={(swiper) => (swiperRef.current = swiper)}
-          
-           
+          pagination={{ clickable: true }}
+          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Track active slide
+          onSwiper={(swiper) => (swiperRef.current = swiper)}
           className="pb-12"
         >
           {/* Test 1 - Mobile */}
