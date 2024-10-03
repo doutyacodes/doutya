@@ -78,11 +78,43 @@ import ListComponents from "./_components/ListComponents";
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const [activeLink, setActiveLink] = useState(1);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
+  const revenueList = [
+    {
+      id: 1,
+      title: "Team Productivity",
+      image:
+        "https://www.gong.io/wp-content/uploads/2024/02/Team-Productivity.png",
+      image2: "https://www.gong.io/wp-content/uploads/2024/02/pitchbook.svg",
+      subTitle: "10x sales efficiency",
+      description:
+        "Save time and maximize team effectiveness with AI-powered insights and guidance.",
+    },
+    {
+      id: 2,
+      title: "Revenue Predictability",
+      image:
+        "https://www.gong.io/wp-content/uploads/2024/02/Revenue-Predictability.png",
+      image2: "https://www.gong.io/wp-content/uploads/2024/02/image-42.svg",
+      subTitle: "95% forecast accuracy",
+      description:
+        "Deliver a strong quarter every quarter with AI that powers precise pipeline management and accurate forecasts.",
+    },
+    {
+      id: 3,
+      title: "Pipeline Growth",
+      image:
+        "https://www.gong.io/wp-content/uploads/2024/02/Pipeline-Growth.png",
+      image2: "https://www.gong.io/wp-content/uploads/2024/02/image-44.svg",
+      subTitle: "80% increase in email response rate",
+      description:
+        "Create, accelerate, and close pipeline with customer-centric sales engagement.",
+    },
+  ];
+  const activeItem = revenueList.find((item) => item.id === activeLink);
   return (
     <main className="relative w-full max-lg:bg-white min-h-screen">
       <header className="flex justify-between items-center max-w-[1200px] mx-auto px-4">
@@ -116,7 +148,7 @@ const Page = () => {
           <div className="hidden lg:flex justify-start md:justify-center w-full">
             <Link
               href={"/login"}
-              className="bg-gradient-to-r from-blue-500 to-[#00b999] text-white rounded-full px-7 py-3 font-semibold"
+              className="bg-[#9069e7] text-white rounded-full px-7 py-3 font-semibold"
             >
               Sign In
             </Link>
@@ -144,7 +176,7 @@ const Page = () => {
                   className="cursor-pointer"
                 />
               </div>
-              <p className="text-blue-600 text-sm cursor-pointer font-semibold focus:underline px-3 mb-2">
+              <p className="text-[#3e0075] text-sm cursor-pointer font-semibold focus:underline px-3 mb-2">
                 Why Xortlist?
               </p>
               <ul className="space-y-5">
@@ -172,33 +204,90 @@ const Page = () => {
         <source src="/assets/videos/bg.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
+
+      <div className="lg:absolute max-md:hidden top-0 left-0 w-full h-full bg-black opacity-50 -z-10"></div>
       <div className=" container z-50 h-full w-full max-lg:mt-16  lg:h-screen lg:flex items-center">
-        <div className="space-y-5">
+        <div className="space-y-5 max-w-[1200px] mx-auto px-4">
           <h1 className="lg:text-white lg:text-5xl text-3xl font-bold lg:leading-relaxed leading-normal lg:w-3/5 max-lg:text-center uppercase">
             <span className="bg-blue-600  text-transparent bg-clip-text">
               Next-Generation AI{" "}
             </span>
             Powered SEO Content Generator
           </h1>
-          <p className=" max-lg:text-center text-blue-600 font-medium lg:w-2/6">
+          <p className=" max-lg:text-center text-blue-600 font-medium lg:w-3/6">
             Engage customers, forecast accurately, and improve team
             productivity, all in one revenue intelligence platform.
           </p>
           <div className="flex max-lg:justify-center w-full">
             <Link
               href={"/login"}
-              className="bg-gradient-to-r from-blue-500 to-[#00b999] text-white rounded-full px-7 py-3 font-semibold"
+              className="bg-[#9069e7] text-white rounded-full px-7 py-3 font-semibold"
             >
               Sign In
             </Link>
           </div>
         </div>
       </div>
-      <div className="bg-white shadow-xl outline outline-slate-100 p-3 rounded-t-3xl mt-5 space-y-5 pt-10">
-        <h1 className="text-center text-blue-600 lg:text-5xl text-3xl font-bold w-4/5 mx-auto ">
+      <div className="bg-white shadow-xl outline outline-slate-100 p-3 rounded-t-3xl mt-5 space-y-5 pt-10 w-full">
+        <h1 className="text-center text-[#3e0075] lg:text-5xl text-3xl font-bold w-4/5 mx-auto ">
           The world’s leading companies power their revenue workflows with
           Xortlist
         </h1>
+        <div className="w-full flex justify-center items-center flex-col max-w-[1200px] mx-auto">
+          <div className="mt-14 flex flex-wrap gap-5 mx-auto  p-3 md:gap-7">
+            {revenueList?.length > 0 &&
+              revenueList?.map((item) => {
+                return (
+                  <div
+                    onClick={() => setActiveLink(item.id)}
+                    key={item.id}
+                    className=" max-sm:w-full"
+                  >
+                    <p
+                      className="md:text-2xl text-center font-bold"
+                      style={{
+                        color: activeLink == item.id ? "#a572e8" : "black",
+                      }}
+                    >
+                      {item.title}
+                    </p>
+                  </div>
+                );
+              })}
+          </div>
+          <div>
+            {activeItem && (
+              <div className="w-full p-6 mt-10">
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                  {/* On md and above: image on the left, other content on the right */}
+                  <div className="md:w-1/2 w-full">
+                    <img
+                      src={activeItem.image}
+                      alt={activeItem.title}
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+
+                  <div className="md:w-1/2 w-full md:space-y-10">
+                    <Image
+                      src={activeItem.image2}
+                      alt={activeItem.title + " secondary"}
+                      width={240}
+                      height={240}
+                      className=" object-cover mb-4"
+                    />
+                    <h3 className="text-lg font-semibold mb-2 md:text-4xl">
+                      {activeItem.subTitle}
+                    </h3>
+                    <p className="text-gray-600 md:w-4/5">{activeItem.description}</p>
+                  </div>
+                </div>
+
+                {/* On small screens: stack images and content */}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </main>
   );
