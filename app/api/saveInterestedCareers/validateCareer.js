@@ -4,8 +4,26 @@ export const maxDuration = 40; // This function can run for a maximum of 5 secon
 export const dynamic = 'force-dynamic';
 
 export async function validateCareer(career) {
-    console.log('validate')
-    const validationPrompt = `Is "${career}" a valid career name? If yes, provide a brief description of this career and whether it has associated information available. Respond with JSON containing "is_valid" and "description" fields.`;
+    console.log('Validating career:', career);
+    // const validationPrompt = `Is "${career}" a valid career name? If yes, provide a brief description of this career and whether it has associated information available. Respond with JSON containing "is_valid" and "description" fields.`;
+
+    // Check for invalid input
+    if (!career || career.trim().length < 2 || /[^a-zA-Z\s]/.test(career)) {
+        return { isValid: false, correctedName: null, message: "Input seems to be invalid. Please try again" };
+    }
+
+    const validationPrompt = `
+        Please check if "${career}" is a recognized career name. 
+        If the name is valid, return true for "is_valid" and the same name as "career_name".
+        If the name is misspelled but recognized as a valid career, return true for "is_valid" and the correct spelling as "career_name".
+        If the name is not recognized as a valid career, return false for "is_valid" and an empty string for "career_name".
+        Respond with JSON in the following structure:
+        {
+            "is_valid": boolean,
+            "career_name": string
+        }
+    `;
+
 
     let validationResponseText;
 
@@ -28,9 +46,7 @@ export async function validateCareer(career) {
         validationResponseText = validationResponse.data.choices[0].message.content.trim();
         validationResponseText = validationResponseText.replace(/```json|```/g, "").trim();
         console.log(validationResponseText)
-        // console.log("validationResponseText", validationResponseText);
         
-
     } catch (error) {
         throw new Error("Failed to validate career name");
     }
@@ -43,7 +59,7 @@ export async function validateCareer(career) {
             return { isValid: false, message: "Invalid career name provided" };
         }
 
-        return { isValid: true, description: validationParsedData.description };
+        return { isValid: true, career_name: validationParsedData.career_name };
 
     } catch (error) {
         throw new Error("Failed to parse validation response data");

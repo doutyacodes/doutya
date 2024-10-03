@@ -1,21 +1,106 @@
 import GlobalApi from '@/app/_services/GlobalApi';
 import { CheckCircle } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
-function RoadMap({ selectedCareer, roadMapLoading }) {
+function RoadMap({ selectedCareer }) {
   const [activeTab, setActiveTab] = useState('Educational Milestones');
+  const [roadMapData, setRoadMapData] = useState([])
   const [completedTasks, setCompletedTasks] = useState({});
-  
-  // Extract milestones from selectedCareer
-  const milestones = selectedCareer.milestones.reduce((acc, milestone) => {
-    const { milestoneCategoryName, ...milestoneData } = milestone;
-    if (!acc[milestoneCategoryName]) {
-      acc[milestoneCategoryName] = [];
+  const [milestones, setMilestones] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [LoadMessage, setLoadMessage] = useState('')
+
+  const requestIdRef = useRef(0); // Create a ref to track the request ID
+
+  const getRoadmap = async () => {
+    setIsLoading(true);
+    // Clearing previous state before fetching new data
+    setRoadMapData([]);
+    setMilestones([]);
+    setCompletedTasks({});
+    setLoadMessage("Fetching roadmap data, please wait...");
+
+
+    const currentRequestId = ++requestIdRef.current; // Increment the request ID
+    
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+      const response = await GlobalApi.GetRoadMapData(selectedCareer.id, token);
+      
+      // Check for the response status
+      if (response.status === 200) {  // Successful response
+        if (currentRequestId === requestIdRef.current) { // Ensure this is the latest request
+          const results = response.data;
+          console.log(results);
+          setRoadMapData(results);
+        }
+      } else if (response.status === 202) {  // Data generation in progress
+        console.log("resp Mesage", response.data.message)
+        if (currentRequestId === requestIdRef.current) { // Ensure this is the latest request
+          // setLoadMessage("Generating roadmap data, please wait...");
+          setLoadMessage(response.data.message);
+        }
+        console.log("Status 202 received, starting polling.");
+        // Poll for new data
+        await checkForNewData(selectedCareer.id, token, currentRequestId);
+      }
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        toast.error(`Error: ${err.response.data.message}`);
+      } else {
+        toast.error('Failed to fetch Road Map data. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
     }
-    acc[milestoneCategoryName].push(milestoneData);
-    return acc;
-  }, {});
+  };
+
+    // Function to check for new data periodically
+    const checkForNewData = async (userCareerId, token) => {
+      let attempts = 0;
+      const maxAttempts = 3; // Maximum polling attempts
+      const interval = 30000; 
+  
+      console.log("The apprempt", attempts);
+  
+      const intervalId = setInterval(async () => {
+        attempts += 1;
+        const response = await GlobalApi.GetRoadMapData(userCareerId, token);
+        
+        if (response.status === 200) {
+          clearInterval(intervalId); // Stop polling
+          const results = response.data;
+          setRoadMapData(results);
+          toast.success('Data generation completed successfully!');
+        } else if (attempts >= maxAttempts) {
+          clearInterval(intervalId); // Stop polling after max attempts
+          toast.error('Data generation is still in progress. Please try again later.');
+        }
+      }, interval);
+    };
+
+  useEffect(()=>{
+    getRoadmap()
+  }, [selectedCareer])
+  
+
+  useEffect(()=>{
+
+    if(roadMapData.length>0){
+      // Extract milestones from selectedCareer
+      const milestones = roadMapData.reduce((acc, milestone) => {
+        const { milestoneCategoryName, ...milestoneData } = milestone;
+        if (!acc[milestoneCategoryName]) {
+          acc[milestoneCategoryName] = [];
+        }
+        acc[milestoneCategoryName].push(milestoneData);
+        return acc;
+      }, {});
+      setMilestones(milestones)
+    }
+
+  }, [roadMapData])
   
   const handleComplete = async (tab, milestoneId) => {
     const isCompleted = !completedTasks[tab]?.[milestoneId];
@@ -46,6 +131,8 @@ function RoadMap({ selectedCareer, roadMapLoading }) {
     } catch (err) {
       // Handle any errors that occurred during the API call
       toast.error("An unexpected error occurred.");
+    } finally {
+      getRoadmap()
     }
   };
 
@@ -53,10 +140,14 @@ function RoadMap({ selectedCareer, roadMapLoading }) {
     <div className="p-4 bg-white">
 
        {/* Loading Message */}
-       {roadMapLoading ? (
+       {/* {isLoading ? (
         <div className="flex items-center justify-center h-[300px]">
           <p className="text-gray-700">Generating roadmap data, please wait...</p>
-        </div>
+        </div> */}
+        {!milestones ? (
+          <div className="flex items-center justify-center h-[300px]">
+            <p className="text-gray-700">{LoadMessage}</p>
+          </div>
         ):(
           <>
             {/* Tabs */}
@@ -108,7 +199,7 @@ function RoadMap({ selectedCareer, roadMapLoading }) {
                   </div>
                 ))
               ) : (
-                <p className="text-gray-600 text-center">No milestones available for this category.</p>
+                <p className="text-gray-600 text-center">{LoadMessage}</p>
               )}
             </div>
             </>

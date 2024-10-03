@@ -60,7 +60,7 @@ function Page() {
   }, [router]);
 
   useEffect(() => {
-    if (careerData.length > 0) {
+    if (careerData.length > 0) {      
       setSelectedCareer(careerData[0]);
     }
   }, [careerData]);
@@ -84,6 +84,7 @@ function Page() {
   
       const response = await GlobalApi.GetCarrerData(token);
       if (response.status === 201 && response.data && response.data.length > 0) {
+        console.log(response.data);
         setCareerData(response.data);
       } else {
         toast.error("No career data available at the moment.");
@@ -115,16 +116,17 @@ function Page() {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const response = await GlobalApi.SaveInterestedCareer(token, careerName, country);
-      if (response && response.status === 201) {
+      if (response && response.status === 200) {
         setCareerName("");
         setCountry("");
-      } else {
-        toast.error("Failed to save career data. Please try again later.");
+        getCareers();
+      } else if (response && response.status === 201)  {
+        // toast.error("Failed to save career data. Please try again later.");
+        toast.error(response.data.message);
       }
     } catch (error) {
       toast.error("Failed to save career data. Please try again later.");
     } finally {
-      getCareers();
       setRoadMapLoading(false);
     }
   };
@@ -214,7 +216,7 @@ function Page() {
           </div>
 
           {activeTab === "roadmap" && (
-            <RoadMap selectedCareer={selectedCareer} roadMapLoading={roadMapLoading} />
+            <RoadMap selectedCareer={selectedCareer} />
           )}
           {activeTab === "contests" && <Contests selectedCareer={selectedCareer} />}
           {activeTab === "tests" && <Tests selectedCareer={selectedCareer} />}

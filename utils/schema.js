@@ -232,10 +232,8 @@ export const FEEDBACK=mysqlTable('feedback',{
 export const USER_CAREER = mysqlTable('user_career', {
     id: int('id').notNull().autoincrement().primaryKey(),
     user_id: int('user_id').notNull(),
-    // career_name: varchar('career_name', { length: 255 }).notNull(),
     career_group_id: int('career_group_id').notNull().references(() => CAREER_GROUP.id),
     reason_for_recommendation: text('reason_for_recommendation').default(null),
-    // roadmap: text('roadmap').default(null),
     present_trends: text('present_trends').default(null),
     future_prospects: text('future_prospects').default(null),
     user_description: text('user_description').default(null),
@@ -245,6 +243,16 @@ export const USER_CAREER = mysqlTable('user_career', {
     country: text('country').default(null),
     feedback: text('feedback').default(null),
   });
+
+export const USER_CAREER_STATUS = mysqlTable('user_career_status', {
+    id: int('id').autoincrement().notNull().primaryKey(),
+    user_career_id: varchar('user_career_id', { length: 36 }).notNull().references(() => USER_CAREER.id),
+    roadmap_status: mysqlEnum('roadmap_status', ['not_started', 'in_progress', 'completed'])
+        .default('not_started')
+        .notNull(),
+    created_at: timestamp('created_at').defaultNow(), // Automatically set to current timestamp when created
+    updated_at: timestamp('updated_at').defaultNow().onUpdateNow() // Automatically updated to current timestamp on update
+});
 
 export const STRENGTH_TYPES = mysqlTable('strength_types', {
     id: int('id').primaryKey().autoincrement(),

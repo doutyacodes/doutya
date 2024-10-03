@@ -159,7 +159,7 @@ const CheckFeedback=(token)=>axios.get('/api/feedback',{
 });
 
 const SaveCarrerData = (token, data) => {
-  return axios.post(`/api/saveCareer`, data, {
+  return axios.post(`/api/saveCareers`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -167,7 +167,16 @@ const SaveCarrerData = (token, data) => {
 };
 
 const GetCarrerData = (token) => {
-  return axios.get(`/api/getCareer`, {
+  return axios.get(`/api/getCareers`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetRoadMapData = (userCareerId, token) => {
+
+  return axios.get(`/api/getRoadmapData/${userCareerId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -217,7 +226,7 @@ const SaveInterestedCareer = (token, careerName,country) => {
     country: country
   };
 
-  return axios.post(`/api/saveInterestedCareer`, payload, {
+  return axios.post(`/api/saveInterestedCareers`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -434,6 +443,7 @@ export default {
   CheckFeedback,
   SaveCarrerData,
   GetCarrerData,
+  GetRoadMapData,
   GetIndustry,
   GetStrengthsQuiz,
   SaveStrengthQuizProgress,
