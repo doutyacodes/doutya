@@ -8,10 +8,7 @@ import "swiper/css"; // Updated Swiper CSS path
 import "swiper/css/pagination"; // For pagination styles
 import "swiper/css/navigation"; // For navigation styles
 import SwiperCore, { Pagination, Navigation } from "swiper";
-import MobileNavigation from "../Navbar/button.jsx";
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
-
 
 // Install Swiper modules
 SwiperCore.use([Pagination, Navigation]);

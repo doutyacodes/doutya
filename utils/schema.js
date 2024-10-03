@@ -415,6 +415,12 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
     });
 
+    export const STAR_PERCENT = mysqlTable('star_percent', {
+        id: int('id').primaryKey().autoincrement(),
+        min_percentage: decimal('min_percentage', 5, 2).notNull(),
+        stars: int('stars').notNull(),
+    });
+
     export const ACTIVITIES = mysqlTable('activities', {
         id:int('id').notNull().primaryKey().autoincrement(),
         activity_id: int('activity_id').notNull(),

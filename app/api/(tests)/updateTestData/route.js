@@ -60,16 +60,6 @@ export async function POST(req) {
                     .orderBy(STAR_PERCENT.min_percentage, 'desc') // Sort descending to get the highest applicable stars
                     .limit(1); // Only get the top result
 
-        // const result = await db
-        //             .select({
-        //                 stars: STAR_PERCENT.stars
-        //             })
-        //             .from(STAR_PERCENT)
-        //             .where(
-        //                 db.raw('min_percentage <= ?', [percentage])
-        //             )
-        //             .orderBy(STAR_PERCENT.min_percentage, 'desc') // Sort descending to get the highest applicable stars
-        //             .limit(1); // Only get the top result
         let stars;
         if (result.length > 0) {
             stars = result[0].stars;
