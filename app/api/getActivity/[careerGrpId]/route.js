@@ -20,6 +20,7 @@ export async function GET(req, { params }) {
     const userId = userData.userId;
 
     const { careerGrpId } = params;
+    console.log(careerGrpId)
 
     const user_data = await db
         .select({
@@ -63,7 +64,14 @@ export async function GET(req, { params }) {
                 updated_at: USER_ACTIVITIES.updated_at
             })
             .from(USER_ACTIVITIES)
-            .where(eq(USER_ACTIVITIES.user_id, userId));
+            .innerJoin(ACTIVITIES, eq(USER_ACTIVITIES.activity_id, ACTIVITIES.activity_id)) 
+            .where(
+                and(
+                    eq(ACTIVITIES.career_id, careerGrpId),
+                    eq(USER_ACTIVITIES.user_id, userId) 
+                )
+            );
+        console.log(userProgress)
 
         const progressMap = {};
         userProgress.forEach(progress => {
@@ -100,10 +108,9 @@ export async function GET(req, { params }) {
         );
         let responseText = response.data.choices[0].message.content.trim();
         responseText = responseText.replace(/```json|```/g, "").trim();
-        console.log(responseText)
 
         const activities = JSON.parse(responseText);
-        let activityId = 1; 
+        let activityId = 1;
 
         for (let stepObj of activities) {
             const step = stepObj.step;

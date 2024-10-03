@@ -200,7 +200,7 @@ function Page() {
           </div>
 
           <div className="flex justify-center flex-wrap gap-4 mb-4">
-            {["roadmap", "contests", "tests", "feedback", "activities", "challenges", "community"].map((tab) => (
+            {["roadmap", "contests", "tests", "feedback", "challenges", "community"].map((tab) => (
               <button
                 key={tab}
                 className={`${

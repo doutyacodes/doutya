@@ -11,6 +11,36 @@ function RoadMap({ selectedCareer }) {
   const [isLoading, setIsLoading] = useState(false)
   const [LoadMessage, setLoadMessage] = useState('')
 
+
+  // const getRoadmap = async () => {
+  //     setIsLoading(true)
+  //     // Clearing previous state before fetching new data
+  //     setRoadMapData([]);
+  //     setMilestones([]);
+  //     setCompletedTasks({});
+  //     try {
+  //         const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+  //         const response = await GlobalApi.GetRoadMapData(selectedCareer.career_group_id, token);
+  //         if (response.status === 200) {  // Check for a 200 status code
+              
+  //             const results = response.data
+  //             console.log(results)
+  //             setRoadMapData(results);
+
+  //         } else {
+  //             toast.error('Failed to fetch RoadMap data. Please try again later.');
+  //         }
+  //     } catch (err) {
+  
+  //         if (err.response && err.response.data && err.response.data.message) {
+  //         toast.error(`Error: ${err.response.data.message}`);
+  //         } else {
+  //         toast.error('Failed to fetch Road Map data. Please try again later.');
+  //         }
+  //     } finally {
+  //         setIsLoading(false)
+  //     }
+  // }
   const requestIdRef = useRef(0); // Create a ref to track the request ID
 
   const getRoadmap = async () => {
@@ -42,7 +72,7 @@ function RoadMap({ selectedCareer }) {
           setLoadMessage(response.data.message);
         }
         console.log("Status 202 received, starting polling.");
-        // Poll for new data
+        // await checkForNewData(selectedCareer.id, token); // Poll for new data
         await checkForNewData(selectedCareer.id, token, currentRequestId);
       }
     } catch (err) {
@@ -84,6 +114,7 @@ function RoadMap({ selectedCareer }) {
     getRoadmap()
   }, [selectedCareer])
   
+  console.log("selectedCareer", selectedCareer);
 
   useEffect(()=>{
 
