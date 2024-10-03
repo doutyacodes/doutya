@@ -229,7 +229,7 @@ const SaveInterestedCareer = (token, careerName,country) => {
   return axios.post(`/api/saveInterestedCareers`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
-    }
+    },
   });
 };
 

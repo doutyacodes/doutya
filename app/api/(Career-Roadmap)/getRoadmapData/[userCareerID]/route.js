@@ -117,25 +117,20 @@ export async function GET(req, { params }) {
 
       // Trigger the data generation asynchronously
       // Start the background roadmap generation process
-      fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2);
-      // fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2)
-      // .then(async () => {
-      //     // After data is generated, update the status to "completed"
-      //     await db
-      //         .update(USER_CAREER_STATUS)
-      //         .set({ roadmap_status: 'completed' })
-      //         .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
-      //         .execute();
-      // })
-      // .catch(async (err) => {
-      //     console.error("Error during roadmap generation:", err);
-      //     // In case of an error, reset the status to "not_started"
-      //     await db
-      //         .update(USER_CAREER_STATUS)
-      //         .set({ roadmap_status: 'not_started' })
-      //         .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
-      //         .execute();
-      // });
+      // fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2);
+      fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2)
+      .then(async () => {
+          // After data is generated, update the status to "completed"
+          // await db
+          //     .update(USER_CAREER_STATUS)
+          //     .set({ roadmap_status: 'completed' })
+          //     .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+          //     .execute();
+              console.error("Roadmap generated");
+      })
+      .catch(async (err) => {
+          console.error("Error during roadmap generation:", err);
+      });
       
       // Respond with a 202 Accepted status if you want to signify processing
       return NextResponse.json(loadingResponse, { status: 202 });
