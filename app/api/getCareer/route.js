@@ -36,29 +36,6 @@ export async function GET(req) {
 
     const birth_date = user_data[0].birth_date;
     const age = formattedAge(birth_date);
-    // const age = 8
-    // // console.log("birth_date", age);
-
-    // return NextResponse.json({ message: 'Careers GOt successfully' }, { status: 201 });
-
-    // Fetch data for the given userId
-    // const data = await db
-    //     .select()
-    //     .from(USER_CAREER)
-    //     .where(eq(USER_CAREER.user_id, userId))
-    //     .orderBy(desc(USER_CAREER.created_at))
-    //     .execute();
-
-    // const data = await db
-    //     .select({
-    //         careerName: CAREER_GROUP.career_name, // Select the career_name from CAREER_GROUP
-    //         userCareerData: USER_CAREER // Select all columns from USER_CAREER
-    //     })
-    //     .from(USER_CAREER)
-    //     .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id)) // Join on the career_group_id
-    //     .where(eq(USER_CAREER.user_id, userId))
-    //     .orderBy(desc(USER_CAREER.created_at))
-    //     .execute();
 
     const data = await db
       .select({
@@ -172,6 +149,9 @@ export async function GET(req) {
         };
       })
     );
+
+    console.log("resultData", resultData);
+    
 
     // Respond with the fetched data
     return NextResponse.json(resultData, { status: 201 });

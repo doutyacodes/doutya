@@ -83,6 +83,12 @@ function Login() {
             >
               <option value="en">English</option>
               <option value="hi">Hindi</option>
+              <option value="mar">Marathi</option>
+              <option value="ur">Urdu</option>
+              <option value="sp">Spanish</option>
+              <option value="ben">Bengali</option>
+              <option value="assa">Assamese</option>
+              <option value="ge">German</option>
             </select>
           </div>
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
