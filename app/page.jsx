@@ -316,8 +316,8 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className="w-full ">
-        <div className="w-full max-w-[1200px] mx-auto px-3 bg-gradient-to-tr from-[#b1aaf6] to-[#8054df] py-5 space-y-4">
+      <div className="w-full bg-gradient-to-tr from-[#b1aaf6] to-[#8054df]">
+        <div className="w-full max-w-[1200px] mx-auto px-3 py-5 space-y-4">
           <h1 className="text-white text-2xl md:text-4xl font-bold text-center">
             From Interactions to Insights to Revenue — All in One Platform
           </h1>
