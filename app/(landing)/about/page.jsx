@@ -7,38 +7,42 @@ const page = () => {
     sections: [
       {
         title: "Customer Service",
-        image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
+        image:
+          "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
         shape: "hexagon",
-        color: "bg-yellow-500"
+        color: "bg-yellow-500",
       },
       {
         title: "Diversity",
-        image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
+        image:
+          "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
         shape: "hexagon",
-        color: "bg-teal-500"
+        color: "bg-teal-500",
       },
       {
         title: "Trust",
-        image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
+        image:
+          "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
         shape: "rectangle",
-        color: "bg-blue-500"
+        color: "bg-blue-500",
       },
       {
         title: "Innovation",
-        image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
+        image:
+          "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
         shape: "rectangle",
-        color: "bg-pink-500"
-      }
-    ]
+        color: "bg-pink-500",
+      },
+    ],
   };
   const getShapeClass = (shape) => {
     switch (shape) {
-      case 'hexagon':
-        return 'hexagon-shape';
-      case 'rectangle':
-        return 'rectangle-shape';
+      case "hexagon":
+        return "hexagon-shape";
+      case "rectangle":
+        return "rectangle-shape";
       default:
-        return '';
+        return "";
     }
   };
   return (
@@ -102,24 +106,33 @@ const page = () => {
         </div>
       </div>
       <div className=" bg-white px-4 mx-auto py-10">
-      <div className="max-w-[1200px] px-4 mx-auto py-10">
-      <div className="grid grid-cols-12 gap-6">
-        {data.sections.map((section, index) => (
-          <div key={index} className="flex col-span-6 flex-col items-center">
-            <img 
-              src={section.image} 
-              alt={section.title} 
-              className="w-full h-40 md:h-[50vh] object-cover rounded-lg mb-4"
-            />
-            <div className={`relative px-4 py-2 rounded-md flex justify-center items-center ${section.color} ${getShapeClass(section.shape)}`}>
-              <h3 className="text-white font-bold text-center">{section.title}</h3>
-            </div>
+        <div className="max-w-[1200px] px-4 mx-auto py-10">
+          <div className="grid grid-cols-12 gap-6">
+            {data.sections.map((section, index) => (
+              <div
+                key={index}
+                className="flex col-span-6 flex-col items-center"
+              >
+                <img
+                  src={section.image}
+                  alt={section.title}
+                  className="w-full h-40 md:h-[50vh] object-cover rounded-lg mb-4"
+                />
+                <div
+                  className={`relative px-4 py-2 rounded-md flex justify-center items-center ${
+                    section.color
+                  } ${getShapeClass(section.shape)}`}
+                >
+                  <h3 className="text-white font-bold text-center">
+                    {section.title}
+                  </h3>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
-    </div>
-    </div>
-    <Footer />
+      <Footer />
     </main>
   );
 };
