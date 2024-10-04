@@ -1,0 +1,42 @@
+{
+    "LoginPage": {
+      "title": "Login",
+      "username":"Username",
+      "password":"Password",
+      "NoAccount":"Don't have an account?",
+      "Signup":"Signup",
+      "LoginButton":"Log In"
+    },
+    "SignupPage": {
+    "title": "Sign Up",
+    "gender": "Gender",
+    "genderOptions": {
+      "mr": "Mr",
+      "miss": "Miss",
+      "mrs": "Mrs"
+    },
+    "name": "Name",
+    "username": "Username (Don't include space in your username)",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "mobile": "Mobile Number",
+    "country": "Select Your Country",
+    "dob": "Date of Birth",
+    "dobValidation": "Age must be a minimum of 5 years.",
+    "collegeStudent": "Are you a college student?",
+    "studentOptions": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "college": "College",
+    "university": "University",
+    "submit": "Submit",
+    "alreadyRegistered": "Already Registered?",
+    "login": "Log In",
+    "forgotPassword": "Forgot Password?",
+    "successMessage": "Successfully added to the database!",
+    "defaultErrorMessage": "Failed to add data.",
+    "usernameExists": "Username already exists",
+    "phoneExists": "Phone number already exists"
+  }
+}

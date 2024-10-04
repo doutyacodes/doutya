@@ -1,11 +1,12 @@
-"use client"
-import React, { useState } from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useForm } from "react-hook-form"
+import { useForm } from "react-hook-form";
 import { useRouter } from 'next/navigation';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
 import { calculateAge } from "@/lib/ageCalculate";
+import { useTranslations } from 'next-intl';
 
 function Login() {
   const router = useRouter();
@@ -17,6 +18,22 @@ function Login() {
     reset,
     setError
   } = useForm();
+  const [selectedLanguage, setSelectedLanguage] = useState('en'); 
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language') || 'en';
+    setSelectedLanguage(savedLanguage);
+  }, []);
+
+  // Handle language change and store it in localStorage
+  const handleLanguageChange = (e) => {
+    const newLanguage = e.target.value;
+    console.log(newLanguage)
+    setSelectedLanguage(newLanguage);
+    localStorage.setItem('language', newLanguage);
+    document.cookie = `locale=${newLanguage}; path=/`;
+    console.log(document.cookie)
+    router.refresh(); 
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -34,10 +51,10 @@ function Login() {
           localStorage.setItem('dashboardUrl', '/dashboard_kids');
           router.push('/dashboard_kids');
         } 
-        else if(age <= 13){
-          localStorage.setItem('dashboardUrl', '/dashboard_kids');
+        else if (age <= 13) {
+          localStorage.setItem('dashboardUrl', '/dashboard_junior');
           router.push('/dashboard_junior');
-        }
+        } 
         else {
           localStorage.setItem('dashboardUrl', '/dashboard');
           router.push('/dashboard');
@@ -50,15 +67,30 @@ function Login() {
     }
   };
 
+  const t = useTranslations('LoginPage');
+
   return (
     <div>
-      <Toaster></Toaster>
+      <Toaster />
       <div className="flex items-center justify-center min-h-screen">
+      <div className="mb-4 -ml-80 mr-56 -mt-96">
+            <label htmlFor="language" className="block text-sm font-medium text-white">Select Language:</label>
+            <select
+              id="language"
+              value={selectedLanguage}
+              onChange={handleLanguageChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            >
+              <option value="en">English</option>
+              <option value="hi">Hindi</option>
+            </select>
+          </div>
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-          <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+          
+          <h1 className="text-2xl font-bold mb-6 text-center">{t('title')}</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">{t('username')}</label>
               <input
                 type="text"
                 {...register("username")}
@@ -67,7 +99,7 @@ function Login() {
               />
             </div>
             <div className="mb-6">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">{t('password')}</label>
               <input
                 type="password"
                 {...register("password")}
@@ -75,13 +107,13 @@ function Login() {
                 required
               />
             </div>
-            <span className='text-emerald-600'>Don't have an account? <Link className='text-gray-500 hover:text-black' href="/signup">SignUp</Link></span>
+            <span className='text-emerald-600'>{t('NoAccount')} <Link className='text-gray-500 hover:text-black' href="/signup">{t('Signup')}</Link></span>
             <br /> <br />
             <button
               type="submit"
               className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              Log In
+              {t('LoginButton')}
             </button>
           </form>
         </div>

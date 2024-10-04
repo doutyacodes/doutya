@@ -1,0 +1,42 @@
+{
+    "LoginPage": {
+        "title": "लॉगिन",
+        "username": "प्रयोक्ता नाम",
+        "password": "पासवर्ड",
+        "NoAccount": "खाता नहीं है?",
+        "Signup": "साइन अप करें",
+        "LoginButton": "लॉग इन"
+    },
+    "SignupPage": {
+    "title": "साइन अप",
+    "gender": "लिंग",
+    "genderOptions": {
+      "mr": "श्री",
+      "miss": "कुमारी",
+      "mrs": "श्रीमती"
+    },
+    "name": "नाम",
+    "username": "उपयोगकर्ता नाम (अपने उपयोगकर्ता नाम में स्पेस शामिल न करें)",
+    "password": "पासवर्ड",
+    "confirmPassword": "पासवर्ड की पुष्टि करें",
+    "mobile": "मोबाइल नंबर",
+    "country": "अपना देश चुनें",
+    "dob": "जन्म तिथि",
+    "dobValidation": "आयु कम से कम 5 वर्ष होनी चाहिए।",
+    "collegeStudent": "क्या आप कॉलेज के छात्र हैं?",
+    "studentOptions": {
+      "yes": "हाँ",
+      "no": "नहीं"
+    },
+    "college": "कॉलेज",
+    "university": "विश्वविद्यालय",
+    "submit": "सबमिट करें",
+    "alreadyRegistered": "पहले से पंजीकृत?",
+    "login": "लॉग इन करें",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "successMessage": "सफलतापूर्वक डेटाबेस में जोड़ा गया!",
+    "defaultErrorMessage": "डेटा जोड़ने में विफल रहा।",
+    "usernameExists": "उपयोगकर्ता नाम पहले से मौजूद है",
+    "phoneExists": "फ़ोन नंबर पहले से मौजूद है"
+  }
+}

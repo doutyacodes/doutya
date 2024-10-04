@@ -1,6 +1,6 @@
-"use client"
-import React, { useState } from 'react'
-import { useForm } from "react-hook-form"
+"use client";
+import React, { useState } from 'react';
+import { useForm } from "react-hook-form";
 import { encryptText } from '@/utils/encryption';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
@@ -9,12 +9,15 @@ import Link from 'next/link';
 import { calculateAge } from "@/lib/ageCalculate";
 import countryList from 'react-select-country-list';
 import Select from 'react-select';
+import { useTranslations } from 'next-intl';
 
 function SignUp() {
     const [isCollegeStudent, setIsCollegeStudent] = useState(false);
     const [countryOptions] = useState(countryList().getData());
     const [selectedCountry, setSelectedCountry] = useState(null); 
     const router = useRouter();
+    const t = useTranslations('SignupPage'); // Use translations
+
     const {
         register,
         handleSubmit,
@@ -24,18 +27,17 @@ function SignUp() {
         setError
     } = useForm();
 
-    const onSubmit = async(data) => {
+    const onSubmit = async (data) => {
         if (data.password !== data.confirmPassword) {
             setError("confirmPassword", {
                 type: "manual",
-                message: "Passwords do not match"
+                message: t('passwordMismatch')
             });
             return;
         }
         const encryptedPassword = encryptText(data.password);
         data.password = encryptedPassword;
 
-       
         if (isCollegeStudent && data.college && data.university) {
             data.college = encryptText(data.college);
             data.university = encryptText(data.university);
@@ -43,51 +45,44 @@ function SignUp() {
         data.country = selectedCountry?.label;
         try {
             const response = await GlobalApi.CreateNewUser(data);
-    
+
             if (response.status === 201) {
                 const { token } = response.data.data;
                 localStorage.setItem('token', token);
                 reset();
 
-              
                 const age = calculateAge(data.dob);
 
-                toast.success("Successfully added to the database!");
+                toast.success(t('successMessage')); // Use translation
 
-              
                 if (age <= 9) {
                     localStorage.setItem('dashboardUrl', '/dashboard_kids');
                     router.push('/dashboard_kids');
-                } 
-                else if (age <= 13) {
+                } else if (age <= 13) {
                     localStorage.setItem('dashboardUrl', '/dashboard_junior');
                     router.push('/dashboard_junior');
-                } 
-                else {
+                } else {
                     localStorage.setItem('dashboardUrl', '/dashboard');
                     router.push('/dashboard');
                 }
             } else {
-                const errorMessage = response.data?.message || "Failed to add data.";
+                const errorMessage = response.data?.message || t('defaultErrorMessage');
                 toast.error(`Error: ${errorMessage}`);
             }
-            console.log(data)
         } catch (err) {
             console.error('Error:', err);
-    
-            // Handle specific errors for username and mobile number
+
             if (err.response?.status === 400 && err.response?.data?.message) {
                 const errorMsg = err.response.data.message;
                 if (errorMsg.includes('Username')) {
-                    console.log('got errr')
                     setError("username", {
                         type: "manual",
-                        message: "Username already exists"
+                        message: t('usernameExists')
                     });
                 } else if (errorMsg.includes('Phone number')) {
                     setError("mobile", {
                         type: "manual",
-                        message: "Phone number already exists"
+                        message: t('phoneExists')
                     });
                 } else {
                     toast.error(`Error: ${errorMsg}`);
@@ -103,9 +98,8 @@ function SignUp() {
     return (
         <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
             <Toaster />
-            
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg ">
-                <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
+            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+                <h1 className="text-2xl font-bold mb-6 text-center">{t('title')}</h1>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex gap-4 mb-4">
                         <div className="flex-1">
@@ -115,14 +109,14 @@ function SignUp() {
                                 className="mt-6 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                 {...register("gender")}
                             >
-                                <option value=''>Gender</option>
-                                <option className=" font-serif" value='Mr'>Mr</option>
-                                <option value='Miss'>Miss</option>
-                                <option value='Mrs'>Mrs</option>
+                                <option value="">{t('gender')}</option>
+                                <option value="Mr">{t('genderOptions.mr')}</option>
+                                <option value="Miss">{t('genderOptions.miss')}</option>
+                                <option value="Mrs">{t('genderOptions.mrs')}</option>
                             </select>
                         </div>
                         <div className="flex-1">
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">{t('name')}</label>
                             <input
                                 type="text"
                                 {...register("name")}
@@ -132,7 +126,7 @@ function SignUp() {
                         </div>
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username (Don't include space in your username)</label>
+                        <label htmlFor="username" className="block text-sm font-medium text-gray-700">{t('username')}</label>
                         <input
                             type="text"
                             {...register("username")}
@@ -142,18 +136,18 @@ function SignUp() {
                     </div>
                     {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>}
                     <div className="mb-4">
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">{t('password')}</label>
                         <input
                             type="password"
                             {...register("password", {
-                                required: "Password is required",
+                                required: t('passwordRequired'),
                                 minLength: {
                                     value: 6,
-                                    message: "Password must be at least 6 characters long"
+                                    message: t('passwordMinLength')
                                 },
                                 pattern: {
                                     value: /(?=.*[!@#$%^&*])/,
-                                    message: "Password must contain at least one special character"
+                                    message: t('passwordPattern')
                                 }
                             })}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -162,10 +156,10 @@ function SignUp() {
                         {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">{t('confirmPassword')}</label>
                         <input
                             type="password"
-                            {...register("confirmPassword",)}
+                            {...register("confirmPassword")}
                             className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${errors.confirmPassword ? 'border-red-500' : ''}`}
                             required
                         />
@@ -175,13 +169,13 @@ function SignUp() {
                     </div>
 
                     <div className="mb-4">
-                        <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                        <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">{t('mobile')}</label>
                         <input
                             type="number"
-                            {...register("mobile",{
+                            {...register("mobile", {
                                 minLength: {
                                     value: 10,
-                                    message: "Number should contain 10 digits"
+                                    message: t('mobileMinLength')
                                 }
                             })}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -191,39 +185,38 @@ function SignUp() {
                     </div>
 
                     <div className="mb-4">
-                        <label htmlFor="country" className="block text-sm font-medium text-gray-700">Select Your Country</label>
+                        <label htmlFor="country" className="block text-sm font-medium text-gray-700">{t('country')}</label>
                         <Select
-                            options={countryOptions} 
+                            options={countryOptions}
                             value={selectedCountry}
-                            onChange={setSelectedCountry} 
+                            onChange={setSelectedCountry}
                             className="mt-1 block w-full"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
-                            Date of Birth
-                        </label>
+                        <label htmlFor="dob" className="block text-sm font-medium text-gray-700">{t('dob')}</label>
                         <input
                             type="date"
                             {...register("dob", {
-                            required: "Date of birth is required",
-                            validate: {
-                                notTooYoung: (value) => {
-                                    const today = new Date();
-                                    const selectedDate = new Date(value);
-                                    const minAllowedDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
-                                    return selectedDate <= minAllowedDate || "Age must be a minimum of 5 years.";
+                                required: t('dobRequired'),
+                                validate: {
+                                    notTooYoung: (value) => {
+                                        const today = new Date();
+                                        const selectedDate = new Date(value);
+                                        const minAllowedDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
+                                        return selectedDate <= minAllowedDate || t('dobValidation');
+                                    }
                                 }
-                            }
                             })}
                             max={new Date().toISOString().split("T")[0]}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"                        />
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
                         {errors.dob && <p className="mt-2 text-sm text-red-600">{errors.dob.message}</p>}
                     </div>
                     <br />
                     <div className="mb-4 flex items-center">
-                        <label htmlFor="collegeStudent" className="block text-sm font-medium text-gray-700 mr-4">Are you a college student?</label>
+                        <label htmlFor="collegeStudent" className="block text-sm font-medium text-gray-700 mr-4">{t('collegeStudent')}</label>
                         <div className="flex items-center space-x-4">
                             <label className="inline-flex items-center">
                                 <input
@@ -233,7 +226,7 @@ function SignUp() {
                                     onChange={() => setIsCollegeStudent(false)}
                                     className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                                 />
-                                <span className="ml-2 text-gray-700 mr-5">No</span>
+                                <span className="ml-2 text-gray-700 mr-5">{t('studentOptions.no')}</span>
                                 <input
                                     type="radio"
                                     {...register("student")}
@@ -241,7 +234,7 @@ function SignUp() {
                                     onChange={() => setIsCollegeStudent(true)}
                                     className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                                 />
-                                <span className="ml-2 text-gray-700">Yes</span>
+                                <span className="ml-2 text-gray-700">{t('studentOptions.yes')}</span>
                             </label>
                         </div>
                     </div>
@@ -249,7 +242,7 @@ function SignUp() {
                     {isCollegeStudent && (
                         <>
                             <div className="mb-4">
-                                <label htmlFor="college" className="block text-sm font-medium text-gray-700">College</label>
+                                <label htmlFor="college" className="block text-sm font-medium text-gray-700">{t('college')}</label>
                                 <input
                                     type="text"
                                     {...register("college")}
@@ -257,7 +250,7 @@ function SignUp() {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label htmlFor="university" className="block text-sm font-medium text-gray-700">University</label>
+                                <label htmlFor="university" className="block text-sm font-medium text-gray-700">{t('university')}</label>
                                 <input
                                     type="text"
                                     {...register("university")}
@@ -272,17 +265,17 @@ function SignUp() {
                             type="submit"
                             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
                         >
-                            Submit
+                            {t('submit')}
                         </button>
                     </div>
                 </form>
                 <div className="flex justify-between">
-                    <Link href="/login" className="text-sm text-gray-500">Already Registered? Log In</Link>
-                    <Link href="/" className="text-sm text-gray-500">Forgot Password?</Link>
+                    <Link href="/login" className="text-sm text-gray-500">{t('alreadyRegistered')} {t('login')}</Link>
+                    <Link href="/" className="text-sm text-gray-500">{t('forgotPassword')}</Link>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default SignUp;
