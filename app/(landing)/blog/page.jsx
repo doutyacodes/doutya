@@ -1,3 +1,4 @@
+import Footer from "@/app/_components/Footer";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
@@ -164,63 +165,66 @@ const page = () => {
             })}
         </div>
         <div className="grid grid-cols-12 w-full gap-3">
-  {fullData?.length > 0 &&
-    fullData?.map((item2, index) => {
-      return (
-        <div className="w-full col-span-12" key={index}>
-          <h2 className="font-bold text-xl">{item2.tag}</h2>
-          {/* Custom HR styling */}
-          <hr
-            className="w-full mb-3"
-            style={{
-              border: "none",
-              height: "2px",
-              background:
-                "linear-gradient(to right, red " +
-                item2.tag.length * 8 +
-                "px, #000 0)",
-            }}
-          />
-          {/* Blogs scrollable horizontally without scrollbar */}
-          <div className="flex overflow-x-auto space-x-4 pb-3 scrollbar-hide">
-          {item2?.blogs?.length > 0 &&
-  item2?.blogs.map((item, index2) => {
-    return (
-      <div
-        key={index2 + 121212}
-        className="relative w-64 flex-none rounded-md"
-      >
-        <Image
-          src={item.image}
-          width={300}
-          height={180}
-          objectFit="cover"
-          className="rounded-md"
-        />
-        <div className="w-full flex flex-col gap-3 p-3">
-          <h1 className="text-xl font-bold">
-            {/* Limit title to 50 characters */}
-            {item.title.length > 32 ? item.title.slice(0, 32) + "..." : item.title}
-          </h1>
-          <p className="text-xs uppercase">{item.created_date}</p>
-          <p className="text-xs">
-            {/* Limit description to 100 characters */}
-            {item.description.length > 50
-              ? item.description.slice(0, 50) + "..."
-              : item.description}
-          </p>
+          {fullData?.length > 0 &&
+            fullData?.map((item2, index) => {
+              return (
+                <div className="w-full col-span-12" key={index}>
+                  <h2 className="font-bold text-xl">{item2.tag}</h2>
+                  {/* Custom HR styling */}
+                  <hr
+                    className="w-full mb-3"
+                    style={{
+                      border: "none",
+                      height: "1px",
+                      background:
+                        "linear-gradient(to right, red " +
+                        item2.tag.length * 12 +
+                        "px, #000 0)",
+                    }}
+                  />
+                  {/* Blogs scrollable horizontally without scrollbar */}
+                  <div className="flex overflow-x-auto space-x-4 pb-3 scrollbar-hide">
+                    {item2?.blogs?.length > 0 &&
+                      item2?.blogs.map((item, index2) => {
+                        return (
+                          <div
+                            key={index2 + 121212}
+                            className="relative w-64 flex-none rounded-md"
+                          >
+                            <Image
+                              src={item.image}
+                              width={300}
+                              height={180}
+                              objectFit="cover"
+                              className="rounded-md"
+                            />
+                            <div className="w-full flex flex-col gap-3 p-3">
+                              <h1 className="text-xl font-bold">
+                                {/* Limit title to 50 characters */}
+                                {item.title.length > 32
+                                  ? item.title.slice(0, 32) + "..."
+                                  : item.title}
+                              </h1>
+                              <p className="text-xs uppercase">
+                                {item.created_date}
+                              </p>
+                              <p className="text-xs">
+                                {/* Limit description to 100 characters */}
+                                {item.description.length > 50
+                                  ? item.description.slice(0, 50) + "..."
+                                  : item.description}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </div>
-    );
-  })}
-
-          </div>
-        </div>
-      );
-    })}
-</div>
-
-      </div>
+      <Footer />
     </div>
   );
 };
