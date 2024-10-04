@@ -1,0 +1,128 @@
+{
+    "LoginPage": {
+      "title": "Iniciar sesión",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "NoAccount": "¿No tienes cuenta?",
+      "Signup": "Regístrate",
+      "LoginButton": "Iniciar sesión"
+    },
+    "SignupPage": {
+      "title": "Regístrate",
+      "gender": "Género",
+      "genderOptions": {
+        "mr": "Sr.",
+        "miss": "Srta.",
+        "mrs": "Sra."
+      },
+      "name": "Nombre",
+      "username": "Nombre de usuario (sin espacios)",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "mobile": "Número de móvil",
+      "country": "Selecciona tu país",
+      "dob": "Fecha de nacimiento",
+      "dobValidation": "La edad mínima debe ser de 5 años.",
+      "collegeStudent": "¿Eres estudiante universitario?",
+      "studentOptions": {
+        "yes": "Sí",
+        "no": "No"
+      },
+      "college": "Universidad",
+      "university": "Universidad",
+      "submit": "Enviar",
+      "alreadyRegistered": "¿Ya tienes una cuenta?",
+      "login": "Iniciar sesión",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "successMessage": "¡Registrado exitosamente en la base de datos!",
+      "defaultErrorMessage": "Error al agregar los datos.",
+      "usernameExists": "El nombre de usuario ya existe",
+      "phoneExists": "El número de móvil ya está registrado"
+    },
+    "Banner": {
+      "title": "Personalidad",
+      "personalityTestTitle": "Test de personalidad",
+      "personalityTestDescription": "Realiza un test de personalidad y conócete mejor a ti mismo. Descubre tus características únicas y construye tu carrera sobre ellas.",
+      "interestTestTitle": "Test de intereses",
+      "interestTestDescription": "¡Descubre tus intereses en el siguiente paso! Encuentra carreras que se adapten a tu personalidad.",
+      "loadingText": "Cargando...",
+      "viewResults": "Ver resultados",
+      "hideResults": "Ocultar resultados",
+      "navigateToQuizAlt": "Ir a la sección de pruebas",
+      "quizCompletedAlt": "Prueba completada"
+    },
+    "Navbar": {
+      "profileAltText": "Abrir menú de usuario",
+      "profileLink": "Tu perfil",
+      "careersLink": "Carreras",
+      "signOutLink": "Cerrar sesión",
+      "loginLink": "Iniciar sesión",
+      "aboutUsLink": "Sobre nosotros",
+      "solutionsPlaceholder": "Soluciones",
+      "options": {
+        "option1": "Opción 1",
+        "option2": "Opción 2",
+        "option3": "Opción 3"
+      },
+      "sidebarCloseButton": "×",
+      "sidebarLogin": "Iniciar sesión"
+    },
+    "ResultsPage": {
+      "title": "Resultados",
+      "description": "Descripción",
+      "strengths": "Fortalezas",
+      "weaknesses": "Debilidades",
+      "opportunities": "Oportunidades",
+      "threats": "Amenazas",
+      "careers": "Mejores carreras",
+      "loading": "Cargando"
+    },
+    "ProfilePage": {
+      "backToDashboard": "Volver al panel",
+      "myProfile": "Mi perfil",
+      "gender": "Género",
+      "select": "Seleccionar",
+      "male": "Sr.",
+      "female": "Srta.",
+      "mrs": "Sra.",
+      "name": "Nombre",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "mobileNumber": "Número de móvil",
+      "dob": "Fecha de nacimiento",
+      "student": "¿Estás en la universidad?",
+      "yes": "Sí",
+      "no": "No",
+      "college": "Universidad",
+      "university": "Universidad",
+      "yearAndMonthOfPassing": "Año y mes de graduación",
+      "currentEnrollment": "Matrícula actual",
+      "highestDegree": "Máximo grado obtenido",
+      "highSchool": "Preparatoria",
+      "associateDegree": "Grado asociado",
+      "bachelorsDegree": "Grado de licenciatura",
+      "mastersDegree": "Grado de maestría",
+      "doctorate": "Doctorado",
+      "verifiedProfile": "Perfil verificado",
+      "loading": "Cargando...",
+      "saveChanges": "Guardar cambios",
+      "passwordRequired": "La contraseña debe tener al menos 6 caracteres",
+      "passwordSpecial": "La contraseña debe tener al menos un carácter especial.",
+      "confirmPasswordRequired": "Confirma la contraseña",
+      "ageValidation": "La edad mínima debe ser de 5 años.",
+      "userDataUpdated": "Los datos del usuario han sido actualizados",
+      "usernameExists": "El nombre de usuario ya existe",
+      "unexpectedError": "Se ha producido un error inesperado."
+    },
+    "CareerPage": {
+      "careers": "Carreras",
+      "roadmap": "Hoja de ruta",
+      "contests": "Concursos",
+      "test": "Prueba",
+      "feedback": "Comentarios",
+      "challenges": "Desafíos",
+      "community": "Comunidad",
+      "careerAdding": "Agregando carrera. Por favor, espera..."
+    }
+  }
+  

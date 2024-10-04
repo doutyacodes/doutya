@@ -1,0 +1,128 @@
+{
+    "LoginPage": {
+      "title": "লগ ইন",
+      "username": "ইউজাৰনেম",
+      "password": "পাচৱৰ্ড",
+      "NoAccount": "একাউণ্ট নাই?",
+      "Signup": "ছাইন আপ",
+      "LoginButton": "লগ ইন"
+    },
+    "SignupPage": {
+      "title": "ছাইন আপ",
+      "gender": "লিংগ",
+      "genderOptions": {
+        "mr": "শ্ৰী",
+        "miss": "কুমাৰী",
+        "mrs": "শ্ৰীমতী"
+      },
+      "name": "নাম",
+      "username": "ইউজাৰনেম (ইউজাৰনেমত স্পেচ ব্যৱহাৰ নকৰিব)",
+      "password": "পাচৱৰ্ড",
+      "confirmPassword": "পাচৱৰ্ড নিশ্চিত কৰক",
+      "mobile": "ম'বাইল নম্বৰ",
+      "country": "আপোনাৰ দেশ বাচক",
+      "dob": "জন্ম তাৰিখ",
+      "dobValidation": "বয়স কমেও ৫ বছৰ হ’ব লাগিব।",
+      "collegeStudent": "আপুনি কলেজৰ ছাত্ৰ-ছাত্ৰী নেকি?",
+      "studentOptions": {
+        "yes": "হয়",
+        "no": "নাই"
+      },
+      "college": "কলেজ",
+      "university": "বিশ্ববিদ্যালয়",
+      "submit": "সাবমিট",
+      "alreadyRegistered": "পূৰ্বে নিবন্ধিত?",
+      "login": "লগ ইন",
+      "forgotPassword": "পাচৱৰ্ড পাহৰিছেনে?",
+      "successMessage": "সফলভাবে ডেটাবেচত যোগ হৈছে!",
+      "defaultErrorMessage": "ডেটা যোগ কৰিবলৈ ব্যৰ্থ।",
+      "usernameExists": "ইউজাৰনেম আগতেৰে আছে",
+      "phoneExists": "ম'বাইল নম্বৰ আগতেৰে আছে"
+    },
+    "Banner": {
+      "title": "ব্যক্তিত্ব",
+      "personalityTestTitle": "ব্যক্তিত্ব পৰীক্ষা",
+      "personalityTestDescription": "ব্যক্তিত্ব পৰীক্ষাৰ জৰিয়তে আপোনাৰ নিজকে জানক! আপোনাৰ বেক্তিগত গুণাবলী আবিষ্কাৰ কৰক আৰু কেরিয়াৰৰ ভৱিষ্যৎ গঢ়া আৰম্ভ কৰক।",
+      "interestTestTitle": "আগ্রহ পৰীক্ষা",
+      "interestTestDescription": "আপোনাৰ আগ্ৰহ বুজক আৰু ব্যক্তিত্বৰ সৈতে মিলাই কেরিয়াৰ বাচক।",
+      "loadingText": "লোড হৈছে...",
+      "viewResults": "ফলাফল চাওক",
+      "hideResults": "ফলাফল লুকাওক",
+      "navigateToQuizAlt": "কুইজ শাখালৈ যাওক",
+      "quizCompletedAlt": "কুইজ সম্পূৰ্ণ হৈছে"
+    },
+    "Navbar": {
+      "profileAltText": "ইউজাৰ মেনু খোলক",
+      "profileLink": "আপোনাৰ প্ৰফাইল",
+      "careersLink": "কেরিয়াৰ",
+      "signOutLink": "ছাইন আউট",
+      "loginLink": "লগ ইন",
+      "aboutUsLink": "আমাৰ বিষয়ে",
+      "solutionsPlaceholder": "সমাধানসমূহ",
+      "options": {
+        "option1": "বিকল্প ১",
+        "option2": "বিকল্প ২",
+        "option3": "বিকল্প ৩"
+      },
+      "sidebarCloseButton": "×",
+      "sidebarLogin": "লগ ইন"
+    },
+    "ResultsPage": {
+      "title": "ফলাফল",
+      "description": "বিৱৰণ",
+      "strengths": "শক্তি",
+      "weaknesses": "দুৰ্বলতা",
+      "opportunities": "সুযোগ",
+      "threats": "বিপদ",
+      "careers": "শ্ৰেষ্ঠ কেরিয়াৰ",
+      "loading": "লোড হৈছে"
+    },
+    "ProfilePage": {
+      "backToDashboard": "ড্যাশবোর্ডলৈ উভতি যাওক",
+      "myProfile": "মোৰ প্ৰফাইল",
+      "gender": "লিংগ",
+      "select": "বাচক",
+      "male": "শ্ৰী",
+      "female": "কুমাৰী",
+      "mrs": "শ্ৰীমতী",
+      "name": "নাম",
+      "username": "ইউজাৰনেম",
+      "password": "পাচৱৰ্ড",
+      "mobileNumber": "ম'বাইল নম্বৰ",
+      "dob": "জন্ম তাৰিখ",
+      "student": "আপুনি কলেজত যায় নেকি?",
+      "yes": "হয়",
+      "no": "নাই",
+      "college": "কলেজ",
+      "university": "বিশ্ববিদ্যালয়",
+      "yearAndMonthOfPassing": "পাশ হোৱাৰ বৰ্ষ আৰু মাহ",
+      "currentEnrollment": "বৰ্তমানৰ নামাংকন",
+      "highestDegree": "সৰ্বাধিক ডিগ্ৰী",
+      "highSchool": "হাই স্কুল",
+      "associateDegree": "সহযোগী ডিগ্ৰী",
+      "bachelorsDegree": "ব্যাচেলৰ ডিগ্ৰী",
+      "mastersDegree": "মাষ্টাৰ্স ডিগ্ৰী",
+      "doctorate": "ডক্টৰেট",
+      "verifiedProfile": "যাচাইকৃত প্ৰফাইল",
+      "loading": "লোড হৈছে...",
+      "saveChanges": "সলাই সংৰক্ষণ কৰক",
+      "passwordRequired": "পাচৱৰ্ড কমেও ৬ আখৰ হোৱা উচিত",
+      "passwordSpecial": "পাচৱৰ্ডত কমেও এটা বিশেষ চিহ্ন থাকিব লাগে।",
+      "confirmPasswordRequired": "পাচৱৰ্ড নিশ্চিত কৰক",
+      "ageValidation": "বয়স কমেও ৫ বছৰ হ’ব লাগিব।",
+      "userDataUpdated": "ব্যৱহাৰকাৰীৰ তথ্য সলনি হৈছে",
+      "usernameExists": "ইউজাৰনেম আগতেৰে আছে",
+      "unexpectedError": "অপ্ৰত্যাশিত ত্ৰুটি।"
+    },
+    "CareerPage": {
+      "careers": "কেরিয়াৰ",
+      "roadmap": "ৰোডমেপ",
+      "contests": "প্ৰতিযোগিতা",
+      "test": "পৰীক্ষা",
+      "feedback": "মন্তব্য",
+      "challenges": "চেলেঞ্জ",
+      "community": "কমিউনিটি",
+      "careerAdding": "কেরিয়াৰ যোগ হৈছে। অনুগ্ৰহ কৰি অপেক্ষা কৰক..."
+    }
+  }
+  

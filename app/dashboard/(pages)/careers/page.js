@@ -13,6 +13,7 @@ import Activity from '../../_components/Activities/activity';
 import Challenge from '../../_components/Challenges/page';
 import Feedback from "../../_components/FeedbackTab/Feedback";
 import RoadMap from "../../_components/RoadMapTab/RoadMap";
+import { useTranslations } from 'next-intl';
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -29,6 +30,7 @@ function Page() {
   const router = useRouter();
   const [showRoadmap, setShowRoadmap] = useState(false);
   const [showRoadMapDetails, setShowRoadMapDetails] = useState(false);
+  const t = useTranslations('CareerPage');
 
   const handleRoadmapClick = () => {
     setShowRoadmap(!showRoadmap);
@@ -155,7 +157,7 @@ function Page() {
         roadMapLoading={roadMapLoading}
       />
 
-      <p className="text-center text-white text-3xl mb-8">Careers</p>
+      <p className="text-center text-white text-3xl mb-8">{t('careers')}</p>
       <div className="flex justify-start gap-2 text-white bg-gradient-to-r from-teal-200 to-orange-200 p-5 sm:p-10 rounded-xl mb-10 overflow-x-auto">
         {careerData.map((career, index) => (
           <div
@@ -177,7 +179,7 @@ function Page() {
         {roadMapLoading && (
           <div className="w-48 h-48 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95">
             <p className="text-center text-sm font-bold text-blue-900 mb-4">
-              Career is being added. Please wait...
+              {t('careerAdding')}
             </p>
           </div>
         )}
@@ -200,7 +202,7 @@ function Page() {
           </div>
 
           <div className="flex justify-center flex-wrap gap-4 mb-4">
-            {["roadmap", "contests", "tests", "feedback", "challenges", "community"].map((tab) => (
+            {[t('roadmap'), t('contests'), t('test'), t('feedback'), t('challenges'), t('community')].map((tab) => (
               <button
                 key={tab}
                 className={`${
