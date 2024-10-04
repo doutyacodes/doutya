@@ -75,6 +75,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { IoIosClose, IoIosMenu } from "react-icons/io";
 import ListComponents from "./_components/ListComponents";
+import Footer from "./_components/Footer";
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -289,6 +290,7 @@ const Page = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </main>
   );
 };
