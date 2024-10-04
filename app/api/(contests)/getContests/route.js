@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { USER_CAREER, CHALLENGES, TASKS, USER_TASKS } from '@/utils/schema';
+import { TASKS, USER_TASKS, CHALLENGES_MAIN } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { eq, inArray, isNotNull, isNull } from 'drizzle-orm'; // Adjust based on your ORM version
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -19,15 +19,20 @@ export async function GET(req) {
         // Fetch only the challenge IDs where career_group_id is not null
         const challenges = await db
         .select()
-        .from(CHALLENGES)
-        .where(isNull(CHALLENGES.career_group_id))  // Ensure career_group_id is not null
+        .from(CHALLENGES_MAIN)
+        .where(isNull(CHALLENGES_MAIN.career_group_id))  // Ensure career_group_id is not null
         .execute();
 
         if (!challenges.length) {
             return NextResponse.json({ message: 'No tests found for this career group' }, { status: 404 });
         }
 
+        console.log("Challenges");
+        
+
         const challengeIds = challenges.map(challenge => challenge.challenge_id);
+        console.log("Challenges ID");
+
 
         // Step 2: Fetch all tasks (tests) associated with these challenges
         const tasks = await db
@@ -35,11 +40,17 @@ export async function GET(req) {
             .from(TASKS)
             .where(inArray(TASKS.challenge_id, challengeIds));
 
+        console.log("TAsks ");
+
+
         if (!tasks.length) {
             return NextResponse.json({ message: 'No tasks found for these challenges' }, { status: 404 });
         }
 
         const taskIds = tasks.map(task => task.task_id);
+
+        console.log("tasks ID");
+
 
         // Step 3: Fetch user task completion status
         const userTasks = await db
@@ -53,6 +64,8 @@ export async function GET(req) {
             map[userTask.task_id] = userTask.completed;
             return map;
         }, {});
+
+        console.log("userTasks ID");
 
         // Combine tasks with user task status
         const tasksWithStatus = tasks.map(task => ({
