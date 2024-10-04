@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { CHALLENGES, TEMP_LEADER, TASKS } from '@/utils/schema';
+import { CHALLENGES_MAIN, TEMP_LEADER, TASKS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -18,11 +18,11 @@ export async function GET(request) {
         // Fetch only the challenge IDs where career_group_id is not null
         const challengeIdsResult = await db
         .select({
-            challengeId: CHALLENGES.challenge_id,
-            questions: CHALLENGES.questions 
+            challengeId: CHALLENGES_MAIN.challenge_id,
+            questions: CHALLENGES_MAIN.questions 
         })
-        .from(CHALLENGES)
-        .where(isNull(CHALLENGES.career_group_id))  // Ensure career_group_id is  null
+        .from(CHALLENGES_MAIN)
+        .where(isNull(CHALLENGES_MAIN.career_group_id))  // Ensure career_group_id is  null
         .execute();
 
         const challengeIds = challengeIdsResult.map(challenge => challenge.challengeId);
