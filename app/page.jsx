@@ -80,6 +80,7 @@ import Footer from "./_components/Footer";
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeLink, setActiveLink] = useState(1);
+  const [featureLink, setFeatureLink] = useState(1);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -116,6 +117,29 @@ const Page = () => {
     },
   ];
   const activeItem = revenueList.find((item) => item.id === activeLink);
+  const features = [
+    {
+      id: 1,
+      description: "Built on customer interactions",
+    },
+    {
+      id: 2,
+      description: "Powered by the industry’s leading AI",
+    },
+    {
+      id: 3,
+      description: "Meaningful insights to drive action",
+    },
+    {
+      id: 4,
+      description: "Enriched by a robust ecosystem",
+    },
+    {
+      id: 5,
+      description: "Purpose-built for revenue workflows and outcomes",
+    },
+  ];
+
   return (
     <main className="relative w-full max-lg:bg-white min-h-screen">
       <header className="flex justify-between items-center max-w-[1200px] mx-auto px-4">
@@ -280,13 +304,42 @@ const Page = () => {
                     <h3 className="text-lg font-semibold mb-2 md:text-4xl">
                       {activeItem.subTitle}
                     </h3>
-                    <p className="text-gray-600 md:w-4/5">{activeItem.description}</p>
+                    <p className="text-gray-600 md:w-4/5">
+                      {activeItem.description}
+                    </p>
                   </div>
                 </div>
 
                 {/* On small screens: stack images and content */}
               </div>
             )}
+          </div>
+        </div>
+      </div>
+      <div className="w-full ">
+        <div className="w-full max-w-[1200px] mx-auto px-3 bg-gradient-to-tr from-[#b1aaf6] to-[#8054df] py-5 space-y-4">
+          <h1 className="text-white text-2xl md:text-4xl font-bold text-center">
+            From Interactions to Insights to Revenue — All in One Platform
+          </h1>
+          <div className="grid grid-cols-12 w-full gap-3">
+            <div className="col-span-12 w-full md:col-span-6 ">
+              <div className="h-[1px] bg-white w-full" />
+              {
+               features?.length > 0 && features?.map((item,index)=>{
+                return(
+                  <div className="w-full" onClick={()=>setFeatureLink(item.id)}>
+                  <p className="my-8 text-white/70 hover:text-white font-semibold text-lg">0{index+1}{" "}{item.description}</p>
+                  <div className="h-[1px] bg-white w-full" />
+
+                  </div>
+                )
+               })
+              }
+              
+            </div>
+            <div className="col-span-12 w-full md:col-span-6">
+              <Image src={`/assets/images/${featureLink}.webp`} width={600} height={700} />
+            </div>
           </div>
         </div>
       </div>
