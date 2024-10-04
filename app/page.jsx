@@ -182,19 +182,27 @@ const Page = () => {
         </div>
         <ul className="lg:flex hidden gap-7">
           <li>
+            
             <p className="text-white text-sm cursor-pointer">Product</p>
           </li>
           <li>
             <p className="text-white text-sm cursor-pointer">Solutions</p>
           </li>
           <li>
-            <p className="text-white text-sm cursor-pointer">Customer</p>
+          <Link href={"/careers"}>
+
+            <p className="text-white text-sm cursor-pointer">Careers</p>
+            </Link>
           </li>
           <li>
-            <p className="text-white text-sm cursor-pointer">Resources</p>
+          <Link href={"/blog"}>
+            <p className="text-white text-sm cursor-pointer">Blog</p>
+            </Link>
           </li>
           <li>
-            <p className="text-white text-sm cursor-pointer">Company</p>
+          <Link href={"/about"}>
+            <p className="text-white text-sm cursor-pointer">About</p>
+            </Link>
           </li>
         </ul>
         <div>
