@@ -183,28 +183,37 @@ const page = () => {
           />
           {/* Blogs scrollable horizontally without scrollbar */}
           <div className="flex overflow-x-auto space-x-4 pb-3 scrollbar-hide">
-            {item2?.blogs?.length > 0 &&
-              item2?.blogs.map((item, index2) => {
-                return (
-                  <div
-                    key={index2 + 121212}
-                    className="relative w-64 flex-none rounded-md"
-                  >
-                    <Image
-                      src={item.image}
-                      width={300}
-                      height={180}
-                      objectFit="cover"
-                      className="rounded-md"
-                    />
-                    <div className="w-full h-full flex flex-col gap-3 p-3">
-                      <h1 className="text-xl font-bold">{item.title}</h1>
-                      <p className="text-xs uppercase">{item.created_date}</p>
-                      <p className="text-xs">{item.description}</p>
-                    </div>
-                  </div>
-                );
-              })}
+          {item2?.blogs?.length > 0 &&
+  item2?.blogs.map((item, index2) => {
+    return (
+      <div
+        key={index2 + 121212}
+        className="relative w-64 flex-none rounded-md"
+      >
+        <Image
+          src={item.image}
+          width={300}
+          height={180}
+          objectFit="cover"
+          className="rounded-md"
+        />
+        <div className="w-full flex flex-col gap-3 p-3">
+          <h1 className="text-xl font-bold">
+            {/* Limit title to 50 characters */}
+            {item.title.length > 32 ? item.title.slice(0, 32) + "..." : item.title}
+          </h1>
+          <p className="text-xs uppercase">{item.created_date}</p>
+          <p className="text-xs">
+            {/* Limit description to 100 characters */}
+            {item.description.length > 50
+              ? item.description.slice(0, 50) + "..."
+              : item.description}
+          </p>
+        </div>
+      </div>
+    );
+  })}
+
           </div>
         </div>
       );
