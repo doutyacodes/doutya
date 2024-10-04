@@ -9,10 +9,13 @@ import {
   FaBuilding,
   FaBlog,
 } from "react-icons/fa";
+import Link from "next/link";
 
 const ListComponents = () => {
   const [isProductVisible, setIsProductVisible] = useState(false);
   const [isResourcesVisible, setIsResourcesVisible] = useState(false);
+  const [career, setCareer] = useState(false);
+  // const [isResourcesVisible, setIsResourcesVisible] = useState(false);
 
   const toggleProductVisibility = () => setIsProductVisible(!isProductVisible);
   const toggleResourcesVisibility = () =>
@@ -89,9 +92,12 @@ const ListComponents = () => {
         {isResourcesVisible && (
           <div className="w-full bg-[#f5edff] px-3 space-y-3 py-5">
             <ul className="space-y-5">
-              <li className="flex gap-2 items-center hover:scale-105 transition-transform">
+              <li>
+
+              <Link href={"/blog"} className="flex gap-2 items-center hover:scale-105 transition-transform">
                 <FaBlog color="brown" size={20} />
                 <p className="text-blue-600 text-sm font-semibold">Blogs</p>
+              </Link>
               </li>
             </ul>
           </div>
