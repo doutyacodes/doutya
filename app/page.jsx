@@ -76,6 +76,7 @@ import React, { useState } from "react";
 import { IoIosClose, IoIosMenu } from "react-icons/io";
 import ListComponents from "./_components/ListComponents";
 import Footer from "./_components/Footer";
+import { cn } from "@/lib/utils";
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -137,6 +138,33 @@ const Page = () => {
     {
       id: 5,
       description: "Purpose-built for revenue workflows and outcomes",
+    },
+  ];
+  const resources = [
+    {
+      type: "news",
+      title: "Gong named a leader in Forrester Wave 2024",
+      image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
+      description: "Revenue Orchestration Platforms For B2B",
+    },
+    {
+      type: "executive blog",
+      title: "Why Companies are Shifting to AI-Powered Revenue Forecasting",
+      description: "",
+      image: null,
+    },
+    {
+      type: "ebook",
+      title: "8 Key Email Templates for Sales Success",
+      description: "",
+      image: null,
+    },
+    {
+      type: "gong labs",
+      title:
+        "Selling is more complex than ever, and 24M sales calls told us why",
+      description: "",
+      image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
     },
   ];
 
@@ -324,21 +352,70 @@ const Page = () => {
           <div className="grid grid-cols-12 w-full gap-3">
             <div className="col-span-12 w-full md:col-span-6 ">
               <div className="h-[1px] bg-white w-full" />
-              {
-               features?.length > 0 && features?.map((item,index)=>{
-                return(
-                  <div className="w-full" onClick={()=>setFeatureLink(item.id)}>
-                  <p className="my-8 text-white/70 hover:text-white font-semibold text-lg">0{index+1}{" "}{item.description}</p>
-                  <div className="h-[1px] bg-white w-full" />
-
-                  </div>
-                )
-               })
-              }
-              
+              {features?.length > 0 &&
+                features?.map((item, index) => {
+                  return (
+                    <div
+                      className="w-full"
+                      onClick={() => setFeatureLink(item.id)}
+                    >
+                      <p className="my-8 text-white/70 hover:text-white font-semibold text-lg">
+                        0{index + 1} {item.description}
+                      </p>
+                      <div className="h-[1px] bg-white w-full" />
+                    </div>
+                  );
+                })}
             </div>
             <div className="col-span-12 w-full md:col-span-6">
-              <Image src={`/assets/images/${featureLink}.webp`} width={600} height={700} />
+              <Image
+                src={`/assets/images/${featureLink}.webp`}
+                width={600}
+                height={700}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="w-full bg-white">
+        <div className="mx-auto max-w-[1200px] p-3">
+          <div className="grid grid-cols-12 gap-3">
+            <div className="col-span-12 md:col-span-4 space-y-5">
+              <p className="text-center md:text-left uppercase font-semibold text-lg text-[#8039df]">
+                Resources
+              </p>
+              <p className="text-center md:text-left uppercase font-bold text-3xl text-[#3e0075] ">
+                Unlock your team’s revenue potential
+              </p>
+            </div>
+            <div className="col-span-12 md:col-span-8 space-y-5 grid grid-cols-12 gap-3">
+              {resources?.length > 0 &&
+                resources?.map((item, index) => {
+                  return (
+                    <div
+                      className={cn(
+                        "w-full shadow hover:shadow-lg  p-4 bg-white border border-slate-300 rounded-md",
+                        index == 0 || index == 3
+                          ? "col-span-12 md:col-span-8 md:flex"
+                          : "col-span-12 md:col-span-4"
+                      )}
+                    >
+                      <div className="space-y-4">
+                        <p className="uppercase font-semibold text-[#8039df]">
+                          {item.type}
+                        </p>
+                        <p className="uppercase text-xl font-semibold text-[#3e0075]">
+                          {item.title}
+                        </p>
+                      </div>
+                      {item.image && (
+                        <div className="w-full h-full relative max-md:hidden">
+                          <Image src={item.image} fill className="rounded-md" />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
             </div>
           </div>
         </div>
