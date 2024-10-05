@@ -217,15 +217,46 @@ export default function Results2() {
     );
   }
 
+
   return (
     <>
-      {step === 1 && industries && (
+
+    {/* Conditionally render the blue bar with the text */}
+    {singleCareer ? (
+      // If in single career detail view, do not render the blue bar
+      null
+    ) : (
+      <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
+        <p className="text-white uppercase font-bold text-center">
+          Career Suggestions
+        </p>
+      </div>
+    )}
+
+    {step === 1 && industries && (
+      <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
+        <p className="text-white uppercase font-bold text-center">
+          Select an Industry
+        </p>
+      </div>
+    )}
+
+
+      {/* {step === 1 && industries && (
         <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center">
             Select an Industry
           </p>
         </div>
       )}
+      
+      {step === 1 && industries && (
+        <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
+          <p className="text-white uppercase font-bold text-center">
+            Select an Industry
+          </p>
+        </div>
+      )} */}
       {singleCareer?.career_name && (
         <div className="bg-[#009be8] h-20 my-4">
           <div className="justify-between items-center flex flex-row px-4 mx-auto h-full max-w-[1280px]">

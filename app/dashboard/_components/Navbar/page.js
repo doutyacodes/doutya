@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import Image from "next/image";
 import { useTranslations } from 'next-intl'; // Import the useTranslations hook
+import {IconMenu2} from '@tabler/icons-react'
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -30,7 +31,7 @@ function Navbar() {
 
   return (
     <div>
-      <nav className="pt-6 pb-4">
+      <nav className="pt-3 pb-4">
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
@@ -42,19 +43,27 @@ function Navbar() {
           </div>
 
           {/* Navigation Links */}
-          <div className="md:flex items-center space-x-6 text-sm lg:text-base text-nowrap">
-            <div>
+          <div className="md:flex items-center space-x-6 text-sm lg:text-base text-nowrap ">
+            
+            <div className="flex items-center gap-3 ">
               {/* Profile dropdown */}
+              <div className=" text-white flex gap-12 mr-10">
+                <div>Home</div>
+                <div>Tests</div>
+                <div>Careers</div>
+                <div>Communities</div>
+              </div>
               <Menu as="div" className="relative ml-3">
-                <div>
-                  <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                <div className="flex items-center">
+                  <MenuButton className="">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">{t('profileAltText')}</span>
-                    <img
+                    {/* <img
                       alt=""
                       src="/assets/images/avatar.png"
                       className="h-8 w-8 rounded-full"
-                    />
+                    /> */}
+                    <IconMenu2 className="text-white" />
                   </MenuButton>
                 </div>
                 <MenuItems

@@ -42,9 +42,9 @@
   "Banner": {
     "title": "Personality",
     "personalityTestTitle": "Personality Test",
-    "personalityTestDescription": "Begin your journey of self-discovery with the Personality Test! Uncover your unique traits to build a foundation for finding your ideal career path.",
+    "personalityTestDescription": "Begin your journey of self-discovery with the Personality Assessment! This initial phase of our comprehensive career guidance test analyzes your traits, skills, and preferences. By understanding your unique personality profile, you'll lay the foundation for identifying your ideal career path.",
     "interestTestTitle": "Interest Test",
-    "interestTestDescription": "Explore your interests in the next phase! Uncover your passions and combine them with your personality profile to find career paths that truly resonate with you.",
+    "interestTestDescription": "Building on your personality insights, dive deeper with the Interest Exploration phase! This second part of our test uncovers your true passions and natural inclinations. By combining these interests with your personality profile, you'll gain direction towards the career paths that truly resonate with you.",
     "loadingText": "Loading...",
     "viewResults": "View Results",
     "hideResults": "Hide Results",

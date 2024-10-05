@@ -74,16 +74,23 @@ function Page({ params }) {
     }
   }, [quizCompleted, router]);
 
-  useEffect(() => {
-    // setIsLoading(true)
-    if (questions?.length > 0) {
-      // Shuffle choices when the component mounts or when the question changes
-      // const choices = questions[currentQuestionIndex].answers.map(answer => answer.text);
-      const choices = questions[currentQuestionIndex]?.answers;
-      setShuffledChoices(choices.sort(() => Math.random() - 0.5));
-    }
+  // useEffect(() => {
+  //   // setIsLoading(true)
+  //   if (questions?.length > 0) {
+  //     // Shuffle choices when the component mounts or when the question changes
+  //     // const choices = questions[currentQuestionIndex].answers.map(answer => answer.text);
+  //     const choices = questions[currentQuestionIndex]?.answers;
+  //     setShuffledChoices(choices.sort(() => Math.random() - 0.5));
+  //   }
 
-    // setIsLoading(false)
+  //   // setIsLoading(false)
+  // }, [currentQuestionIndex, questions]);
+
+  useEffect(() => {
+    if (questions.length > 0 && questions[currentQuestionIndex]?.answers) {
+      const choices = questions[currentQuestionIndex]?.answers;
+      setShuffledChoices([...choices].sort(() => Math.random() - 0.5));
+    }
   }, [currentQuestionIndex, questions]);
 
   const handleChoiceSelect = (choice) => {

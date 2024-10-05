@@ -20,6 +20,7 @@
     "@nextui-org/chip": "^2.0.32",
     "@radix-ui/react-toast": "^1.2.1",
     "@reduxjs/toolkit": "^2.2.7",
+    "@tabler/icons-react": "^3.19.0",
     "axios": "^1.7.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
