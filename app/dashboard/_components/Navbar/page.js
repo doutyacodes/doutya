@@ -123,7 +123,15 @@ function Navbar() {
                       {"Your Profile"}
                     </Link>
                   </MenuItem>
-                  <MenuItem key={"Your Profile"}>
+                  <MenuItem key={"Dashboard"}>
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                    >
+                      {"Dashboard"}
+                    </Link>
+                  </MenuItem>
+                  <MenuItem key={"Careers"}>
                     <Link
                     href="/dashboard/careers"
                     className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
