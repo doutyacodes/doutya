@@ -126,20 +126,22 @@ const GetDashboarCheck = (token) => {
   });
 };
 
-const GetResult2=(token,industryParam)=>axios.get('/api/getresult2',{
+const GetResult2=(token,industryParam,language)=>axios.get('/api/getresult2',{
   headers: {
     Authorization: `Bearer ${token}`,
+    'Accept-Language': language
   },
   params: {
     industry: industryParam
   }
 });
 
-const GetIndustry = (token) => {
+const GetIndustry = (token, language) => {
 
   return axios.get(`/api/getIndustry`, {
     headers: {
       Authorization: `Bearer ${token}`,
+      'Accept-Language': language,
     }
   });
 };
@@ -174,11 +176,12 @@ const GetCarrerData = (token) => {
   });
 };
 
-const GetRoadMapData = (userCareerId, token) => {
+const GetRoadMapData = (userCareerId, token,language) => {
 
   return axios.get(`/api/getRoadmapData/${userCareerId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
+      'Accept-Language': language
     },
   });
 };
@@ -368,11 +371,12 @@ const updateActivityStatus = (token,activityId,status) => {
   });
 };
 
-const getChallenges = (id, token) => {
+const getChallenges = (id, token,language) => {
 
   return axios.get(`/api/getChallenge/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
+      'Accept-Language': language
     },
   });
 };
@@ -416,11 +420,12 @@ const UpdateMileStoneStatus = (data, token) => {
   });
 };
 
-const GetFeedBackData = (id, token) => {
+const GetFeedBackData = (id, token,language) => {
 
   return axios.get(`/api/getFeedBackData/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
+      'Accept-Language': language
     },
   });
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 export default function Challenge({ selectedCareer }) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -15,7 +16,11 @@ export default function Challenge({ selectedCareer }) {
     const [lastSubmittedChallenge, setLastSubmittedChallenge] = useState(null); // Track last submitted challenge
     const [fetching, setFetching] = useState(false); // Track fetching state for loading spinner
     const [currentWeek, setCurrentWeek] = useState(null); // Initialize null
-    const [showWaitMessage, setShowWaitMessage] = useState(false); // Track if the "Wait for the next week" message should be shown
+    const [showWaitMessage, setShowWaitMessage] = useState(false); 
+
+    const t = useTranslations('ChallengePage');
+
+    const language = localStorage.getItem('language') || 'en';
 
     // Authenticate the use
     useEffect(() => {
@@ -35,7 +40,7 @@ export default function Challenge({ selectedCareer }) {
         console.log('fetching')
         setFetching(true);
         try {
-            const response = await GlobalApi.getChallenges(selectedCareer.career_group_id, token);
+            const response = await GlobalApi.getChallenges(selectedCareer.career_group_id, token, language);
             console.log(response)
             setChallenges(response.data.challenges);
 
@@ -118,7 +123,7 @@ export default function Challenge({ selectedCareer }) {
     const handleSubmit = async (week, challengeId) => {
         const file = files[week];
         if (!file) {
-            toast.error('Please select a file before submitting.');
+            toast.error(t('pleaseSelectFile'));
             return;
         }
 
@@ -135,7 +140,7 @@ export default function Challenge({ selectedCareer }) {
         try {
             const response = await GlobalApi.submitChallenge(formData, token);
             if (response.status === 200) {
-                toast.success('Challenge submitted successfully');
+                toast.success(t('challengeSubmittedSuccess'));
 
                 // Remove the submitted challenge from the state
                 setChallenges((prevChallenges) =>
@@ -159,11 +164,11 @@ export default function Challenge({ selectedCareer }) {
                     setShowWaitMessage(true);
                 }
             } else {
-                toast.error('Failed to submit the challenge');
+                toast.error(t('failedToSubmitChallenge'));
             }
         } catch (error) {
             console.error('Error submitting challenge:', error);
-            toast.error('An error occurred while submitting the challenge.');
+            toast.error(t('errorSubmittingChallenge'));
         } finally {
             setSubmitting((prevSubmitting) => ({
                 ...prevSubmitting,
@@ -179,13 +184,13 @@ export default function Challenge({ selectedCareer }) {
                 .map((challenge, index) => (
                     <li key={index} className="border p-4 rounded bg-yellow-100 flex justify-between items-center">
                         <div>
-                            <h3 className="font-bold text-lg">Week {challenge.week}</h3>
-                            <p><strong>Challenge:</strong> {challenge.challenge}</p>
-                            <p><strong>Verification:</strong> {challenge.verification}</p>
+                            <h3 className="font-bold text-lg">{t('week')} {challenge.week}</h3>
+                            <p><strong>{t('challenge')}:</strong> {challenge.challenge}</p>
+                            <p><strong>{t('verification')}:</strong> {challenge.verification}</p>
                         </div>
                         <div className="flex flex-col">
                             <label className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer mb-2">
-                                Upload Image
+                                {t('uploadImage')}
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -198,10 +203,10 @@ export default function Challenge({ selectedCareer }) {
                                 className="bg-green-500 text-white px-4 py-2 rounded"
                                 disabled={submitting[challenge.id]}
                             >
-                                {submitting[challenge.id] ? 'Submitting...' : 'Submit'}
+                                {submitting[challenge.id] ? t('submitting') : t('submit')}
                             </button>
                             <p className="mt-2 text-sm text-gray-600">
-                                {fileNames[challenge.week] || 'No file chosen'}
+                                {fileNames[challenge.week] || t('noFileChosen')}
                             </p>
                         </div>
                     </li>
@@ -210,9 +215,9 @@ export default function Challenge({ selectedCareer }) {
             return challenges.map((challenge, index) => (
                 <li key={index} className="border p-4 rounded bg-yellow-100 flex justify-between items-center">
                     <div>
-                        <h3 className="font-bold text-lg">Week {challenge.week}</h3>
-                        <p><strong>Challenge:</strong> {challenge.challenge}</p>
-                        <p><strong>Verification:</strong> {challenge.verification}</p>
+                        <h3 className="font-bold text-lg">{t('week')} {challenge.week}</h3>
+                        <p><strong>{t('challenge')}:</strong> {challenge.challenge}</p>
+                        <p><strong>{t('verification')}:</strong> {challenge.verification}</p>
                     </div>
                 </li>
             ));
@@ -220,9 +225,9 @@ export default function Challenge({ selectedCareer }) {
             return challenges.map((challenge, index) => (
                 <li key={index} className="border p-4 rounded bg-yellow-100 flex justify-between items-center">
                     <div>
-                        <h3 className="font-bold text-lg">Week {challenge.week}</h3>
-                        <p><strong>Challenge:</strong> {challenge.challenge}</p>
-                        <p><strong>Verification:</strong> {challenge.verification}</p>
+                        <h3 className="font-bold text-lg">{t('week')} {challenge.week}</h3>
+                        <p><strong>{t('challenge')}:</strong> {challenge.challenge}</p>
+                        <p><strong>{t('verification')}:</strong> {challenge.verification}</p>
                     </div>
                 </li>
             ));
@@ -237,31 +242,31 @@ export default function Challenge({ selectedCareer }) {
                     className={`bg-purple-400 text-black font-bold py-2 px-4 w-1/3 ${activeTab === 'weekly' ? 'bg-purple-700' : ''}`}
                     onClick={() => setActiveTab('weekly')}
                 >
-                    Weekly Challenges
+                    {t('weeklyChallenges')}
                 </button>
                 <button
                     className={`bg-red-400 text-black font-bold py-2 px-4 w-1/3 ${activeTab === 'pending' ? 'bg-red-700' : ''}`}
                     onClick={() => setActiveTab('pending')}
                 >
-                    Pending Challenges
+                    {t('pendingChallenges')}
                 </button>
                 <button
                     className={`bg-blue-400 text-black font-bold py-2 px-4 w-1/3 ${activeTab === 'rejected' ? 'bg-blue-700' : ''}`}
                     onClick={() => setActiveTab('rejected')}
                 >
-                    Rejected Challenges
+                    {t('rejectedChallenges')}
                 </button>
             </div>
             <br />
             {fetching ? (
-                <p>Loading challenges...</p>
+                <p>{t('loadingChallenges')}</p>
             ) : challenges.length > 0 ? (
                 <ul className="space-y-4">
                     {renderChallenges()}
-                    {activeTab === 'weekly' && showWaitMessage && <p>Wait for the next week!</p>}
+                    {activeTab === 'weekly' && showWaitMessage && <p>{t('waitForNextWeek')}</p>}
                 </ul>
             ) : (
-                <p>No challenges available.</p>
+                <p>{t('noChallengesAvailable')}</p>
             )}
         </div>
     );

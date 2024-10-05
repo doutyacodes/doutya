@@ -11,6 +11,8 @@ function RoadMap({ selectedCareer }) {
   const [isLoading, setIsLoading] = useState(false)
   const [LoadMessage, setLoadMessage] = useState('')
 
+  const language = localStorage.getItem('language') || 'en';
+
 
   // const getRoadmap = async () => {
   //     setIsLoading(true)
@@ -56,7 +58,7 @@ function RoadMap({ selectedCareer }) {
     
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-      const response = await GlobalApi.GetRoadMapData(selectedCareer.id, token);
+      const response = await GlobalApi.GetRoadMapData(selectedCareer.id, token, language);
       
       // Check for the response status
       if (response.status === 200) {  // Successful response

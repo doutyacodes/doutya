@@ -123,5 +123,46 @@
         "challenges": "चुनौतियाँ",
         "community": "समुदाय",
         "careerAdding": "करियर जोड़ा जा रहा है। कृपया प्रतीक्षा करें..."
-    }
+    },
+    "Result2":{
+        "match": "मिलान",
+        "reasonForRecommendation": "सिफारिश का कारण",
+        "readMore": "और पढ़ें",
+        "careerSuitability": "यह करियर आपके लिए क्यों उपयुक्त है",
+        "presentTrends": "वर्तमान रुझान",
+        "futureProspects": "भविष्य की संभावनाएं",
+        "expenses": "व्यय",
+        "opportunities": "अवसर",
+        "giveFeedback": "अपनी प्रतिक्रिया दें",
+        "submitFeedback": "प्रतिक्रिया सबमिट करें",
+        "thankYouFeedback": "आपकी प्रतिक्रिया के लिए धन्यवाद!",
+        "backToCareer": "करियर सुझावों पर वापस जाएं",
+        "PDFdownload": "PDF डाउनलोड करें",
+        "selectCareer": "इस करियर का चयन करें",
+        "saveResults": "परिणाम सहेजें"
+      },
+      "FeedbackPage":
+      {
+        "careerFeedback": "करियर फीडबैक",
+        "noFeedbackAvailable": "इस समय कोई फीडबैक उपलब्ध नहीं है।"
+      },
+      "ChallengePage":{
+        "uploadImage": "छवि अपलोड करें",
+        "submit": "प्रस्तुत करें",
+        "submitting": "प्रस्तुत कर रहा है...",
+        "noFileChosen": "कोई फ़ाइल चुनी नहीं गई",
+        "loadingChallenges": "चुनौतियाँ लोड हो रही हैं...",
+        "noChallengesAvailable": "कोई चुनौतियाँ उपलब्ध नहीं हैं।",
+        "weeklyChallenges": "साप्ताहिक चुनौतियाँ",
+        "pendingChallenges": "लंबित चुनौतियाँ",
+        "rejectedChallenges": "अस्वीकृत चुनौतियाँ",
+        "week": "सप्ताह",
+        "challenge": "चुनौती",
+        "verification": "सत्यापन",
+        "waitForNextWeek": "अगले सप्ताह का इंतजार करें!",
+        "pleaseSelectFile": "प्रस्तुत करने से पहले कृपया एक फ़ाइल चुनें।",
+        "challengeSubmittedSuccess": "चुनौती सफलतापूर्वक प्रस्तुत की गई",
+        "failedToSubmitChallenge": "चुनौती प्रस्तुत करने में विफल रहा",
+        "errorSubmittingChallenge": "चुनौती प्रस्तुत करने में एक त्रुटि हुई।"
+      }      
 }

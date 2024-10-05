@@ -8,6 +8,17 @@ import {
 } from "@/utils/schema"; // Ensure this path is correct
 import { eq } from "drizzle-orm";
 
+const languageOptions = {
+    en: 'in English',
+    hi: 'in Hindi',
+    mar: 'in Marathi',
+    ur: 'in Urdu',
+    sp: 'in Spanish',
+    ben: 'in Bengali',
+    assa: 'in Assamese',
+    ge: 'in German'
+  };
+
 export async function fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2) {
     console.log("userCareerID:",userCareerID, "age:",age, "education:",education, "career:",career, "type1:",type1, "type2:",type2);
     try {
@@ -44,7 +55,7 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
         }
         }
 
-        Ensure that the response is valid JSON, using the specified field names.`;
+        Ensure that the response is valid JSON, using the specified field names.Provide the response $${languageOptions[language] || 'in English'}.`;
 
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
