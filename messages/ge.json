@@ -123,6 +123,47 @@
       "challenges": "Herausforderungen",
       "community": "Gemeinschaft",
       "careerAdding": "Karriere wird hinzugefügt. Bitte warten..."
-    }
+    },
+    "Result2": {
+  "match": "Übereinstimmung",
+  "reasonForRecommendation": "Grund für die Empfehlung",
+  "readMore": "Mehr lesen",
+  "careerSuitability": "WARUM IST DIESER BERUF FÜR SIE GEEIGNET",
+  "presentTrends": "Aktuelle Trends",
+  "futureProspects": "Zukunftsaussichten",
+  "expenses": "Ausgaben",
+  "opportunities": "Möglichkeiten",
+  "giveFeedback": "Geben Sie Ihr Feedback",
+  "submitFeedback": "Feedback senden",
+  "thankYouFeedback": "Danke für Ihr Feedback!",
+  "backToCareer": "Zurück zu Karrierevorschlägen",
+  "PDFdownload": "PDF herunterladen",
+  "selectCareer": "Wählen Sie diese Karriere",
+  "saveResults": "Ergebnisse speichern"
+},
+"FeedbackPage": {
+  "careerFeedback": "Karriere-Feedback",
+  "noFeedbackAvailable": "Derzeit kein Feedback verfügbar."
+},
+"ChallengePage": {
+  "uploadImage": "Bild hochladen",
+  "submit": "Einreichen",
+  "submitting": "Einreichung...",
+  "noFileChosen": "Keine Datei ausgewählt",
+  "loadingChallenges": "Herausforderungen werden geladen...",
+  "noChallengesAvailable": "Keine Herausforderungen verfügbar.",
+  "weeklyChallenges": "Wöchentliche Herausforderungen",
+  "pendingChallenges": "Ausstehende Herausforderungen",
+  "rejectedChallenges": "Abgelehnte Herausforderungen",
+  "week": "Woche",
+  "challenge": "Herausforderung",
+  "verification": "Überprüfung",
+  "waitForNextWeek": "Warten Sie auf die nächste Woche!",
+  "pleaseSelectFile": "Bitte wählen Sie eine Datei aus, bevor Sie sie einreichen.",
+  "challengeSubmittedSuccess": "Herausforderung erfolgreich eingereicht",
+  "failedToSubmitChallenge": "Herausforderung konnte nicht eingereicht werden",
+  "errorSubmittingChallenge": "Fehler beim Einreichen der Herausforderung."
+}
+
   }
   

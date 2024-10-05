@@ -123,6 +123,46 @@
       "challenges": "چیلنجز",
       "community": "کمیونٹی",
       "careerAdding": "کیریئر شامل کیا جا رہا ہے۔ براہ کرم انتظار کریں..."
-    }
+    },
+    "Result2": {
+  "match": "مطابقت",
+  "reasonForRecommendation": "تجویز کی وجہ",
+  "readMore": "مزید پڑھیں",
+  "careerSuitability": "یہ کیریئر آپ کے لئے کیوں موزوں ہے",
+  "presentTrends": "موجودہ رجحانات",
+  "futureProspects": "مستقبل کے امکانات",
+  "expenses": "اخراجات",
+  "opportunities": "مواقع",
+  "giveFeedback": "اپنی رائے دیں",
+  "submitFeedback": "رائے جمع کروائیں",
+  "thankYouFeedback": "آپ کی رائے کے لئے شکریہ!",
+  "backToCareer": "کیریئر کی تجاویز پر واپس جائیں",
+  "PDFdownload": "PDF ڈاؤن لوڈ کریں",
+  "selectCareer": "اس کیریئر کا انتخاب کریں",
+  "saveResults": "نتائج محفوظ کریں"
+},
+"FeedbackPage": {
+  "careerFeedback": "کیریئر کی رائے",
+  "noFeedbackAvailable": "اس وقت کوئی رائے دستیاب نہیں ہے۔"
+},
+"ChallengePage": {
+  "uploadImage": "تصویر اپ لوڈ کریں",
+  "submit": "جمع کروائیں",
+  "submitting": "جمع کر رہا ہے...",
+  "noFileChosen": "کوئی فائل منتخب نہیں کی گئی",
+  "loadingChallenges": "چیلنجز لوڈ ہو رہے ہیں...",
+  "noChallengesAvailable": "کوئی چیلنج دستیاب نہیں ہے۔",
+  "weeklyChallenges": "ہفتہ وار چیلنجز",
+  "pendingChallenges": "زیر التواء چیلنجز",
+  "rejectedChallenges": "مسترد شدہ چیلنجز",
+  "week": "ہفتہ",
+  "challenge": "چیلنج",
+  "verification": "تصدیق",
+  "waitForNextWeek": "اگلے ہفتے کے لئے انتظار کریں!",
+  "pleaseSelectFile": "براہ کرم جمع کروانے سے پہلے ایک فائل منتخب کریں۔",
+  "challengeSubmittedSuccess": "چیلنج کامیابی سے جمع کر دیا گیا",
+  "failedToSubmitChallenge": "چیلنج جمع کرنے میں ناکام",
+  "errorSubmittingChallenge": "چیلنج جمع کرتے وقت ایک خرابی پیش آگئی۔"
+}
   }
   

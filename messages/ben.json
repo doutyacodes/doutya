@@ -123,6 +123,46 @@
       "challenges": "চ্যালেঞ্জ",
       "community": "কমিউনিটি",
       "careerAdding": "ক্যারিয়ার যোগ করা হচ্ছে। দয়া করে অপেক্ষা করুন..."
-    }
+    },
+    "Result2": {
+  "match": "মিল",
+  "reasonForRecommendation": "প্রস্তাবনার কারণ",
+  "readMore": "আরও পড়ুন",
+  "careerSuitability": "কেন এই পেশা আপনার জন্য উপযুক্ত",
+  "presentTrends": "বর্তমান প্রবণতা",
+  "futureProspects": "ভবিষ্যতের সম্ভাবনা",
+  "expenses": "খরচ",
+  "opportunities": "সুযোগ",
+  "giveFeedback": "আপনার মতামত দিন",
+  "submitFeedback": "মতামত জমা দিন",
+  "thankYouFeedback": "আপনার মতামতের জন্য ধন্যবাদ!",
+  "backToCareer": "ক্যারিয়ার প্রস্তাবনায় ফিরে যান",
+  "PDFdownload": "PDF ডাউনলোড করুন",
+  "selectCareer": "এই পেশা নির্বাচন করুন",
+  "saveResults": "ফলাফল সংরক্ষণ করুন"
+},
+"FeedbackPage": {
+  "careerFeedback": "ক্যারিয়ার প্রতিক্রিয়া",
+  "noFeedbackAvailable": "এই মুহুর্তে কোন প্রতিক্রিয়া উপলব্ধ নেই।"
+},
+"ChallengePage": {
+  "uploadImage": "ছবি আপলোড করুন",
+  "submit": "জমা দিন",
+  "submitting": "জমা দেওয়া হচ্ছে...",
+  "noFileChosen": "কোন ফাইল নির্বাচিত হয়নি",
+  "loadingChallenges": "চ্যালেঞ্জগুলি লোড হচ্ছে...",
+  "noChallengesAvailable": "কোন চ্যালেঞ্জ উপলব্ধ নেই।",
+  "weeklyChallenges": "সাপ্তাহিক চ্যালেঞ্জ",
+  "pendingChallenges": "মুলতুবি চ্যালেঞ্জ",
+  "rejectedChallenges": "প্রত্যাখ্যাত চ্যালেঞ্জ",
+  "week": "সপ্তাহ",
+  "challenge": "চ্যালেঞ্জ",
+  "verification": "যাচাই",
+  "waitForNextWeek": "পরবর্তী সপ্তাহের জন্য অপেক্ষা করুন!",
+  "pleaseSelectFile": "জমা দেওয়ার আগে অনুগ্রহ করে একটি ফাইল নির্বাচন করুন।",
+  "challengeSubmittedSuccess": "চ্যালেঞ্জ সফলভাবে জমা দেওয়া হয়েছে",
+  "failedToSubmitChallenge": "চ্যালেঞ্জ জমা দিতে ব্যর্থ",
+  "errorSubmittingChallenge": "চ্যালেঞ্জ জমা দেওয়ার সময় একটি ত্রুটি ঘটেছে।"
+}
   }
   

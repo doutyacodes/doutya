@@ -123,6 +123,46 @@
       "challenges": "Desafíos",
       "community": "Comunidad",
       "careerAdding": "Agregando carrera. Por favor, espera..."
-    }
+    },
+    "Result2": {
+  "match": "Coincidencia",
+  "reasonForRecommendation": "Razón de la Recomendación",
+  "readMore": "Leer más",
+  "careerSuitability": "¿POR QUÉ ES ESTA CARRERA ADECUADA PARA TI?",
+  "presentTrends": "Tendencias Actuales",
+  "futureProspects": "Perspectivas Futuras",
+  "expenses": "Gastos",
+  "opportunities": "Oportunidades",
+  "giveFeedback": "Danos tu opinión",
+  "submitFeedback": "Enviar Opinión",
+  "thankYouFeedback": "¡Gracias por tu opinión!",
+  "backToCareer": "Volver a las Sugerencias de Carrera",
+  "PDFdownload": "Descargar PDF",
+  "selectCareer": "Seleccionar esta carrera",
+  "saveResults": "Guardar Resultados"
+},
+"FeedbackPage": {
+  "careerFeedback": "Opinión sobre la Carrera",
+  "noFeedbackAvailable": "No hay opiniones disponibles en este momento."
+},
+"ChallengePage": {
+  "uploadImage": "Subir Imagen",
+  "submit": "Enviar",
+  "submitting": "Enviando...",
+  "noFileChosen": "Ningún archivo seleccionado",
+  "loadingChallenges": "Cargando desafíos...",
+  "noChallengesAvailable": "No hay desafíos disponibles.",
+  "weeklyChallenges": "Desafíos Semanales",
+  "pendingChallenges": "Desafíos Pendientes",
+  "rejectedChallenges": "Desafíos Rechazados",
+  "week": "Semana",
+  "challenge": "Desafío",
+  "verification": "Verificación",
+  "waitForNextWeek": "¡Espera para la próxima semana!",
+  "pleaseSelectFile": "Por favor selecciona un archivo antes de enviar.",
+  "challengeSubmittedSuccess": "Desafío enviado con éxito",
+  "failedToSubmitChallenge": "Error al enviar el desafío",
+  "errorSubmittingChallenge": "Se produjo un error al enviar el desafío."
+}
   }
   
