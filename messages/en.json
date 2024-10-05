@@ -124,5 +124,47 @@
       "challenges": "Challenges",
       "community": "Community",
       "careerAdding": "Career is being added. Please wait..."
-    }
+    },
+    "Result2":
+    {
+      "match": "Match",
+      "reasonForRecommendation": "Reason for Recommendation",
+      "readMore": "Read More",
+      "careerSuitability": "WHY IS THIS CAREER SUITABLE FOR YOU",
+      "presentTrends": "Present Trends",
+      "futureProspects": "Future Prospects",
+      "expenses": "Expenses",
+      "opportunities": "Opportunities",
+      "giveFeedback": "Give Your Feedback",
+      "submitFeedback": "Submit Feedback",
+      "thankYouFeedback": "Thank you for your feedback!",
+      "backToCareer":"Back to Career Suggestions",
+      "PDFdownload":"Download PDF",
+      "selectCareer":"Select this career",
+      "saveResults":"Save Results"
+    },
+    "FeedbackPage":
+      {
+        "careerFeedback": "Career Feedback",
+        "noFeedbackAvailable": "No feedback available at the moment."
+      },
+      "ChallengePage":{
+        "uploadImage": "Upload Image",
+        "submit": "Submit",
+        "submitting": "Submitting...",
+        "noFileChosen": "No file chosen",
+        "loadingChallenges": "Loading challenges...",
+        "noChallengesAvailable": "No challenges available.",
+        "weeklyChallenges": "Weekly Challenges",
+        "pendingChallenges": "Pending Challenges",
+        "rejectedChallenges": "Rejected Challenges",
+        "week": "Week",
+        "challenge": "Challenge",
+        "verification": "Verification",
+        "waitForNextWeek": "Wait for the next week!",
+        "pleaseSelectFile": "Please select a file before submitting.",
+        "challengeSubmittedSuccess": "Challenge submitted successfully",
+        "failedToSubmitChallenge": "Failed to submit the challenge",
+        "errorSubmittingChallenge": "An error occurred while submitting the challenge."
+      }      
 }

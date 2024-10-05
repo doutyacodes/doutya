@@ -4,11 +4,15 @@ import { decryptText } from '@/utils/encryption'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
 
 function Feedback({selectedCareer}) {
 
     const [isLoading, setIsLoading] = useState(false)
     const [feedBackData, setfeedBackData] = useState([])
+    const t = useTranslations('FeedbackPage');
+
+    const language = localStorage.getItem('language') || 'en';
 
     const router = useRouter();
 
@@ -17,7 +21,7 @@ function Feedback({selectedCareer}) {
             setIsLoading(true)
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const response = await GlobalApi.GetFeedBackData(selectedCareer.career_group_id, token);
+                const response = await GlobalApi.GetFeedBackData(selectedCareer.career_group_id, token,language);
                 if (response.status === 200) {  
                     const feedback = response.data.feedback;
                     
@@ -59,7 +63,7 @@ function Feedback({selectedCareer}) {
   return (
     <div>
         <div className="grid grid-cols-1 gap-6 mt-4 bg-white p-10 rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Career Feedback</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">{t('careerFeedback')}</h2>
             {feedBackData ? (
                 <div className="bg-gray-100 p-6 rounded-md shadow-md">
                     <p className="text-lg text-gray-700">
@@ -67,7 +71,7 @@ function Feedback({selectedCareer}) {
                     </p>
                 </div>
             ) : (
-                <p className="text-gray-600">No feedback available at the moment.</p>
+                <p className="text-gray-600">{t('noFeedbackAvailable')}.</p>
             )}
         </div>
     </div>

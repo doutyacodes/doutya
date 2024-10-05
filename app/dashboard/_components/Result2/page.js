@@ -7,6 +7,7 @@ import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import { ChevronsLeft } from "lucide-react";
 import jsPDF from "jspdf"; 
 import PDFCareerPage from "./PDFCareerPage";
+import { useTranslations } from "next-intl";
 
 export default function Results2() {
   const [resultData, setResultData] = useState(null);
@@ -22,10 +23,13 @@ export default function Results2() {
   const [step, setStep] = useState(1);
   const [industries, setIndustries] = useState([]);
   const [saveResultloading, setSaveResultLoading] = useState(false);
+  const t = useTranslations('Result2');
 
   const router = useRouter();
   const resultsRef = useRef();
   const maxSelections = 5;
+
+  const language = localStorage.getItem('language') || 'en';
 
   useEffect(() => {
     const storedCareers = JSON.parse(localStorage.getItem("selectedCareers")) || [];
@@ -76,7 +80,7 @@ export default function Results2() {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const industryParam = selectedIndustry ? selectedIndustry : "";
-      const response = await GlobalApi.GetResult2(token, industryParam);
+      const response = await GlobalApi.GetResult2(token, industryParam, language);
       console.log(response.data);
       if (response.status === 200) {
         const parsedResult = JSON.parse(response.data.result);
@@ -190,7 +194,7 @@ export default function Results2() {
     setLoading(true);
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      const data = await GlobalApi.GetIndustry(token);
+      const data = await GlobalApi.GetIndustry(token, language);
       const parsedResult = JSON.parse(data.data.result);
       console.log("parsedResult", parsedResult);
       setIndustries(parsedResult);
@@ -234,14 +238,14 @@ export default function Results2() {
                 }}
                 className="uppercase text-white font-bold"
               >
-                Back to Career Suggestions
+                {t('backToCareer')}
               </button>
             </div>
             <button
               onClick={downloadResultsAsImage}
               className="bg-white p-3 rounded-md uppercase font-bold text-[#009be8] transition-all duration-300 hover:bg-gray-300"
             >
-              Download PDF
+              {t('PDFdownload')}
             </button>
           </div>
         </div>
@@ -299,11 +303,11 @@ export default function Results2() {
                           </h2>
                           <div className="p-4 bg-[#0097b2] rounded-md mb-4">
                             <p className="text-center font-bold">
-                              Match - {career.match} %
+                              {t('match')} - {career.match} %
                             </p>
                           </div>
                           <p className="text-white flex-grow">
-                            <strong>Reason for Recommendation:</strong>{" "}
+                            <strong>{t('reasonForRecommendation')}:</strong>{" "}
                             {career.reason_for_recommendation}
                           </p>
                         </div>
@@ -316,7 +320,7 @@ export default function Results2() {
                           }}
                           className="bg-[#7824f6] px-7 py-2 rounded-full text-white font-bold"
                         >
-                          Read More
+                          {t('readMore')}
                         </button>
                       </div>
                     </div>
@@ -328,7 +332,7 @@ export default function Results2() {
                     {singleCareer?.reason_for_recommendation && (
                       <div className="bg-[#00bf63] px-[1px] py-[1px] col-span-12 rounded-t-md">
                         <p className="text-white font-bold text-lg uppercase text-center py-3">
-                          WHY IS THIS CAREER SUITABLE FOR YOU
+                          {t('careerSuitability')}
                         </p>
                         <div className="bg-[#1c143b] p-3 min-h-[150px] justify-center items-center flex">
                           <p className="text-justify text-sm flex-grow overflow-hidden text-ellipsis">
@@ -341,7 +345,7 @@ export default function Results2() {
                     {singleCareer?.present_trends && (
                       <div className="bg-[#ffa000] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md">
                         <p className="text-white font-bold text-lg uppercase text-center py-3">
-                          Present Trends
+                          {t('presentTrends')}
                         </p>
                         <div className="bg-[#1c143b] p-3 min-h-[150px] justify-center items-center flex">
                           <p className="text-justify text-sm flex-grow overflow-hidden text-ellipsis">
@@ -354,7 +358,7 @@ export default function Results2() {
                     {singleCareer?.future_prospects && (
                       <div className="bg-[#7824f6] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md">
                         <p className="text-white font-bold text-lg uppercase text-center py-3">
-                          Future Prospects
+                          {t('futureProspects')}
                         </p>
                         <div className="bg-[#1c143b] p-3 min-h-[150px] justify-center items-center flex">
                           <p className="text-justify text-sm flex-grow overflow-hidden text-ellipsis">
@@ -367,7 +371,7 @@ export default function Results2() {
                     {singleCareer?.expenses && (
                       <div className="bg-[#ff0000] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md">
                         <p className="text-white font-bold text-lg uppercase text-center py-3">
-                          Expenses
+                          {t('expenses')}
                         </p>
                         <div className="bg-[#1c143b] p-3 min-h-[150px] justify-center items-center flex">
                           <p className="text-justify text-sm flex-grow overflow-hidden text-ellipsis">
@@ -380,7 +384,7 @@ export default function Results2() {
                     {singleCareer?.opportunities && (
                       <div className="bg-[#5ce1e6] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md">
                         <p className="text-white font-bold text-lg uppercase text-center py-3">
-                          opportunities
+                          {t('opportunities')}
                         </p>
                         <div className="bg-[#1c143b] p-3 min-h-[150px] justify-center items-center flex">
                           <p className="text-justify text-sm flex-grow overflow-hidden text-ellipsis">
@@ -401,7 +405,7 @@ export default function Results2() {
                         setSingleCareer(null);
                       }}
                     >
-                      {selectedCareers.includes(careerIndex) ? 'Deselect' : 'Select this career'}
+                      {selectedCareers.includes(careerIndex) ? 'Deselect' : t('selectCareer')}
                     </button>
                   </div>
                 </div>
@@ -422,14 +426,14 @@ export default function Results2() {
                       Saving...
                     </>
                   ) : (
-                    "Save Results"
+                    t('saveResults')
                   )}
                 </button>
               </div>
             )}
             {displayResults && !feedbackGiven && (
               <div className="bg-white p-5 rounded-lg text-gray-600">
-                <p className="text-center text-xl mb-4">Give Your Feedback</p>
+                <p className="text-center text-xl mb-4">{t('giveFeedback')}</p>
                 <div className="flex justify-center mb-4">
                   {[...Array(10)].map((_, index) => (
                     <span
@@ -452,11 +456,11 @@ export default function Results2() {
                   className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4"
                   onClick={handleFeedbackSubmit}
                 >
-                  Submit Feedback
+                  {t('submitFeedback')}
                 </button>
                 {feedbackGiven && (
                   <p className="text-center text-white">
-                    Thank you for your feedback!
+                    {t('thankYouFeedback')}
                   </p>
                 )}
               </div>
