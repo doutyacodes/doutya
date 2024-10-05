@@ -29,6 +29,8 @@ export async function GET(req, { params }) {
   const userData = authResult.decoded_Data;
   const userId = userData.userId;
 
+  const language = req.headers.get('accept-language') || 'en';
+
   const { userCareerID } = params;
 
   try {
@@ -117,7 +119,7 @@ export async function GET(req, { params }) {
 
       // Trigger the data generation asynchronously
       // Start the background roadmap generation process
-      fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2);
+      fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language);
       // fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2)
       // .then(async () => {
       //     // After data is generated, update the status to "completed"

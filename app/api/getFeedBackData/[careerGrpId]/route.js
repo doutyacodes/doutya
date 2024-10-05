@@ -6,11 +6,23 @@ import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import axios from 'axios';
 
+const languageOptions = {
+  en: 'in English',
+  hi: 'in Hindi',
+  mar: 'in Marathi',
+  ur: 'in Urdu',
+  sp: 'in Spanish',
+  ben: 'in Bengali',
+  assa: 'in Assamese',
+  ge: 'in German'
+};
+
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
 
 export async function GET(req, { params }) {
+  console.log('generating')
      // Authenticate user
     const authResult = await authenticate(req);
     if (!authResult.authenticated) {
@@ -19,6 +31,8 @@ export async function GET(req, { params }) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
+
+    const language = req.headers.get('accept-language') || 'en';
 
     const { careerGrpId } = params;
 
@@ -62,7 +76,7 @@ export async function GET(req, { params }) {
             const career_name = careerGroup[0]?.career_name;
             const { type1, type2, country } = userCareer[0];
           
-            const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career, such as time management, organizational skills, and other relevant skills. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output as a single paragraph without additional wrapping other than {}.`;
+            const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career, such as time management, organizational skills, and other relevant skills. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only. Give it as a single JSON data without any wrapping other than {}`;
           
           
               const response = await axios.post(
@@ -82,8 +96,9 @@ export async function GET(req, { params }) {
               console.log("API request completed.");
               let responseText = response.data.choices[0].message.content.trim();
               responseText = responseText.replace(/```json|```/g, "").trim();
-              // console.log("responseText",responseText);
+              console.log("responseText",responseText);
               const parsedFeedback = JSON.parse(responseText);
+              console.log(parsedFeedback)
 
             // Step 4: Save the generated feedback in the USER_CAREER table
             await db

@@ -31,6 +31,14 @@ function Page() {
   const [showRoadmap, setShowRoadmap] = useState(false);
   const [showRoadMapDetails, setShowRoadMapDetails] = useState(false);
   const t = useTranslations('CareerPage');
+  const tabs = [
+    { key: 'roadmap', label: t('roadmap') },
+    { key: 'contests', label: t('contests') },
+    { key: 'tests', label: t('test') },
+    { key: 'feedback', label: t('feedback') },
+    { key: 'challenges', label: t('challenges') },
+    { key: 'community', label: t('community') }
+  ];
 
   const handleRoadmapClick = () => {
     setShowRoadmap(!showRoadmap);
@@ -202,17 +210,17 @@ function Page() {
           </div>
 
           <div className="flex justify-center flex-wrap gap-4 mb-4">
-            {[t('roadmap'), t('contests'), t('test'), t('feedback'), t('challenges'), t('community')].map((tab) => (
+            {tabs.map((tab) => (
               <button
-                key={tab}
+                key={tab.key}
                 className={`${
-                  activeTab === tab
+                  activeTab === tab.key
                     ? "bg-gradient-to-r from-yellow-400 to-orange-400"
                     : "bg-green-500"
                 } text-white font-bold py-2 px-4 rounded-full w-32`}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => setActiveTab(tab.key)}
               >
-                {tab.toUpperCase()}
+                {tab.label.toUpperCase()}
               </button>
             ))}
           </div>
