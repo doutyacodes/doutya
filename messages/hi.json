@@ -49,7 +49,10 @@
         "viewResults": "परिणाम देखें",
         "hideResults": "परिणाम छुपाएं",
         "navigateToQuizAlt": "क्विज़ सेक्शन पर जाएं",
-        "quizCompletedAlt": "क्विज़ पूरा हो गया"
+        "quizCompletedAlt": "क्विज़ पूरा हो गया",
+        "takeTest": "परीक्षण करें",
+      "findStrength":"अपनी ताकत खोजें",
+      "followCareer": "सही करियर पथ का अनुसरण करें"
     },
     "Navbar": {
         "profileAltText": "उपयोगकर्ता मेनू खोलें",

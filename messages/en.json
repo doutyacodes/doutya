@@ -49,7 +49,10 @@
     "viewResults": "View Results",
     "hideResults": "Hide Results",
     "navigateToQuizAlt": "Navigate to Quiz Section",
-    "quizCompletedAlt": "Quiz Completed"
+    "quizCompletedAlt": "Quiz Completed",
+    "takeTest": "Take the Test",
+    "findStrength":"Find your Strength",
+    "followCareer": "Follow the right career path"
   },
   "Navbar": {
     "profileAltText": "Open user menu",

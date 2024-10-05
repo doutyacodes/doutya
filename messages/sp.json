@@ -49,7 +49,10 @@
       "viewResults": "Ver resultados",
       "hideResults": "Ocultar resultados",
       "navigateToQuizAlt": "Ir a la sección de pruebas",
-      "quizCompletedAlt": "Prueba completada"
+      "quizCompletedAlt": "Prueba completada",
+      "takeTest":"Haz la prueba",
+      "findStrength":"Encuentra tu fuerza",
+      "followCareer": "Siga el camino profesional correcto"
     },
     "Navbar": {
       "profileAltText": "Abrir menú de usuario",

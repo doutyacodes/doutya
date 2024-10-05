@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import GlobalApi from "@/app/_services/GlobalApi";
 import toast, { LoaderIcon, Toaster } from "react-hot-toast";
@@ -217,64 +218,50 @@ export default function Results2() {
     );
   }
 
-
   return (
     <>
-
-    {/* Conditionally render the blue bar with the text */}
-    {singleCareer ? (
-      // If in single career detail view, do not render the blue bar
-      null
-    ) : (
-      <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
-        <p className="text-white uppercase font-bold text-center">
-          Career Suggestions
-        </p>
-      </div>
-    )}
-
-    {step === 1 && industries && (
-      <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
-        <p className="text-white uppercase font-bold text-center">
-          Select an Industry
-        </p>
-      </div>
-    )}
-
-
-      {/* {step === 1 && industries && (
-        <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
-          <p className="text-white uppercase font-bold text-center">
-            Select an Industry
-          </p>
-        </div>
-      )}
-      
       {step === 1 && industries && (
         <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center">
             Select an Industry
           </p>
         </div>
-      )} */}
+      )}
+
+      {step === 2 && !singleCareer && (
+        <div className="bg-[#009be8] h-20 mb-5 justify-center items-center flex">
+          <p className="text-white uppercase font-bold text-center md:text-xl">
+            Career Suggestions
+          </p>
+        </div>
+      )}
+
       {singleCareer?.career_name && (
-        <div className="bg-[#009be8] h-20 my-4">
-          <div className="justify-between items-center flex flex-row px-4 mx-auto h-full max-w-[1280px]">
-            <div className="justify-between items-center flex gap-4">
-              <ChevronsLeft className="text-white text-lg" />
-              <button
+        <div className="bg-[#009be8] py-5 mb-5">
+          <div className="flex flex-col md:flex-row justify-between items-center px-4 mx-auto h-full max-w-[1280px]">
+            <div className="flex items-center gap-4 mb-2 md:mb-0">
+              <button 
                 onClick={() => {
                   setCareerIndex(null);
                   setSingleCareer(null);
                 }}
-                className="uppercase text-white font-bold"
+                className="text-white flex items-center"
               >
-                {t('backToCareer')}
+                <ChevronsLeft className="text-white md:text-lg" />
+                <span className="uppercase font-bold">{t('backToCareer')}</span>
               </button>
+            </div>
+            <div className="text-center">
+              <p className="text-white uppercase font-bold md:text-xl mb-2">
+                {singleCareer.career_name}
+              </p>
+              <p className="text-white md:text-lg font-bold">
+                {t('match')} - {singleCareer.match}%
+              </p>
             </div>
             <button
               onClick={downloadResultsAsImage}
-              className="bg-white p-3 rounded-md uppercase font-bold text-[#009be8] transition-all duration-300 hover:bg-gray-300"
+              className="bg-white md:p-3 p-2 rounded-md uppercase max-md:text-xs font-bold text-[#009be8] transition-all duration-300 hover:bg-gray-300 mt-2 md:mt-0"
             >
               {t('PDFdownload')}
             </button>
@@ -282,10 +269,10 @@ export default function Results2() {
         </div>
       )}
 
-      <div className="flex flex-col text-white gap-5">
+      <div className="flex flex-col text-white gap-5 w-full">
         {step === 1 && industries && (
-          <div className="p-6 rounded-lg text-white mt-6">
-            <div className="grid grid-cols-12 gap-10 justify-between items-center">
+          <div className="p-6 rounded-lg text-white mt-6 w-full">
+            <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-4xl mx-auto">
               {industries.map((industry, index) => {
                 const color = getColorByIndex(index);
                 return (
@@ -308,7 +295,7 @@ export default function Results2() {
           <>
             <div ref={resultsRef}>
               {resultData && !singleCareer ? (
-                <div className="grid grid-cols-12 gap-3">
+                <div className="grid grid-cols-12 gap-3 px-4">
                   {resultData?.map((career, index) => (
                     <div key={index} className="col-span-12 sm:col-span-6 md:col-span-2 flex flex-col">
                       <div
@@ -358,18 +345,18 @@ export default function Results2() {
                   ))}
                 </div>
               ) : singleCareer ? (
-                <div className="space-y-6">
+                <div className="space-y-6 px-10">
                   <div className="grid grid-cols-12 gap-4">
                     {singleCareer?.reason_for_recommendation && (
                       <div className="bg-[#00bf63] px-[1px] py-[1px] col-span-12 rounded-t-md">
                         <p className="text-white font-bold text-lg uppercase text-center py-3">
                           {t('careerSuitability')}
                         </p>
-                        <div className="bg-[#1c143b] p-3 min-h-[150px] justify-center items-center flex">
-                          <p className="text-justify text-sm flex-grow overflow-hidden text-ellipsis">
+                        <div className="bg-[#1c143b] px-6 py-3 min-h-[150px] justify-center items-center flex">
+                          <p className="text-justify text-lg flex-grow overflow-hidden text-ellipsis">
                             {singleCareer?.reason_for_recommendation}
                           </p>
-                        </div>
+                          </div>
                       </div>
                     )}
 
