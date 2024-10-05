@@ -21,7 +21,7 @@ function Navbarkids() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem('dashboardUrl');
+    localStorage.removeItem("dashboardUrl");
     setIsLoggedIn(false);
     window.location.href = "/login";
   };
@@ -66,7 +66,8 @@ function Navbarkids() {
                 DASHBOARD
               </button>
             </a>
-            <a href="#">
+            {/* Updated "MY PROFILE" to link to user profile */}
+            <a href="/dashboard/user-profile">
               <button
                 style={{ ...styles.navButton, ...styles.navButtonProfile }}
                 data-bg="#FFD700"
@@ -82,35 +83,6 @@ function Navbarkids() {
                 CAREER
               </button>
             </a>
-            {/* <select className="bg-transparent text-white">
-              <option className="text-black" value="">
-                Solutions
-              </option>
-              <option className="text-black" value="">
-                option1
-              </option>
-              <option className="text-black" value="">
-                option2
-              </option>
-              <option className="text-black" value="">
-                option3
-              </option>
-            </select> */}
-            {/* {isLoggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="text-white hover:text-gray-300 font-bold"
-              >
-                Logout
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                className="text-white hover:text-gray-300 font-bold"
-              >
-                Login
-              </Link>
-            )} */}
 
             <div>
               {/* Profile dropdown */}
@@ -120,7 +92,7 @@ function Navbarkids() {
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
                     <img
-                      alt=""
+                      alt="User Avatar"
                       src="/assets/images/avatar.png"
                       className="h-8 w-8 rounded-full"
                     />
@@ -188,22 +160,18 @@ function Navbarkids() {
 }
 
 export default Navbarkids;
+
 const styles = {
   navigationBar: {
     display: "flex",
     justifyContent: "space-around",
     width: "100%",
-    // position: "fixed",
-    // bottom: "20px",
-    // left: "0",
-    // right: "0",
     padding: "10px 0",
-    // backgroundColor: "rgba(255, 255, 255, 0.8)",
     boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
   },
   navButton: {
     border: "none",
-    borderRadius: "30px", 
+    borderRadius: "30px",
     color: "white",
     padding: "10px 20px",
     fontSize: "16px",
@@ -211,15 +179,15 @@ const styles = {
     transition: "all 0.3s ease",
   },
   navButtonHome: {
-    backgroundColor: "#FF6F61", 
+    backgroundColor: "#FF6F61",
   },
   navButtonProfile: {
-    backgroundColor: "#FFD700", 
+    backgroundColor: "#FFD700",
   },
   navButtonCareer: {
-    backgroundColor: "#4CAF50", 
+    backgroundColor: "#4CAF50",
   },
   navButtonHover: {
-    backgroundColor: "#FFC0CB", 
+    backgroundColor: "#FFC0CB",
   },
 };

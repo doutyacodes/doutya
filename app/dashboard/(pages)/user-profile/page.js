@@ -16,6 +16,7 @@ import { encryptText } from "@/utils/encryption";
 import toast, { Toaster } from "react-hot-toast";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import { calculateAge } from "@/lib/ageCalculate";
+import { useTranslations } from 'next-intl';
 
 function page() {
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
@@ -24,6 +25,7 @@ function page() {
   const [userData, setUserdata] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [isEditing, setisEditing] = useState(false);
+  const t = useTranslations('ProfilePage');
 
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -126,7 +128,7 @@ function page() {
     if (data.password !== data.confirmPassword) {
       setError("confirmPassword", {
         type: "manual",
-        message: "Passwords do not match",
+        message: t('passwordRequired'),
       });
       return;
     }
@@ -144,11 +146,11 @@ function page() {
       const response = await GlobalApi.UpdateUser(data, token);
 
       if (response.status === 201) {
-        toast.success("User Data Updated");
+        toast.success(t('userDataUpdated'));
         getUserData();
       } else {
 
-        const errorMessage = response.data?.message || "Failed to add data.";
+        const errorMessage = response.data?.message || t('unexpectedError');
         toast.error(`Error: ${errorMessage}`);
       }
     } catch (err) {
@@ -157,7 +159,7 @@ function page() {
         const { response } = err;
         if (response.status === 409) {
           const errorMessage =
-            response.data?.message || "Username is already taken";
+            response.data?.message || t('usernameExists');
           console.log("Error message:", errorMessage);
           setError("username", {
             type: "manual",
@@ -165,12 +167,12 @@ function page() {
           });
           toast.error(errorMessage); // Display toast error message
         } else {
-          const errorMessage = response.data?.message || "Failed to add data.";
+          const errorMessage = response.data?.message || t('unexpectedError');;
           toast.error(`Error: ${errorMessage}`);
         }
       } else {
         // Handle unexpected errors
-        toast.error("An unexpected error occurred.");
+        toast.error(t('unexpectedError'));
       }
     } finally {
       setIsSubmit(false);
@@ -182,7 +184,7 @@ function page() {
       <div className="h-screen flex items-center justify-center text-white">
         <div>
           <div className="font-semibold">
-            <LoadingOverlay loadText={"Loading..."} />
+            <LoadingOverlay loadText={t('loading')} />
           </div>
         </div>
       </div>
@@ -194,7 +196,7 @@ function page() {
       <Toaster position="top-center" reverseOrder={false} />
       <Link href={typeof window !== 'undefined' ? localStorage.getItem('dashboardUrl') : '/login'}>
         <button className="text-white bg-green-600 -mt-20 mb-7 ml-20 p-3 rounded-xl">
-          Back to Dashboard
+          {t('backToDashboard')}
         </button>
       </Link>
       <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
@@ -216,17 +218,17 @@ function page() {
                   />
                 )}
               </div>
-              <h2 className="text-2xl font-bold">{userData.name || "Loading..."}</h2>
+              <h2 className="text-2xl font-bold">{userData.name || t('loading...')}</h2>
               <p className="text-indigo-200">{userData.username || "Username"}</p>
               <div className="flex items-center mt-2 text-sm">
                 <span className="bg-green-500 rounded-full w-3 h-3 mr-2"></span>
-                Verified Profile
+                {t('verifiedProfile')}
               </div>
             </div>
           </div>
           <div className="p-8 w-full">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+              <h1 className="text-3xl font-bold text-gray-900">{t('myProfile')}</h1>
               <button
                 onClick={() => setIsEditable(!isEditable)}
                 className={`p-2 rounded-full transition-colors duration-200 ${isEditable
@@ -245,7 +247,7 @@ function page() {
               <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
-                    Gender
+                    {t('gender')}
                   </label>
                   <select
                     {...register("gender")}
@@ -256,21 +258,21 @@ function page() {
                     autoComplete="gender"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   >
-                    <option value="">Select</option>
-                    <option value="Mr">Mr</option>
-                    <option value="Miss">Miss</option>
-                    <option value="Mrs">Mrs</option>
+                    <option value="">{t('select')}</option>
+                    <option value="Mr">{t('male')}</option>
+                    <option value="Miss">{t('female')}</option>
+                    <option value="Mrs">{t('mrs')}</option>
                   </select>
                 </div>
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                    Name
+                    {t('name')}
                   </label>
                   <input
                     id="name"
                     name="name"
                     type="text"
-                    {...register("name", { required: "Name is required" })}
+                    {...register("name", { required: t('name') + " is required" })}
                     disabled={!isEditable}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   />
@@ -278,13 +280,13 @@ function page() {
                 </div>
                 <div>
                   <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                    Username
+                    {t('username')}
                   </label>
                   <input
                     id="username"
                     name="username"
                     type="text"
-                    {...register("username", { required: "Username is required" })}
+                    {...register("username", { required: t('username') + " is required" })}
                     disabled={!isEditable}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   />
@@ -292,18 +294,18 @@ function page() {
                 </div>
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password
+                    {t('password')}
                   </label>
                   <input
                     type="password"
                     {...register("password", {
                       minLength: {
                         value: 6,
-                        message: "Password must be at least 6 characters long",
+                        message: t('passwordRequired')
                       },
                       pattern: {
                         value: /(?=.*[!@#$%^&*])/,
-                        message: "Password must contain at least one special character",
+                        message: t('passwordSpecial'),
                       },
                     })}
                     disabled={!isEditable}
@@ -325,12 +327,12 @@ function page() {
                 </div> */}
                 <div>
                   <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">
-                    Mobile Number
+                    {t('mobileNumber')}
                   </label>
                   <input
                     type="tel"
                     {...register("mobile", {
-                      required: "Mobile number is required",
+                      required: t('mobileNumber') + " is required",
                       pattern: {
                         value: /^[0-9]{10}$/,
                         message: "Please enter a valid 10-digit mobile number",
@@ -343,18 +345,18 @@ function page() {
                 </div>
                 <div>
                   <label htmlFor="birth_date" className="block text-sm font-medium text-gray-700">
-                    Date of Birth
+                    {t('dob')}
                   </label>
                   <input
                     type="date"
                     {...register("birth_date", {
-                      required: "Date of birth is required",
+                      required: t('dob') + " is required",
                       validate: {
                         notTooYoung: (value) => {
                           const today = new Date();
                           const selectedDate = new Date(value);
                           const minAllowedDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
-                          return selectedDate <= minAllowedDate || "Age must be a minimum of 5 years.";
+                          return selectedDate <= minAllowedDate || t('ageValidation');
                         }
                       }
                     })}
@@ -365,7 +367,7 @@ function page() {
                   {errors.birth_date && <p className="mt-2 text-sm text-red-600">{errors.birth_date.message}</p>}
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Are you a college student?</label>
+                  <label className="block text-sm font-medium text-gray-700">{t('student')}</label>
                   <div className="mt-2 space-x-6">
                     <label className="inline-flex items-center">
                       <input
@@ -376,7 +378,7 @@ function page() {
                         disabled={!isEditable}
                         className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                       />
-                      <span className="ml-2">No</span>
+                      <span className="ml-2">{t('no')}</span>
                     </label>
                     <label className="inline-flex items-center">
                       <input
@@ -387,7 +389,7 @@ function page() {
                         disabled={!isEditable}
                         className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                       />
-                      <span className="ml-2">Yes</span>
+                      <span className="ml-2">{t('yes')}</span>
                     </label>
                   </div>
                 </div>
@@ -395,7 +397,7 @@ function page() {
                   <>
                     <div>
                       <label htmlFor="college" className="block text-sm font-medium text-gray-700">
-                        College
+                        {t('college')}
                       </label>
                       <input
                         type="text"
@@ -406,7 +408,7 @@ function page() {
                     </div>
                     <div>
                       <label htmlFor="university" className="block text-sm font-medium text-gray-700">
-                        University
+                        {t('university')}
                       </label>
                       <input
                         type="text"
@@ -417,7 +419,7 @@ function page() {
                     </div>
                     <div>
                       <label htmlFor="yearMonthOfPassing" className="block text-sm font-medium text-gray-700">
-                        Year and Month of Passing
+                        {t('yearAndMonthOfPassing')}
                       </label>
                       <input
                         id="yearMonthOfPassing"
@@ -434,7 +436,7 @@ function page() {
                         htmlFor="currentEnrollment"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Current Enrollment
+                        {t('currentEnrollment')}
                       </label>
                       <div className="mt-2 w-1/2">
                         <select
@@ -445,7 +447,7 @@ function page() {
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                           {...register("education")}
                         >
-                          <option value="">select</option>
+                          <option value="">{t('select')}</option>
                           <option>High School</option>
                           <option>Associate Degree</option>
                           <option>Bachelor's Degree</option>
@@ -461,7 +463,7 @@ function page() {
                       htmlFor="highestDegree"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Highest Degree
+                      {t('highestDegree')}
                     </label>
                     <div className="mt-2 w-1/2">
                       <select
@@ -472,7 +474,7 @@ function page() {
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register("education")}
                       >
-                        <option value="">select</option>
+                        <option value="">{t('select')}</option>
                         <option>High School</option>
                         <option>Associate Degree</option>
                         <option>Bachelor's Degree</option>
@@ -492,7 +494,7 @@ function page() {
                     className="mt-6 inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-indigo-400"
                   >
                     <Save className="mr-2 h-5 w-5" />
-                    Save Changes
+                    {t('saveChanges')}
                   </button>
                 </div>
               )}

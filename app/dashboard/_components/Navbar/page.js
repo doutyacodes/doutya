@@ -3,10 +3,12 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import Image from "next/image";
+import { useTranslations } from 'next-intl'; // Import the useTranslations hook
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const t = useTranslations('Navbar'); // Initialize the translations hook for the 'Navbar' namespace
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -39,71 +41,15 @@ function Navbar() {
             />
           </div>
 
-          {/* Search Bar */}
-          {/* <div className="flex-1 mx-4">
-            <input
-              type="text"
-              placeholder="Search...                 "
-              className="w-full px-4 py-2 rounded-full bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 max-sm:hidden"
-            />
-          </div> */}
-
-          {/* Menu Button */}
-          {/* <button className="md:hidden text-white" onClick={toggleSidebar}>
-            ☰
-          </button> */}
-
           {/* Navigation Links */}
-          <div className=" md:flex items-center space-x-6 text-sm lg:text-base text-nowrap">
-            {/* <a href="/dashboard" className="text-white hover:text-gray-300">
-              Dashboard
-            </a>
-            <a href="#" className="text-white hover:text-gray-300">
-              About Us
-            </a>
-            <a
-              href="/dashboard/careers"
-              className="text-white hover:text-gray-300"
-            >
-              Careers
-            </a> */}
-            {/* <select className="bg-transparent text-white">
-              <option className="text-black" value="">
-                Solutions
-              </option>
-              <option className="text-black" value="">
-                option1
-              </option>
-              <option className="text-black" value="">
-                option2
-              </option>
-              <option className="text-black" value="">
-                option3
-              </option>
-            </select> */}
-            {/* {isLoggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="text-white hover:text-gray-300 font-bold"
-              >
-                Logout
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                className="text-white hover:text-gray-300 font-bold"
-              >
-                Login
-              </Link>
-            )} */}
-
+          <div className="md:flex items-center space-x-6 text-sm lg:text-base text-nowrap">
             <div>
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
                   <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="absolute -inset-1.5" />
-                    <span className="sr-only">Open user menu</span>
+                    <span className="sr-only">{t('profileAltText')}</span>
                     <img
                       alt=""
                       src="/assets/images/avatar.png"
@@ -113,39 +59,31 @@ function Navbar() {
                 </div>
                 <MenuItems
                   transition
-                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none"
                 >
                   <MenuItem key={"Your Profile"}>
                     <Link
                       href="/dashboard/user-profile"
-                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                      className="block px-4 py-2 text-sm text-gray-700"
                     >
-                      {"Your Profile"}
-                    </Link>
-                  </MenuItem>
-                  <MenuItem key={"Dashboard"}>
-                    <Link
-                      href="/dashboard"
-                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                    >
-                      {"Dashboard"}
+                      {t('profileLink')}
                     </Link>
                   </MenuItem>
                   <MenuItem key={"Careers"}>
                     <Link
-                    href="/dashboard/careers"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                      href="/dashboard/careers"
+                      className="block px-4 py-2 text-sm text-gray-700"
                     >
-                      {"Careers"}
+                      {t('careersLink')}
                     </Link>
                   </MenuItem>
 
                   <MenuItem key={"Sign Out"}>
                     <a
                       onClick={handleLogout}
-                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                      className="block px-4 py-2 text-sm text-gray-700"
                     >
-                      {"Sign Out"}
+                      {t('signOutLink')}
                     </a>
                   </MenuItem>
                 </MenuItems>
@@ -163,31 +101,27 @@ function Navbar() {
       >
         <div className="w-64 h-full bg-white p-4">
           <button className="text-black float-right" onClick={toggleSidebar}>
-            ×
+            {t('sidebarCloseButton')}
           </button>
           <div className="mt-8">
             <a href="#" className="block py-2 text-black hover:bg-gray-200">
-              About Us
+              {t('aboutUsLink')}
             </a>
             <a
               href="./login"
               className="block py-2 text-black hover:bg-gray-200"
             >
-              Login
+              {t('sidebarLogin')}
             </a>
             <select className="bg-transparent text-black mt-4">
-              <option value="">Solutions</option>
-              <option value="">option1</option>
-              <option value="">option2</option>
-              <option value="">option3</option>
+              <option value="">{t('solutionsPlaceholder')}</option>
+              <option value="">{t('options.option1')}</option>
+              <option value="">{t('options.option2')}</option>
+              <option value="">{t('options.option3')}</option>
             </select>
           </div>
         </div>
       </div>
-      {/* <div className="h-1 bg-[#00be61] mb-3" />
-      <div className=" mx-auto w-full px-6 fixed z-30 bottom-5">
-        <div className="py-4 w-full bg-red-500"></div>
-      </div> */}
     </div>
   );
 }

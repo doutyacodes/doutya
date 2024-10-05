@@ -1,0 +1,128 @@
+{
+    "LoginPage": {
+      "title": "Einloggen",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "NoAccount": "Kein Konto?",
+      "Signup": "Registrieren",
+      "LoginButton": "Einloggen"
+    },
+    "SignupPage": {
+      "title": "Registrieren",
+      "gender": "Geschlecht",
+      "genderOptions": {
+        "mr": "Herr",
+        "miss": "Fräulein",
+        "mrs": "Frau"
+      },
+      "name": "Name",
+      "username": "Benutzername (ohne Leerzeichen)",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "mobile": "Mobilnummer",
+      "country": "Land auswählen",
+      "dob": "Geburtsdatum",
+      "dobValidation": "Das Mindestalter muss 5 Jahre betragen.",
+      "collegeStudent": "Sind Sie ein College-Student?",
+      "studentOptions": {
+        "yes": "Ja",
+        "no": "Nein"
+      },
+      "college": "College",
+      "university": "Universität",
+      "submit": "Absenden",
+      "alreadyRegistered": "Bereits registriert?",
+      "login": "Einloggen",
+      "forgotPassword": "Passwort vergessen?",
+      "successMessage": "Erfolgreich in die Datenbank aufgenommen!",
+      "defaultErrorMessage": "Fehler beim Hinzufügen der Daten.",
+      "usernameExists": "Benutzername bereits vergeben",
+      "phoneExists": "Mobilnummer bereits vergeben"
+    },
+    "Banner": {
+      "title": "Persönlichkeit",
+      "personalityTestTitle": "Persönlichkeitstest",
+      "personalityTestDescription": "Machen Sie einen Persönlichkeitstest und lernen Sie sich selbst besser kennen! Entdecken Sie Ihre einzigartigen Eigenschaften und bauen Sie Ihre Karriere darauf auf.",
+      "interestTestTitle": "Interessentest",
+      "interestTestDescription": "Finden Sie im nächsten Schritt Ihre Interessen heraus! Finden Sie Berufe, die zu Ihrer Persönlichkeit passen.",
+      "loadingText": "Wird geladen...",
+      "viewResults": "Ergebnisse anzeigen",
+      "hideResults": "Ergebnisse ausblenden",
+      "navigateToQuizAlt": "Zum Quiz-Bereich gehen",
+      "quizCompletedAlt": "Quiz abgeschlossen"
+    },
+    "Navbar": {
+      "profileAltText": "Benutzermenü öffnen",
+      "profileLink": "Ihr Profil",
+      "careersLink": "Karrieren",
+      "signOutLink": "Abmelden",
+      "loginLink": "Einloggen",
+      "aboutUsLink": "Über uns",
+      "solutionsPlaceholder": "Lösungen",
+      "options": {
+        "option1": "Option 1",
+        "option2": "Option 2",
+        "option3": "Option 3"
+      },
+      "sidebarCloseButton": "×",
+      "sidebarLogin": "Einloggen"
+    },
+    "ResultsPage": {
+      "title": "Ergebnisse",
+      "description": "Beschreibung",
+      "strengths": "Stärken",
+      "weaknesses": "Schwächen",
+      "opportunities": "Chancen",
+      "threats": "Bedrohungen",
+      "careers": "Beste Karrieren",
+      "loading": "Wird geladen"
+    },
+    "ProfilePage": {
+      "backToDashboard": "Zurück zum Dashboard",
+      "myProfile": "Mein Profil",
+      "gender": "Geschlecht",
+      "select": "Wählen",
+      "male": "Herr",
+      "female": "Fräulein",
+      "mrs": "Frau",
+      "name": "Name",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "mobileNumber": "Mobilnummer",
+      "dob": "Geburtsdatum",
+      "student": "Sind Sie im College?",
+      "yes": "Ja",
+      "no": "Nein",
+      "college": "College",
+      "university": "Universität",
+      "yearAndMonthOfPassing": "Jahr und Monat des Abschlusses",
+      "currentEnrollment": "Aktuelle Anmeldung",
+      "highestDegree": "Höchster Abschluss",
+      "highSchool": "Gymnasium",
+      "associateDegree": "Associate Degree",
+      "bachelorsDegree": "Bachelor-Abschluss",
+      "mastersDegree": "Master-Abschluss",
+      "doctorate": "Doktorat",
+      "verifiedProfile": "Verifiziertes Profil",
+      "loading": "Wird geladen...",
+      "saveChanges": "Änderungen speichern",
+      "passwordRequired": "Das Passwort muss mindestens 6 Zeichen lang sein",
+      "passwordSpecial": "Das Passwort muss mindestens ein Sonderzeichen enthalten.",
+      "confirmPasswordRequired": "Bestätigen Sie das Passwort",
+      "ageValidation": "Das Mindestalter muss 5 Jahre betragen.",
+      "userDataUpdated": "Benutzerdaten wurden aktualisiert",
+      "usernameExists": "Benutzername bereits vergeben",
+      "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten."
+    },
+    "CareerPage": {
+      "careers": "Karrieren",
+      "roadmap": "Fahrplan",
+      "contests": "Wettbewerbe",
+      "test": "Test",
+      "feedback": "Rückmeldung",
+      "challenges": "Herausforderungen",
+      "community": "Gemeinschaft",
+      "careerAdding": "Karriere wird hinzugefügt. Bitte warten..."
+    }
+  }
+  
