@@ -10,6 +10,7 @@ import { Navigation } from "swiper/modules";
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
+
 function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2Results }) {
     const [loading, setLoading] = useState(false);
     const [dashboardData, setDashboardData] = useState([]);
@@ -68,8 +69,8 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                     <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
                       Find Your strengths
                     </h3>
-                   {/* 
-                    <div className="text-center mt-4">
+                   
+                    {/* <div className="text-center mt-4">
                         {getQuizStatus(1).isCompleted ? (
                             <button
                                 className="bg-green-500 text-white px-4 py-2 rounded-md"
@@ -86,6 +87,7 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                             </button>
                         )}
                     </div> */}
+
                     <div className="bg-[#191134] h-full rounded-lg p-3 gap-3 flex flex-col justify-between">
                       <div className="space-y-4">
                         <h3 className="font-bold text-2xl text-center py-3 text-white ">
@@ -110,31 +112,31 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
 
                 {/* Interest Test */}
                 
-                   {/* <div className="text-center mt-4">
-                        {getQuizStatus(2).isCompleted ? (
-                            <button
-                                className="bg-green-500 text-white px-4 py-2 rounded-md"
-                                onClick={onToggleQuiz2Results}
-                            >
-                                {showQuiz2Results ? t('hideResults') : t('viewResults')}
-                            </button>
-                        ) : (
-                            <button
-                                className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
-                                disabled
-                            >
-                                {t('viewResults')}
-                            </button>
-                        )}
-                    </div>
-                </div>*/}
 
 <div className="pt-3 p-[1px] rounded-lg max-w-96  flex-1"  style={{
-                    backgroundImage: `linear-gradient(to right, #f39033fb, #f39033fb)`,
-                  }}>
+  backgroundImage: `linear-gradient(to right, #f39033fb, #f39033fb)`,
+}}>
                     <h3 className="font-bold text-center text-black text-md pb-2 uppercase ">
                       Follow the right career
                     </h3>
+
+                    {/* <div className="text-center mt-4">
+                         {getQuizStatus(2).isCompleted ? (
+                             <button
+                                 className="bg-green-500 text-white px-4 py-2 rounded-md"
+                                 onClick={onToggleQuiz2Results}
+                             >
+                                 {showQuiz2Results ? t('hideResults') : t('viewResults')}
+                             </button>
+                         ) : (
+                             <button
+                                 className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
+                                 disabled
+                             >
+                                 {t('viewResults')}
+                             </button>
+                         )}
+                     </div> */}
                     
                     <div className="bg-[#191134] h-full rounded-lg p-3 gap-3 flex flex-col justify-between">
                       <div className="space-y-4">
