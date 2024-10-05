@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { Pagination, Navigation } from "swiper/modules";
+import { Navigation } from "swiper/modules";
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
@@ -15,10 +15,9 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
     const [dashboardData, setDashboardData] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
     const swiperRef = useRef(null);
-    const t = useTranslations('Banner'); // Initialize the translations hook
+    const t = useTranslations('Banner');
 
-    // Custom pagination dots
-    const paginationDots = [0, 1]; // Number of slides
+    const paginationDots = [0, 1];
 
     useEffect(() => {
         const getQuizData = async () => {
@@ -48,7 +47,7 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
             <div className="h-screen flex items-center justify-center text-white">
                 <div>
                     <div className="font-semibold">
-                        <LoadingOverlay loadText={t('loadingText')} /> {/* Use translation */}
+                        <LoadingOverlay loadText={t('loadingText')} />
                     </div>
                 </div>
             </div>
@@ -58,181 +57,107 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
     const MobileNavigation = dynamic(() => import('../Navbar/button.jsx'), { ssr: false });
 
     return (
-      <div className="h-screen flex items-center justify-center text-white">
-        <div>
-          <div className="font-semibold">
-            <LoadingOverlay loadText={"Loading..."} />
-          </div>
-        </div>
-      </div>
-    );
-  }
-  const MobileNavigation = dynamic(() => import('../Navbar/button.jsx'), { ssr: false });
-
-  return (
-    <div className="mb-8 w-full px-10 mt-18">
-      <h2 className="text-white mt-7 font-bold font-serif pb-6">
-        Personality
-      </h2>
-
-      
-      <div className="border-t border-cyan-400"></div>
-
-      <div className="mt-8 sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 hidden w-full">
-        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
-          <img
-            className="rounded-md object-cover w-full h-36"
-            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-            alt="Test 4 Image"
-          />
-          <div className="border-t border-cyan-400"></div>
-          <h1 className="text-white mt-4 text-2xl font-bold ml-7">Personality Test</h1>
-          <div className="relative">
-            {!getQuizStatus(1).isCompleted ? (
-              <Link href="/quiz-section/1">
-                <img
-                  src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                  className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
-                  alt="Navigate to Quiz Section"
-                />
-              </Link>
-            ) : (
-              <img
-                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-                alt="Quiz Completed"
-              />
-            )}
-          </div>
-          <div className="relative">
-            <p className="mx-auto text-white pt-8 w-4/5 text-justify">
-            Begin your journey of self-discovery with the Personality Test! Uncover your unique traits to build a foundation for finding your ideal career path.
-            </p>
-          </div>
-          <div className="text-center mt-4">
-            {getQuizStatus(1).isCompleted ? (
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded-md"
-                onClick={onToggleResults}
-              >
-                {showResults ? "Hide Results" : "View Results"}
-              </button>
-            ) : (
-              <button
-                className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
-                disabled
-              >
-                View Results
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="mb-7 w-full px-10 mt-18">
-            <h2 className="text-white mt-7 font-bold font-serif pb-6">{t('title')}</h2> {/* Use translation */}
-            <div className="border-t border-cyan-400"></div>
-
-
-            <div className="mt-8 sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 hidden w-full">
-                <div className="border border-cyan-400 pb-3 rounded-sm w-full">
-                    <img
-                        className="rounded-md object-cover w-full h-36"
-                        src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-                        alt={t('navigateToQuizAlt')} 
-                    />
-                    <div className="border-t border-cyan-400"></div>
-                    <h1 className="text-white mt-4 text-2xl font-bold ml-7">{t('personalityTestTitle')}</h1> {/* Use translation */}
-                    <div className="relative">
-                        {!getQuizStatus(1).isCompleted ? (
-                            <Link href="/quiz-section/1">
-                                <img
-                                    src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                                    className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
-                                    alt={t('navigateToQuizAlt')} 
-                                />
-                            </Link>
-                        ) : (
-                            <img
-                                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-                                alt={t('quizCompletedAlt')} 
-                            />
-                        )}
-                    </div>
-                    <div className="relative">
-                        <p className="mx-auto text-white pt-8 w-4/5 text-justify">
-                            {t('personalityTestDescription')} {/* Use translation */}
-                        </p>
-                    </div>
+      <div>
+        <div className="w-full py-8 text-3xl font-bold text-white text-center bg-gradient-to-r from-[#2f87aa] to-green-300">CAREER ASSESSMENT TESTS</div>
+        <div className="p-4">
+            <div className="mt-8 flex justify-evenly gap-10 w-full">
+                {/* Personality Test */}
+                <div className="pt-3 p-[1px] rounded-lg max-w-96 flex-1"  style={{
+                    backgroundImage: `linear-gradient(to right, #3294bb, #3294bb)`,
+                  }}>
+                    <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
+                      Find Your strengths
+                    </h3>
+                   {/* 
                     <div className="text-center mt-4">
                         {getQuizStatus(1).isCompleted ? (
                             <button
                                 className="bg-green-500 text-white px-4 py-2 rounded-md"
                                 onClick={onToggleResults}
                             >
-                                {showResults ? t('hideResults') : t('viewResults')} {/* Use translation */}
+                                {showResults ? t('hideResults') : t('viewResults')}
                             </button>
                         ) : (
                             <button
                                 className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
                                 disabled
                             >
-                                {t('viewResults')} {/* Use translation */}
+                                {t('viewResults')}
                             </button>
                         )}
-                    </div>
+                    </div> */}
+                    <div className="bg-[#191134] h-full rounded-lg p-3 gap-3 flex flex-col justify-between">
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-2xl text-center py-3 text-white ">
+                          <p> Personality</p><p> Test</p>
+                        </h3>
+                        <div className="bg-slate-600 p-[1px]" />
+                        <p className="text-white text-justify text-md">
+                        {t('personalityTestDescription')}
+                        </p>
+                        <div className="flex justify-center items-center">
+                        <Link
+                          href="/quiz-section/1"
+                          className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400  p-3 rounded-full w-40 "
+                        >
+                          <p className="text-white font-semibold text-lg text-center">Take the Test</p>
+                        </Link>
+                      </div>
+                      </div>
+                      
+                  </div>
                 </div>
 
                 {/* Interest Test */}
-                <div className="border border-cyan-400 pb-3 rounded-sm w-full">
-                    <img
-                        className="rounded-md object-cover w-full h-36"
-                        src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-                        alt={t('interestTestTitle')} 
-                    />
-                    <div className="border-t border-cyan-400"></div>
-                    <h1 className="text-white mt-4 text-2xl font-bold ml-7">{t('interestTestTitle')}</h1> {/* Use translation */}
-                    <div className="relative">
-                        {!getQuizStatus(2).isCompleted ? (
-                            <Link href="CareerQuizSection/2">
-                                <img
-                                    src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                                    className={`h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 ${isTest1Completed ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
-                                    alt={t('navigateToQuizAlt')} 
-                                />
-                            </Link>
-                        ) : (
-                            <img
-                                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-                                alt={t('quizCompletedAlt')} 
-                            />
-                        )}
-                    </div>
-                    <div className="relative">
-                        <p className="mx-auto text-white pt-8 w-4/5 text-justify">
-                            {t('interestTestDescription')} {/* Use translation */}
-                        </p>
-                    </div>
-                    <div className="text-center mt-4">
+                
+                   {/* <div className="text-center mt-4">
                         {getQuizStatus(2).isCompleted ? (
                             <button
                                 className="bg-green-500 text-white px-4 py-2 rounded-md"
                                 onClick={onToggleQuiz2Results}
                             >
-                                {showQuiz2Results ? t('hideResults') : t('viewResults')} {/* Use translation */}
+                                {showQuiz2Results ? t('hideResults') : t('viewResults')}
                             </button>
                         ) : (
                             <button
                                 className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
                                 disabled
                             >
-                                {t('viewResults')} {/* Use translation */}
+                                {t('viewResults')}
                             </button>
                         )}
                     </div>
+                </div>*/}
+
+<div className="pt-3 p-[1px] rounded-lg max-w-96  flex-1"  style={{
+                    backgroundImage: `linear-gradient(to right, #f39033fb, #f39033fb)`,
+                  }}>
+                    <h3 className="font-bold text-center text-black text-md pb-2 uppercase ">
+                      Follow the right career
+                    </h3>
+                    
+                    <div className="bg-[#191134] h-full rounded-lg p-3 gap-3 flex flex-col justify-between">
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-2xl text-center py-3 text-white ">
+                           <p> Interests</p><p> Test</p>
+                        </h3>
+                        <div className="bg-slate-600 p-[1px]" />
+                        <p className="text-white text-justify text-md">
+                        {t('interestTestDescription')}
+                        </p>
+                      <div className="flex justify-center items-center">
+                        <Link
+                          href="CareerQuizSection/2"
+                          className="hover:cursor-pointer bg-neutral-400 p-3 rounded-full w-40 "
+                        >
+                          <p className="text-white font-semibold text-lg text-center">Take the Test</p>
+                        </Link>
+                      </div>
+                      </div>
+                  </div>
                 </div>
-            </div>
+
+            </div> 
 
             {/* Mobile view: Swiper carousel */}
             <div className="mt-8 sm:hidden">
@@ -250,11 +175,11 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                             <img
                                 className="rounded-md object-cover w-full h-48"
                                 src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-                                alt={t('personalityTestTitle')} 
+                                alt={t('personalityTestTitle')}
                             />
                             <div className="border-t border-cyan-400"></div>
                             <h1 className="text-white mt-4 text-2xl font-bold ml-3">
-                                {t('personalityTestTitle')} {/* Use translation */}
+                                {t('personalityTestTitle')}
                             </h1>
                             <div className="relative">
                                 {!getQuizStatus(1).isCompleted ? (
@@ -262,20 +187,20 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                                         <img
                                             src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
                                             className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
-                                            alt={t('navigateToQuizAlt')} 
+                                            alt={t('navigateToQuizAlt')}
                                         />
                                     </Link>
                                 ) : (
                                     <img
                                         src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
                                         className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-                                        alt={t('quizCompletedAlt')} 
+                                        alt={t('quizCompletedAlt')}
                                     />
                                 )}
                             </div>
                             <div className="relative">
                                 <p className="ml-3 text-white pt-8 w-4/5">
-                                    {t('personalityTestDescription')} {/* Use translation */}
+                                    {t('personalityTestDescription')}
                                 </p>
                             </div>
                             <div className="text-center mt-4">
@@ -284,14 +209,14 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                                         className="bg-green-500 text-white px-4 py-2 rounded-md"
                                         onClick={onToggleResults}
                                     >
-                                        {showResults ? t('hideResults') : t('viewResults')} {/* Use translation */}
+                                        {showResults ? t('hideResults') : t('viewResults')}
                                     </button>
                                 ) : (
                                     <button
                                         className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
                                         disabled
                                     >
-                                        {t('viewResults')} {/* Use translation */}
+                                        {t('viewResults')}
                                     </button>
                                 )}
                             </div>
@@ -304,11 +229,11 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                             <img
                                 className="rounded-md object-cover w-full h-48"
                                 src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-                                alt={t('interestTestTitle')} 
+                                alt={t('interestTestTitle')}
                             />
                             <div className="border-t border-cyan-400"></div>
                             <h1 className="text-white mt-4 text-2xl font-bold ml-3">
-                                {t('interestTestTitle')} {/* Use translation */}
+                                {t('interestTestTitle')}
                             </h1>
                             <div className="relative">
                                 {!getQuizStatus(2).isCompleted ? (
@@ -323,13 +248,13 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                                     <img
                                         src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
                                         className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-                                        alt={t('quizCompletedAlt')} 
+                                        alt={t('quizCompletedAlt')}
                                     />
                                 )}
                             </div>
                             <div className="relative">
                                 <p className="ml-3 text-white pt-8 w-4/5">
-                                    {t('interestTestDescription')} {/* Use translation */}
+                                    {t('interestTestDescription')}
                                 </p>
                             </div>
                             <div className="text-center mt-4">
@@ -338,14 +263,14 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                                         className="bg-green-500 text-white px-4 py-2 rounded-md"
                                         onClick={onToggleQuiz2Results}
                                     >
-                                        {showQuiz2Results ? t('hideResults') : t('viewResults')} {/* Use translation */}
+                                        {showQuiz2Results ? t('hideResults') : t('viewResults')}
                                     </button>
                                 ) : (
                                     <button
                                         className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
                                         disabled
                                     >
-                                        {t('viewResults')} {/* Use translation */}
+                                        {t('viewResults')}
                                     </button>
                                 )}
                             </div>
@@ -366,6 +291,7 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
             </div>
 
             <MobileNavigation />
+        </div>
         </div>
     );
 }
