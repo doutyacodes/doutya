@@ -49,7 +49,10 @@
       "viewResults": "Ergebnisse anzeigen",
       "hideResults": "Ergebnisse ausblenden",
       "navigateToQuizAlt": "Zum Quiz-Bereich gehen",
-      "quizCompletedAlt": "Quiz abgeschlossen"
+      "quizCompletedAlt": "Quiz abgeschlossen",
+      "takeTest": "Machen Sie den Test",
+      "findStrength":"Finden Sie Ihre Stärke",
+      "followCareer": "Folgen Sie dem richtigen Karriereweg"
     },
     "Navbar": {
       "profileAltText": "Benutzermenü öffnen",

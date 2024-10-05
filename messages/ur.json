@@ -49,7 +49,10 @@
       "viewResults": "نتائج دیکھیں",
       "hideResults": "نتائج چھپائیں",
       "navigateToQuizAlt": "کوئز سیکشن کی طرف جائیں",
-      "quizCompletedAlt": "کوئز مکمل ہو چکا ہے"
+      "quizCompletedAlt": "کوئز مکمل ہو چکا ہے",
+      "takeTest":"ٹیسٹ لیں۔",
+      "findStrength":"اپنی طاقت تلاش کریں۔",
+      "followCareer": "کیریئر کے صحیح راستے پر چلیں۔"
     },
     "Navbar": {
       "profileAltText": "یوزر مینو کھولیں",

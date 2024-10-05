@@ -47,7 +47,7 @@ function Navbar() {
             
             <div className="flex items-center gap-3 ">
               {/* Profile dropdown */}
-              <div className=" text-white flex gap-12 mr-10">
+              <div className=" text-white md:flex gap-12 mr-10 hidden">
                 <Link
                       href="/"
                       className="cursor-pointer"

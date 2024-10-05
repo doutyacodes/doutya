@@ -49,7 +49,10 @@
       "viewResults": "ফলাফল চাওক",
       "hideResults": "ফলাফল লুকাওক",
       "navigateToQuizAlt": "কুইজ শাখালৈ যাওক",
-      "quizCompletedAlt": "কুইজ সম্পূৰ্ণ হৈছে"
+      "quizCompletedAlt": "কুইজ সম্পূৰ্ণ হৈছে",
+      "takeTest":"পরীক্ষা নিন",
+      "findStrength":"নিজৰ শক্তি বিচাৰি উলিয়াওক",
+      "followCareer":"সঠিক কেৰিয়াৰ পথ অনুসৰণ কৰক"
     },
     "Navbar": {
       "profileAltText": "ইউজাৰ মেনু খোলক",

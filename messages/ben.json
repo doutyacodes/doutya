@@ -49,7 +49,10 @@
       "viewResults": "ফলাফল দেখুন",
       "hideResults": "ফলাফল লুকান",
       "navigateToQuizAlt": "কুইজ বিভাগে যান",
-      "quizCompletedAlt": "কুইজ সম্পন্ন হয়েছে"
+      "quizCompletedAlt": "কুইজ সম্পন্ন হয়েছে",
+      "takeTest": "পরীক্ষা নিন",
+      "findStrength":"আপনার শক্তি খুঁজুন",
+      "followCareer":"সঠিক কর্মজীবনের পথ অনুসরণ করুন"
     },
     "Navbar": {
       "profileAltText": "ইউজার মেনু খুলুন",
