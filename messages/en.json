@@ -1,0 +1,128 @@
+{
+  "LoginPage": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "NoAccount": "Don't have an account?",
+    "Signup": "Signup",
+    "LoginButton": "Log In"
+  },
+  "SignupPage": {
+    "title": "Sign Up",
+    "gender": "Gender",
+    "genderOptions": {
+      "mr": "Mr",
+      "miss": "Miss",
+      "mrs": "Mrs"
+    },
+    "name": "Name",
+    "username": "Username (Don't include space in your username)",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "mobile": "Mobile Number",
+    "country": "Select Your Country",
+    "dob": "Date of Birth",
+    "dobValidation": "Age must be a minimum of 5 years.",
+    "collegeStudent": "Are you a college student?",
+    "studentOptions": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "college": "College",
+    "university": "University",
+    "submit": "Submit",
+    "alreadyRegistered": "Already Registered?",
+    "login": "Log In",
+    "forgotPassword": "Forgot Password?",
+    "successMessage": "Successfully added to the database!",
+    "defaultErrorMessage": "Failed to add data.",
+    "usernameExists": "Username already exists",
+    "phoneExists": "Phone number already exists"
+  },
+  "Banner": {
+    "title": "Personality",
+    "personalityTestTitle": "Personality Test",
+    "personalityTestDescription": "Begin your journey of self-discovery with the Personality Test! Uncover your unique traits to build a foundation for finding your ideal career path.",
+    "interestTestTitle": "Interest Test",
+    "interestTestDescription": "Explore your interests in the next phase! Uncover your passions and combine them with your personality profile to find career paths that truly resonate with you.",
+    "loadingText": "Loading...",
+    "viewResults": "View Results",
+    "hideResults": "Hide Results",
+    "navigateToQuizAlt": "Navigate to Quiz Section",
+    "quizCompletedAlt": "Quiz Completed"
+  },
+  "Navbar": {
+    "profileAltText": "Open user menu",
+    "profileLink": "Your Profile",
+    "careersLink": "Careers",
+    "signOutLink": "Sign Out",
+    "loginLink": "Login",
+    "aboutUsLink": "About Us",
+    "solutionsPlaceholder": "Solutions",
+    "options": {
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3"
+    },
+    "sidebarCloseButton": "×",
+    "sidebarLogin": "Login"
+  },
+  "ResultsPage": {
+    "title": "Results",
+    "description": "Description",
+    "strengths": "Strengths",
+    "weaknesses": "Weaknesses",
+    "opportunities": "Opportunities",
+    "threats": "Threats",
+    "careers": "Most Suitable Careers",
+    "loading": "Loading"
+  },
+  "ProfilePage": {
+    "backToDashboard": "Back to Dashboard",
+    "myProfile": "My Profile",
+    "gender": "Gender",
+    "select": "Select",
+    "male": "Mr",
+    "female": "Miss",
+    "mrs": "Mrs",
+    "name": "Name",
+    "username": "Username",
+    "password": "Password",
+    "mobileNumber": "Mobile Number",
+    "dob": "Date of Birth",
+    "student": "Are you a college student?",
+    "yes": "Yes",
+    "no": "No",
+    "college": "College",
+    "university": "University",
+    "yearAndMonthOfPassing": "Year and Month of Passing",
+    "currentEnrollment": "Current Enrollment",
+    "highestDegree": "Highest Degree",
+    "highSchool": "High School",
+    "associateDegree": "Associate Degree",
+    "bachelorsDegree": "Bachelor's Degree",
+    "mastersDegree": "Master's Degree",
+    "doctorate": "Doctorate",
+    "verifiedProfile": "Verified Profile",
+    "loading": "Loading...",
+    "saveChanges": "Save Changes",
+    "passwordRequired": "Password must be at least 6 characters long",
+    "passwordSpecial":"Password must contain at least one special character.",
+    "confirmPasswordRequired": "Confirm Password",
+    "ageValidation": "Age must be a minimum of 5 years.",
+    "userDataUpdated": "User Data Updated",
+    "usernameExists": "Username is already taken",
+    "unexpectedError": "An unexpected error occurred."
+  },
+  "CareerPage":
+    {
+      "careers": "Careers",
+      "roadmap": "Roadmap",
+      "contests": "Contests",
+      "test": "Test",
+      "feedback": "Feedback",
+      "challenges": "Challenges",
+      "community": "Community",
+      "careerAdding": "Career is being added. Please wait..."
+    }
+}

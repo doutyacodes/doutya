@@ -29,9 +29,9 @@ const MobileNavigation = () => {
 
   const navItems = [
     { name: 'Home', href: '/', icon: <GoHomeFill /> },
-    { name: 'Analytics', href: '/pro', icon: <IoMdAnalytics /> },
-    { name: 'My Careers', href: '/my-careers', icon: <FaBriefcase /> },
-    { name: 'Profile', href: '/my-school', icon: <RxAvatar /> },
+    { name: 'Dashboard', href: '/dashboard', icon: <IoMdAnalytics /> },
+    { name: 'My Careers', href: '/dashboard/careers', icon: <FaBriefcase /> },
+    { name: 'Profile', href: '/dashboard/user-profile', icon: <RxAvatar /> },
   ];
   
 

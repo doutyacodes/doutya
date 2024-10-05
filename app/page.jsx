@@ -76,10 +76,12 @@ import React, { useState } from "react";
 import { IoIosClose, IoIosMenu } from "react-icons/io";
 import ListComponents from "./_components/ListComponents";
 import Footer from "./_components/Footer";
+import { cn } from "@/lib/utils";
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeLink, setActiveLink] = useState(1);
+  const [featureLink, setFeatureLink] = useState(1);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -116,6 +118,56 @@ const Page = () => {
     },
   ];
   const activeItem = revenueList.find((item) => item.id === activeLink);
+  const features = [
+    {
+      id: 1,
+      description: "Built on customer interactions",
+    },
+    {
+      id: 2,
+      description: "Powered by the industry’s leading AI",
+    },
+    {
+      id: 3,
+      description: "Meaningful insights to drive action",
+    },
+    {
+      id: 4,
+      description: "Enriched by a robust ecosystem",
+    },
+    {
+      id: 5,
+      description: "Purpose-built for revenue workflows and outcomes",
+    },
+  ];
+  const resources = [
+    {
+      type: "news",
+      title: "Gong named a leader in Forrester Wave 2024",
+      image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
+      description: "Revenue Orchestration Platforms For B2B",
+    },
+    {
+      type: "executive blog",
+      title: "Why Companies are Shifting to AI-Powered Revenue Forecasting",
+      description: "",
+      image: null,
+    },
+    {
+      type: "ebook",
+      title: "8 Key Email Templates for Sales Success",
+      description: "",
+      image: null,
+    },
+    {
+      type: "gong labs",
+      title:
+        "Selling is more complex than ever, and 24M sales calls told us why",
+      description: "",
+      image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
+    },
+  ];
+
   return (
     <main className="relative w-full max-lg:bg-white min-h-screen">
       <header className="flex justify-between items-center max-w-[1200px] mx-auto px-4">
@@ -130,19 +182,27 @@ const Page = () => {
         </div>
         <ul className="lg:flex hidden gap-7">
           <li>
+            
             <p className="text-white text-sm cursor-pointer">Product</p>
           </li>
           <li>
             <p className="text-white text-sm cursor-pointer">Solutions</p>
           </li>
           <li>
-            <p className="text-white text-sm cursor-pointer">Customer</p>
+          <Link href={"/careers"}>
+
+            <p className="text-white text-sm cursor-pointer">Careers</p>
+            </Link>
           </li>
           <li>
-            <p className="text-white text-sm cursor-pointer">Resources</p>
+          <Link href={"/blog"}>
+            <p className="text-white text-sm cursor-pointer">Blog</p>
+            </Link>
           </li>
           <li>
-            <p className="text-white text-sm cursor-pointer">Company</p>
+          <Link href={"/about"}>
+            <p className="text-white text-sm cursor-pointer">About</p>
+            </Link>
           </li>
         </ul>
         <div>
@@ -280,13 +340,91 @@ const Page = () => {
                     <h3 className="text-lg font-semibold mb-2 md:text-4xl">
                       {activeItem.subTitle}
                     </h3>
-                    <p className="text-gray-600 md:w-4/5">{activeItem.description}</p>
+                    <p className="text-gray-600 md:w-4/5">
+                      {activeItem.description}
+                    </p>
                   </div>
                 </div>
 
                 {/* On small screens: stack images and content */}
               </div>
             )}
+          </div>
+        </div>
+      </div>
+      <div className="w-full bg-gradient-to-tr from-[#b1aaf6] to-[#8054df]">
+        <div className="w-full max-w-[1200px] mx-auto px-3 py-5 space-y-4">
+          <h1 className="text-white text-2xl md:text-4xl font-bold text-center">
+            From Interactions to Insights to Revenue — All in One Platform
+          </h1>
+          <div className="grid grid-cols-12 w-full gap-3">
+            <div className="col-span-12 w-full md:col-span-6 ">
+              <div className="h-[1px] bg-white w-full" />
+              {features?.length > 0 &&
+                features?.map((item, index) => {
+                  return (
+                    <div
+                      className="w-full"
+                      onClick={() => setFeatureLink(item.id)}
+                    >
+                      <p className="my-8 text-white/70 hover:text-white font-semibold text-lg">
+                        0{index + 1} {item.description}
+                      </p>
+                      <div className="h-[1px] bg-white w-full" />
+                    </div>
+                  );
+                })}
+            </div>
+            <div className="col-span-12 w-full md:col-span-6">
+              <Image
+                src={`/assets/images/${featureLink}.webp`}
+                width={600}
+                height={700}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="w-full bg-white">
+        <div className="mx-auto max-w-[1200px] p-3">
+          <div className="grid grid-cols-12 gap-3">
+            <div className="col-span-12 md:col-span-4 space-y-5">
+              <p className="text-center md:text-left uppercase font-semibold text-lg text-[#8039df]">
+                Resources
+              </p>
+              <p className="text-center md:text-left uppercase font-bold text-3xl text-[#3e0075] ">
+                Unlock your team’s revenue potential
+              </p>
+            </div>
+            <div className="col-span-12 md:col-span-8 space-y-5 grid grid-cols-12 gap-3">
+              {resources?.length > 0 &&
+                resources?.map((item, index) => {
+                  return (
+                    <div
+                      className={cn(
+                        "w-full shadow hover:shadow-lg  p-4 bg-white border border-slate-300 rounded-md",
+                        index == 0 || index == 3
+                          ? "col-span-12 md:col-span-8 md:flex"
+                          : "col-span-12 md:col-span-4"
+                      )}
+                    >
+                      <div className="space-y-4">
+                        <p className="uppercase font-semibold text-[#8039df]">
+                          {item.type}
+                        </p>
+                        <p className="uppercase text-xl font-semibold text-[#3e0075]">
+                          {item.title}
+                        </p>
+                      </div>
+                      {item.image && (
+                        <div className="w-full h-full relative max-md:hidden">
+                          <Image src={item.image} fill className="rounded-md" />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
           </div>
         </div>
       </div>
