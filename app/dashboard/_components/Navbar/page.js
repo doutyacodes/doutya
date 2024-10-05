@@ -48,10 +48,30 @@ function Navbar() {
             <div className="flex items-center gap-3 ">
               {/* Profile dropdown */}
               <div className=" text-white flex gap-12 mr-10">
-                <div>Home</div>
-                <div>Tests</div>
-                <div>Careers</div>
-                <div>Communities</div>
+                <Link
+                      href="/"
+                      className="cursor-pointer"
+                    >
+                  <div>Home</div>
+                </Link>
+                <Link
+                      href="/dashboard/"
+                      className="cursor-pointer"
+                    >
+                  <div>Tests</div>
+                </Link>
+                <Link
+                      href="/dashboard/careers"
+                      className="cursor-pointer"
+                    >
+                  <div>Careers</div>
+                </Link>
+                <Link
+                      href="/dashboard/careers"
+                      className="cursor-pointer"
+                    >
+                  <div>Communities</div>
+                </Link>
               </div>
               <Menu as="div" className="relative ml-3">
                 <div className="flex items-center">
@@ -78,14 +98,14 @@ function Navbar() {
                       {t('profileLink')}
                     </Link>
                   </MenuItem>
-                  <MenuItem key={"Careers"}>
+                  {/* <MenuItem key={"Careers"}>
                     <Link
                       href="/dashboard/careers"
                       className="block px-4 py-2 text-sm text-gray-700"
                     >
                       {t('careersLink')}
                     </Link>
-                  </MenuItem>
+                  </MenuItem> */}
 
                   <MenuItem key={"Sign Out"}>
                     <a
