@@ -58,9 +58,80 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
     const MobileNavigation = dynamic(() => import('../Navbar/button.jsx'), { ssr: false });
 
     return (
+      <div className="h-screen flex items-center justify-center text-white">
+        <div>
+          <div className="font-semibold">
+            <LoadingOverlay loadText={"Loading..."} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  const MobileNavigation = dynamic(() => import('../Navbar/button.jsx'), { ssr: false });
+
+  return (
+    <div className="mb-8 w-full px-10 mt-18">
+      <h2 className="text-white mt-7 font-bold font-serif pb-6">
+        Personality
+      </h2>
+
+      
+      <div className="border-t border-cyan-400"></div>
+
+      <div className="mt-8 sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 hidden w-full">
+        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
+          <img
+            className="rounded-md object-cover w-full h-36"
+            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
+            alt="Test 4 Image"
+          />
+          <div className="border-t border-cyan-400"></div>
+          <h1 className="text-white mt-4 text-2xl font-bold ml-7">Personality Test</h1>
+          <div className="relative">
+            {!getQuizStatus(1).isCompleted ? (
+              <Link href="/quiz-section/1">
+                <img
+                  src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
+                  className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
+                  alt="Navigate to Quiz Section"
+                />
+              </Link>
+            ) : (
+              <img
+                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
+                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
+                alt="Quiz Completed"
+              />
+            )}
+          </div>
+          <div className="relative">
+            <p className="mx-auto text-white pt-8 w-4/5 text-justify">
+            Begin your journey of self-discovery with the Personality Test! Uncover your unique traits to build a foundation for finding your ideal career path.
+            </p>
+          </div>
+          <div className="text-center mt-4">
+            {getQuizStatus(1).isCompleted ? (
+              <button
+                className="bg-green-500 text-white px-4 py-2 rounded-md"
+                onClick={onToggleResults}
+              >
+                {showResults ? "Hide Results" : "View Results"}
+              </button>
+            ) : (
+              <button
+                className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
+                disabled
+              >
+                View Results
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="mb-7 w-full px-10 mt-18">
             <h2 className="text-white mt-7 font-bold font-serif pb-6">{t('title')}</h2> {/* Use translation */}
             <div className="border-t border-cyan-400"></div>
+
 
             <div className="mt-8 sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 hidden w-full">
                 <div className="border border-cyan-400 pb-3 rounded-sm w-full">
