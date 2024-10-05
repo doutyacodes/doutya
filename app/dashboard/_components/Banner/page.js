@@ -1,6 +1,3 @@
-
-
-
 import Link from "next/link";
 import React, { useEffect, useState, useRef  } from "react";
 import GlobalApi from "@/app/_services/GlobalApi";
@@ -69,7 +66,7 @@ function Banner({
   const MobileNavigation = dynamic(() => import('../Navbar/button.jsx'), { ssr: false });
 
   return (
-    <div className="mb-7 w-full px-10 mt-18">
+    <div className="mb-8 w-full px-10 mt-18">
       <h2 className="text-white mt-7 font-bold font-serif pb-6">
         Personality
       </h2>
