@@ -35,8 +35,10 @@ export const createSequence = async (resultDataArray, userId, quizId) => {
         secondPart: getAnalyticIds(resultDataArray, parts.secondPart),
         thirdPart: getAnalyticIds(resultDataArray, parts.thirdPart),
         fourthPart: getAnalyticIds(resultDataArray, parts.fourthPart)
-    };    
+    };
 
+    // console.log();
+    
     const getMostFrequentLetter = ids => {
         const frequency = new Map();
 
