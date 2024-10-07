@@ -3,6 +3,59 @@ import Image from "next/image";
 import React from "react";
 
 const Press = () => {
+  const company_news = [
+    {
+      date: "September 4, 2024",
+      title:
+        "Independent Research Firm Names Gong a Leader in Revenue Orchestration Platforms",
+      category: "Company news",
+    },
+    {
+      date: "August 6, 2024",
+      title:
+        "Gong Named to the Forbes Cloud 100 for the Fifth Consecutive Year",
+      category: "Company news",
+    },
+    {
+      date: "July 25, 2024",
+      title:
+        "IDC MarketScape Names Gong a Leader in Worldwide Revenue Intelligence Platforms 2024 Vendor Assessment",
+      category: "Company news",
+    },
+    {
+      date: "June 26, 2024",
+      title:
+        "Gong Named 'Best AI-Based Solution for Sales' in 2024 AI Breakthrough Awards",
+      category: "Company news",
+    },
+    {
+      date: "June 25, 2024",
+      title:
+        "Gong Unveils New AI Capabilities to Help Revenue Teams Drive Excellence in Execution",
+      category: "Company news",
+    },
+    {
+      date: "May 15, 2024",
+      title: "Gong Recognizes Top Companies Harnessing AI for Revenue Success",
+      category: "Company news",
+    },
+    {
+      date: "May 15, 2024",
+      title: "Gong Appoints Emily He as Chief Marketing Officer",
+      category: "Company news",
+    },
+    {
+      date: "March 26, 2024",
+      title:
+        "Gong Introduces Industry’s First AI 'Ask Anything' Solution for Individual Contacts to Help Revenue Teams Gain More Complete Insights and Boost Efficiency",
+      category: "Company news",
+    },
+    {
+      date: "March 5, 2024",
+      title: "Gong Named to Forbes' List of America’s Best Startup Employers",
+      category: "Company news",
+    },
+  ];
   return (
     <main className="relative w-full ">
       <div className="min-h-screen bg-white py-2">
