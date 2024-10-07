@@ -59,12 +59,12 @@ function RoadMap({ selectedCareer }) {
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
       const response = await GlobalApi.GetRoadMapData(selectedCareer.id, token, language);
-      
+      // console.log("GetRoadMapData",response.data)
       // Check for the response status
       if (response.status === 200) {  // Successful response
         if (currentRequestId === requestIdRef.current) { // Ensure this is the latest request
           const results = response.data;
-          console.log(results);
+          // console.log(results);
           setRoadMapData(results);
         }
       } else if (response.status === 202) {  // Data generation in progress

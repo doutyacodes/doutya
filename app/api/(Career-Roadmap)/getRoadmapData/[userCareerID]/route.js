@@ -44,10 +44,10 @@ export async function GET(req, { params }) {
 
       const roadmapStatus = userCareerStatus[0]?.roadmap_status;
 
-      if (roadmapStatus === 'in_progress') {
-          // If the roadmap generation is in progress, return a message
-          return NextResponse.json({ message: "Data is already being generated. Please wait." }, { status: 202 });
-      }
+      // if (roadmapStatus === 'in_progress') {
+      //     // If the roadmap generation is in progress, return a message
+      //     return NextResponse.json({ message: "Data is already being generated. Please wait." }, { status: 202 });
+      // }
 
     console.log("userCareerID", userCareerID);
 
@@ -108,18 +108,18 @@ export async function GET(req, { params }) {
     if (userMilestones.length === 0) {
 
       // Mark the roadmap status as "in_progress" before starting generation
-      await db
-      .update(USER_CAREER_STATUS)
-      .set({ roadmap_status: 'in_progress' }) // Update the roadmap status
-      .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
-      .execute();
+      // await db
+      // .update(USER_CAREER_STATUS)
+      // .set({ roadmap_status: 'in_progress' }) // Update the roadmap status
+      // .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+      // .execute();
 
       // Send immediate response
       const loadingResponse = { message: "Generating data, please wait..." };
 
       // Trigger the data generation asynchronously
       // Start the background roadmap generation process
-      fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language);
+     await fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language);
       // fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2)
       // .then(async () => {
       //     // After data is generated, update the status to "completed"

@@ -77,6 +77,7 @@ function Page() {
       }
   
       const response = await GlobalApi.GetCarrerData(token);
+      // console.log("GetCarrerData",response.data)
       if (response.status === 201 && response.data && response.data.length > 0) {
         setCareerData(response.data);
       } else {
