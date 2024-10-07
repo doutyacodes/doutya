@@ -41,7 +41,8 @@ export async function POST(req) {
       university: data?.university,
       yearOfPassing: data?.yearOfPassing,
       monthOfPassing: data?.monthOfPassing,
-      country: data?.country
+      country: data?.country,
+      language:data?.language
     });
 
     if (!result) {

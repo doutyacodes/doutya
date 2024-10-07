@@ -38,7 +38,15 @@
     "defaultErrorMessage": "ডেটা যোগ কৰিবলৈ ব্যৰ্থ।",
     "usernameExists": "ইউজাৰনেম আগতেৰে আছে",
     "phoneExists": "ম'বাইল নম্বৰ আগতেৰে আছে",
-    "mobileMinLength": "ফোন নম্বৰ ১০ সংখ্যাৰ হ'ব লাগিব"
+    "mobileMinLength": "ফোন নম্বৰ ১০ সংখ্যাৰ হ'ব লাগিব",
+    "passwordMinLength": "পাছৱৰ্ডৰ ন্যূনতম ৬টা অক্ষৰ হ'ব লাগিব",
+    "passwordPattern": "পাছৱৰ্ডত অন্তত এক বিশেষ চিহ্ন থাকিব লাগিব (!@#$%^&*)",
+    "education": "সৰ্বোচ্চ শিক্ষা",
+    "selectHighestEducation": "সৰ্বোচ্চ শিক্ষা বাছনি কৰক",
+    "bachelorsDegree": "বাচেলৰ ডিগ্ৰী",
+    "associateDegree": "অ্যাসোসিয়েট ডিগ্ৰী",
+    "mastersDegree": "মাস্টাৰ ডিগ্ৰী",
+    "dobRequired": "জন্ম তাৰিখ আৱশ্যক"
   },
   "Banner": {
     "title": "ব্যক্তিত্ব",
@@ -128,7 +136,8 @@
     "feedback": "মন্তব্য",
     "challenges": "চেলেঞ্জ",
     "community": "কমিউনিটি",
-    "careerAdding": "কেরিয়াৰ যোগ হৈছে। অনুগ্ৰহ কৰি অপেক্ষা কৰক..."
+    "careerAdding": "কেরিয়াৰ যোগ হৈছে। অনুগ্ৰহ কৰি অপেক্ষা কৰক...",
+    "age":"বয়স"
   },
   "Result2": {
     "match": "মিল",
@@ -194,5 +203,12 @@
     "interestRecognitionTest": "ইচ্ছা স্বীকৃতি পৰীক্ষা",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "পৰৱৰ্তী"
+  },
+  "countryPage": {
+    "selectYourCountries": "আপোনাৰ দেশসমূহ বাচনি কৰক",
+    "selectEducationCountry": "আপোনাৰ শিক্ষা দেশ বাচনি কৰক",
+    "selectCurrentCountry": "আপোনাৰ বৰ্তমান দেশ বাচনি কৰক",
+    "pleaseSelectBoth": "দয়া কৰি দুয়োখন দেশ বাচনি কৰক",
+    "submit": "জমা দিয়ক"
   }
 }

@@ -32,7 +32,7 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
         - present_trends: Current trends and opportunities in the field.
         - future_prospects: Predictions and potential growth in this career.
         - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full text format.
-        - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old until the age of 20-year-old aspiring to be a ${career} and education level is '${education}'. 
+        - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old aspiring to be a ${career} and education level is '${education}'. 
 
         The roadmap should be broken down into intervals of every **6 months**, starting from the initial age (${age}), and include the following types of milestones:
         1. Educational Milestones
@@ -62,7 +62,7 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
             {
                 model: "gpt-4o-mini", 
                 messages: [{ role: "user", content: prompt }],
-                max_tokens: 5000,
+                max_tokens: 10000,
             },
             {
                 headers: {
