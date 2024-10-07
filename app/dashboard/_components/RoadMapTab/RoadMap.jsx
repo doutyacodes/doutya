@@ -1,5 +1,3 @@
-
-
 import GlobalApi from '@/app/_services/GlobalApi';
 import { CheckCircle } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -7,58 +5,64 @@ import toast from 'react-hot-toast';
 
 function RoadMap({ selectedCareer }) {
   const [activeTab, setActiveTab] = useState('Educational Milestones');
-  const [roadMapData, setRoadMapData] = useState([])
+  const [roadMapData, setRoadMapData] = useState([]);
   const [completedTasks, setCompletedTasks] = useState({});
-  const [milestones, setMilestones] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [LoadMessage, setLoadMessage] = useState('')
+  const [milestones, setMilestones] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadMessage, setLoadMessage] = useState('');
 
   const language = localStorage.getItem('language') || 'en';
-
   const requestIdRef = useRef(0);
 
   const getRoadmap = async () => {
     setIsLoading(true);
-    setRoadMapData([]);
-    setMilestones([]);
-    setCompletedTasks({});
-    setLoadMessage("Fetching roadmap data, please wait...");
+    setLoadMessage('Fetching roadmap data, please wait...');
 
     const currentRequestId = ++requestIdRef.current;
-    
+
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+      const token = localStorage.getItem('token');
       const response = await GlobalApi.GetRoadMapData(selectedCareer.id, token, language);
-      
-      if (response.status === 200) {
-        if (currentRequestId === requestIdRef.current) {
-          const results = response.data;
-          console.log(results);
-          setRoadMapData(results);
-        }
-      } else if (response.status === 202) {
-        if (currentRequestId === requestIdRef.current) {
-          setLoadMessage(response.data.message);
-        }
-        console.log("Status 202 received, starting polling.");
+
+      if (response.status === 200 && currentRequestId === requestIdRef.current) {
+        setRoadMapData(response.data);
+      } else if (response.status === 202 && currentRequestId === requestIdRef.current) {
+        setLoadMessage(response.data.message || 'Generating roadmap data, please wait...');
+        checkForNewData(selectedCareer.id, token);
       }
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        toast.error(`Error: ${err.response.data.message}`);
-      } else {
-        toast.error('Failed to fetch Road Map data. Please try again later.');
-      }
+      toast.error('Failed to fetch Road Map data. Please try again later.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    getRoadmap()
-  }, [selectedCareer])
+  const checkForNewData = async (userCareerId, token) => {
+    let attempts = 0;
+    const maxAttempts = 5;
+    const interval = 30000; // Poll every 30 seconds
+
+    const intervalId = setInterval(async () => {
+      attempts += 1;
+      const response = await GlobalApi.GetRoadMapData(userCareerId, token);
+      
+      if (response.status === 200) {
+        clearInterval(intervalId);
+        setRoadMapData(response.data);
+        toast.success('Data generation completed successfully!');
+      } else if (attempts >= maxAttempts) {
+        clearInterval(intervalId);
+        toast.error('Data generation is still in progress. Please try again later.');
+      }
+    }, interval);
+  };
 
   useEffect(() => {
-    if(roadMapData.length > 0) {
+    getRoadmap();
+  }, [selectedCareer]);
+
+  useEffect(() => {
+    if (roadMapData.length > 0) {
       const milestones = roadMapData.reduce((acc, milestone) => {
         const { milestoneCategoryName, ...milestoneData } = milestone;
         if (!acc[milestoneCategoryName]) {
@@ -67,10 +71,10 @@ function RoadMap({ selectedCareer }) {
         acc[milestoneCategoryName].push(milestoneData);
         return acc;
       }, {});
-      setMilestones(milestones)
+      setMilestones(milestones);
     }
-  }, [roadMapData])
-  
+  }, [roadMapData]);
+
   const handleComplete = async (tab, milestoneId) => {
     const isCompleted = !completedTasks[tab]?.[milestoneId];
     setCompletedTasks((prevState) => ({
@@ -80,26 +84,21 @@ function RoadMap({ selectedCareer }) {
         [milestoneId]: isCompleted,
       },
     }));
-  
+
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      const data = {
-        milestoneId,
-        completed: isCompleted,
-      };
-  
+      const token = localStorage.getItem('token');
+      const data = { milestoneId, completed: isCompleted };
+
       const response = await GlobalApi.UpdateMileStoneStatus(data, token);
-  
+
       if (response.status === 201) {
-        toast.success("Milestone status updated");
+        toast.success('Milestone status updated');
       } else {
-        const errorMessage = response.data?.message || "Failed to update status.";
+        const errorMessage = response.data?.message || 'Failed to update status.';
         toast.error(`Error: ${errorMessage}`);
       }
     } catch (err) {
-      toast.error("An unexpected error occurred.");
-    } finally {
-      getRoadmap()
+      toast.error('An unexpected error occurred.');
     }
   };
 
@@ -107,7 +106,7 @@ function RoadMap({ selectedCareer }) {
     <div className="p-2 sm:p-4 bg-white">
       {!milestones ? (
         <div className="flex items-center justify-center h-[300px]">
-          <p className="text-gray-700">{LoadMessage}</p>
+          <p className="text-gray-700">{loadMessage}</p>
         </div>
       ) : (
         <>
@@ -153,7 +152,7 @@ function RoadMap({ selectedCareer }) {
                 </div>
               ))
             ) : (
-              <p className="text-gray-600 text-center">{LoadMessage}</p>
+              <p className="text-gray-600 text-center">{loadMessage}</p>
             )}
           </div>
         </>

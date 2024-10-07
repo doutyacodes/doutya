@@ -146,41 +146,41 @@ function Page() {
         roadMapLoading={roadMapLoading}
       />
 
-      <div className="flex flex-col sm:flex-row justify-start md:items-center items-start gap-4 sm:gap-10 text-white bg-gradient-to-r from-teal-200 to-orange-200 pb-4 sm:p-10 mb-5 overflow-x-auto">
-        <p className="text-center font-bold text-black text-2xl sm:text-4xl  md:pl-10 md:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">{t('careers')}</p>
-        <div className="flex gap-4 overflow-x-auto sm:pb-0 pl-10">
-          {careerData.map((career, index) => (
-            <div
-              key={index}
-              onClick={() => handleCareerClick(career)}
-              className={`min-w-[80px] w-20 h-20 sm:w-32 sm:h-32 p-1 sm:p-2 shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95 ${
-                selectedCareer && selectedCareer.id === career.id
-                  ? "bg-blue-100 border-2 border-blue-500"
-                  : "bg-white"
-              }`}
-            >
-              <p className="text-center text-xs sm:text-lg font-bold text-blue-900">
-                {career.career_name}
-              </p>
-            </div>
-          ))}
-          
-          {roadMapLoading && (
-            <div className="min-w-[80px] w-20 h-20 sm:w-32 sm:h-32 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95">
-              <p className="text-center text-xs sm:text-sm font-bold text-blue-900">
-                {t('careerAdding')}
-              </p>
-            </div>
-          )}
-
-          <div
-            className="min-w-[80px] w-20 h-20 sm:w-32 sm:h-32 p-2 sm:p-5 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95"
-            onClick={handleAddCareerClick}
-          >
-            <PlusIcon className="text-gray-600 font-thin h-6 w-6 sm:h-10 sm:w-10" />
-          </div>
-        </div>
+<div className="flex flex-col sm:flex-row justify-start md:items-center items-start gap-4 sm:gap-10 text-white bg-gradient-to-r from-teal-200 to-orange-200 md:p-4 max-md:pb-4 sm:p-10 mb-5">
+  <p className="text-center font-bold text-black text-2xl sm:text-4xl md:pl-10 md:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">{t('careers')}</p>
+  <div className="flex flex-wrap gap-4 justify-start items-center max-md:pl-4">
+    {careerData.map((career, index) => (
+      <div
+        key={index}
+        onClick={() => handleCareerClick(career)}
+        className={`w-20 h-20 sm:w-28 sm:h-28 p-1 sm:p-2 shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95 ${
+          selectedCareer && selectedCareer.id === career.id
+            ? "bg-blue-100 border-2 border-blue-500"
+            : "bg-white"
+        }`}
+      >
+        <p className="text-center text-xs sm:text-sm font-bold text-blue-900 break-words">
+          {career.career_name}
+        </p>
       </div>
+    ))}
+    
+    {roadMapLoading && (
+      <div className="w-20 h-20 sm:w-28 sm:h-28 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95">
+        <p className="text-center text-xs sm:text-sm font-bold text-blue-900">
+          {t('careerAdding')}
+        </p>
+      </div>
+    )}
+
+    <div
+      className="w-20 h-20 sm:w-28 sm:h-28 p-2 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95"
+      onClick={handleAddCareerClick}
+    >
+      <PlusIcon className="text-gray-600 font-thin h-6 w-6 sm:h-8 sm:w-8" />
+    </div>
+  </div>
+</div>
 
       {selectedCareer && (
         <div className="flex flex-col md:flex-row px-4 md:px-20 gap-6 md:gap-10 py-6 md:py-10 bg-gradient-to-r from-sky-200 to-green-200">
