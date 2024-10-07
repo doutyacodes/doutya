@@ -37,7 +37,8 @@
     "successMessage": "সফলভাবে ডেটাবেসে যোগ করা হয়েছে!",
     "defaultErrorMessage": "ডেটা যোগ করতে ব্যর্থ হয়েছে।",
     "usernameExists": "ইউজারনেম আগেই নেওয়া হয়েছে",
-    "phoneExists": "ফোন নম্বর আগেই নেওয়া হয়েছে"
+    "phoneExists": "ফোন নম্বর আগেই নেওয়া হয়েছে",
+    "mobileMinLength": "ফোন নম্বর ১০ সংখ্যার হতে হবে"
   },
   "Banner": {
     "title": "ব্যক্তিত্ব",
@@ -149,7 +150,9 @@
     "selectCareer": "এই পেশা নির্বাচন করুন",
     "saveResults": "ফলাফল সংরক্ষণ করুন",
     "careerSuggestion": "ক্যারিয়ার পরামর্শ",
-    "writeFeedback": "আপনার প্রতিক্রিয়া লিখুন (ঐচ্ছিক)।"
+    "writeFeedback": "আপনার প্রতিক্রিয়া লিখুন (ঐচ্ছিক)।",
+    "selectIndustry": "একটি শিল্প নির্বাচন করুন",
+    "deselect": "বাছাই তুলে নিন"
   },
   "FeedbackPage": {
     "careerFeedback": "ক্যারিয়ার প্রতিক্রিয়া",
@@ -184,6 +187,15 @@
     "errorSavingProgress": "আপনার অগ্রগতি সংরক্ষণে ত্রুটি হয়েছে। অনুগ্রহ করে পরে আবার চেষ্টা করুন।",
     "quizSubmitSuccess": "কুইজ সফলভাবে সম্পন্ন হয়েছে!",
     "quizSubmitFailed": "কুইজ জমা দিতে ব্যর্থ।",
-    "errorSubmittingQuiz": "ত্রুটি: কুইজ জমা দিতে ব্যর্থ।"
+    "errorSubmittingQuiz": "ত্রুটি: কুইজ জমা দিতে ব্যর্থ।",
+    "navigating": "হোম পেজে নিয়ে যাওয়া হচ্ছে"
+  },
+  "Quiz2": {
+    "loading": "লোড হচ্ছে...",
+    "quizCompleted": "কুইজ সফলভাবে সম্পন্ন হয়েছে",
+    "navigating": "হোম পেজে নিয়ে যাওয়া হচ্ছে",
+    "interestRecognitionTest": "রুচি স্বীকৃতি পরীক্ষা",
+    "questionProgress": "{currentQuestionIndex + 1}/30",
+    "next": "পরবর্তী"
   }
 }

@@ -19,7 +19,7 @@ const languageOptions = {
     ge: 'in German'
   };
 
-export async function fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2) {
+export async function fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language) {
     console.log("userCareerID:",userCareerID, "age:",age, "education:",education, "career:",career, "type1:",type1, "type2:",type2);
     try {
         const prompt = `Provide detailed information for the career named "${career}" based on the following criteria:

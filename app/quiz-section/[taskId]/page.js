@@ -188,7 +188,7 @@ function Page({ params }) {
           </div>
 
           <p className="mt-4">
-            Navigating to home page in {secondsRemaining} seconds
+            {t('navigating')} {secondsRemaining} seconds
           </p>
         </div>
       </div>

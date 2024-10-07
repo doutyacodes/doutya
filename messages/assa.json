@@ -37,7 +37,8 @@
     "successMessage": "সফলভাবে ডেটাবেচত যোগ হৈছে!",
     "defaultErrorMessage": "ডেটা যোগ কৰিবলৈ ব্যৰ্থ।",
     "usernameExists": "ইউজাৰনেম আগতেৰে আছে",
-    "phoneExists": "ম'বাইল নম্বৰ আগতেৰে আছে"
+    "phoneExists": "ম'বাইল নম্বৰ আগতেৰে আছে",
+    "mobileMinLength": "ফোন নম্বৰ ১০ সংখ্যাৰ হ'ব লাগিব"
   },
   "Banner": {
     "title": "ব্যক্তিত্ব",
@@ -146,7 +147,9 @@
     "selectCareer": "এই পেচা বাছনি কৰক",
     "saveResults": "ফলাফল সংৰক্ষণ কৰক",
     "careerSuggestion":"কৰিয়াৰ পৰামৰ্শ",
-    "writeFeedback":"আপোনাৰ মতামত লিখক (ঐচ্ছিক)।"
+    "writeFeedback":"আপোনাৰ মতামত লিখক (ঐচ্ছিক)।",
+    "selectIndustry": "এটা উদ্যোগ বাছনি কৰক",
+    "deselect": "অপছন্দ কৰক"
   },
   "FeedbackPage": {
     "careerFeedback": "পেচা মতামত",
@@ -181,6 +184,15 @@
     "errorSavingProgress": "আপোনাৰ অগ্ৰগতি সংৰক্ষণত ত্ৰুটি ঘটিছে। অনুগ্ৰহ কৰি পাছত পুনৰ চেষ্টা কৰক।",
     "quizSubmitSuccess": "কুইজ সফলভাৱে সম্পন্ন হৈছে!",
     "quizSubmitFailed": "কুইজ জমা দিবলৈ ব্যৰ্থ।",
-    "errorSubmittingQuiz": "ত্রুটি: কুইজ জমা দিবলৈ ব্যৰ্থ।"
+    "errorSubmittingQuiz": "ত্রুটি: কুইজ জমা দিবলৈ ব্যৰ্থ।",
+    "navigating": "হোম পেজলৈ পৰিবৰ্তন কৰা হৈছে"
+  },
+  "Quiz2": {
+    "loading": "লোড হৈ আছে...",
+    "quizCompleted": "কুইজ সফলতাৰে সম্পূৰ্ণ",
+    "navigating": "হোম পেজলৈ পৰিবৰ্তন কৰা হৈছে",
+    "interestRecognitionTest": "ইচ্ছা স্বীকৃতি পৰীক্ষা",
+    "questionProgress": "{currentQuestionIndex + 1}/30",
+    "next": "পৰৱৰ্তী"
   }
 }

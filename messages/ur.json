@@ -37,7 +37,8 @@
     "successMessage": "کامیابی سے ڈیٹا بیس میں شامل کر دیا گیا!",
     "defaultErrorMessage": "ڈیٹا شامل کرنے میں ناکامی۔",
     "usernameExists": "یوزر نیم پہلے سے موجود ہے",
-    "phoneExists": "موبائل نمبر پہلے سے موجود ہے"
+    "phoneExists": "موبائل نمبر پہلے سے موجود ہے",
+    "mobileMinLength": "فون نمبر 10 ہندسوں کا ہونا چاہیے"
   },
   "Banner": {
     "title": "شخصیت",
@@ -149,7 +150,9 @@
     "selectCareer": "اس کیریئر کا انتخاب کریں",
     "saveResults": "نتائج محفوظ کریں",
     "careerSuggestion": "کیریئر تجاویز",
-    "writeFeedback": "اپنی رائے لکھیں (اختیاری)۔"
+    "writeFeedback": "اپنی رائے لکھیں (اختیاری)۔",
+    "selectIndustry": "ایک صنعت کا انتخاب کریں",
+    "deselect": "انتخاب ختم کریں"
   },
   "FeedbackPage": {
     "careerFeedback": "کیریئر کی رائے",
@@ -184,6 +187,15 @@
     "errorSavingProgress": "آپ کی پیش رفت کو محفوظ کرنے میں خرابی ہوئی۔ براہ کرم بعد میں دوبارہ کوشش کریں۔",
     "quizSubmitSuccess": "کویز کامیابی سے مکمل ہو گیا!",
     "quizSubmitFailed": "کویز جمع کروانے میں ناکام۔",
-    "errorSubmittingQuiz": "خرابی: کویز جمع کروانے میں ناکام۔"
+    "errorSubmittingQuiz": "خرابی: کویز جمع کروانے میں ناکام۔",
+    "navigating": "ہوم پیج پر منتقل ہو رہے ہیں"
+  },
+  "Quiz2": {
+    "loading": "لوڈ ہو رہا ہے...",
+    "quizCompleted": "کوئز کامیابی سے مکمل ہو گیا",
+    "navigating": "ہوم پیج پر منتقل ہو رہے ہیں",
+    "interestRecognitionTest": "دلچسپی کی پہچان کا امتحان",
+    "questionProgress": "{currentQuestionIndex + 1}/30",
+    "next": "اگلا"
   }
 }
