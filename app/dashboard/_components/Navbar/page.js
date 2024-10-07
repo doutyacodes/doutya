@@ -31,10 +31,10 @@ function Navbar() {
 
   return (
     <div>
-      <nav className="pt-3 pb-4">
-        <div className="container mx-auto flex items-center justify-between">
+      <nav className="pt-3 pb-4 md:px-16 px-8">
+        <div className=" mx-auto flex items-center md:justify-between justify-end">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center mr-16">
             <Image
               src={"/assets/images/logo-full.png"}
               width={150}

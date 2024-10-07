@@ -131,7 +131,8 @@
     "feedback": "Feedback",
     "challenges": "Challenges",
     "community": "Community",
-    "careerAdding": "Career is being added. Please wait..."
+    "careerAdding": "Career is being added. Please wait...",
+    "age":"Age"
   },
   "Result2": {
     "match": "Match",

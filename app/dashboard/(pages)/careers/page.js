@@ -1,3 +1,5 @@
+
+
 "use client";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import GlobalApi from "@/app/_services/GlobalApi";
@@ -6,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import AddCareer from '../../_components/AddCareer/AddCareer';
-import { Chip } from "@nextui-org/chip";
 import Tests from '../../_components/TestTab/Tests';
 import Contests from '../../_components/ContestTab/Contests';
 import Activity from '../../_components/Activities/activity';
@@ -40,20 +41,6 @@ function Page() {
     { key: 'community', label: t('community') }
   ];
 
-  const handleRoadmapClick = () => {
-    setShowRoadmap(!showRoadmap);
-    setShowFeedback(false);
-  };
-
-  const handleShowRoadMapDetails = () => {
-    setShowRoadMapDetails(!showRoadMapDetails);
-  };
-
-  const handleFeedbackClick = () => {
-    setShowFinalRoadMap(false);
-    setShowFeedback(true);
-  };
-
   useEffect(() => {
     const authCheck = () => {
       if (typeof window !== "undefined") {
@@ -84,17 +71,13 @@ function Page() {
     setIsLoading(true);
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      console.log("checkinggggg");
-
       if (!token) {
-        // If there's no token, it means the user hasn't done anything yet, so we just return early.
         setIsLoading(false);
         return;
       }
   
       const response = await GlobalApi.GetCarrerData(token);
       if (response.status === 201 && response.data && response.data.length > 0) {
-        console.log(response.data);
         setCareerData(response.data);
       } else {
         toast.error("No career data available at the moment.");
@@ -106,7 +89,6 @@ function Page() {
       setIsLoading(false);
     }
   };
-  
 
   useEffect(() => {
     getCareers();
@@ -131,7 +113,6 @@ function Page() {
         setCountry("");
         getCareers();
       } else if (response && response.status === 201)  {
-        // toast.error("Failed to save career data. Please try again later.");
         toast.error(response.data.message);
       }
     } catch (error) {
@@ -150,7 +131,7 @@ function Page() {
   }
 
   return (
-    <div className="w-4/5 mx-auto">
+    <div className="mx-auto bg-white">
       <Toaster />
 
       <AddCareer
@@ -165,75 +146,83 @@ function Page() {
         roadMapLoading={roadMapLoading}
       />
 
-      <p className="text-center text-white text-3xl mb-8">{t('careers')}</p>
-      <div className="flex justify-start gap-2 text-white bg-gradient-to-r from-teal-200 to-orange-200 p-5 sm:p-10 rounded-xl mb-10 overflow-x-auto">
-        {careerData.map((career, index) => (
+      <div className="flex flex-col sm:flex-row justify-start md:items-center items-start gap-4 sm:gap-10 text-white bg-gradient-to-r from-teal-200 to-orange-200 pb-4 sm:p-10 mb-5 overflow-x-auto">
+        <p className="text-center font-bold text-black text-2xl sm:text-4xl  md:pl-10 md:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">{t('careers')}</p>
+        <div className="flex gap-4 overflow-x-auto sm:pb-0 pl-10">
+          {careerData.map((career, index) => (
+            <div
+              key={index}
+              onClick={() => handleCareerClick(career)}
+              className={`min-w-[80px] w-20 h-20 sm:w-32 sm:h-32 p-1 sm:p-2 shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95 ${
+                selectedCareer && selectedCareer.id === career.id
+                  ? "bg-blue-100 border-2 border-blue-500"
+                  : "bg-white"
+              }`}
+            >
+              <p className="text-center text-xs sm:text-lg font-bold text-blue-900">
+                {career.career_name}
+              </p>
+            </div>
+          ))}
+          
+          {roadMapLoading && (
+            <div className="min-w-[80px] w-20 h-20 sm:w-32 sm:h-32 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95">
+              <p className="text-center text-xs sm:text-sm font-bold text-blue-900">
+                {t('careerAdding')}
+              </p>
+            </div>
+          )}
+
           <div
-            key={index}
-            onClick={() => handleCareerClick(career)}
-            className={`w-32 h-32 sm:w-48 sm:h-48 p-1 sm:p-2 shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95 ${
-              selectedCareer && selectedCareer.id === career.id
-                ? "bg-blue-100 border-2 border-blue-500"
-                : "bg-white"
-            }`}
-            style={{ minWidth: "8rem", minHeight: "8rem" }}
+            className="min-w-[80px] w-20 h-20 sm:w-32 sm:h-32 p-2 sm:p-5 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95"
+            onClick={handleAddCareerClick}
           >
-            <p className="text-center text-sm sm:text-lg font-bold text-blue-900 mb-2 sm:mb-4">
-              {career.career_name}
-            </p>
+            <PlusIcon className="text-gray-600 font-thin h-6 w-6 sm:h-10 sm:w-10" />
           </div>
-        ))}
-
-        {roadMapLoading && (
-          <div className="w-48 h-48 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95">
-            <p className="text-center text-sm font-bold text-blue-900 mb-4">
-              {t('careerAdding')}
-            </p>
-          </div>
-        )}
-
-        <div
-          className="w-32 h-32 sm:w-48 sm:h-48 p-2 sm:p-5 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150 active:scale-95"
-          onClick={handleAddCareerClick}
-          style={{ minWidth: "8rem", minHeight: "8rem" }}
-        >
-          <PlusIcon className="text-gray-600 font-thin h-10 w-10 sm:h-20 sm:w-20" />
         </div>
       </div>
 
       {selectedCareer && (
-        <>
-          <div className="bg-teal-400 flex justify-center items-center h-24 rounded-sm mb-4">
-            <h2 className="text-2xl text-black font-bold">
-              {selectedCareer.career_name}
-            </h2>
-          </div>
+        <div className="flex flex-col md:flex-row px-4 md:px-20 gap-6 md:gap-10 py-6 md:py-10 bg-gradient-to-r from-sky-200 to-green-200">
+          <div className="bg-white flex flex-col items-center w-full md:w-auto">
+            <div className="flex justify-center w-full items-center py-4 md:py-10 px-4 md:w-56">
+              <div className="text-xl md:text-2xl text-black font-bold text-center">
+                <p className="flex">{selectedCareer.career_name}</p>
+                {/*Insert Country over here*/}
+                <p className="font-medium md:text-lg text-sm"></p>
+              </div>
+            </div>
 
-          <div className="flex justify-center flex-wrap gap-4 mb-4">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                className={`${
-                  activeTab === tab.key
-                    ? "bg-gradient-to-r from-yellow-400 to-orange-400"
-                    : "bg-green-500"
-                } text-white font-bold py-2 px-4 rounded-full w-32`}
-                onClick={() => setActiveTab(tab.key)}
-              >
-                {tab.label.toUpperCase()}
-              </button>
-            ))}
+            <div className="flex flex-row md:flex-col justify-start md:justify-center gap-2 md:gap-4 text-xs md:text-base w-full mb-4 overflow-x-scroll md:overflow-x-visible max-md:px-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  className={`${
+                    activeTab === tab.key
+                      ? "bg-green-400"
+                      : "bg-neutral-300"
+                  } text-black font-semibold py-2 px-3 md:py-4 md:px-4 whitespace-nowrap md:w-full`}
+                  onClick={() => setActiveTab(tab.key)}
+                >
+                  {tab.label.toUpperCase()}
+                </button>
+              ))}
+            </div>
           </div>
-
-          {activeTab === "roadmap" && (
-            <RoadMap selectedCareer={selectedCareer} />
-          )}
-          {activeTab === "contests" && <Contests selectedCareer={selectedCareer} />}
-          {activeTab === "tests" && <Tests selectedCareer={selectedCareer} />}
-          {activeTab === "feedback" && <Feedback selectedCareer={selectedCareer} />}
-          {activeTab === "activities" && <Activity selectedCareer={selectedCareer} />}
-          {activeTab === "challenges" && <Challenge selectedCareer={selectedCareer} />}
-        </>
+          <div className="w-full h-full flex flex-col">
+            <div className="uppercase text-center text-white font-bold text-xl md:text-2xl bg-orange-400 py-3 md:py-5 border-4 border-white">{activeTab}</div>
+            {/*Insert country in the span*/}
+            <div className="text-center text-black text-lg md:text-xl py-3 md:py-5 mx-4 md:mx-10">{t('age')}: 
+              <span className="font-bold"></span>
+            </div>
+            {activeTab === "roadmap" && <RoadMap selectedCareer={selectedCareer} />}
+            {activeTab === "contests" && <Contests selectedCareer={selectedCareer} />}
+            {activeTab === "tests" && <Tests selectedCareer={selectedCareer} />}
+            {activeTab === "feedback" && <Feedback selectedCareer={selectedCareer} />}
+            {activeTab === "activities" && <Activity selectedCareer={selectedCareer} />}
+            {activeTab === "challenges" && <Challenge selectedCareer={selectedCareer} />}
+          </div>
+        </div>
       )}
     </div>
   );
