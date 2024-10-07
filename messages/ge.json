@@ -131,7 +131,8 @@
     "feedback": "Rückmeldung",
     "challenges": "Herausforderungen",
     "community": "Gemeinschaft",
-    "careerAdding": "Karriere wird hinzugefügt. Bitte warten..."
+    "careerAdding": "Karriere wird hinzugefügt. Bitte warten...",
+    "age":"Alter"
   },
   "Result2": {
     "match": "Übereinstimmung",
