@@ -15,12 +15,17 @@ export async function POST(req) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
+    console.log("userid", userId);
+    
     try {
         
             const savedProgress = await db
                                     .select()
                                     .from(USER_PROGRESS)
                                     .where(eq(USER_PROGRESS.user_id, userId),)
+
+            console.log("savedprogress", savedProgress);
+        
             // Create sequence and insert into QUIZ_SEQUENCES
             try {
                 await createSequence(savedProgress, userId, 1);

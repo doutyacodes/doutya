@@ -4,7 +4,8 @@ import QuizProgressAlert from "@/app/_components/QuizProgressAlert";
 import GlobalApi from "@/app/_services/GlobalApi";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast, { LoaderIcon, Toaster } from "react-hot-toast";
+
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -14,6 +15,7 @@ function Page({ params }) {
   const [secondsRemaining, setSecondsRemaining] = useState(5);
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [progressLoading, setProgressLoading] = useState(false)
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
   const quizId = params.taskId;
@@ -90,7 +92,7 @@ function Page({ params }) {
     setSelectedChoice(choice);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
 
     const answer = {
                       questionId: questions[currentQuestionIndex].id,
@@ -99,7 +101,7 @@ function Page({ params }) {
                       analyticId: selectedChoice.analyticId,
                     }
 
-    quizProgressSubmit(answer); 
+    await quizProgressSubmit(answer); 
       
     if (currentQuestionIndex < questions.length - 1) {
       /* Api to save the progress */
@@ -113,7 +115,7 @@ function Page({ params }) {
   };
 
   const quizProgressSubmit = async (data) => {
-    
+    setProgressLoading(true);
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.SaveQuizProgress(data, token, quizId);
@@ -127,6 +129,8 @@ function Page({ params }) {
       } catch (error) {
         console.error("Error submitting progress:", error.message);
         alert("There was an error saving your progress. Please try again later.");
+      } finally {
+        setProgressLoading(false);
       }
   };
 
@@ -194,32 +198,46 @@ function Page({ params }) {
         )
       }
       {questions.length > 0 && (
-        <div className="mt-4 pt-5 flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">
+        <div className="mt-4 pt-5 flex w-4/5 min-h-[20rem] flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">
           <div>
             <p className="font">{currentQuestionIndex + 1}/12</p>
           </div>
-          <div>
-            <p className="font-bold p-2 text-xl md:text-3xl">
-              {questions[currentQuestionIndex]?.question}
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2 w-full text-white">
-            {shuffledChoices.map((choice, index) => (
-              <button
-                key={index}
-                className={`py-2 px-4 rounded-md hover:cursor-pointer
-                  hover:bg-purple-300 hover:text-black transition duration-300 ease-in-ou ${
-                    selectedChoice?.id === choice.id
-                      ? "bg-green-500"
-                      : "bg-slate-400"
-                  }`}
-                onClick={() => handleChoiceSelect(choice)}
-              >
-                {choice.text}
-              </button>
-            ))}
-          </div>
+          {   
+            !progressLoading ?      
+            (
+            <>
+                <div>
+                  <p className="font-bold p-2 text-xl md:text-3xl">
+                    {questions[currentQuestionIndex]?.question}
+                  </p>
+                </div>
+    
+                <div className="flex flex-col gap-2 w-full text-white">
+                  {shuffledChoices.map((choice, index) => (
+                    <button
+                      key={index}
+                      className={`py-2 px-4 rounded-md hover:cursor-pointer
+                        hover:bg-purple-300 hover:text-black transition duration-300 ease-in-ou ${
+                          selectedChoice?.id === choice.id
+                            ? "bg-green-500"
+                            : "bg-slate-400"
+                        }`}
+                      onClick={() => handleChoiceSelect(choice)}
+                    >
+                      {choice.text}
+                    </button>
+                  ))}
+                </div>
+            </>
+            ) : (
+              <div className="inset-0 flex items-center my-16 justify-center bg-gray-800 bg-opacity-50 z-50">
+                <div className="flex items-center space-x-2">
+                  <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
+                  <span className="text-white">Loading..</span>
+                </div>
+              </div>
+            )
+          }
 
           <div>
             <button

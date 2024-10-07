@@ -457,7 +457,7 @@ import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import QuizProgressAlert from "@/app/_components/QuizProgressAlert";
 import GlobalApi from "@/app/_services/GlobalApi";
 import { cn } from "@/lib/utils";
-import toast, { Toaster } from "react-hot-toast";
+import toast, { LoaderIcon, Toaster } from "react-hot-toast";
 import GreenSlider from "@/app/dashboard/_components/GreenSlider";
 
 function Page({ params }) {
@@ -468,6 +468,7 @@ function Page({ params }) {
   const [questions, setQuestions] = useState([]);
   const [choices, setChoices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [progressLoading, setProgressLoading] = useState(false)
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
   const quizId = params.taskId;
@@ -532,14 +533,14 @@ function Page({ params }) {
     setSelectedChoice(choice);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const answer = {
       questionId: questions[currentQuestionIndex].questionId,
       optionId: selectedChoice.choiceId,
       optionText: selectedChoice.choiceText,
       personaTypeId: questions[currentQuestionIndex].personaTypeId,
     };
-    quizProgressSubmit(answer);
+    await quizProgressSubmit(answer);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -551,6 +552,7 @@ function Page({ params }) {
   };
 
   const quizProgressSubmit = async (data) => {
+    setProgressLoading(true);
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -569,6 +571,8 @@ function Page({ params }) {
       toast.error(
         "There was an error saving your progress. Please try again later."
       );
+    } finally {
+      setProgressLoading(false);
     }
   };
 
@@ -630,42 +634,55 @@ function Page({ params }) {
       {showAlert && <QuizProgressAlert />}
       <div className="flex justify-center items-center px-4">
         {questions.length > 0 && (
-          <div className="mt-4 pt-7 flex flex-col gap-8 justify-center items-center mx-auto text-white rounded-2xl p-[1px] bg-[#0097b2]">
-            <div>
-              <p className="font-extrabold text-center">
-                {currentQuestionIndex + 1}/30
-              </p>
-            </div>
-            <div className="bg-[#1b143a] p-3 rounded-2xl w-[600px]">
-              <div className="w-full flex justify-center">
-                <p className="font-bold p-2 text-xl text-center w-full flex items-center justify-center h-24">
-                  {questions[currentQuestionIndex].questionText}
+          <div className="mt-4 pt-7 min-h-[20rem] min-w-[600px] flex flex-col gap-8 justify-center items-center mx-auto text-white rounded-2xl p-[1px] bg-[#0097b2]">
+            {
+              !progressLoading ? (
+                <>
+                <div>
+                <p className="font-extrabold text-center">
+                  {currentQuestionIndex + 1}/30
                 </p>
-              </div>
-
-              <div className="w-full px-10 justify-center items-center flex">
-                <div className="flex flex-col gap-2 w-full text-white">
-                  <GreenSlider
-                    key={currentQuestionIndex}
-                    choices={choices}
-                    selectedChoice={selectedChoice}
-                    onChange={handleChoiceSelect}
-                  />
+                </div>
+                <div className="bg-[#1b143a] p-3 rounded-2xl w-[600px]">
+                  <div className="w-full flex justify-center">
+                    <p className="font-bold p-2 text-xl text-center w-full flex items-center justify-center h-24">
+                      {questions[currentQuestionIndex].questionText}
+                    </p>
+                  </div>
+  
+                  <div className="w-full px-10 justify-center items-center flex">
+                    <div className="flex flex-col gap-2 w-full text-white">
+                      <GreenSlider
+                        key={currentQuestionIndex}
+                        choices={choices}
+                        selectedChoice={selectedChoice}
+                        onChange={handleChoiceSelect}
+                      />
+                    </div>
+                  </div>
+  
+                  <div className="w-full justify-center items-center flex my-5">
+                    <button
+                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
+                        selectedChoice ? "" : "opacity-50 cursor-not-allowed"
+                      }`}
+                      onClick={handleNext}
+                      disabled={!selectedChoice}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </>
+              ) : (
+                <div className="inset-0 flex items-center my-16 justify-center z-50">
+                <div className="flex items-center space-x-2">
+                  <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
+                  <span className="text-white">Loading..</span>
                 </div>
               </div>
-
-              <div className="w-full justify-center items-center flex my-5">
-                <button
-                  className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
-                    selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-                  }`}
-                  onClick={handleNext}
-                  disabled={!selectedChoice}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
+              )
+            }
           </div>
         )}
       </div>

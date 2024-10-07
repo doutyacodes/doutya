@@ -78,8 +78,7 @@ export async function POST(req) {
         } catch (error) {
             console.error("Error adding progress sequence:", error);
             throw error;
-        }
-        
+        }        
         return NextResponse.json({ message: 'Progress added successfully' }, { status: 201 });
         
     } catch (error) {
