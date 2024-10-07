@@ -52,6 +52,10 @@ function Page({ params }) {
       questions: "/analytics_questions/marathi_questions.json",
       options: "/options/marathi_options.json"
     },
+    en:{
+      questions: "/analytics_questions/english_questions.json",
+      options: "/options/english_options.json"
+    }
   };
 
   useEffect(() => {
@@ -129,41 +133,43 @@ function Page({ params }) {
         let questionsData = []; // Use a local variable for questions
         let optionsData = []; // Use a local variable for options
 
-        if (savedLanguage.toLowerCase() === 'en') {
-          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-          const resp = await GlobalApi.GetQuizData(quizId, token);
-          questionsData = resp.data.questions; // Store fetched questions in the local variable
-          setCurrentQuestionIndex(resp.data.quizProgress);
-          if (resp.data.quizProgress > 0) {
-            setShowAlert(true); // Set showAlert to true when resuming the quiz
-          }
-        } else {
+        // if (savedLanguage.toLowerCase() === 'en') {
+        //   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        //   const resp = await GlobalApi.GetQuizData(quizId, token);
+        //   questionsData = resp.data.questions; // Store fetched questions in the local variable
+        //   setCurrentQuestionIndex(resp.data.quizProgress);
+        //   if (resp.data.quizProgress > 0) {
+        //     setShowAlert(true); 
+        //   }
+        // } else {
           // Load questions from the JSON file for other languages
           const languageFile = languageFiles[savedLanguage.toLowerCase()].questions;
+
           if (languageFile) {
             const response = await fetch(languageFile);
-            questionsData = await response.json(); // Store fetched questions in the local variable
+            questionsData = await response.json(); 
+            
           } else {
             console.error("Language file not found for:", savedLanguage);
           }
-
-          // Load options from the JSON file for other languages
           const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
+          console.log(optionsFile)
+          
           if (optionsFile) {
             const optionsResponse = await fetch(optionsFile);
-            optionsData = await optionsResponse.json(); // Store fetched options in the local variable
+            optionsData = await optionsResponse.json(); 
           } else {
             console.error("Options file not found for:", savedLanguage);
           }
 
-          // Associate options with questions
           questionsData = questionsData.map(question => ({
             ...question,
             options: optionsData.filter(option => option.question_id === question.id)
           }));
-        }
+          console.log(questionsData)
+        // }
 
-        setQuestions(questionsData); // Set the state with the combined questions and options
+        setQuestions(questionsData); 
       } catch (error) {
         console.error("Error Fetching Quiz Data:", error);
       } finally {
@@ -213,6 +219,7 @@ function Page({ params }) {
     // Shuffle and set options for the current question
     if (questions.length > 0 && questions[currentQuestionIndex]?.options) {
       const choices = questions[currentQuestionIndex].options;
+      console.log(choices)
       setShuffledChoices([...choices].sort(() => Math.random() - 0.5));
     }
   }, [currentQuestionIndex, questions]);
