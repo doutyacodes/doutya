@@ -37,7 +37,8 @@
         "successMessage": "सफलतापूर्वक डेटाबेस में जोड़ा गया!",
         "defaultErrorMessage": "डेटा जोड़ने में विफल रहा।",
         "usernameExists": "उपयोगकर्ता नाम पहले से मौजूद है",
-        "phoneExists": "फ़ोन नंबर पहले से मौजूद है"
+        "phoneExists": "फ़ोन नंबर पहले से मौजूद है",
+        "mobileMinLength": "फोन नंबर 10 अंकों का होना चाहिए"
     },
     "Banner": {
         "title": "व्यक्तित्व",
@@ -149,7 +150,9 @@
         "selectCareer": "इस करियर का चयन करें",
         "saveResults": "परिणाम सहेजें",
         "careerSuggestion": "करियर सुझाव",
-        "writeFeedback": "अपनी प्रतिक्रिया लिखें (वैकल्पिक)।"
+        "writeFeedback": "अपनी प्रतिक्रिया लिखें (वैकल्पिक)।",
+        "selectIndustry": "एक उद्योग चुनें",
+        "deselect": "अचयन करें"
     },
     "FeedbackPage": {
         "careerFeedback": "करियर फीडबैक",
@@ -184,6 +187,15 @@
     "errorSavingProgress": "आपकी प्रगति को सहेजने में त्रुटि हुई। कृपया बाद में पुनः प्रयास करें।",
     "quizSubmitSuccess": "क्विज़ सफलतापूर्वक पूरा हुआ!",
     "quizSubmitFailed": "क्विज़ सबमिट करने में विफल रहा।",
-    "errorSubmittingQuiz": "त्रुटि: क्विज़ सबमिट करने में विफल।"
+    "errorSubmittingQuiz": "त्रुटि: क्विज़ सबमिट करने में विफल।",
+    "navigating": "होम पेज पर जा रहे हैं"
+  },
+  "Quiz2": {
+    "loading": "लोड हो रहा है...",
+    "quizCompleted": "प्रश्नोत्तरी सफलतापूर्वक पूरी हुई",
+    "navigating": "होम पेज पर जा रहे हैं",
+    "interestRecognitionTest": "रुचि मान्यता परीक्षण",
+    "questionProgress": "{currentQuestionIndex + 1}/30",
+    "next": "अगला"
   }
 }

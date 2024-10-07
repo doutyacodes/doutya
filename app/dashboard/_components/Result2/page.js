@@ -223,7 +223,7 @@ export default function Results2() {
       {step === 1 && industries && (
         <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center">
-            Select an Industry
+            {t('selectIndustry')}
           </p>
         </div>
       )}
@@ -423,7 +423,7 @@ export default function Results2() {
                         setSingleCareer(null);
                       }}
                     >
-                      {selectedCareers.includes(careerIndex) ? 'Deselect' : t('selectCareer')}
+                      {selectedCareers.includes(careerIndex) ? t('deselect') : t('selectCareer')}
                     </button>
                   </div>
                 </div>

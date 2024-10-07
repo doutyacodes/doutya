@@ -37,7 +37,8 @@
         "successMessage": "डेटाबेसमध्ये यशस्वीरित्या जोडले!",
         "defaultErrorMessage": "डेटा जोडण्यात अयशस्वी.",
         "usernameExists": "वापरकर्तानाव आधीच आहे",
-        "phoneExists": "मोबाईल नंबर आधीच आहे"
+        "phoneExists": "मोबाईल नंबर आधीच आहे",
+        "mobileMinLength": "फोन नंबर 10 अंकी असावा"
     },
     "Banner": {
     "title": "वैक्तित्व",
@@ -150,7 +151,9 @@
   "selectCareer": "ही करिअर निवडा",
   "saveResults": "निकाल जतन करा",
   "careerSuggestion":"करिअर सूचना",
-  "writeFeedback":"आपला अभिप्राय लिहा (ऐच्छिक)."
+  "writeFeedback":"आपला अभिप्राय लिहा (ऐच्छिक).",
+  "selectIndustry": "एक उद्योग निवडा",
+  "deselect": "निवड रद्द करा"
 },
 "FeedbackPage": {
   "careerFeedback": "करिअर अभिप्राय",
@@ -185,6 +188,15 @@
     "errorSavingProgress": "तुमची प्रगती जतन करण्यात त्रुटी झाली. कृपया नंतर पुन्हा प्रयत्न करा.",
     "quizSubmitSuccess": "क्विझ यशस्वीरित्या पूर्ण झाले!",
     "quizSubmitFailed": "क्विझ सबमिट करण्यात अयशस्वी.",
-    "errorSubmittingQuiz": "त्रुटी: क्विझ सबमिट करण्यात अयशस्वी."
+    "errorSubmittingQuiz": "त्रुटी: क्विझ सबमिट करण्यात अयशस्वी.",
+    "navigating": "मुख्य पृष्ठावर नेले जात आहे"
+  },
+  "Quiz2": {
+    "loading": "लोड करत आहे...",
+    "quizCompleted": "प्रश्नमंजुषा यशस्वीरित्या पूर्ण झाली",
+    "navigating": "मुख्य पृष्ठावर नेले जात आहे",
+    "interestRecognitionTest": "स्वारस्य ओळख चाचणी",
+    "questionProgress": "{currentQuestionIndex + 1}/30",
+    "next": "पुढे"
   }
 }
