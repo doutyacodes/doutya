@@ -1,62 +1,62 @@
 [
     {
         "id": 1,
-        "question_text": "Cuando estás en un evento social, ¿tú:",
+        "question": "Cuando estás en un evento social, ¿tú:",
         "quiz_id": 1
     },
     {
         "id": 2,
-        "question_text": "¿Cómo prefieres pasar tu tiempo libre?",
+        "question": "¿Cómo prefieres pasar tu tiempo libre?",
         "quiz_id": 1
     },
     {
         "id": 3,
-        "question_text": "¿Sueles pensar en voz alta o procesar tus pensamientos internamente?",
+        "question": "¿Sueles pensar en voz alta o procesar tus pensamientos internamente?",
         "quiz_id": 1
     },
     {
         "id": 4,
-        "question_text": "Cuando aprendes algo nuevo, ¿prefieres:",
+        "question": "Cuando aprendes algo nuevo, ¿prefieres:",
         "quiz_id": 1
     },
     {
         "id": 5,
-        "question_text": "En tu vida diaria, ¿es más probable que tú:",
+        "question": "En tu vida diaria, ¿es más probable que tú:",
         "quiz_id": 1
     },
     {
         "id": 6,
-        "question_text": "Al abordar un problema, ¿tú tiendes a:",
+        "question": "Al abordar un problema, ¿tú tiendes a:",
         "quiz_id": 1
     },
     {
         "id": 7,
-        "question_text": "Al tomar decisiones, ¿priorizas:",
+        "question": "Al tomar decisiones, ¿priorizas:",
         "quiz_id": 1
     },
     {
         "id": 8,
-        "question_text": "¿Encuentras más importante ser:",
+        "question": "¿Encuentras más importante ser:",
         "quiz_id": 1
     },
     {
         "id": 9,
-        "question_text": "En los conflictos, ¿tú:",
+        "question": "En los conflictos, ¿tú:",
         "quiz_id": 1
     },
     {
         "id": 10,
-        "question_text": "En lo que respecta a la planificación, ¿prefieres:",
+        "question": "En lo que respecta a la planificación, ¿prefieres:",
         "quiz_id": 1
     },
     {
         "id": 11,
-        "question_text": "¿Cómo abordas las tareas y los plazos?",
+        "question": "¿Cómo abordas las tareas y los plazos?",
         "quiz_id": 1
     },
     {
         "id": 12,
-        "question_text": "En tu vida diaria, ¿tú:",
+        "question": "En tu vida diaria, ¿tú:",
         "quiz_id": 1
     }
 ]
