@@ -37,7 +37,8 @@
     "successMessage": "¡Registrado exitosamente en la base de datos!",
     "defaultErrorMessage": "Error al agregar los datos.",
     "usernameExists": "El nombre de usuario ya existe",
-    "phoneExists": "El número de móvil ya está registrado"
+    "phoneExists": "El número de móvil ya está registrado",
+    "mobileMinLength": "El número de teléfono debe tener 10 dígitos"
   },
   "Banner": {
     "title": "Personalidad",
@@ -149,7 +150,9 @@
     "selectCareer": "Seleccionar esta carrera",
     "saveResults": "Guardar Resultados",
     "careerSuggestion": "Sugerencias de carrera",
-    "writeFeedback": "Escribe tu comentario (opcional)."
+    "writeFeedback": "Escribe tu comentario (opcional).",
+    "selectIndustry": "Selecciona una industria",
+    "deselect": "Deseleccionar"
   },
   "FeedbackPage": {
     "careerFeedback": "Opinión sobre la Carrera",
@@ -184,6 +187,15 @@
     "errorSavingProgress": "Hubo un error al guardar tu progreso. Por favor, inténtalo de nuevo más tarde.",
     "quizSubmitSuccess": "¡Cuestionario completado con éxito!",
     "quizSubmitFailed": "Falló al enviar el cuestionario.",
-    "errorSubmittingQuiz": "Error: Falló al enviar el cuestionario."
+    "errorSubmittingQuiz": "Error: Falló al enviar el cuestionario.",
+    "navigating": "Navegando a la página de inicio en"
+  },
+  "Quiz2": {
+    "loading": "Cargando...",
+    "quizCompleted": "Prueba completada con éxito",
+    "navigating": "Navegando a la página de inicio en",
+    "interestRecognitionTest": "Prueba de Reconocimiento de Intereses",
+    "questionProgress": "{currentQuestionIndex + 1}/30",
+    "next": "Siguiente"
   }
 }

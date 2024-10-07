@@ -37,7 +37,8 @@
     "successMessage": "Successfully added to the database!",
     "defaultErrorMessage": "Failed to add data.",
     "usernameExists": "Username already exists",
-    "phoneExists": "Phone number already exists"
+    "phoneExists": "Phone number already exists",
+    "mobileMinLength":"Phone number should be 10 digits"
   },
   "Banner": {
     "title": "Personality",
@@ -149,7 +150,9 @@
     "selectCareer": "Select this career",
     "saveResults": "Save Results",
     "careerSuggestion": "Career Suggestions",
-    "writeFeedback": "Write your feedback(optional)."
+    "writeFeedback": "Write your feedback(optional).",
+    "selectIndustry":"Select an Industry",
+    "deselect":"Deselect"
   },
   "FeedbackPage": {
     "careerFeedback": "Career Feedback",
@@ -184,6 +187,15 @@
     "errorSavingProgress": "There was an error saving your progress. Please try again later.",
     "quizSubmitSuccess": "Quiz Completed successfully!.",
     "quizSubmitFailed": "Failed to submit quiz.",
-    "errorSubmittingQuiz": "Error: Failed to submit quiz."
+    "errorSubmittingQuiz": "Error: Failed to submit quiz.",
+    "navigating": "Navigating to the Home page in"
+  },
+  "Quiz2": {
+    "loading": "Loading...",
+    "quizCompleted": "Quiz Completed successfully",
+    "navigating": "Navigating to the Home page in",
+    "interestRecognitionTest": "Interest Recognition Test",
+    "questionProgress": "{currentQuestionIndex + 1}/30",
+    "next": "Next"
   }
 }

@@ -459,6 +459,7 @@ import GlobalApi from "@/app/_services/GlobalApi";
 import { cn } from "@/lib/utils";
 import toast, { Toaster } from "react-hot-toast";
 import GreenSlider from "@/app/dashboard/_components/GreenSlider";
+import { useTranslations } from "next-intl";
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -472,6 +473,7 @@ function Page({ params }) {
   const router = useRouter();
   const quizId = params.taskId;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const t = useTranslations('Quiz2');
 
   useEffect(() => {
     const authCheck = () => {
@@ -596,7 +598,7 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white">
         <div>
           <div className="font-semibold">
-            <LoadingOverlay loadText={"Loading..."} />
+            <LoadingOverlay loadText={t('loading')} />
           </div>
         </div>
       </div>
@@ -608,11 +610,11 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white text-center">
         <div>
           <div className="text-4xl font-semibold">
-            Quiz Completed successfully
+            {t('quizCompleted')}
           </div>
 
           <p className="mt-4">
-            Navigating to the Home page in {secondsRemaining} seconds
+            {t('navigating')} {secondsRemaining} seconds
           </p>
         </div>
       </div>
@@ -624,7 +626,7 @@ function Page({ params }) {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
         <p className="text-white uppercase font-bold text-center">
-          Interest Recognition Test
+           {t('interestRecognitionTest')}
         </p>
       </div>
       {showAlert && <QuizProgressAlert />}
@@ -662,7 +664,7 @@ function Page({ params }) {
                   onClick={handleNext}
                   disabled={!selectedChoice}
                 >
-                  Next
+                  {t('next')}
                 </button>
               </div>
             </div>
