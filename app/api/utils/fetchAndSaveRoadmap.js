@@ -62,7 +62,7 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
             {
                 model: "gpt-4o-mini", 
                 messages: [{ role: "user", content: prompt }],
-                max_tokens: 5000,
+                max_tokens: 10000,
             },
             {
                 headers: {
