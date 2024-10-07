@@ -130,7 +130,7 @@ export async function GET(req) {
   //     user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
   //   Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`;
 
-  const prompt = `Provide a list of the 6 best careers in the ${industry} sector ${
+  const prompt = `Provide a list of the 6 best careers ${industry === 'any'? '': `in the ${industry}` } ${
     country ? "in " + country : ""
   } for an individual with an ${type1} personality type and RIASEC interest types of ${type2} ${
     type3 ? " and Gallup Strengths types of " + type3 : ""
@@ -154,6 +154,9 @@ export async function GET(req) {
         }.
         user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
         Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only but the career names should be ${languageOptions[language] || 'in English'}. Give it as a single JSON data without any wrapping other than []`;
+
+  console.log("prompt", prompt);
+        
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",

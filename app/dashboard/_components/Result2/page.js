@@ -9,6 +9,8 @@ import { ChevronsLeft } from "lucide-react";
 import jsPDF from "jspdf"; 
 import PDFCareerPage from "./PDFCareerPage";
 import { useTranslations } from "next-intl";
+import AddIndustry from "./AddIndustry";
+import AlertDialogue from "./AlertDialogue";
 
 export default function Results2() {
   const [resultData, setResultData] = useState(null);
@@ -24,6 +26,11 @@ export default function Results2() {
   const [step, setStep] = useState(1);
   const [industries, setIndustries] = useState([]);
   const [saveResultloading, setSaveResultLoading] = useState(false);
+
+  const [showDialogue, setShowDialogue] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+
+
   const t = useTranslations('Result2');
 
   const router = useRouter();
@@ -77,6 +84,8 @@ export default function Results2() {
   }, [resultData]);
 
   const fetchResults = async (selectedIndustry) => {
+    console.log("selectedIndustry", selectedIndustry);
+    
     setLoading(true);
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -206,6 +215,12 @@ export default function Results2() {
     }
   };
 
+  console.log("loading", loading)
+
+  const handleAddIndustryClick = () => {
+    setShowDialogue(true);
+  };
+
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center text-white">
@@ -272,8 +287,78 @@ export default function Results2() {
       <div className="flex flex-col text-white gap-5 w-full">
         {step === 1 && industries && (
           <div className="p-6 rounded-lg text-white mt-6 w-full">
+
+            {/* <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-4xl mx-auto">
+
+            </div> */}
+
             <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-4xl mx-auto">
-              {industries.map((industry, index) => {
+              {showAlert && <AlertDialogue fetchResults={fetchResults} setShowAlert={setShowAlert}/>}
+              <button
+                  onClick={() => (setShowAlert(true))}
+                  className="sm:col-span-6 md:col-span-6 col-span-12 text-[#341e44] p-[1px] pt-8 rounded-lg hover:opacity-70"
+                  style={{ backgroundColor: '#FFA500' }}
+                >
+                  <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
+                    I AM INDUSTRY AGNOSTIC
+                  </div>
+                </button>
+
+                <button
+                  onClick={handleAddIndustryClick}
+                  className="sm:col-span-6 md:col-span-6 col-span-12 text-[#341e44] p-[1px] pt-8 rounded-lg hover:opacity-70"
+                  style={{ backgroundColor: '#008000' }}
+                >
+                  <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
+                    I AM INDUSTRY SPECIFIC
+                  </div>
+
+                  <AddIndustry
+                    isOpen={showDialogue}
+                    onClose={() => setShowDialogue(false)}
+                    // setIndustryName={setIndustryName}
+                    fetchResults={fetchResults}
+                  />
+
+                </button>
+
+                <div className="col-span-12 h-20 my-4 justify-center items-center flex">
+                  <p className="text-white uppercase font-bold text-center">
+                    Or select an Industry from below
+                  </p>
+                </div>
+
+
+              {
+                loading ? (
+                  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+                    <div className="flex items-center space-x-2">
+                      <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
+                      <span className="text-white">{loadText}</span>
+                    </div>
+                  </div>
+                ) : (
+                  industries.map((industry, index) => {
+                    const color = getColorByIndex(index);
+                    return (
+                      <button
+                        key={index}
+                        onClick={handleOptionSelect}
+                        className="sm:col-span-6 md:col-span-4 max-w-72 col-span-12 text-[#341e44] p-[1px] pt-8 rounded-lg hover:opacity-70"
+                        style={{ backgroundColor: color }}
+                      >
+                        <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
+                          {industry.industry_name}
+                        </div>
+                      </button>
+                    );
+                  })
+                )
+
+              }
+
+              {/* {
+              industries.map((industry, index) => {
                 const color = getColorByIndex(index);
                 return (
                   <button
@@ -287,7 +372,8 @@ export default function Results2() {
                     </div>
                   </button>
                 );
-              })}
+              })
+              } */}
             </div>
           </div>
         )}
