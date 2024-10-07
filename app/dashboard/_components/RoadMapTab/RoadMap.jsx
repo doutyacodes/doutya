@@ -74,8 +74,7 @@ function RoadMap({ selectedCareer }) {
           setLoadMessage(response.data.message);
         }
         console.log("Status 202 received, starting polling.");
-        // await checkForNewData(selectedCareer.id, token); // Poll for new data
-        await checkForNewData(selectedCareer.id, token, currentRequestId);
+        // await checkForNewData(selectedCareer.id, token, currentRequestId);
       }
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
@@ -91,8 +90,8 @@ function RoadMap({ selectedCareer }) {
     // Function to check for new data periodically
     const checkForNewData = async (userCareerId, token) => {
       let attempts = 0;
-      const maxAttempts = 3; // Maximum polling attempts
-      const interval = 30000; 
+      const maxAttempts = 2; // Maximum polling attempts
+      const interval = 60000; 
   
       console.log("The apprempt", attempts);
   
