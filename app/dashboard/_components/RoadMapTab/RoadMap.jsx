@@ -103,18 +103,18 @@ function RoadMap({ selectedCareer }) {
   };
 
   return (
-    <div className="p-4 bg-white">
+    <div className="p-2 sm:p-4 bg-white">
       {!milestones ? (
         <div className="flex items-center justify-center h-[300px]">
           <p className="text-gray-700">{loadMessage}</p>
         </div>
       ) : (
         <>
-          <div className="flex mb-4">
+          <div className="flex flex-wrap mb-4 gap-2">
             {Object.keys(milestones).map((tab) => (
               <button
                 key={tab}
-                className={`flex-1 px-4 py-2 font-semibold text-lg text-center focus:outline-none ${
+                className={`flex-1 px-2 py-2 sm:py-4 font-semibold text-sm sm:text-lg text-center focus:outline-none ${
                   activeTab === tab
                     ? 'bg-orange-400 text-white'
                     : 'bg-green-300 text-black hover:bg-green-400'
@@ -126,18 +126,18 @@ function RoadMap({ selectedCareer }) {
             ))}
           </div>
 
-          <div className="bg-orange-100 p-6 shadow-lg min-h-[300px]">
+          <div className="bg-orange-100 p-3 sm:p-6 shadow-lg min-h-[300px]">
             {milestones[activeTab]?.length > 0 ? (
               milestones[activeTab]?.map((item) => (
-                <div key={item.milestoneId} className="mb-6 flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg text-black">
+                <div key={item.milestoneId} className="mb-4 sm:mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                  <div className="flex-1 mb-2 sm:mb-0">
+                    <h3 className="font-bold text-base sm:text-lg text-black">
                       • <span className="font-normal">{item.milestoneDescription}</span>
                     </h3>
                   </div>
                   <button
                     onClick={() => handleComplete(activeTab, item.milestoneId)}
-                    className={`ml-4 px-4 py-2 font-semibold text-white rounded-lg flex items-center justify-center w-[150px] ${
+                    className={`mt-2 sm:mt-0 px-3 py-1 sm:px-4 sm:py-2 font-semibold text-white text-sm sm:text-base rounded-lg flex items-center justify-center w-full sm:w-[150px] ${
                       item.milestoneCompletionStatus ? 'bg-green-500' : 'bg-sky-500'
                     }`}
                   >
