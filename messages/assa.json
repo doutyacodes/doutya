@@ -49,7 +49,8 @@
     "viewResults": "ফলাফল চাওক",
     "hideResults": "ফলাফল লুকাওক",
     "navigateToQuizAlt": "কুইজ শাখালৈ যাওক",
-    "quizCompletedAlt": "কুইজ সম্পূৰ্ণ হৈছে"
+    "quizCompletedAlt": "কুইজ সম্পূৰ্ণ হৈছে",
+    "careerAssesment": "কৰিয়াৰ মূল্যায়ন পৰীক্ষা"
   },
   "Navbar": {
     "profileAltText": "ইউজাৰ মেনু খোলক",
@@ -65,7 +66,11 @@
       "option3": "বিকল্প ৩"
     },
     "sidebarCloseButton": "×",
-    "sidebarLogin": "লগ ইন"
+    "sidebarLogin": "লগ ইন",
+    "home": "ঘৰ",
+    "tests": "পরীক্ষা",
+    "careers": "কৰিয়াৰ",
+    "communities": "সম্প্ৰদায়"
   },
   "ResultsPage": {
     "title": "ফলাফল",
@@ -139,7 +144,9 @@
     "backToCareer": "পেচাৰ পৰামৰ্শলৈ উভতি যাওক",
     "PDFdownload": "PDF ডাউনলোড কৰক",
     "selectCareer": "এই পেচা বাছনি কৰক",
-    "saveResults": "ফলাফল সংৰক্ষণ কৰক"
+    "saveResults": "ফলাফল সংৰক্ষণ কৰক",
+    "careerSuggestion":"কৰিয়াৰ পৰামৰ্শ",
+    "writeFeedback":"আপোনাৰ মতামত লিখক (ঐচ্ছিক)।"
   },
   "FeedbackPage": {
     "careerFeedback": "পেচা মতামত",
@@ -163,5 +170,17 @@
     "challengeSubmittedSuccess": "চেলেঞ্জ সফলতাৰে জমা দিয়া হ'ল",
     "failedToSubmitChallenge": "চেলেঞ্জ জমা দিবলৈ ব্যৰ্থ",
     "errorSubmittingChallenge": "চেলেঞ্জ জমা দিয়াৰ সময়ত ত্ৰুটি হৈছিল।"
+  },
+  "QuizPage": {
+    "loading": "লোড হৈছে...",
+    "quizCompletedSuccess": "কুইজ সফলভাৱে সম্পন্ন হৈছে",
+    "personalityAssessment": "ব্যক্তিত্ব মূল্যায়ন পৰীক্ষা",
+    "next": "পৰবৰ্তী",
+    "quizProgress": "{current}/{total}",
+    "noInternetConnection": "আপোনাৰ অগ্ৰগতি সংৰক্ষণ কৰাত সমস্যা হৈছে। অনুগ্ৰহ কৰি আপোনাৰ ইণ্টাৰনেট সংযোগ পৰীক্ষা কৰক।",
+    "errorSavingProgress": "আপোনাৰ অগ্ৰগতি সংৰক্ষণত ত্ৰুটি ঘটিছে। অনুগ্ৰহ কৰি পাছত পুনৰ চেষ্টা কৰক।",
+    "quizSubmitSuccess": "কুইজ সফলভাৱে সম্পন্ন হৈছে!",
+    "quizSubmitFailed": "কুইজ জমা দিবলৈ ব্যৰ্থ।",
+    "errorSubmittingQuiz": "ত্রুটি: কুইজ জমা দিবলৈ ব্যৰ্থ।"
   }
 }

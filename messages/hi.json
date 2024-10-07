@@ -49,7 +49,11 @@
         "viewResults": "परिणाम देखें",
         "hideResults": "परिणाम छुपाएं",
         "navigateToQuizAlt": "क्विज़ सेक्शन पर जाएं",
-        "quizCompletedAlt": "क्विज़ पूरा हो गया"
+        "quizCompletedAlt": "क्विज़ पूरा हो गया",
+        "takeTest": "परीक्षण करें",
+        "findStrength": "अपनी ताकत खोजें",
+        "followCareer": "सही करियर पथ का अनुसरण करें",
+        "careerAssesment": "कैरियर मूल्यांकन परीक्षण"
     },
     "Navbar": {
         "profileAltText": "उपयोगकर्ता मेनू खोलें",
@@ -65,7 +69,11 @@
             "option3": "विकल्प 3"
         },
         "sidebarCloseButton": "×",
-        "sidebarLogin": "लॉगिन"
+        "sidebarLogin": "लॉगिन",
+        "home": "होम",
+        "tests": "परीक्षण",
+        "careers": "करियर",
+        "communities": "समुदाय"
     },
     "ResultsPage": {
         "title": "परिणाम",
@@ -124,7 +132,7 @@
         "community": "समुदाय",
         "careerAdding": "करियर जोड़ा जा रहा है। कृपया प्रतीक्षा करें..."
     },
-    "Result2":{
+    "Result2": {
         "match": "मिलान",
         "reasonForRecommendation": "सिफारिश का कारण",
         "readMore": "और पढ़ें",
@@ -139,14 +147,15 @@
         "backToCareer": "करियर सुझावों पर वापस जाएं",
         "PDFdownload": "PDF डाउनलोड करें",
         "selectCareer": "इस करियर का चयन करें",
-        "saveResults": "परिणाम सहेजें"
-      },
-      "FeedbackPage":
-      {
+        "saveResults": "परिणाम सहेजें",
+        "careerSuggestion": "करियर सुझाव",
+        "writeFeedback": "अपनी प्रतिक्रिया लिखें (वैकल्पिक)।"
+    },
+    "FeedbackPage": {
         "careerFeedback": "करियर फीडबैक",
         "noFeedbackAvailable": "इस समय कोई फीडबैक उपलब्ध नहीं है।"
-      },
-      "ChallengePage":{
+    },
+    "ChallengePage": {
         "uploadImage": "छवि अपलोड करें",
         "submit": "प्रस्तुत करें",
         "submitting": "प्रस्तुत कर रहा है...",
@@ -164,5 +173,17 @@
         "challengeSubmittedSuccess": "चुनौती सफलतापूर्वक प्रस्तुत की गई",
         "failedToSubmitChallenge": "चुनौती प्रस्तुत करने में विफल रहा",
         "errorSubmittingChallenge": "चुनौती प्रस्तुत करने में एक त्रुटि हुई।"
-      }      
+    },
+    "QuizPage": {
+    "loading": "लोड हो रहा है...",
+    "quizCompletedSuccess": "क्विज़ सफलतापूर्वक पूर्ण हुआ",
+    "personalityAssessment": "व्यक्तित्व आकलन परीक्षण",
+    "next": "अगला",
+    "quizProgress": "{current}/{total}",
+    "noInternetConnection": "आपकी प्रगति को सहेजने में समस्या थी। कृपया अपनी इंटरनेट कनेक्शन की जाँच करें।",
+    "errorSavingProgress": "आपकी प्रगति को सहेजने में त्रुटि हुई। कृपया बाद में पुनः प्रयास करें।",
+    "quizSubmitSuccess": "क्विज़ सफलतापूर्वक पूरा हुआ!",
+    "quizSubmitFailed": "क्विज़ सबमिट करने में विफल रहा।",
+    "errorSubmittingQuiz": "त्रुटि: क्विज़ सबमिट करने में विफल।"
+  }
 }

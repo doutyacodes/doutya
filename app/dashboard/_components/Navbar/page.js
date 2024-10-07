@@ -9,7 +9,7 @@ import {IconMenu2} from '@tabler/icons-react'
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const t = useTranslations('Navbar'); // Initialize the translations hook for the 'Navbar' namespace
+  const t = useTranslations('Navbar'); 
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -47,11 +47,31 @@ function Navbar() {
             
             <div className="flex items-center gap-3 ">
               {/* Profile dropdown */}
-              <div className=" text-white flex gap-12 mr-10">
-                <div>Home</div>
-                <div>Tests</div>
-                <div>Careers</div>
-                <div>Communities</div>
+              <div className=" text-white md:flex gap-12 mr-10 hidden">
+                <Link
+                      href="/"
+                      className="cursor-pointer"
+                    >
+                  <div>{t('home')}</div>
+                </Link>
+                <Link
+                      href="/dashboard/"
+                      className="cursor-pointer"
+                    >
+                  <div>{t('tests')}</div>
+                </Link>
+                <Link
+                      href="/dashboard/careers"
+                      className="cursor-pointer"
+                    >
+                  <div>{t('careers')}</div>
+                </Link>
+                <Link
+                      href="/dashboard/careers"
+                      className="cursor-pointer"
+                    >
+                  <div>{t('communities')}</div>
+                </Link>
               </div>
               <Menu as="div" className="relative ml-3">
                 <div className="flex items-center">
@@ -78,14 +98,14 @@ function Navbar() {
                       {t('profileLink')}
                     </Link>
                   </MenuItem>
-                  <MenuItem key={"Careers"}>
+                  {/* <MenuItem key={"Careers"}>
                     <Link
                       href="/dashboard/careers"
                       className="block px-4 py-2 text-sm text-gray-700"
                     >
                       {t('careersLink')}
                     </Link>
-                  </MenuItem>
+                  </MenuItem> */}
 
                   <MenuItem key={"Sign Out"}>
                     <a

@@ -49,8 +49,13 @@
     "viewResults": "परिणाम बघा",
     "hideResults": "परिणाम लपवा",
     "navigateToQuizAlt": "क्विझ सेक्शनला जा",
-    "quizCompletedAlt": "क्विझ पूर्ण"
+    "quizCompletedAlt": "क्विझ पूर्ण",
+    "takeTest": "चाचणी घ्या",
+      "findStrength":"तुमची ताकद शोधा",
+      "followCareer": "करिअरच्या योग्य मार्गाचा अवलंब करा",
+      "careerAssesment": "करिअर मूल्यमापन चाचण्या"
     },
+
     "Navbar": {
     "profileAltText": "यूजर मेनू उघडा",
     "profileLink": "तुमची प्रोफाईल",
@@ -65,7 +70,11 @@
       "option3": "पर्याय 3"
     },
     "sidebarCloseButton": "×",
-    "sidebarLogin": "लॉगिन"
+    "sidebarLogin": "लॉगिन",
+    "home": "मुख्यपृष्ठ",
+    "tests": "चाचण्या",
+    "careers": "करिअर्स",
+    "communities": "समुदाय"
     },
     "ResultsPage": {
     "title": "परिणाम",
@@ -139,7 +148,9 @@
   "backToCareer": "करिअर सूचनांकडे परत जा",
   "PDFdownload": "PDF डाउनलोड करा",
   "selectCareer": "ही करिअर निवडा",
-  "saveResults": "निकाल जतन करा"
+  "saveResults": "निकाल जतन करा",
+  "careerSuggestion":"करिअर सूचना",
+  "writeFeedback":"आपला अभिप्राय लिहा (ऐच्छिक)."
 },
 "FeedbackPage": {
   "careerFeedback": "करिअर अभिप्राय",
@@ -163,5 +174,17 @@
   "challengeSubmittedSuccess": "आव्हान यशस्वीरित्या सबमिट केले",
   "failedToSubmitChallenge": "आव्हान सबमिट करण्यात अयशस्वी",
   "errorSubmittingChallenge": "आव्हान सबमिट करताना त्रुटी आली."
-}
+},
+"QuizPage": {
+    "loading": "लोड करत आहे...",
+    "quizCompletedSuccess": "क्विझ यशस्वीरित्या पूर्ण झाले",
+    "personalityAssessment": "व्यक्तिमत्व मूल्यांकन चाचणी",
+    "next": "पुढे",
+    "quizProgress": "{current}/{total}",
+    "noInternetConnection": "तुमची प्रगती जतन करण्यात समस्या आली. कृपया तुमचा इंटरनेट कनेक्शन तपासा.",
+    "errorSavingProgress": "तुमची प्रगती जतन करण्यात त्रुटी झाली. कृपया नंतर पुन्हा प्रयत्न करा.",
+    "quizSubmitSuccess": "क्विझ यशस्वीरित्या पूर्ण झाले!",
+    "quizSubmitFailed": "क्विझ सबमिट करण्यात अयशस्वी.",
+    "errorSubmittingQuiz": "त्रुटी: क्विझ सबमिट करण्यात अयशस्वी."
+  }
 }

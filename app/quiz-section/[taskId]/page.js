@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -19,6 +20,7 @@ function Page({ params }) {
   const router = useRouter();
   const quizId = params.taskId;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const t = useTranslations('QuizPage');
 
   useEffect(() => {
     const authCheck = () => {
@@ -113,7 +115,7 @@ function Page({ params }) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setQuizCompleted(true);
-      quizSubmit(); // Quiz finished, send data to API
+      quizSubmit(); //finished, send data to API
     }
   };
 
@@ -128,12 +130,12 @@ function Page({ params }) {
       } else {
         console.error("Failed to save progress. Status code:", resp.status);
         alert(
-          "There was a problem saving your progress. Please check your internet connection."
+          t('noInternetConnection')
         );
       }
     } catch (error) {
       console.error("Error submitting progress:", error.message);
-      alert("There was an error saving your progress. Please try again later.");
+      alert(t('errorSavingProgress'));
     }
   };
 
@@ -145,7 +147,7 @@ function Page({ params }) {
       const resp = await GlobalApi.SaveQuizResult(token);
 
       if (resp && resp.status === 201) {
-        toast.success("Quiz Completed successfully!.");
+        toast.success(t('quizSubmitSuccess'));
       } else {
         // toast.error('Failed to create Challenge.');
         toast.error("Failed Submitted results");
@@ -154,7 +156,7 @@ function Page({ params }) {
       console.error("Error creating Submitting:", error);
       console.error("Error creating Submiting:", error.message);
       // toast.error('Error: Failed to create Challenge.');
-      toast.error("Error Error: Failed to submit quiz.");
+      toast.error(t('quizSubmitFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -165,7 +167,7 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white">
         <div>
           <div className="font-semibold">
-            <LoadingOverlay loadText={"Loading..."} />
+            <LoadingOverlay loadText={t('loading')} />
           </div>
         </div>
       </div>
@@ -177,11 +179,11 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white text-center">
         <div>
           <div className="text-4xl font-semibold">
-            Quiz Completed successfully
+            {t('quizCompletedSuccess')}
           </div>
 
           <p className="mt-4">
-            Navigating to the Home page in {secondsRemaining} seconds
+            Navigating to home page in {secondsRemaining} seconds
           </p>
         </div>
       </div>
@@ -193,7 +195,7 @@ function Page({ params }) {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
         <p className="text-white uppercase font-bold text-center">
-          Personality Assessment Test
+          {t('personalityAssessment')}
         </p>
       </div>
       {showAlert && <QuizProgressAlert />}
@@ -238,7 +240,7 @@ function Page({ params }) {
                     onClick={handleNext}
                     disabled={!selectedChoice}
                   >
-                    Next
+                    {t('next')}
                   </button>
                 </div>
               </div>
