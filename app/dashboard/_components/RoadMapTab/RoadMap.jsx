@@ -40,7 +40,7 @@ function RoadMap({ selectedCareer }) {
   const checkForNewData = async (userCareerId, token) => {
     let attempts = 0;
     const maxAttempts = 5;
-    const interval = 30000; // Poll every 30 seconds
+    const interval = 60000; // Poll every 30 seconds
 
     const intervalId = setInterval(async () => {
       attempts += 1;
