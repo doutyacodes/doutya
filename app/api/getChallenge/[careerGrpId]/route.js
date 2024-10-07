@@ -6,7 +6,16 @@ import { CAREER_GROUP, USER_DETAILS, CHALLENGES, CHALLENGE_PROGRESS } from '@/ut
 import { calculateAge } from '@/lib/ageCalculate';
 import { eq, and, isNull } from 'drizzle-orm';
 
-
+const languageOptions = {
+    en: 'in English',
+    hi: 'in Hindi',
+    mar: 'in Marathi',
+    ur: 'in Urdu',
+    sp: 'in Spanish',
+    ben: 'in Bengali',
+    assa: 'in Assamese',
+    ge: 'in German'
+  };
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +28,8 @@ export async function GET(req, { params }) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
+
+    const language = req.headers.get('accept-language') || 'en';
 
     const { careerGrpId } = params;
 
@@ -78,7 +89,7 @@ export async function GET(req, { params }) {
         return NextResponse.json({ challenges: existingChallenges }, { status: 200 });
     }
     else {
-        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGEs LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52 , for a ${age} year old , aspiring TO BE A ${career} IN ${country} and the challenges should be random.Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Give it as a single JSON data without any wrapping other than [].`
+        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGEs LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52 , for a ${age} year old , aspiring TO BE A ${career} IN ${country} and the challenges should be random.Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only. Give it as a single JSON data without any wrapping other than []`;
 
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",

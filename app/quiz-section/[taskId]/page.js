@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import toast, { LoaderIcon, Toaster } from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -20,6 +21,7 @@ function Page({ params }) {
   const router = useRouter();
   const quizId = params.taskId;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const t = useTranslations('QuizPage');
 
   useEffect(() => {
     const authCheck = () => {
@@ -75,16 +77,23 @@ function Page({ params }) {
     }
   }, [quizCompleted, router]);
 
-  useEffect(() => {
-    // setIsLoading(true)
-    if (questions?.length > 0) {
-      // Shuffle choices when the component mounts or when the question changes
-      // const choices = questions[currentQuestionIndex].answers.map(answer => answer.text);
-      const choices = questions[currentQuestionIndex]?.answers;
-      setShuffledChoices(choices.sort(() => Math.random() - 0.5));
-    }
+  // useEffect(() => {
+  //   // setIsLoading(true)
+  //   if (questions?.length > 0) {
+  //     // Shuffle choices when the component mounts or when the question changes
+  //     // const choices = questions[currentQuestionIndex].answers.map(answer => answer.text);
+  //     const choices = questions[currentQuestionIndex]?.answers;
+  //     setShuffledChoices(choices.sort(() => Math.random() - 0.5));
+  //   }
 
-    // setIsLoading(false)
+  //   // setIsLoading(false)
+  // }, [currentQuestionIndex, questions]);
+
+  useEffect(() => {
+    if (questions.length > 0 && questions[currentQuestionIndex]?.answers) {
+      const choices = questions[currentQuestionIndex]?.answers;
+      setShuffledChoices([...choices].sort(() => Math.random() - 0.5));
+    }
   }, [currentQuestionIndex, questions]);
 
   const handleChoiceSelect = (choice) => {
@@ -107,7 +116,7 @@ function Page({ params }) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setQuizCompleted(true);
-      quizSubmit(); // Quiz finished, send data to API
+      quizSubmit(); //finished, send data to API
     }
   };
 
@@ -123,7 +132,7 @@ function Page({ params }) {
       } else {
         console.error("Failed to save progress. Status code:", resp.status);
         alert(
-          "There was a problem saving your progress. Please check your internet connection."
+          t('noInternetConnection')
         );
       }
     } catch (error) {
@@ -131,6 +140,7 @@ function Page({ params }) {
       alert("There was an error saving your progress. Please try again later.");
     } finally {
       setProgressLoading(false);
+      alert(t('errorSavingProgress'));
     }
   };
 
@@ -142,7 +152,7 @@ function Page({ params }) {
       const resp = await GlobalApi.SaveQuizResult(token);
 
       if (resp && resp.status === 201) {
-        toast.success("Quiz Completed successfully!.");
+        toast.success(t('quizSubmitSuccess'));
       } else {
         // toast.error('Failed to create Challenge.');
         toast.error("Failed Submitted results");
@@ -151,7 +161,7 @@ function Page({ params }) {
       console.error("Error creating Submitting:", error);
       console.error("Error creating Submiting:", error.message);
       // toast.error('Error: Failed to create Challenge.');
-      toast.error("Error Error: Failed to submit quiz.");
+      toast.error(t('quizSubmitFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -162,7 +172,7 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white">
         <div>
           <div className="font-semibold">
-            <LoadingOverlay loadText={"Loading..."} />
+            <LoadingOverlay loadText={t('loading')} />
           </div>
         </div>
       </div>
@@ -174,11 +184,11 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white text-center">
         <div>
           <div className="text-4xl font-semibold">
-            Quiz Completed successfully
+            {t('quizCompletedSuccess')}
           </div>
 
           <p className="mt-4">
-            Navigating to the Home page in {secondsRemaining} seconds
+            Navigating to home page in {secondsRemaining} seconds
           </p>
         </div>
       </div>
@@ -190,7 +200,7 @@ function Page({ params }) {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
         <p className="text-white uppercase font-bold text-center">
-          Personality Assessment Test
+          {t('personalityAssessment')}
         </p>
       </div>
       {showAlert && <QuizProgressAlert />}
@@ -230,7 +240,7 @@ function Page({ params }) {
                 </div>
                 <div className="w-full justify-center items-center flex my-5">
                   <div>
-                    <button
+                    {/* <button
                       className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
                         selectedChoice ? "" : "opacity-50 cursor-not-allowed"
                       }`}
@@ -238,6 +248,15 @@ function Page({ params }) {
                       disabled={!selectedChoice}
                     >
                       Next
+                    </button> */}
+                    <button
+                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
+                        selectedChoice ? "" : "opacity-50 cursor-not-allowed"
+                      }`}
+                      onClick={handleNext}
+                      disabled={!selectedChoice}
+                    >
+                      {t('next')}
                     </button>
                   </div>
                 </div>

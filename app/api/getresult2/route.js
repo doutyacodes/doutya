@@ -5,6 +5,17 @@ import { eq, and } from "drizzle-orm";
 import { db } from "@/utils";
 import axios from "axios";
 
+
+const languageOptions = {
+  en: 'in English',
+  hi: 'in Hindi',
+  mar: 'in Marathi',
+  ur: 'in Urdu',
+  sp: 'in Spanish',
+  ben: 'in Bengali',
+  assa: 'in Assamese',
+  ge: 'in German'
+};
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +28,8 @@ export async function GET(req) {
 
   const userData = authResult.decoded_Data;
   const userId = userData.userId;
+
+  const language = req.headers.get('accept-language') || 'en';
 
   const url = new URL(req.url);
 
@@ -140,7 +153,7 @@ export async function GET(req) {
           country ? " in " + country : ""
         }.
         user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
-        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Give it as a single JSON data without any wrapping other than []`;
+        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only but the career names should be ${languageOptions[language] || 'in English'}. Give it as a single JSON data without any wrapping other than []`;
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",

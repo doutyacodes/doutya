@@ -1,321 +1,230 @@
-
-
-
 import Link from "next/link";
-import React, { useEffect, useState, useRef  } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import GlobalApi from "@/app/_services/GlobalApi";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css"; // Updated Swiper CSS path
-import "swiper/css/pagination"; // For pagination styles
-import "swiper/css/navigation"; // For navigation styles
-import { Pagination, Navigation } from "swiper/modules"; 
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 
+function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2Results, isTest2Completed, setIsTest2Completed }) {
+    const [loading, setLoading] = useState(false);
+    const [dashboardData, setDashboardData] = useState([]);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const swiperRef = useRef(null);
+    const t = useTranslations('Banner');
 
-function Banner({
-  onToggleResults,
-  showResults,
-  onToggleQuiz2Results,
-  showQuiz2Results,
-}) {
-  const [loading, setLoading] = useState(false);
-  const [dashboardData, setDashboardData] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const swiperRef = useRef(null);
+    const paginationDots = [0, 1];
 
-  // Custom pagination dots
-  const paginationDots = [0, 1]; // Number of slides
+    useEffect(() => {
+        const getQuizData = async () => {
+            setLoading(true);
+            try {
+                const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+                const resp = await GlobalApi.GetDashboarCheck(token);
+                setDashboardData(resp.data);
+                
+                // Check if Test 2 is completed
+                const test2 = resp.data.find(q => q.quiz_id === 2);
+                if (test2 && test2.isCompleted) {
+                    setIsTest2Completed(true);
+                }
+            } catch (error) {
+                console.error("Error Fetching data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        getQuizData();
+    }, [setIsTest2Completed]);
 
-  useEffect(() => {
-    const getQuizData = async () => {
-      setLoading(true);
-      try {
-        const token =
-          typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        const resp = await GlobalApi.GetDashboarCheck(token);
-        setDashboardData(resp.data);
-      } catch (error) {
-        console.error("Error Fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
+    const getQuizStatus = (quizId) => {
+        const quiz = dashboardData.find((q) => q.quiz_id === quizId);
+        return quiz ? { isCompleted: quiz.isCompleted } : { isCompleted: false };
     };
-    getQuizData();
-  }, []);
 
+    const isTest1Completed = getQuizStatus(1).isCompleted;
 
-  const getQuizStatus = (quizId) => {
-    const quiz = dashboardData.find((q) => q.quiz_id === quizId);
-    // return quiz ? { isCompleted: quiz.isCompleted, isStarted: quiz.isStarted } : { isCompleted: false, isStarted: false };
-    return quiz ? { isCompleted: quiz.isCompleted } : { isCompleted: false };
-  };
+    if (loading) {
+        return (
+            <div className="h-screen flex items-center justify-center text-white">
+                <div>
+                    <div className="font-semibold">
+                        <LoadingOverlay loadText={t('loadingText')} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
+    const MobileNavigation = dynamic(() => import('../Navbar/button.jsx'), { ssr: false });
 
-  const isTest1Completed = getQuizStatus(1).isCompleted;
-
-  
-  if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center text-white">
         <div>
-          <div className="font-semibold">
-            <LoadingOverlay loadText={"Loading..."} />
-          </div>
+            <div className="w-full py-8 md:text-3xl text-xl font-bold text-white text-center bg-gradient-to-r from-[#2f87aa] to-green-300">{t('careerAssesment')}</div>
+            <div className="p-4">
+                <div className="mt-8 md:flex justify-evenly gap-10 w-full hidden">
+                    {/* Personality Test */}
+                    <div className="pt-3 p-[1px] rounded-lg max-w-96 flex-1" style={{
+                        backgroundImage: `linear-gradient(to right, #3294bb, #3294bb)`,
+                    }}>
+                        <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
+                            {t('findStrength')}
+                        </h3>
+                        <div className="bg-[#191134] h-[430px] rounded-lg p-3 gap-3 flex flex-col justify-between">
+                            <div className="space-y-4">
+                                <h3 className="font-bold text-2xl text-center py-3 text-white ">
+                                    <p> {t('personalityTestTitle')}</p>
+                                </h3>
+                                <div className="bg-slate-600 p-[1px]" />
+                                <p className="text-white text-justify text-md">
+                                    {t('personalityTestDescription')}
+                                </p>
+                                <div className="flex justify-center items-center">
+                                    {!getQuizStatus(1).isCompleted ? (
+                                        <Link
+                                            href="/quiz-section/1"
+                                            className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400  p-3 rounded-full w-40 "
+                                        >
+                                            <p className="text-white font-semibold text-lg text-center">{t('takeTest')}</p>
+                                        </Link>) :
+                                        <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Interest Test */}
+                    <div className="pt-3 p-[1px] rounded-lg max-w-96  flex-1" style={{
+                        backgroundImage: `linear-gradient(to right, #f39033fb, #f39033fb)`,
+                    }}>
+                        <h3 className="font-bold text-center text-black text-md pb-2 uppercase ">
+                            {t('followCareer')}
+                        </h3>
+                        <div className="bg-[#191134] h-[430px]  rounded-lg p-3 gap-3 flex flex-col justify-between">
+                            <div className="space-y-4">
+                                <h3 className="font-bold text-2xl text-center py-3 text-white ">
+                                    <p> {t('interestTestTitle')}</p>
+                                </h3>
+                                <div className="bg-slate-600 p-[1px]" />
+                                <p className="text-white text-justify text-md">
+                                    {t('interestTestDescription')}
+                                </p>
+                                <div className="flex justify-center items-center">
+                                    {!getQuizStatus(2).isCompleted && getQuizStatus(1).isCompleted ? (
+                                        <Link
+                                            href="/CareerQuizSection/2"
+                                            className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400  p-3 rounded-full w-40 "
+                                        >
+                                            <p className="text-white font-semibold text-lg text-center">{t('takeTest')}</p>
+                                        </Link>) :
+                                        <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile view: Swiper carousel */}
+                <div className="mt-8 sm:hidden">
+                    <Swiper
+                        modules={[Navigation]}
+                        spaceBetween={10}
+                        slidesPerView={1}
+                        onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+                        onSwiper={(swiper) => (swiperRef.current = swiper)}
+                        className="pb-12"
+                    >
+                        {/* Personality Test - Mobile */}
+                        <SwiperSlide>
+                            {/* ... (Personality Test mobile content) ... */}
+                            <div className="pt-3 p-[1px] rounded-lg max-w-96 flex-1" style={{
+                        backgroundImage: `linear-gradient(to right, #3294bb, #3294bb)`,
+                    }}>
+                        <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
+                            {t('findStrength')}
+                        </h3>
+                        <div className="bg-[#191134] h-[430px] rounded-lg p-3 gap-3 flex flex-col justify-between">
+                            <div className="space-y-4">
+                                <h3 className="font-bold text-2xl text-center py-3 text-white ">
+                                    <p> Personality</p><p> Test</p>
+                                </h3>
+                                <div className="bg-slate-600 p-[1px]" />
+                                <p className="text-white text-justify text-md">
+                                    {t('personalityTestDescription')}
+                                </p>
+                                <div className="flex justify-center items-center">
+                                    {!getQuizStatus(1).isCompleted ? (
+                                        <Link
+                                            href="/quiz-section/1"
+                                            className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400  p-3 rounded-full w-40 "
+                                        >
+                                            <p className="text-white font-semibold text-lg text-center">{t('takeTest')}</p>
+                                        </Link>) :
+                                        <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        </SwiperSlide>
+
+                        {/* Interest Test - Mobile */}
+                        <SwiperSlide>
+                            {/* ... (Interest Test mobile content) ... */}
+                            <div className="pt-3 p-[1px] rounded-lg max-w-96  flex-1" style={{
+                        backgroundImage: `linear-gradient(to right, #f39033fb, #f39033fb)`,
+                    }}>
+                        <h3 className="font-bold text-center text-black text-md pb-2 uppercase ">
+                            {t('followCareer')}
+                        </h3>
+                        <div className="bg-[#191134] h-[430px]  rounded-lg p-3 gap-3 flex flex-col justify-between">
+                            <div className="space-y-4">
+                                <h3 className="font-bold text-2xl text-center py-3 text-white ">
+                                    <p> Interests</p><p> Test</p>
+                                </h3>
+                                <div className="bg-slate-600 p-[1px]" />
+                                <p className="text-white text-justify text-md">
+                                    {t('interestTestDescription')}
+                                </p>
+                                <div className="flex justify-center items-center">
+                                    {!getQuizStatus(2).isCompleted && getQuizStatus(1).isCompleted ? (
+                                        <Link
+                                            href="/CareerQuizSection/2"
+                                            className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400  p-3 rounded-full w-40 "
+                                        >
+                                            <p className="text-white font-semibold text-lg text-center">{t('takeTest')}</p>
+                                        </Link>) :
+                                        <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        </SwiperSlide>
+                    </Swiper>
+
+                    {/* Custom pagination dots */}
+                    <div className="flex justify-center space-x-2 gap-2 mt-4 mb-16">
+                        {paginationDots.map((_, index) => (
+                            <div
+                                key={index}
+                                className={`h-3 w-3 rounded-full cursor-pointer ${activeIndex === index ? 'bg-green-400' : 'bg-gray-400'}`}
+                                onClick={() => swiperRef.current?.slideTo(index)}
+                            ></div>
+                        ))}
+                    </div>
+                </div>
+
+                <MobileNavigation />
+            </div>
         </div>
-      </div>
     );
-  }
-  const MobileNavigation = dynamic(() => import('../Navbar/button.jsx'), { ssr: false });
-
-  return (
-    <div className="mb-7 w-full px-10 mt-18">
-      <h2 className="text-white mt-7 font-bold font-serif pb-6">
-        Personality
-      </h2>
-
-      
-      <div className="border-t border-cyan-400"></div>
-
-      <div className="mt-8 sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 hidden w-full">
-        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
-          <img
-            className="rounded-md object-cover w-full h-36"
-            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-            alt="Test 4 Image"
-          />
-          <div className="border-t border-cyan-400"></div>
-          <h1 className="text-white mt-4 text-2xl font-bold ml-7">Personality Test</h1>
-          <div className="relative">
-            {!getQuizStatus(1).isCompleted ? (
-              <Link href="/quiz-section/1">
-                <img
-                  src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                  className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
-                  alt="Navigate to Quiz Section"
-                />
-              </Link>
-            ) : (
-              <img
-                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-                alt="Quiz Completed"
-              />
-            )}
-          </div>
-          <div className="relative">
-            <p className="mx-auto text-white pt-8 w-4/5 text-justify">
-            Begin your journey of self-discovery with the Personality Test! Uncover your unique traits to build a foundation for finding your ideal career path.
-            </p>
-          </div>
-          <div className="text-center mt-4">
-            {getQuizStatus(1).isCompleted ? (
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded-md"
-                onClick={onToggleResults}
-              >
-                {showResults ? "Hide Results" : "View Results"}
-              </button>
-            ) : (
-              <button
-                className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
-                disabled
-              >
-                View Results
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Interest Test */}
-        <div className="border border-cyan-400 pb-3 rounded-sm w-full">
-          <img
-            className="rounded-md object-cover w-full h-36"
-            src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-            alt="Test 3 Image"
-          />
-          <div className="border-t border-cyan-400"></div>
-          <h1 className="text-white mt-4 text-2xl font-bold ml-7">Interest Test</h1>
-          <div className="relative">
-            {!getQuizStatus(2).isCompleted ? (
-              <Link href="CareerQuizSection/2">
-                <img
-                  src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                  className={`h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 ${isTest1Completed ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
-                  alt="Navigate to Quiz Section"
-                />
-              </Link>
-            ) : (
-              <img
-                src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-                alt="Quiz Completed"
-              />
-            )}
-          </div>
-          <div className="relative">
-            <p className="mx-auto text-white pt-8 w-4/5 text-justify">
-              Explore your interests in the next phase! Uncover your passions and combine them with your personality profile to find career paths that truly resonate with you.
-            </p>
-          </div>
-          <div className="text-center mt-4">
-            {getQuizStatus(2).isCompleted ? (
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded-md"
-                onClick={onToggleQuiz2Results}
-              >
-                {showQuiz2Results ? "Hide Results" : "View Results"}
-              </button>
-            ) : (
-              <button
-                className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
-                disabled
-              >
-                View Results
-              </button>
-            )}
-          </div>
-        </div>
-
-        
-      </div>
-
-      {/* Mobile view: Swiper carousel */}
-      <div className="mt-8 sm:hidden">
-        <Swiper
-          modules={[Navigation]}
-          spaceBetween={10}
-          slidesPerView={1}
-          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-          onSwiper={(swiper) => (swiperRef.current = swiper)}
-          className="pb-12"
-        >
-          {/* Personality Test - Mobile */}
-          <SwiperSlide>
-            <div className="border border-cyan-400 pb-3 rounded-sm h-auto w-full">
-              <img
-                className="rounded-md object-cover w-full h-48"
-                src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-                alt="Personality Test Image"
-              />
-              <div className="border-t border-cyan-400"></div>
-              <h1 className="text-white mt-4 text-2xl font-bold ml-3">
-                Personality Test
-              </h1>
-              <div className="relative">
-                {!getQuizStatus(1).isCompleted ? (
-                  <Link href="/quiz-section/1">
-                    <img
-                      src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                      className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-pointer"
-                      alt="Navigate to Quiz Section"
-                    />
-                  </Link>
-                ) : (
-                  <img
-                    src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                    className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-                    alt="Quiz Completed"
-                  />
-                )}
-              </div>
-              <div className="relative">
-                <p className="ml-3 text-white pt-8 w-4/5">
-                  Begin your journey of self-discovery with the Personality Test! Uncover your unique traits to build a foundation for finding your ideal career path.
-                </p>
-              </div>
-              <div className="text-center mt-4">
-                {getQuizStatus(1).isCompleted ? (
-                  <button
-                    className="bg-green-500 text-white px-4 py-2 rounded-md"
-                    onClick={onToggleResults}
-                  >
-                    {showResults ? "Hide Results" : "View Results"}
-                  </button>
-                ) : (
-                  <button
-                    className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
-                    disabled
-                  >
-                    View Results
-                  </button>
-                )}
-              </div>
-            </div>
-          </SwiperSlide>
-
-          {/* Interest Test - Mobile */}
-          <SwiperSlide>
-            <div className="border border-cyan-400 pb-3 rounded-sm h-auto w-full">
-              <img
-                className="rounded-md object-cover w-full h-48"
-                src="https://i.postimg.cc/QtY528dt/Blog-3-trends-2024.jpg"
-                alt="Interest Test Image"
-              />
-              <div className="border-t border-cyan-400"></div>
-              <h1 className="text-white mt-4 text-2xl font-bold ml-3">
-                Interest Test
-              </h1>
-              <div className="relative">
-                {!getQuizStatus(2).isCompleted ? (
-                  <Link href="CareerQuizSection/2">
-                    <img
-                      src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                      className={`h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 ${isTest1Completed ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
-                      alt="Navigate to Quiz Section"
-                    />
-                  </Link>
-                ) : (
-                  <img
-                    src="https://i.postimg.cc/tCZZkBrG/images-removebg-preview-4.png"
-                    className="h-10 absolute top-1/2 transform -translate-y-1/2 right-0 mr-3 cursor-not-allowed opacity-50"
-                    alt="Quiz Completed"
-                  />
-                )}
-              </div>
-              <div className="relative">
-                <p className="ml-3 text-white pt-8 w-4/5">
-                  Explore your interests in the next phase! Uncover your passions and combine them with your personality profile to find career paths that truly resonate with you.
-                </p>
-              </div>
-              <div className="text-center mt-4">
-                {getQuizStatus(2).isCompleted ? (
-                  <button
-                    className="bg-green-500 text-white px-4 py-2 rounded-md"
-                    onClick={onToggleQuiz2Results}
-                  >
-                    {showQuiz2Results ? "Hide Results" : "View Results"}
-                  </button>
-                ) : (
-                  <button
-                    className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
-                    disabled
-                  >
-                    View Results
-                  </button>
-                )}
-              </div>
-            </div>
-          </SwiperSlide>
-        </Swiper>
-
-        {/* Custom pagination dots */}
-        <div className="flex justify-center space-x-2 gap-2 mt-4 mb-16">
-          {paginationDots.map((_, index) => (
-            <div
-              key={index}
-              className={`h-3 w-3 rounded-full cursor-pointer ${
-                activeIndex === index ? 'bg-green-400' : 'bg-gray-400'
-              }`}
-              onClick={() => swiperRef.current?.slideTo(index)}
-            ></div>
-          ))}
-        </div>
-      </div>
-
-      <MobileNavigation />
-    </div>
-  );
 }
 
 export default Banner;
