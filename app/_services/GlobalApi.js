@@ -429,7 +429,14 @@ const GetFeedBackData = (id, token,language) => {
     },
   });
 };
+const setCountries = (data, token) => {
 
+  return axios.put('/api/setCountry', data,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 export default {
   CreateNewUser,
@@ -481,5 +488,6 @@ export default {
   getLastSubmittedChallenge,
 
   UpdateMileStoneStatus,
-  GetFeedBackData
+  GetFeedBackData,
+  setCountries
 }

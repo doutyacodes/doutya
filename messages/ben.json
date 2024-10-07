@@ -38,7 +38,15 @@
     "defaultErrorMessage": "ডেটা যোগ করতে ব্যর্থ হয়েছে।",
     "usernameExists": "ইউজারনেম আগেই নেওয়া হয়েছে",
     "phoneExists": "ফোন নম্বর আগেই নেওয়া হয়েছে",
-    "mobileMinLength": "ফোন নম্বর ১০ সংখ্যার হতে হবে"
+    "mobileMinLength": "ফোন নম্বর ১০ সংখ্যার হতে হবে",
+    "passwordMinLength": "পাসওয়ার্ড অন্তত 6 অক্ষরের হতে হবে",
+    "passwordPattern": "পাসওয়ার্ডে অন্তত একটি বিশেষ চিহ্ন থাকতে হবে (!@#$%^&*)",
+    "education": "সর্বোচ্চ শিক্ষা",
+    "selectHighestEducation": "সর্বোচ্চ শিক্ষা নির্বাচন করুন",
+    "bachelorsDegree": "স্নাতক ডিগ্রি",
+    "associateDegree": "অ্যাসোসিয়েট ডিগ্রি",
+    "mastersDegree": "স্নাতকোত্তর ডিগ্রি",
+    "dobRequired": "জন্মতারিখ আবশ্যক"
   },
   "Banner": {
     "title": "ব্যক্তিত্ব",
@@ -197,5 +205,12 @@
     "interestRecognitionTest": "রুচি স্বীকৃতি পরীক্ষা",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "পরবর্তী"
+  },
+  "countryPage": {
+    "selectYourCountries": "আপনার দেশগুলি নির্বাচন করুন",
+    "selectEducationCountry": "আপনার শিক্ষা দেশের নির্বাচন করুন",
+    "selectCurrentCountry": "আপনার বর্তমান দেশের নির্বাচন করুন",
+    "pleaseSelectBoth": "দয়া করে উভয় দেশ নির্বাচন করুন",
+    "submit": "জমা দিন"
   }
 }

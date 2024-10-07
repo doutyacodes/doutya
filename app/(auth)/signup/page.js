@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { encryptText } from '@/utils/encryption';
 import GlobalApi from '@/app/_services/GlobalApi';
@@ -11,12 +11,24 @@ import countryList from 'react-select-country-list';
 import Select from 'react-select';
 import { useTranslations } from 'next-intl';
 
+const languageMapping = {
+    en: 'English',
+    hi: 'Hindi',
+    mar: 'Marathi',
+    ur: 'Urdu',
+    sp: 'Spanish',
+    ben: 'Bengali',
+    assa: 'Assamese',
+    ge: 'German',
+};
+
 function SignUp() {
     const [isCollegeStudent, setIsCollegeStudent] = useState(false);
     const [countryOptions] = useState(countryList().getData());
-    const [selectedCountry, setSelectedCountry] = useState(null); 
+    const [selectedCountry, setSelectedCountry] = useState(null);
+    const [languageSelected, setLanguageSelected] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState('en'); 
     const router = useRouter();
-    const t = useTranslations('SignupPage'); // Use translations
 
     const {
         register,
@@ -27,6 +39,39 @@ function SignUp() {
         setError
     } = useForm();
 
+    // useEffect(() => {
+    //     const storedLanguage = localStorage.getItem('language');
+    //     if (storedLanguage) {
+    //         // setSelectedLanguage(storedLanguage);
+    //         setLanguageSelected(true);
+    //     }
+    // }, []);
+    useEffect(() => {
+        const savedLanguage = localStorage.getItem('language');
+        if(savedLanguage){
+            setSelectedLanguage(savedLanguage);
+            setLanguageSelected(true);
+        }
+    }, []);
+
+    const handleLanguageChange = (e) => {
+        const newLanguage = e.target.value;
+        console.log(newLanguage)
+        setSelectedLanguage(newLanguage);
+        localStorage.setItem('language', newLanguage);
+        document.cookie = `locale=${newLanguage}; path=/`;
+        console.log(document.cookie)
+        router.refresh(); 
+        // setLanguageSelected(true);
+      };
+
+    // const handleNext = () => {
+    //     localStorage.setItem('language', selectedLanguage);
+    //     document.cookie = `locale=${selectedLanguage}; path=/`;
+    //     setLanguageSelected(true);
+    // }; 
+
+    const t = useTranslations('SignupPage');
     const onSubmit = async (data) => {
         if (data.password !== data.confirmPassword) {
             setError("confirmPassword", {
@@ -37,6 +82,8 @@ function SignUp() {
         }
         const encryptedPassword = encryptText(data.password);
         data.password = encryptedPassword;
+
+        data.language = languageMapping[selectedLanguage] || selectedLanguage;
 
         if (isCollegeStudent && data.college && data.university) {
             data.college = encryptText(data.college);
@@ -54,17 +101,17 @@ function SignUp() {
                 const age = calculateAge(data.dob);
 
                 toast.success(t('successMessage')); // Use translation
-
-                if (age <= 9) {
-                    localStorage.setItem('dashboardUrl', '/dashboard_kids');
-                    router.push('/dashboard_kids');
-                } else if (age <= 13) {
-                    localStorage.setItem('dashboardUrl', '/dashboard_junior');
-                    router.push('/dashboard_junior');
-                } else {
-                    localStorage.setItem('dashboardUrl', '/dashboard');
-                    router.push('/dashboard');
-                }
+                router.push('/country')
+                // if (age <= 9) {
+                //     localStorage.setItem('dashboardUrl', '/dashboard_kids');
+                //     router.push('/dashboard_kids');
+                // } else if (age <= 13) {
+                //     localStorage.setItem('dashboardUrl', '/dashboard_junior');
+                //     router.push('/dashboard_junior');
+                // } else {
+                //     localStorage.setItem('dashboardUrl', '/dashboard');
+                //     router.push('/dashboard');
+                // }
             } else {
                 const errorMessage = response.data?.message || t('defaultErrorMessage');
                 toast.error(`Error: ${errorMessage}`);
@@ -94,6 +141,40 @@ function SignUp() {
     }
 
     const collegeStudent = watch("student");
+
+    if (!languageSelected) {
+        return (
+            <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
+                <Toaster />
+                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+                    <h1 className="text-xl font-bold mb-4 text-center">Choose Your Language</h1>
+                    <p className="text-center mb-4">You won't be able to modify it later, so choose wisely.</p>
+                    <div className="mb-4">
+                        <select
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            value={selectedLanguage}
+                            onChange={handleLanguageChange}
+                        >
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="mar">Marathi</option>
+                            <option value="ur">Urdu</option>
+                            <option value="sp">Spanish</option>
+                            <option value="ben">Bengali</option>
+                            <option value="assa">Assamese</option>
+                            <option value="ge">German</option>
+                        </select>
+                    </div>
+                    <button
+                        onClick={() => setLanguageSelected(true)}
+                        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
@@ -259,6 +340,27 @@ function SignUp() {
                             </div>
                         </>
                     )}
+
+                   {!isCollegeStudent && (
+                    <>
+                    <div className="mb-4">
+                        <label htmlFor="highestEducation" className="block text-sm font-medium text-gray-700">
+                            {t('education')}
+                        </label>
+                        <select
+                            id="highestEducation"
+                            {...register("education")} 
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            required
+                        >
+                            <option value="">{t('selectHighestEducation')}</option>
+                            <option value="Bachelor's Degree"> {t('bachelorsDegree')} </option>
+                            <option value="Associates Degree"> {t('associateDegree')} </option>
+                            <option value="Masters Degree"> {t('mastersDegree')} </option>
+                        </select>
+                    </div>
+                    </>
+                   )}
 
                     <div className="mb-4">
                         <button

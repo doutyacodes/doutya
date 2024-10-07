@@ -23,6 +23,37 @@ function Page({ params }) {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const t = useTranslations('QuizPage');
 
+  const languageFiles = {
+    hi: {
+      questions: "/analytics_questions/hindi_questions.json",
+      options: "/options/hindi_options.json"
+    },
+    ur: {
+      questions: "/analytics_questions/urdu_questions.json",
+      options: "/options/urdu_options.json"
+    },
+    sp: {
+      questions: "/analytics_questions/spanish_questions.json",
+      options: "/options/spanish_options.json"
+    },
+    ge: {
+      questions: "/analytics_questions/german_questions.json",
+      options: "/options/german_options.json"
+    },
+    ben: {
+      questions: "/analytics_questions/bengali_questions.json",
+      options: "/options/bengali_options.json"
+    },
+    assa: {
+      questions: "/analytics_questions/assamese_questions.json",
+      options: "/options/assamese_options.json"
+    },
+    mar: {
+      questions: "/analytics_questions/marathi_questions.json",
+      options: "/options/marathi_options.json"
+    },
+  };
+
   useEffect(() => {
     const authCheck = () => {
       if (typeof window !== "undefined") {
@@ -38,20 +69,103 @@ function Page({ params }) {
     authCheck();
   }, [router]);
 
+  // useEffect(() => {
+  //   const getQuizData = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const savedLanguage = localStorage.getItem('language') || 'en';
+  //       let questionsData = []; // Use a local variable for questions
+  //       let optionsData = [];
+
+  //       if (savedLanguage.toLowerCase() === 'en') {
+  //         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  //         const resp = await GlobalApi.GetQuizData(quizId, token);
+  //         questionsData = resp.data.questions;
+  //         // setQuestions(resp.data.questions);
+  //         setCurrentQuestionIndex(resp.data.quizProgress);
+  //         if (resp.data.quizProgress > 0) {
+  //           setShowAlert(true); // Set showAlert to true when resuming the quiz
+  //         }
+  //       } else {
+  //         // Load questions from the JSON file for other languages
+  //         const languageFile = languageFiles[savedLanguage.toLowerCase()].questions;
+  //         if (languageFile) {
+  //           const response = await fetch(languageFile);
+  //           questionsData = await response.json();
+  //           // setQuestions(data);
+  //         } else {
+  //           console.error("Language file not found for:", savedLanguage);
+  //         }
+  //         const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
+  //         if (optionsFile) {
+  //           const optionsResponse = await fetch(optionsFile);
+  //           optionsData = await optionsResponse.json(); 
+  //           console.log(optionsData)
+  //         } else {
+  //           console.error("Options file not found for:", savedLanguage);
+  //         }
+
+  //         questionsData = questionsData.map(question => ({
+  //           ...question,
+  //           options: optionsData.filter(option => option.question_id === question.id)
+  //         }));
+  //       }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error Fetching GetQuizData data:", error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   getQuizData();
+  // }, []);
+
+
   useEffect(() => {
     const getQuizData = async () => {
       setIsLoading(true);
       try {
-        const token =
-          typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        const resp = await GlobalApi.GetQuizData(quizId, token);
-        setQuestions(resp.data.questions);
-        setCurrentQuestionIndex(resp.data.quizProgress);
-        if (resp.data.quizProgress > 0) {
-          setShowAlert(true); // Set showAlert to true when resuming the quiz
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        let questionsData = []; // Use a local variable for questions
+        let optionsData = []; // Use a local variable for options
+
+        if (savedLanguage.toLowerCase() === 'en') {
+          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+          const resp = await GlobalApi.GetQuizData(quizId, token);
+          questionsData = resp.data.questions; // Store fetched questions in the local variable
+          setCurrentQuestionIndex(resp.data.quizProgress);
+          if (resp.data.quizProgress > 0) {
+            setShowAlert(true); // Set showAlert to true when resuming the quiz
+          }
+        } else {
+          // Load questions from the JSON file for other languages
+          const languageFile = languageFiles[savedLanguage.toLowerCase()].questions;
+          if (languageFile) {
+            const response = await fetch(languageFile);
+            questionsData = await response.json(); // Store fetched questions in the local variable
+          } else {
+            console.error("Language file not found for:", savedLanguage);
+          }
+
+          // Load options from the JSON file for other languages
+          const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
+          if (optionsFile) {
+            const optionsResponse = await fetch(optionsFile);
+            optionsData = await optionsResponse.json(); // Store fetched options in the local variable
+          } else {
+            console.error("Options file not found for:", savedLanguage);
+          }
+
+          // Associate options with questions
+          questionsData = questionsData.map(question => ({
+            ...question,
+            options: optionsData.filter(option => option.question_id === question.id)
+          }));
         }
+
+        setQuestions(questionsData); // Set the state with the combined questions and options
       } catch (error) {
-        console.error("Error Fetching GetQuizData data:", error);
+        console.error("Error Fetching Quiz Data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -89,9 +203,16 @@ function Page({ params }) {
   //   // setIsLoading(false)
   // }, [currentQuestionIndex, questions]);
 
+  // useEffect(() => {
+  //   if (questions.length > 0 && questions[currentQuestionIndex]?.answers) {
+  //     const choices = questions[currentQuestionIndex]?.answers;
+  //     setShuffledChoices([...choices].sort(() => Math.random() - 0.5));
+  //   }
+  // }, [currentQuestionIndex, questions]);
   useEffect(() => {
-    if (questions.length > 0 && questions[currentQuestionIndex]?.answers) {
-      const choices = questions[currentQuestionIndex]?.answers;
+    // Shuffle and set options for the current question
+    if (questions.length > 0 && questions[currentQuestionIndex]?.options) {
+      const choices = questions[currentQuestionIndex].options;
       setShuffledChoices([...choices].sort(() => Math.random() - 0.5));
     }
   }, [currentQuestionIndex, questions]);
@@ -140,7 +261,6 @@ function Page({ params }) {
       alert("There was an error saving your progress. Please try again later.");
     } finally {
       setProgressLoading(false);
-      alert(t('errorSavingProgress'));
     }
   };
 
@@ -216,31 +336,31 @@ function Page({ params }) {
             {
               !progressLoading ? (
                 <div className="bg-[#1b143a] w-full p-3 rounded-2xl pt-6 ">
-                <div>
-                  <p className="font-bold p-2 text-xl text-center mb-6">
-                    {questions[currentQuestionIndex]?.question}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-5 w-full text-white">
-                  {shuffledChoices.map((choice, index) => (
-                    <button
-                      key={index}
-                      className={cn(
-                        `py-5 px-4 rounded-full hover:cursor-pointer
-                    hover:text-black  transition duration-300 ease-in-out `,
-                        selectedChoice?.id === choice.id
-                          ? "bg-green-500"
-                          : "bg-[#0070c0] hover:bg-green-500"
-                      )}
-                      onClick={() => handleChoiceSelect(choice)}
-                    >
-                      {choice.text}
-                    </button>
-                  ))}
-                </div>
-                <div className="w-full justify-center items-center flex my-5">
                   <div>
-                    {/* <button
+                    <p className="font-bold p-2 text-xl text-center mb-6">
+                      {questions[currentQuestionIndex]?.question}
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-5 w-full text-white">
+                    {shuffledChoices.map((choice, index) => (
+                      <button
+                        key={index}
+                        className={cn(
+                          `py-5 px-4 rounded-full hover:cursor-pointer
+                    hover:text-black  transition duration-300 ease-in-out `,
+                          selectedChoice?.id === choice.id
+                            ? "bg-green-500"
+                            : "bg-[#0070c0] hover:bg-green-500"
+                        )}
+                        onClick={() => handleChoiceSelect(choice)}
+                      >
+                        {choice.text}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="w-full justify-center items-center flex my-5">
+                    <div>
+                      {/* <button
                       className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
                         selectedChoice ? "" : "opacity-50 cursor-not-allowed"
                       }`}
@@ -249,18 +369,17 @@ function Page({ params }) {
                     >
                       Next
                     </button> */}
-                    <button
-                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
-                        selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-                      }`}
-                      onClick={handleNext}
-                      disabled={!selectedChoice}
-                    >
-                      {t('next')}
-                    </button>
+                      <button
+                        className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${selectedChoice ? "" : "opacity-50 cursor-not-allowed"
+                          }`}
+                        onClick={handleNext}
+                        disabled={!selectedChoice}
+                      >
+                        {t('next')}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
               ) : (
                 <div className="inset-0 flex items-center my-16 justify-center z-50">
                   <div className="flex items-center space-x-2">

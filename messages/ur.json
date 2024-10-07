@@ -38,7 +38,15 @@
     "defaultErrorMessage": "ڈیٹا شامل کرنے میں ناکامی۔",
     "usernameExists": "یوزر نیم پہلے سے موجود ہے",
     "phoneExists": "موبائل نمبر پہلے سے موجود ہے",
-    "mobileMinLength": "فون نمبر 10 ہندسوں کا ہونا چاہیے"
+    "mobileMinLength": "فون نمبر 10 ہندسوں کا ہونا چاہیے",
+    "passwordMinLength": "پاسورڈ کی کم از کم 6 حروف ہونی چاہئیں",
+    "passwordPattern": "پاسورڈ میں کم از کم ایک خاص حرف ہونا چاہیے (!@#$%^&*)",
+    "education": "اعلیٰ تعلیم",
+    "selectHighestEducation": "اعلیٰ تعلیم منتخب کریں",
+    "bachelorsDegree": "بیچلر کی ڈگری",
+    "associateDegree": "ایسوسی ایٹ ڈگری",
+    "mastersDegree": "ماسٹر کی ڈگری",
+    "dobRequired": "تاریخ پیدائش ضروری ہے"
   },
   "Banner": {
     "title": "شخصیت",
@@ -197,5 +205,12 @@
     "interestRecognitionTest": "دلچسپی کی پہچان کا امتحان",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "اگلا"
+  },
+  "countryPage": {
+    "selectYourCountries": "اپنے ممالک کا انتخاب کریں",
+    "selectEducationCountry": "اپنے تعلیمی ملک کا انتخاب کریں",
+    "selectCurrentCountry": "اپنے موجودہ ملک کا انتخاب کریں",
+    "pleaseSelectBoth": "براہ کرم دونوں ممالک کا انتخاب کریں",
+    "submit": "جمع کرائیں"
   }
 }

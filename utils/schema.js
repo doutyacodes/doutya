@@ -14,7 +14,9 @@ export const USER_DETAILS= mysqlTable('user_details',{
     university:text('university').default(null),
     yearOfPassing:varchar('yearOfPassing',{length:150}).default(null),
     monthOfPassing:varchar('monthOfPassing',{length:150}).default(null),
-    country:varchar('country',{length:30}).default(null)
+    country:varchar('country',{length:30}).default(null),
+    language:varchar('language',{length:50}).default('English'),
+    education_country:varchar('education_country',{length:100}).default(null)
 });
 
 // Define the schema for the 'page' table
