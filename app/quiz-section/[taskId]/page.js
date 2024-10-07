@@ -233,9 +233,9 @@ function Page({ params }) {
       questionId: questions[currentQuestionIndex].id,
       optionId: selectedChoice.id,
       optionText: selectedChoice.text,
-      analyticId: selectedChoice.analyticId,
+      analyticId: selectedChoice.analytic_id,
     };
-
+    
     await quizProgressSubmit(answer);
 
     if (currentQuestionIndex < questions.length - 1) {
