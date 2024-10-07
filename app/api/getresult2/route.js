@@ -153,7 +153,7 @@ export async function GET(req) {
           country ? " in " + country : ""
         }.
         user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
-        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only. Give it as a single JSON data without any wrapping other than []`;
+        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only but the career names should be ${languageOptions[language] || 'in English'}. Give it as a single JSON data without any wrapping other than []`;
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",

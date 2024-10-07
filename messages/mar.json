@@ -52,8 +52,10 @@
     "quizCompletedAlt": "क्विझ पूर्ण",
     "takeTest": "चाचणी घ्या",
       "findStrength":"तुमची ताकद शोधा",
-      "followCareer": "करिअरच्या योग्य मार्गाचा अवलंब करा"
+      "followCareer": "करिअरच्या योग्य मार्गाचा अवलंब करा",
+      "careerAssesment": "करिअर मूल्यमापन चाचण्या"
     },
+
     "Navbar": {
     "profileAltText": "यूजर मेनू उघडा",
     "profileLink": "तुमची प्रोफाईल",
@@ -68,7 +70,11 @@
       "option3": "पर्याय 3"
     },
     "sidebarCloseButton": "×",
-    "sidebarLogin": "लॉगिन"
+    "sidebarLogin": "लॉगिन",
+    "home": "मुख्यपृष्ठ",
+    "tests": "चाचण्या",
+    "careers": "करिअर्स",
+    "communities": "समुदाय"
     },
     "ResultsPage": {
     "title": "परिणाम",
@@ -126,5 +132,59 @@
     "challenges": "आव्हाने",
     "community": "समुदाय",
     "careerAdding": "करियर जोडले जात आहे. कृपया थांबा..."
+  },
+  "Result2": {
+  "match": "जुळणी",
+  "reasonForRecommendation": "शिफारसीचे कारण",
+  "readMore": "अधिक वाचा",
+  "careerSuitability": "ही करिअर तुमच्यासाठी का योग्य आहे",
+  "presentTrends": "वर्तमान प्रवृत्ती",
+  "futureProspects": "भविष्याचे दृष्टीकोन",
+  "expenses": "खर्च",
+  "opportunities": "संधी",
+  "giveFeedback": "तुमचे अभिप्राय द्या",
+  "submitFeedback": "अभिप्राय सबमिट करा",
+  "thankYouFeedback": "तुमच्या अभिप्रायाबद्दल धन्यवाद!",
+  "backToCareer": "करिअर सूचनांकडे परत जा",
+  "PDFdownload": "PDF डाउनलोड करा",
+  "selectCareer": "ही करिअर निवडा",
+  "saveResults": "निकाल जतन करा",
+  "careerSuggestion":"करिअर सूचना",
+  "writeFeedback":"आपला अभिप्राय लिहा (ऐच्छिक)."
+},
+"FeedbackPage": {
+  "careerFeedback": "करिअर अभिप्राय",
+  "noFeedbackAvailable": "सध्या कोणताही अभिप्राय उपलब्ध नाही."
+},
+"ChallengePage": {
+  "uploadImage": "प्रतिमा अपलोड करा",
+  "submit": "सबमिट करा",
+  "submitting": "सबमिट करत आहे...",
+  "noFileChosen": "कोणतीही फाइल निवडलेली नाही",
+  "loadingChallenges": "आव्हाने लोड केली जात आहेत...",
+  "noChallengesAvailable": "कोणतीही आव्हाने उपलब्ध नाहीत.",
+  "weeklyChallenges": "साप्ताहिक आव्हाने",
+  "pendingChallenges": "प्रलंबित आव्हाने",
+  "rejectedChallenges": "नाकारलेली आव्हाने",
+  "week": "आठवडा",
+  "challenge": "आव्हान",
+  "verification": "सत्यापन",
+  "waitForNextWeek": "पुढच्या आठवड्यासाठी प्रतीक्षा करा!",
+  "pleaseSelectFile": "सबमिट करण्यापूर्वी कृपया फाइल निवडा.",
+  "challengeSubmittedSuccess": "आव्हान यशस्वीरित्या सबमिट केले",
+  "failedToSubmitChallenge": "आव्हान सबमिट करण्यात अयशस्वी",
+  "errorSubmittingChallenge": "आव्हान सबमिट करताना त्रुटी आली."
+},
+"QuizPage": {
+    "loading": "लोड करत आहे...",
+    "quizCompletedSuccess": "क्विझ यशस्वीरित्या पूर्ण झाले",
+    "personalityAssessment": "व्यक्तिमत्व मूल्यांकन चाचणी",
+    "next": "पुढे",
+    "quizProgress": "{current}/{total}",
+    "noInternetConnection": "तुमची प्रगती जतन करण्यात समस्या आली. कृपया तुमचा इंटरनेट कनेक्शन तपासा.",
+    "errorSavingProgress": "तुमची प्रगती जतन करण्यात त्रुटी झाली. कृपया नंतर पुन्हा प्रयत्न करा.",
+    "quizSubmitSuccess": "क्विझ यशस्वीरित्या पूर्ण झाले!",
+    "quizSubmitFailed": "क्विझ सबमिट करण्यात अयशस्वी.",
+    "errorSubmittingQuiz": "त्रुटी: क्विझ सबमिट करण्यात अयशस्वी."
   }
 }

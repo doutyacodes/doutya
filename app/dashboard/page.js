@@ -1,6 +1,3 @@
-
-
-
 "use client"
 import React, { useEffect, useState } from 'react'
 import Banner from './_components/Banner/page'

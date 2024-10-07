@@ -231,7 +231,7 @@ export default function Results2() {
       {step === 2 && !singleCareer && (
         <div className="bg-[#009be8] h-20 mb-5 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center md:text-xl">
-            Career Suggestions
+            {t('careerSuggestion')}
           </p>
         </div>
       )}
@@ -467,7 +467,7 @@ export default function Results2() {
                 </div>
                 <textarea
                   className="w-full p-3 rounded-lg border"
-                  placeholder="Write your feedback (optional)"
+                  placeholder={t('writeFeedback')}
                   onChange={(e) => setUserFeedback(e.target.value)}
                 />
                 <button

@@ -9,7 +9,7 @@ import {IconMenu2} from '@tabler/icons-react'
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const t = useTranslations('Navbar'); // Initialize the translations hook for the 'Navbar' namespace
+  const t = useTranslations('Navbar'); 
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -52,25 +52,25 @@ function Navbar() {
                       href="/"
                       className="cursor-pointer"
                     >
-                  <div>Home</div>
+                  <div>{t('home')}</div>
                 </Link>
                 <Link
                       href="/dashboard/"
                       className="cursor-pointer"
                     >
-                  <div>Tests</div>
+                  <div>{t('tests')}</div>
                 </Link>
                 <Link
                       href="/dashboard/careers"
                       className="cursor-pointer"
                     >
-                  <div>Careers</div>
+                  <div>{t('careers')}</div>
                 </Link>
                 <Link
                       href="/dashboard/careers"
                       className="cursor-pointer"
                     >
-                  <div>Communities</div>
+                  <div>{t('communities')}</div>
                 </Link>
               </div>
               <Menu as="div" className="relative ml-3">

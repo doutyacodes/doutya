@@ -64,7 +64,7 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
 
     return (
         <div>
-            <div className="w-full py-8 md:text-3xl text-xl font-bold text-white text-center bg-gradient-to-r from-[#2f87aa] to-green-300">CAREER ASSESSMENT TESTS</div>
+            <div className="w-full py-8 md:text-3xl text-xl font-bold text-white text-center bg-gradient-to-r from-[#2f87aa] to-green-300">{t('careerAssesment')}</div>
             <div className="p-4">
                 <div className="mt-8 md:flex justify-evenly gap-10 w-full hidden">
                     {/* Personality Test */}
@@ -77,7 +77,7 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                         <div className="bg-[#191134] h-[430px] rounded-lg p-3 gap-3 flex flex-col justify-between">
                             <div className="space-y-4">
                                 <h3 className="font-bold text-2xl text-center py-3 text-white ">
-                                    <p> Personality</p><p> Test</p>
+                                    <p> {t('personalityTestTitle')}</p>
                                 </h3>
                                 <div className="bg-slate-600 p-[1px]" />
                                 <p className="text-white text-justify text-md">
@@ -108,7 +108,7 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                         <div className="bg-[#191134] h-[430px]  rounded-lg p-3 gap-3 flex flex-col justify-between">
                             <div className="space-y-4">
                                 <h3 className="font-bold text-2xl text-center py-3 text-white ">
-                                    <p> Interests</p><p> Test</p>
+                                    <p> {t('interestTestTitle')}</p>
                                 </h3>
                                 <div className="bg-slate-600 p-[1px]" />
                                 <p className="text-white text-justify text-md">
