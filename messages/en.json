@@ -38,7 +38,15 @@
     "defaultErrorMessage": "Failed to add data.",
     "usernameExists": "Username already exists",
     "phoneExists": "Phone number already exists",
-    "mobileMinLength":"Phone number should be 10 digits"
+    "mobileMinLength":"Phone number should be 10 digits",
+    "passwordMinLength": "Password should be at least 6 characters long",
+    "passwordPattern": "Password must contain at least one special character (!@#$%^&*)",
+    "education": "Highest Education",
+    "selectHighestEducation": "Select Highest Education",
+    "bachelorsDegree": "Bachelor's Degree",
+    "associateDegree": "Associate Degree",
+    "mastersDegree": "Master's Degree",
+    "dobRequired": "Date of Birth is required"
   },
   "Banner": {
     "title": "Personality",
@@ -198,5 +206,12 @@
     "interestRecognitionTest": "Interest Recognition Test",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "Next"
+  },
+  "countryPage": {
+    "selectYourCountries": "Select Your Countries",
+    "selectEducationCountry": "Select Your Education Country",
+    "selectCurrentCountry": "Select Your Current Country",
+    "pleaseSelectBoth": "Please select both countries",
+    "submit": "Submit"
   }
 }

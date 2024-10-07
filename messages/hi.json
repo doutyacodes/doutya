@@ -38,7 +38,15 @@
         "defaultErrorMessage": "डेटा जोड़ने में विफल रहा।",
         "usernameExists": "उपयोगकर्ता नाम पहले से मौजूद है",
         "phoneExists": "फ़ोन नंबर पहले से मौजूद है",
-        "mobileMinLength": "फोन नंबर 10 अंकों का होना चाहिए"
+        "mobileMinLength": "फोन नंबर 10 अंकों का होना चाहिए",
+        "passwordMinLength": "पासवर्ड न्यूनतम 6 अक्षरों का होना चाहिए",
+        "passwordPattern": "पासवर्ड में कम से कम एक विशेष वर्ण होना चाहिए (!@#$%^&*)",
+        "education": "उच्चतम शिक्षा",
+        "selectHighestEducation": "उच्चतम शिक्षा चुनें",
+        "bachelorsDegree": "स्नातक डिग्री",
+        "associateDegree": "संबद्ध डिग्री",
+        "mastersDegree": "स्नातकोत्तर डिग्री",
+        "dobRequired": "जन्म तिथि आवश्यक है"
     },
     "Banner": {
         "title": "व्यक्तित्व",
@@ -179,24 +187,31 @@
         "errorSubmittingChallenge": "चुनौती प्रस्तुत करने में एक त्रुटि हुई।"
     },
     "QuizPage": {
-    "loading": "लोड हो रहा है...",
-    "quizCompletedSuccess": "क्विज़ सफलतापूर्वक पूर्ण हुआ",
-    "personalityAssessment": "व्यक्तित्व आकलन परीक्षण",
-    "next": "अगला",
-    "quizProgress": "{current}/{total}",
-    "noInternetConnection": "आपकी प्रगति को सहेजने में समस्या थी। कृपया अपनी इंटरनेट कनेक्शन की जाँच करें।",
-    "errorSavingProgress": "आपकी प्रगति को सहेजने में त्रुटि हुई। कृपया बाद में पुनः प्रयास करें।",
-    "quizSubmitSuccess": "क्विज़ सफलतापूर्वक पूरा हुआ!",
-    "quizSubmitFailed": "क्विज़ सबमिट करने में विफल रहा।",
-    "errorSubmittingQuiz": "त्रुटि: क्विज़ सबमिट करने में विफल।",
-    "navigating": "होम पेज पर जा रहे हैं"
-  },
-  "Quiz2": {
-    "loading": "लोड हो रहा है...",
-    "quizCompleted": "प्रश्नोत्तरी सफलतापूर्वक पूरी हुई",
-    "navigating": "होम पेज पर जा रहे हैं",
-    "interestRecognitionTest": "रुचि मान्यता परीक्षण",
-    "questionProgress": "{currentQuestionIndex + 1}/30",
-    "next": "अगला"
+        "loading": "लोड हो रहा है...",
+        "quizCompletedSuccess": "क्विज़ सफलतापूर्वक पूर्ण हुआ",
+        "personalityAssessment": "व्यक्तित्व आकलन परीक्षण",
+        "next": "अगला",
+        "quizProgress": "{current}/{total}",
+        "noInternetConnection": "आपकी प्रगति को सहेजने में समस्या थी। कृपया अपनी इंटरनेट कनेक्शन की जाँच करें।",
+        "errorSavingProgress": "आपकी प्रगति को सहेजने में त्रुटि हुई। कृपया बाद में पुनः प्रयास करें।",
+        "quizSubmitSuccess": "क्विज़ सफलतापूर्वक पूरा हुआ!",
+        "quizSubmitFailed": "क्विज़ सबमिट करने में विफल रहा।",
+        "errorSubmittingQuiz": "त्रुटि: क्विज़ सबमिट करने में विफल।",
+        "navigating": "होम पेज पर जा रहे हैं"
+    },
+    "Quiz2": {
+        "loading": "लोड हो रहा है...",
+        "quizCompleted": "प्रश्नोत्तरी सफलतापूर्वक पूरी हुई",
+        "navigating": "होम पेज पर जा रहे हैं",
+        "interestRecognitionTest": "रुचि मान्यता परीक्षण",
+        "questionProgress": "{currentQuestionIndex + 1}/30",
+        "next": "अगला"
+    },
+    "countryPage": {
+    "selectYourCountries": "अपने देशों का चयन करें",
+    "selectEducationCountry": "अपनी शिक्षा देश का चयन करें",
+    "selectCurrentCountry": "अपने वर्तमान देश का चयन करें",
+    "pleaseSelectBoth": "कृपया दोनों देशों का चयन करें",
+    "submit": "सबमिट करें"
   }
 }

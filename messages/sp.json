@@ -38,7 +38,15 @@
     "defaultErrorMessage": "Error al agregar los datos.",
     "usernameExists": "El nombre de usuario ya existe",
     "phoneExists": "El número de móvil ya está registrado",
-    "mobileMinLength": "El número de teléfono debe tener 10 dígitos"
+    "mobileMinLength": "El número de teléfono debe tener 10 dígitos",
+    "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
+    "passwordPattern": "La contraseña debe contener al menos un carácter especial (!@#$%^&*)",
+    "education": "Educación más alta",
+    "selectHighestEducation": "Selecciona la educación más alta",
+    "bachelorsDegree": "Título de Licenciatura",
+    "associateDegree": "Título de Asociado",
+    "mastersDegree": "Título de Maestría",
+    "dobRequired": "La fecha de nacimiento es obligatoria"
   },
   "Banner": {
     "title": "Personalidad",
@@ -198,5 +206,12 @@
     "interestRecognitionTest": "Prueba de Reconocimiento de Intereses",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "Siguiente"
+  },
+  "countryPage": {
+    "selectYourCountries": "Selecciona tus países",
+    "selectEducationCountry": "Selecciona tu país de educación",
+    "selectCurrentCountry": "Selecciona tu país actual",
+    "pleaseSelectBoth": "Por favor, selecciona ambos países",
+    "submit": "Enviar"
   }
 }

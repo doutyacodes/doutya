@@ -19,21 +19,12 @@ function Login() {
     setError
   } = useForm();
   const [selectedLanguage, setSelectedLanguage] = useState('en'); 
+  
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language') || 'en';
     setSelectedLanguage(savedLanguage);
   }, []);
 
-  // Handle language change and store it in localStorage
-  const handleLanguageChange = (e) => {
-    const newLanguage = e.target.value;
-    console.log(newLanguage)
-    setSelectedLanguage(newLanguage);
-    localStorage.setItem('language', newLanguage);
-    document.cookie = `locale=${newLanguage}; path=/`;
-    console.log(document.cookie)
-    router.refresh(); 
-  };
 
   const onSubmit = async (data) => {
     try {
@@ -73,24 +64,6 @@ function Login() {
     <div>
       <Toaster />
       <div className="flex items-center justify-center min-h-screen">
-      <div className="mb-4 -ml-80 mr-56 -mt-96">
-            <label htmlFor="language" className="block text-sm font-medium text-white">Select Language:</label>
-            <select
-              id="language"
-              value={selectedLanguage}
-              onChange={handleLanguageChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="en">English</option>
-              <option value="hi">Hindi</option>
-              <option value="mar">Marathi</option>
-              <option value="ur">Urdu</option>
-              <option value="sp">Spanish</option>
-              <option value="ben">Bengali</option>
-              <option value="assa">Assamese</option>
-              <option value="ge">German</option>
-            </select>
-          </div>
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
           
           <h1 className="text-2xl font-bold mb-6 text-center">{t('title')}</h1>
