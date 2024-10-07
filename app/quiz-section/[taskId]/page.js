@@ -259,6 +259,7 @@ function Page({ params }) {
     } catch (error) {
       console.error("Error submitting progress:", error.message);
       alert("There was an error saving your progress. Please try again later.");
+      alert(t('errorSavingProgress'));
     } finally {
       setProgressLoading(false);
     }
