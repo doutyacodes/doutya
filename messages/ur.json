@@ -161,7 +161,10 @@
     "careerSuggestion": "کیریئر تجاویز",
     "writeFeedback": "اپنی رائے لکھیں (اختیاری)۔",
     "selectIndustry": "ایک صنعت کا انتخاب کریں",
-    "deselect": "انتخاب ختم کریں"
+    "deselect": "انتخاب ختم کریں",
+    "selectBelowIndustry":"یا نیچے سے کوئی انڈسٹری منتخب کریں۔",
+    "industryAgnostic":"میں انڈسٹری AGNOSTIC ہوں۔",
+    "industrySpecific":"میں صنعت کے لیے مخصوص ہوں۔"
   },
   "FeedbackPage": {
     "careerFeedback": "کیریئر کی رائے",

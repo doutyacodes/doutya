@@ -161,7 +161,10 @@
         "careerSuggestion": "करियर सुझाव",
         "writeFeedback": "अपनी प्रतिक्रिया लिखें (वैकल्पिक)।",
         "selectIndustry": "एक उद्योग चुनें",
-        "deselect": "अचयन करें"
+        "deselect": "अचयन करें",
+        "selectBelowIndustry":"या नीचे से एक उद्योग चुनें",
+        "industryAgnostic":"मैं उद्योग अज्ञेयवादी हूं",
+        "industrySpecific":"मैं उद्योग विशिष्ट हूं"
     },
     "FeedbackPage": {
         "careerFeedback": "करियर फीडबैक",

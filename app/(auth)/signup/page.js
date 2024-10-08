@@ -247,8 +247,8 @@ function SignUp() {
                         {errors.confirmPassword && (
                             <p className="mt-2 text-sm text-red-600">{errors.confirmPassword.message}</p>
                         )}
+                        <div className='md:text-sm text-xs'>Password must be 6+ characters with letters, numbers, and special characters.</div>
                     </div>
-
                     <div className="mb-4">
                         <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">{t('mobile')}</label>
                         <input

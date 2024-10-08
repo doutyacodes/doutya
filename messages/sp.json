@@ -161,7 +161,10 @@
     "careerSuggestion": "Sugerencias de carrera",
     "writeFeedback": "Escribe tu comentario (opcional).",
     "selectIndustry": "Selecciona una industria",
-    "deselect": "Deseleccionar"
+    "deselect": "Deseleccionar",
+    "selectBelowIndustry":"O seleccione una industria de abajo",
+    "industryAgnostic":"SOY AGNOSTICO DE LA INDUSTRIA",
+    "industrySpecific":"SOY ESPECÍFICA DE LA INDUSTRIA"
   },
   "FeedbackPage": {
     "careerFeedback": "Opinión sobre la Carrera",
