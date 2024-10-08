@@ -82,7 +82,8 @@
     "home": "হোম",
     "tests": "পরীক্ষা",
     "careers": "ক্যারিয়ার",
-    "communities": "সম্প্রদায়"
+    "communities": "সম্প্রদায়",
+    "myResults": "আমার ফলাফল"
   },
   "ResultsPage": {
     "title": "ফলাফল",

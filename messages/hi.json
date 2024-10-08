@@ -82,7 +82,8 @@
         "home": "होम",
         "tests": "परीक्षण",
         "careers": "करियर",
-        "communities": "समुदाय"
+        "communities": "समुदाय",
+        "myResults": "मेरे परिणाम"
     },
     "ResultsPage": {
         "title": "परिणाम",

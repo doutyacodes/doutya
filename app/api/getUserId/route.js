@@ -4,7 +4,20 @@ import { QUIZ_SEQUENCES } from '@/utils/schema';
 import { db } from '@/utils';
 import { and,eq } from 'drizzle-orm';
 import { RESULTS1 } from '@/utils/schema';
+import path from 'path';
+import fs from 'fs';
 
+
+const languageOptions = {
+  en: 'english',
+  hi: 'hindi',
+  mar: 'marathi',
+  ur: 'urdu',
+  sp: 'spanish',
+  ben: 'bengali',
+  assa: 'assamese',
+  ge: 'german'
+};
 export async function GET(req) {
   console.log('got user id function')
   const authResult = await authenticate(req);
@@ -15,6 +28,9 @@ export async function GET(req) {
   const userData = authResult.decoded_Data;
 
   const userId = userData.userId;
+
+  const shortLanguage = req.headers.get('accept-language') || 'en';
+  const language = languageOptions[shortLanguage] || 'english'; 
 
   console.log(userId)
 
@@ -36,7 +52,13 @@ export async function GET(req) {
   const type = type_sequences[0].typeSequence
   console.log(type)
 
-  const results = await db.select().from(RESULTS1).where(eq(RESULTS1.type_sequence, type));
+  const jsonFilePath = path.join(process.cwd(), 'public', 'results', `${language}_result.json`);
+  if (!fs.existsSync(jsonFilePath)) {
+    return NextResponse.json({ error: "Results file not found" }, { status: 404 });
+  }
+  const fileContents = fs.readFileSync(jsonFilePath, 'utf8');
+  const results = JSON.parse(fileContents);
+  // const results = await db.select().from(RESULTS1).where(eq(RESULTS1.type_sequence, type));
 
   console.log(results)
 
