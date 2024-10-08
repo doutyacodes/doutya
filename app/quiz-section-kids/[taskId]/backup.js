@@ -2,11 +2,10 @@
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import QuizProgressAlert from "@/app/_components/QuizProgressAlert";
 import GlobalApi from "@/app/_services/GlobalApi";
-import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import toast, { LoaderIcon, Toaster } from "react-hot-toast";
-import { useTranslations } from "next-intl";
+
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -21,7 +20,6 @@ function Page({ params }) {
   const router = useRouter();
   const quizId = params.taskId;
   const [isAuthenticated, setIsAuthenticated] = useState(true)
-  const t = useTranslations('QuizPage');
 
   useEffect(() => {
     const authCheck = ()=>{
@@ -67,8 +65,7 @@ function Page({ params }) {
       }, 1000);
 
       const timer = setTimeout(() => {
-        const url = typeof window !== "undefined" ? localStorage.getItem("dashboardUrl") : null;
-        router.replace(url);
+        router.replace("/dashboard_junior");
         console.log("Route");
       }, 5000);
 
@@ -132,7 +129,6 @@ function Page({ params }) {
       } catch (error) {
         console.error("Error submitting progress:", error.message);
         alert("There was an error saving your progress. Please try again later.");
-        alert(t('errorSavingProgress'))
       } finally {
         setProgressLoading(false);
       }
@@ -148,7 +144,6 @@ function Page({ params }) {
 
       if (resp && resp.status === 201) {
         toast.success("Quiz Completed successfully!.");
-        toast.success(t('quizSubmitSuccess'));
       } else {
         // toast.error('Failed to create Challenge.');
         toast.error("Failed Submitted results");
@@ -158,7 +153,6 @@ function Page({ params }) {
       console.error("Error creating Submiting:", error.message);
       // toast.error('Error: Failed to create Challenge.');
       toast.error("Error Error: Failed to submit quiz.");
-      toast.error(t('quizSubmitFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -169,7 +163,7 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white">
         <div>
           <div className="font-semibold">
-            <LoadingOverlay loadText={t('loading')} />
+            <LoadingOverlay loadText={"Loading..."} />
           </div>
         </div>
       </div>
@@ -181,11 +175,11 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white text-center">
         <div>
           <div className="text-4xl font-semibold">
-            {t('quizCompletedSuccess')}
+            Quiz Completed successfully
           </div>
 
           <p className="mt-4">
-            {t('navigating')} {secondsRemaining} seconds
+            Navigating to the Home page in {secondsRemaining} seconds
           </p>
         </div>
       </div>
@@ -198,85 +192,66 @@ function Page({ params }) {
         position="top-center"
         reverseOrder={false}
         />
-      <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
-        <p className="text-white uppercase font-bold text-center">
-          {t('personalityAssessment')}
-        </p>
-      </div>
       {
         showAlert && (
           <QuizProgressAlert />
         )
       }
-      <div className="mx-3 flex justify-center items-center">
-        {questions.length > 0 && (
-          <div className="mt-4 pt-5 min-h-[20rem] flex flex-col gap-4 justify-center items-center mx-auto sm:w-4/5 w-full max-w-[800px] text-white rounded-2xl p-[1px] bg-[#0097b2]">
-            <div className="">
-              <p className="font-extrabold text-center">
-                {" "}
-                {currentQuestionIndex + 1}/12
-              </p>
-            </div>
-            {
-              !progressLoading ? (
-                <div className="bg-[#1b143a] w-full p-3 rounded-2xl pt-6 ">
-                  <div>
-                    <p className="font-bold p-2 text-xl text-center mb-6">
-                      {questions[currentQuestionIndex]?.question}
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-5 w-full text-white">
-                    {shuffledChoices.map((choice, index) => (
-                      <button
-                        key={index}
-                        className={cn(
-                          `py-5 px-4 rounded-full hover:cursor-pointer
-                    hover:text-black  transition duration-300 ease-in-out `,
+      {questions.length > 0 && (
+        <div className="mt-4 pt-5 flex w-4/5 min-h-[20rem] flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">
+          <div>
+            <p className="font">{currentQuestionIndex + 1}/12</p>
+          </div>
+          {   
+            !progressLoading ?      
+            (
+            <>
+                <div>
+                  <p className="font-bold p-2 text-xl md:text-3xl">
+                    {questions[currentQuestionIndex]?.question}
+                  </p>
+                </div>
+    
+                <div className="flex flex-col gap-2 w-full text-white">
+                  {shuffledChoices.map((choice, index) => (
+                    <button
+                      key={index}
+                      className={`py-2 px-4 rounded-md hover:cursor-pointer
+                        hover:bg-purple-300 hover:text-black transition duration-300 ease-in-ou ${
                           selectedChoice?.id === choice.id
                             ? "bg-green-500"
-                            : "bg-[#0070c0] hover:bg-green-500"
-                        )}
-                        onClick={() => handleChoiceSelect(choice)}
-                      >
-                        {choice.text}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="w-full justify-center items-center flex my-5">
-                    <div>
-                      {/* <button
-                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
-                        selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-                      }`}
-                      onClick={handleNext}
-                      disabled={!selectedChoice}
+                            : "bg-slate-400"
+                        }`}
+                      onClick={() => handleChoiceSelect(choice)}
                     >
-                      Next
-                    </button> */}
-                      <button
-                        className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-                          }`}
-                        onClick={handleNext}
-                        disabled={!selectedChoice}
-                      >
-                        {t('next')}
-                      </button>
-                    </div>
-                  </div>
+                      {choice.text}
+                    </button>
+                  ))}
                 </div>
-              ) : (
-                <div className="inset-0 flex items-center my-16 justify-center z-50">
-                  <div className="flex items-center space-x-2">
-                    <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
-                    <span className="text-white">Loading..</span>
-                  </div>
+            </>
+            ) : (
+              <div className="inset-0 flex items-center my-16 justify-center bg-gray-800 bg-opacity-50 z-50">
+                <div className="flex items-center space-x-2">
+                  <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
+                  <span className="text-white">Loading..</span>
                 </div>
-              )
+              </div>
+            )
+          }
 
-            }
+          <div>
+            <button
+              className={`bg-green-600 py-2 px-5 rounded-lg text-white ${
+                selectedChoice ? "" : "opacity-50 cursor-not-allowed"
+              }`}
+              onClick={handleNext}
+              disabled={!selectedChoice}
+            >
+              Next
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

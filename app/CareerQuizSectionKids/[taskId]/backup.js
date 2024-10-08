@@ -2,11 +2,10 @@
 import LoadingOverlay from '@/app/_components/LoadingOverlay';
 import QuizProgressAlert from '@/app/_components/QuizProgressAlert';
 import GlobalApi from '@/app/_services/GlobalApi';
-import toast, { LoaderIcon, Toaster } from "react-hot-toast";
+// import { Toaster } from '@/components/ui/toaster';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import GreenSlider from "@/app/dashboard/_components/GreenSlider";
-import { useTranslations } from "next-intl";
+import toast, { LoaderIcon, Toaster } from 'react-hot-toast';
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -21,7 +20,6 @@ function Page({ params }) {
   const router = useRouter();
   const quizId = params.taskId;
   const [isAuthenticated, setIsAuthenticated] = useState(true)
-  const t = useTranslations('Quiz2');
 
   useEffect(() => {
     const authCheck = ()=>{
@@ -149,7 +147,7 @@ function Page({ params }) {
         <div className='h-screen flex items-center justify-center text-white'>
             <div>
                 <div className='font-semibold'>
-                     <LoadingOverlay loadText={t('loading')}/>
+                     <LoadingOverlay loadText={"Loading..."}/>
                 </div>
             </div>
         </div>
@@ -161,11 +159,11 @@ function Page({ params }) {
       <div className='h-screen flex items-center justify-center text-white text-center'>
         <div>
             <div className='text-4xl font-semibold'>
-              {t('quizCompleted')}essfully
+              Quiz Completed successfully
             </div>
 
             <p className='mt-4'>
-              {t('navigating')} {secondsRemaining} seconds
+                Navigating to the Home page in {secondsRemaining} seconds
             </p>
             
         </div>
@@ -175,68 +173,79 @@ function Page({ params }) {
   
 
   return (
-    <div className='h-screen'> 
-      <Toaster position="top-center" reverseOrder={false} />
-      <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
-        <p className="text-white uppercase font-bold text-center">
-           {t('interestRecognitionTest')}
-        </p>
-      </div>
-      {showAlert && ( <QuizProgressAlert /> ) }
-      <div className="flex justify-center items-center px-4">
-        {questions.length > 0 && (
-          <div className="mt-4 pt-7 min-h-[20rem] min-w-[600px] flex flex-col gap-8 justify-center items-center mx-auto text-white rounded-2xl p-[1px] bg-[#0097b2]">
-            {
-              !progressLoading ? (
-                <>
-                <div>
-                <p className="font-extrabold text-center">
-                  {currentQuestionIndex + 1}/30
-                </p>
-                </div>
-                <div className="bg-[#1b143a] p-3 rounded-2xl w-[600px]">
-                  <div className="w-full flex justify-center">
-                    <p className="font-bold p-2 text-xl text-center w-full flex items-center justify-center h-24">
-                      {questions[currentQuestionIndex].questionText}
-                    </p>
-                  </div>
+    <div className='h-screen'>
+      <Toaster
+      position="top-center"
+      reverseOrder={false}
+      />
+
+      {
+        showAlert && (
+          <QuizProgressAlert />
+        )
+      }
+      {
+        questions.length > 0 &&
+        <div className='flex w-4/5 min-h-[20rem] flex-col gap-8 justify-center items-center mx-auto py-4 border-solid border-4 text-white rounded-2xl'>
+
+            <div>
+              <p className='font-semibold text-4xl'>Question {currentQuestionIndex + 1}</p>
+            </div>
+
+         { 
+          !progressLoading ? (
+            <>
+
+            <div>
+              <p className='font-normal p-2 text-xl md:text-3xl'>{questions[currentQuestionIndex].questionText}</p>
+            </div>
   
-                  <div className="w-full px-10 justify-center items-center flex">
-                    <div className="flex flex-col gap-2 w-full text-white">
-                      <GreenSlider
-                        key={currentQuestionIndex}
-                        choices={choices}
-                        selectedChoice={selectedChoice}
-                        onChange={handleChoiceSelect}
-                      />
-                    </div>
-                  </div>
+            {/* <div className='flex flex-col gap-2 w-full text-white'>
+              {questions[currentQuestionIndex]?.choices.map((choice, index) => (
+                <button
+                  key={index}
+                  className={`py-2 px-4 ${selectedChoice?.choiceId === choice.choiceId ? 'bg-green-500' : 'bg-slate-400'}`}
+                  onClick={() => handleChoiceSelect(choice)}
+                >
+                  {choice.choiceText}
+                </button>
+              ))}
+            </div> */}
   
-                  <div className="w-full justify-center items-center flex my-5">
-                    <button
-                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
-                        selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-                      }`}
-                      onClick={handleNext}
-                      disabled={!selectedChoice}
-                    >
-                      {t('next')}
-                    </button>
-                  </div>
-                </div>
-              </>
-              ) : (
-                <div className="inset-0 flex items-center my-16 justify-center z-50">
-                <div className="flex items-center space-x-2">
-                  <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
-                  <span className="text-white">{t('loading')}</span>
-                </div>
+              <div className='flex flex-col gap-2 w-full text-white'>
+                {choices.map((choice, index) => (
+                  <button
+                    key={index}
+                    className={`py-2 px-4 ${selectedChoice?.choiceId === choice.choiceId ? 'bg-green-500' : 'bg-slate-400'}`}
+                    onClick={() => handleChoiceSelect(choice)}
+                  >
+                    {choice.choiceText}
+                  </button>
+                ))}
               </div>
-              )
-            }
-          </div>
-        )}
-      </div>
+          </>
+          ) : (
+            <div className="inset-0 flex items-center my-16 justify-center z-50">
+              <div className="flex items-center space-x-2">
+                <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
+                <span className="text-white">Loading..</span>
+              </div>
+            </div>
+          )
+          
+        }
+
+        <div>
+          <button
+            className={`bg-green-600 py-2 px-5 rounded-lg text-white ${selectedChoice ? '' : 'opacity-50 cursor-not-allowed'}`}
+            onClick={handleNext}
+            disabled={!selectedChoice}
+          >
+            Next
+          </button>
+        </div>
+        </div>
+      }
     </div>
   );
 }

@@ -2,18 +2,18 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LoadingOverlay from "../_components/LoadingOverlay";
-import Navbar from "../dashboard/_components/Navbar/page";
 import Bannerkids from "./_components/Banner/page";
-import Footer from "./_components/Footer/page";
 import Navbarkids from "./_components/Navbar/page";
 import Results from "../dashboard/_components/Results/page";
 import Results2 from "../dashboard/_components/Result2/page";
+import dynamic from 'next/dynamic';
 
 export default function Dashboard() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [showQuiz2Results, setShowQuiz2Results] = useState(false);
+  const [isTest2Completed, setIsTest2Completed] = useState(false);
 
   useEffect(() => {
     const authCheck = () => {
@@ -50,29 +50,46 @@ export default function Dashboard() {
     );
   }
 
+  const MobileNavigation = dynamic(() => import('./_components/Navbar/button.jsx'), { ssr: false });
+
   return (
     <div style={styles.dashboardContainer}>
       
       <Navbarkids />
-      <Bannerkids onToggleResults={toggleResults} showResults={showResults} onToggleQuiz2Results={toggleQuiz2Results} showQuiz2Results={showQuiz2Results} />
-      <style jsx>{`
-        @keyframes bounce {
-          0%, 20%, 50%, 80%, 100% {
-            transform: translateY(0);
-          }
-          40% {
-            transform: translateY(-15px);
-          }
-          60% {
-            transform: translateY(-7px);
-          }
-        }
-      `}</style>
 
-      <br />
-      <br />
-      {showResults && <Results />} 
-      {showQuiz2Results && <Results2/>}
+      {!isTest2Completed ? (
+        <>
+          <Bannerkids
+            onToggleResults={toggleResults}
+            showResults={showResults} 
+            onToggleQuiz2Results={toggleQuiz2Results} 
+            showQuiz2Results={showQuiz2Results} 
+            setIsTest2Completed={setIsTest2Completed}
+          />
+          <style jsx>{`
+            @keyframes bounce {
+              0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+              }
+              40% {
+                transform: translateY(-15px);
+              }
+              60% {
+                transform: translateY(-7px);
+              }
+            }
+          `}</style>
+    
+          <br />
+          <br />
+          {showResults && <Results />} 
+          {showQuiz2Results && <Results2/>}
+        </>
+      ) : (
+        <Results2 />
+      )
+    }
+    <MobileNavigation />
     </div>
   );
 }
