@@ -164,7 +164,7 @@ export async function GET(req) {
         3
       : " 2 futuristic career for an individual with age " +
         finalAge +
-        " till they reach 21 "
+        " till they reach the age 21 "
   }. For each career, include the following information:
         career_name: A brief title of the career?.
         reason_for_recommendation: Why this career is suitable for someone with these interests${
