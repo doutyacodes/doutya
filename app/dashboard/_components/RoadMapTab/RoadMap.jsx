@@ -183,11 +183,11 @@ function RoadMap({ selectedCareer }) {
         ):(
           <>
             {/* Tabs */}
-            <div className="flex mb-4">
+            <div className="flex mb-4 max-md:grid max-md:grid-cols-2 max-md:gap-1">
               {Object.keys(milestones).map((tab) => (
                 <button
                   key={tab}
-                  className={`flex-1 px-4 py-2 font-semibold text-lg text-center focus:outline-none ${
+                  className={`flex-1 px-4 py-2 font-semibold md:text-lg text-sm  text-center focus:outline-none ${
                     activeTab === tab
                       ? 'bg-orange-400 text-white'
                       : 'bg-green-300 text-black hover:bg-green-400'
@@ -204,7 +204,7 @@ function RoadMap({ selectedCareer }) {
               
               {milestones[activeTab]?.length > 0 ? (
                 milestones[activeTab]?.map((item) => (
-                  <div key={item.milestoneId} className="mb-6 flex items-center justify-between">
+                  <div key={item.milestoneId} className="mb-6 flex md:flex-row flex-col max-md:gap-2 items-center justify-between">
                     <div className="flex-1">
                       <h3 className="font-bold text-lg text-black">
                         {/* • {item.milestoneTitle}: <span className="font-normal">{item.milestoneDescription}</span> */}
