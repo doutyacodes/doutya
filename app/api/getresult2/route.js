@@ -165,7 +165,7 @@ export async function GET(req) {
       : " 2 futuristic career for an individual with age " +
         finalAge +
         " till they reach the age 21 "
-  }. For each career, include the following information:
+  }.Provide careers atleast 80 percentage above of how the user compatible with the particular career. For each career, include the following information:
         career_name: A brief title of the career?.
         reason_for_recommendation: Why this career is suitable for someone with these interests${
           country
