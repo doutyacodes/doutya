@@ -15,6 +15,7 @@ import Challenge from '../../_components/Challenges/page';
 import Feedback from "../../_components/FeedbackTab/Feedback";
 import RoadMap from "../../_components/RoadMapTab/RoadMap";
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -123,6 +124,9 @@ function Page() {
     }
   };
 
+  const MobileNavigation = dynamic(() => import('../../_components/Navbar/button.jsx'), { ssr: false });
+
+
   if (isLoading || !isAuthenticated) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
@@ -132,7 +136,7 @@ function Page() {
   }
 
   return (
-    <div className="mx-auto bg-white">
+    <div className="mx-auto bg-white max-md:pb-7">
       <Toaster />
 
       <AddCareer
@@ -225,6 +229,7 @@ function Page() {
           </div>
         </div>
       )}
+      <MobileNavigation />
     </div>
   );
 }

@@ -221,7 +221,7 @@ function Banner({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2R
                     </div>
                 </div>
 
-                <MobileNavigation />
+                {/* <MobileNavigation /> */}
             </div>
         </div>
     );

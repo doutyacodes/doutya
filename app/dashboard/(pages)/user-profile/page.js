@@ -17,6 +17,7 @@ import toast, { Toaster } from "react-hot-toast";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import { calculateAge } from "@/lib/ageCalculate";
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
 
 function page() {
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
@@ -191,8 +192,10 @@ function page() {
     );
   }
 
+  const MobileNavigation = dynamic(() => import('../../_components/Navbar/button.jsx'), { ssr: false });
+
   return (
-    <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen  py-12 max-md:pb-24 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
       <Link href={typeof window !== 'undefined' ? localStorage.getItem('dashboardUrl') : '/login'}>
         <button className="text-white bg-green-600 -mt-20 mb-7 ml-20 p-3 rounded-xl">
@@ -502,6 +505,7 @@ function page() {
           </div>
         </div>
       </div>
+      <MobileNavigation />
     </div>
   );
 }

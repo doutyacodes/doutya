@@ -5,6 +5,7 @@ import Results from './_components/Results/page'
 import Results2 from './_components/Result2/page'
 import { useRouter } from 'next/navigation'
 import LoadingOverlay from '../_components/LoadingOverlay'
+import dynamic from 'next/dynamic';
 
 export default function Dashboard() {
   const [showResults, setShowResults] = useState(false);
@@ -48,6 +49,9 @@ export default function Dashboard() {
     )
   }
 
+  const MobileNavigation = dynamic(() => import('./_components/Navbar/button.jsx'), { ssr: false });
+
+
   return (
     <div className='md:pb-16 pb-24'>
       {!isTest2Completed ? (
@@ -68,6 +72,7 @@ export default function Dashboard() {
       ) : (
         <Results2 />
       )}
+      <MobileNavigation />
     </div>
   )
 }
