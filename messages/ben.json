@@ -161,7 +161,10 @@
     "careerSuggestion": "ক্যারিয়ার পরামর্শ",
     "writeFeedback": "আপনার প্রতিক্রিয়া লিখুন (ঐচ্ছিক)।",
     "selectIndustry": "একটি শিল্প নির্বাচন করুন",
-    "deselect": "বাছাই তুলে নিন"
+    "deselect": "বাছাই তুলে নিন",
+    "selectBelowIndustry":"অথবা নীচে থেকে একটি শিল্প নির্বাচন করুন",
+    "industryAgnostic":"আমি শিল্প অজ্ঞেয়বাদী",
+    "industrySpecific":"আমি ইন্ডাস্ট্রি স্পেসিফিক"
   },
   "FeedbackPage": {
     "careerFeedback": "ক্যারিয়ার প্রতিক্রিয়া",

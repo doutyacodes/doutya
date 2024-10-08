@@ -161,7 +161,10 @@
     "careerSuggestion": "करिअर सूचना",
     "writeFeedback": "आपला अभिप्राय लिहा (ऐच्छिक).",
     "selectIndustry": "एक उद्योग निवडा",
-    "deselect": "निवड रद्द करा"
+    "deselect": "निवड रद्द करा",
+    "selectBelowIndustry":"किंवा खालीलपैकी एखादा उद्योग निवडा",
+    "industryAgnostic":"मी इंडस्ट्री अज्ञेयवादी आहे",
+    "industrySpecific":"मी इंडस्ट्री स्पेसिफिक आहे"
   },
   "FeedbackPage": {
     "careerFeedback": "करिअर अभिप्राय",

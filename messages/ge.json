@@ -161,7 +161,10 @@
     "careerSuggestion": "Berufsvorschläge",
     "writeFeedback": "Schreiben Sie Ihr Feedback (optional).",
     "selectIndustry": "Wählen Sie eine Branche",
-    "deselect": "Abwählen"
+    "deselect": "Abwählen",
+    "selectBelowIndustry":"Oder wählen Sie unten eine Branche aus",
+    "industryAgnostic":"Ich bin branchenneutral",
+    "industrySpecific":"Ich bin branchenspezifisch"
   },
   "FeedbackPage": {
     "careerFeedback": "Karriere-Feedback",

@@ -161,7 +161,10 @@
     "careerSuggestion": "Career Suggestions",
     "writeFeedback": "Write your feedback(optional).",
     "selectIndustry":"Select an Industry",
-    "deselect":"Deselect"
+    "deselect":"Deselect",
+    "selectBelowIndustry":"Or select an Industry from below",
+    "industryAgnostic":"I AM INDUSTRY AGNOSTIC",
+    "industrySpecific":"I AM INDUSTRY SPECIFIC"
   },
   "FeedbackPage": {
     "careerFeedback": "Career Feedback",
