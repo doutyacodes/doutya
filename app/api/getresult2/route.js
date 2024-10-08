@@ -5,19 +5,18 @@ import { eq, and } from "drizzle-orm";
 import { db } from "@/utils";
 import axios from "axios";
 
-
 const languageOptions = {
-  en: 'in English',
-  hi: 'in Hindi',
-  mar: 'in Marathi',
-  ur: 'in Urdu',
-  sp: 'in Spanish',
-  ben: 'in Bengali',
-  assa: 'in Assamese',
-  ge: 'in German'
+  en: "in English",
+  hi: "in Hindi",
+  mar: "in Marathi",
+  ur: "in Urdu",
+  sp: "in Spanish",
+  ben: "in Bengali",
+  assa: "in Assamese",
+  ge: "in German",
 };
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET(req) {
   console.log("got");
@@ -29,24 +28,44 @@ export async function GET(req) {
   const userData = authResult.decoded_Data;
   const userId = userData.userId;
 
-  const language = req.headers.get('accept-language') || 'en';
+  const language = req.headers.get("accept-language") || "en";
 
   const url = new URL(req.url);
 
   const country_db = await db
     .select({
       country: USER_DETAILS.country,
+      birth_date: USER_DETAILS.birth_date,
     })
     .from(USER_DETAILS)
     .where(eq(USER_DETAILS.id, userId))
     .execute();
-  console.log(country_db);
-  const country = country_db[0].country;
+  // console.log("country_db",country_db);
+  const country = country_db[0].country; // Access the country
+  let finalAge = 18;
+  if (country_db.length > 0) {
+    const birthDate = new Date(country_db[0].birth_date); // Access the birth date from the first result
+    const today = new Date(); // Get today's date
 
-  const industry = url.searchParams.get("industry") || null;
+    // Calculate age in years
+    let ageInNumber = today.getFullYear() - birthDate.getFullYear();
 
-  console.log("country", country);
-  console.log("industry", industry);
+    // Adjust for whether the birthday has occurred this year
+    const hasBirthdayPassed =
+      today.getMonth() > birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() &&
+        today.getDate() >= birthDate.getDate());
+
+    finalAge = hasBirthdayPassed ? ageInNumber : ageInNumber - 1;
+
+    console.log("country_db", finalAge); // Log the calculated age
+  } else {
+    console.log("No user found with the given ID");
+  }
+  const industry = url.searchParams.get("industry") || null; // Get industry from URL parameters
+
+  // console.log("country", country);
+  // console.log("industry", industry);
 
   // let existingResult=[];
   // if (industry == null) {
@@ -130,11 +149,23 @@ export async function GET(req) {
   //     user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
   //   Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`;
 
-  const prompt = `Provide a list of the 6 best careers ${industry === 'any'? '': `in the ${industry}` } ${
+  const prompt = `Provide a list of the 8 best careers ${
+    industry === "any" ? "" : `in the ${industry}`
+  } ${
     country ? "in " + country : ""
   } for an individual with an ${type1} personality type and RIASEC interest types of ${type2} ${
     type3 ? " and Gallup Strengths types of " + type3 : ""
-  } with 2 normal careers, 2 trending career and 2 off beat career. For each career, include the following information:
+  } with 2 normal careers, 2 trending career, 2 off beat and ${
+    finalAge >= 18
+      ? " 2 futuristic career for an individual with age " +
+        finalAge +
+        " on the year " +
+        new Date().getFullYear() +
+        3
+      : " 2 futuristic career for an individual with age " +
+        finalAge +
+        " till they reach 21 "
+  }. For each career, include the following information:
         career_name: A brief title of the career?.
         reason_for_recommendation: Why this career is suitable for someone with these interests${
           country
@@ -153,17 +184,20 @@ export async function GET(req) {
           country ? " in " + country : ""
         }.
         user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
-        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only but the career names should be ${languageOptions[language] || 'in English'}. Give it as a single JSON data without any wrapping other than []`;
+        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Provide the response ${
+    languageOptions[language] || "in English"
+  } keeping the keys in english only but the career names should be ${
+    languageOptions[language] || "in English"
+  }. Give it as a single JSON data without any wrapping other than []`;
 
   console.log("prompt", prompt);
-        
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
       model: "gpt-4o-mini", // or 'gpt-4' if you have access
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 3000, // Adjust the token limit as needed
+      max_tokens: 4000, // Adjust the token limit as needed
     },
     {
       headers: {
