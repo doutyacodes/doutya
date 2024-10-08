@@ -64,17 +64,9 @@ function RoadMap({ selectedCareer }) {
       if (response.status === 200) {  // Successful response
         if (currentRequestId === requestIdRef.current) { // Ensure this is the latest request
           const results = response.data;
-          // console.log(results);
+          console.log(results);
           setRoadMapData(results);
         }
-      } else if (response.status === 202) {  // Data generation in progress
-        console.log("resp Mesage", response.data.message)
-        if (currentRequestId === requestIdRef.current) { // Ensure this is the latest request
-          // setLoadMessage("Generating roadmap data, please wait...");
-          setLoadMessage(response.data.message);
-        }
-        console.log("Status 202 received, starting polling.");
-        // await checkForNewData(selectedCareer.id, token, currentRequestId);
       }
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
@@ -87,29 +79,6 @@ function RoadMap({ selectedCareer }) {
     }
   };
 
-    // Function to check for new data periodically
-    const checkForNewData = async (userCareerId, token) => {
-      let attempts = 0;
-      const maxAttempts = 2; // Maximum polling attempts
-      const interval = 60000; 
-  
-      console.log("The apprempt", attempts);
-  
-      const intervalId = setInterval(async () => {
-        attempts += 1;
-        const response = await GlobalApi.GetRoadMapData(userCareerId, token);
-        
-        if (response.status === 200) {
-          clearInterval(intervalId); // Stop polling
-          const results = response.data;
-          setRoadMapData(results);
-          toast.success('Data generation completed successfully!');
-        } else if (attempts >= maxAttempts) {
-          clearInterval(intervalId); // Stop polling after max attempts
-          toast.error('Data generation is still in progress. Please try again later.');
-        }
-      }, interval);
-    };
 
   useEffect(()=>{
     getRoadmap()

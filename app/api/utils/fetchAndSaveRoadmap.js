@@ -85,6 +85,8 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
         }
 
         try {
+
+            const milestonesForFrontend = [];  // Array to store the milestones in your desired format
             // Check if roadmap is an array and iterate over each milestone data
             if (Array.isArray(parsedData.roadmap)) {                
                 for (const milestoneData of parsedData.roadmap) {
@@ -131,8 +133,21 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
                                     user_career_id: userCareerID,
                                     milestone_id: milestoneId
                                 }).execute();
+
+                                 // Push to the milestones array for the frontend
+                                milestonesForFrontend.push({
+                                    milestoneId: milestoneId,
+                                    milestoneDescription: desc,
+                                    milestoneCategoryName: category,
+                                    milestoneCompletionStatus: false,
+                                    milestoneDateAchieved: null
+                                });
                             }
                         }
+
+                        // console.log("Milestones ready for frontend:", milestonesForFrontend);
+                        return milestonesForFrontend;  // Return the milestones array for the frontend
+
                     } else {
                         console.error("Invalid milestone data:", milestoneData);
                         throw new Error("Invalid milestone data encountered.");
@@ -140,11 +155,11 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
                 }
 
                 // After successful data generation, update the status to "completed"
-                await db
-                    .update(USER_CAREER_STATUS)
-                    .set({ roadmap_status: 'completed' })
-                    .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
-                    .execute();
+                // await db
+                //     .update(USER_CAREER_STATUS)
+                //     .set({ roadmap_status: 'completed' })
+                //     .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+                //     .execute();
 
             } else {
                 console.error("Career roadmap is not an array or is missing.");
@@ -155,22 +170,22 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
             console.error("Error processing milestones data:", error);
 
              // Reset the status to "not_started" in case of an error
-             await db
-             .update(USER_CAREER_STATUS)
-             .set({ roadmap_status: 'not_started' })
-             .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
-             .execute();
+            //  await db
+            //  .update(USER_CAREER_STATUS)
+            //  .set({ roadmap_status: 'not_started' })
+            //  .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+            //  .execute();
 
             throw new Error("Error processing milestones data:", error);
         }
     } catch (error) {
         console.error("Error fetching or saving roadmap:", error);
          // Reset the status to "not_started" in case of an error
-         await db
-         .update(USER_CAREER_STATUS)
-         .set({ roadmap_status: 'not_started' })
-         .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
-         .execute();
+        //  await db
+        //  .update(USER_CAREER_STATUS)
+        //  .set({ roadmap_status: 'not_started' })
+        //  .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID))
+        //  .execute();
         // Log the error without returning a response
         throw error; // Rethrow the error to be caught by the caller
     }

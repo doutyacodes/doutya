@@ -102,7 +102,7 @@ export async function GET(req, { params }) {
       )
       .execute();
 
-    console.log("userMilestones", userMilestones);
+    // console.log("userMilestones", userMilestones);
       
     // If no milestones are found, start data generation
     if (userMilestones.length === 0) {
@@ -115,11 +115,10 @@ export async function GET(req, { params }) {
       // .execute();
 
       // Send immediate response
-      const loadingResponse = { message: "Generating data, please wait..." };
+      // const loadingResponse = { message: "Generating data, please wait..." };
 
       // Trigger the data generation asynchronously
       // Start the background roadmap generation process
-     await fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language);
       // fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2)
       // .then(async () => {
       //     // After data is generated, update the status to "completed"
@@ -139,8 +138,9 @@ export async function GET(req, { params }) {
       //         .execute();
       // });
       
-      // Respond with a 202 Accepted status if you want to signify processing
-      return NextResponse.json(loadingResponse, { status: 202 });
+      // Respond with savedData
+      const savedMilestones = await fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language);
+      return NextResponse.json(savedMilestones, { status: 200 });
     }
 
     // Respond with fetched milestones data
