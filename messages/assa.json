@@ -158,7 +158,10 @@
     "careerSuggestion":"কৰিয়াৰ পৰামৰ্শ",
     "writeFeedback":"আপোনাৰ মতামত লিখক (ঐচ্ছিক)।",
     "selectIndustry": "এটা উদ্যোগ বাছনি কৰক",
-    "deselect": "অপছন্দ কৰক"
+    "deselect": "অপছন্দ কৰক",
+    "selectBelowIndustry":"অথবা তলৰ পৰা এটা Industry বাছি লওক",
+    "industryAgnostic":"মই INDUSTRY AGNOSTIC",
+    "industrySpecific":"মই উদ্যোগৰ নিৰ্দিষ্ট"
   },
   "FeedbackPage": {
     "careerFeedback": "পেচা মতামত",

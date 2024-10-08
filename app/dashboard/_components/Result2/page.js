@@ -300,7 +300,7 @@ export default function Results2() {
                   style={{ backgroundColor: '#FFA500' }}
                 >
                   <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
-                    I AM INDUSTRY AGNOSTIC
+                    {t('industryAgnostic')}
                   </div>
                 </button>
 
@@ -310,7 +310,7 @@ export default function Results2() {
                   style={{ backgroundColor: '#008000' }}
                 >
                   <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
-                    I AM INDUSTRY SPECIFIC
+                    {t('industrySpecific')}
                   </div>
 
                   <AddIndustry
@@ -324,7 +324,7 @@ export default function Results2() {
 
                 <div className="col-span-12 h-20 my-4 justify-center items-center flex">
                   <p className="text-white uppercase font-bold text-center">
-                    Or select an Industry from below
+                    {t('selectBelowIndustry')}
                   </p>
                 </div>
 
@@ -379,7 +379,7 @@ export default function Results2() {
         )}
         {step === 2 && (
           <>
-            <div ref={resultsRef}>
+            <div ref={resultsRef} className="mt-8">
               {resultData && !singleCareer ? (
                 <div className="grid grid-cols-12 gap-3 px-4">
                   {resultData?.map((career, index) => (
