@@ -98,6 +98,14 @@ function Navbar() {
                       {t('profileLink')}
                     </Link>
                   </MenuItem>
+                  <MenuItem key={"Your results"}>
+                    <Link
+                      href="/dashboard/myResults"
+                      className="block px-4 py-2 text-sm text-gray-700"
+                    >
+                      {t('myResults')}
+                    </Link>
+                  </MenuItem>
                   {/* <MenuItem key={"Careers"}>
                     <Link
                       href="/dashboard/careers"

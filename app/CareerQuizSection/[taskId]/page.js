@@ -461,6 +461,41 @@ import toast, { LoaderIcon, Toaster } from "react-hot-toast";
 import GreenSlider from "@/app/dashboard/_components/GreenSlider";
 import { useTranslations } from "next-intl";
 
+const languageFiles = {
+  hi: {
+    questions: "/personality_questions/hindi_questions.json",
+    options: "/personality_options/hindi_options.json"
+  },
+  ur: {
+    questions: "/personality_questions/urdu_questions.json",
+    options: "/personality_options/urdu_options.json"
+  },
+  sp: {
+    questions: "/personality_questions/spanish_questions.json",
+    options: "/personality_options/spanish_options.json"
+  },
+  ge: {
+    questions: "/personality_questions/german_questions.json",
+    options: "/personality_options/german_options.json"
+  },
+  ben: {
+    questions: "/personality_questions/bengali_questions.json",
+    options: "/personality_options/bengali_options.json"
+  },
+  assa: {
+    questions: "/personality_questions/assamese_questions.json",
+    options: "/personality_options/assamese_options.json"
+  },
+  mar: {
+    questions: "/personality_questions/marathi_questions.json",
+    options: "/personality_options/marathi_options.json"
+  },
+  en:{
+    questions: "/personality_questions/english_questions.json",
+    options: "/personality_options/english_options.json"
+  }
+};
+
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState(null);
@@ -495,16 +530,51 @@ function Page({ params }) {
     const getQuizData = async () => {
       setIsLoading(true);
       try {
-        const token =
-          typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        const resp = await GlobalApi.GetCareerQuiz(quizId, token);
-        setQuestions(resp.data.questions);
-        setChoices(resp.data.choices);
-        setCurrentQuestionIndex(resp.data.quizProgress);
+        // const token =typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        // const resp = await GlobalApi.GetCareerQuiz(quizId, token);
+        // setQuestions(resp.data.questions);
+        // setChoices(resp.data.choices);
+        // console.log(resp.data.choices)
+        // setCurrentQuestionIndex(resp.data.quizProgress);
 
-        if (resp.data.quizProgress > 0) {
-          setShowAlert(true);
-        }
+        // if (resp.data.quizProgress > 0) {
+        //   setShowAlert(true);
+        // }
+
+
+
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        let questionsData = []; 
+        let optionsData = [];
+        const languageFile = languageFiles[savedLanguage.toLowerCase()].questions;
+
+          if (languageFile) {
+            const response = await fetch(languageFile);
+            questionsData = await response.json(); 
+            
+          } else {
+            console.error("Language file not found for:", savedLanguage);
+          }
+          const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
+          console.log(optionsFile)
+          
+          if (optionsFile) {
+            const optionsResponse = await fetch(optionsFile);
+            optionsData = await optionsResponse.json();
+            console.log(optionsData) 
+          } else {
+            console.error("Options file not found for:", savedLanguage);
+          }
+
+          // questionsData = questionsData.map(question => ({
+          //   ...question,
+          //   options: optionsData.filter(option => option.question_id === question.id)
+          // }));
+          // console.log(questionsData)
+        // }
+
+        setQuestions(questionsData);
+        setChoices(optionsData); 
       } catch (error) {
         console.error("Error Fetching GetQuizData data:", error);
       } finally {
@@ -648,7 +718,7 @@ function Page({ params }) {
                 <div className="bg-[#1b143a] p-3 rounded-2xl w-[600px]">
                   <div className="w-full flex justify-center">
                     <p className="font-bold p-2 text-xl text-center w-full flex items-center justify-center h-24">
-                      {questions[currentQuestionIndex].questionText}
+                      {questions[currentQuestionIndex].question_text}
                     </p>
                   </div>
   
