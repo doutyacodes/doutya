@@ -23,12 +23,17 @@ const languageMapping = {
 };
 
 function SignUp() {
+    const [selectedDOB, setSelectedDOB] = useState('');
+    const [step, setStep] = useState('language');
     const [isCollegeStudent, setIsCollegeStudent] = useState(false);
     const [countryOptions] = useState(countryList().getData());
     const [selectedCountry, setSelectedCountry] = useState(null);
-    const [languageSelected, setLanguageSelected] = useState(false);
+    // const [languageSelected, setLanguageSelected] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('en'); 
+    const [dobError, setDobError] = useState('')
+    
     const router = useRouter();
+    const t = useTranslations('SignupPage');
 
     const {
         register,
@@ -46,32 +51,67 @@ function SignUp() {
     //         setLanguageSelected(true);
     //     }
     // }, []);
+
+    // useEffect(() => {
+    //     const savedLanguage = localStorage.getItem('language');
+    //     if(savedLanguage){
+    //         setSelectedLanguage(savedLanguage);
+    //         setLanguageSelected(true);
+    //     }
+    // }, []);
+
     useEffect(() => {
-        const savedLanguage = localStorage.getItem('language');
-        if(savedLanguage){
-            setSelectedLanguage(savedLanguage);
-            setLanguageSelected(true);
-        }
-    }, []);
+        localStorage.setItem('language', selectedLanguage);
+        document.cookie = `locale=${selectedLanguage}; path=/`;
+        console.log('document.cookie', document.cookie)
+        router.refresh();
+    }, [selectedLanguage]);
 
     const handleLanguageChange = (e) => {
         const newLanguage = e.target.value;
-        console.log(newLanguage)
+        console.log('newLanguage', newLanguage)
         setSelectedLanguage(newLanguage);
-        localStorage.setItem('language', newLanguage);
-        document.cookie = `locale=${newLanguage}; path=/`;
-        console.log(document.cookie)
-        router.refresh(); 
-        // setLanguageSelected(true);
-      };
+    };
 
-    // const handleNext = () => {
-    //     localStorage.setItem('language', selectedLanguage);
-    //     document.cookie = `locale=${selectedLanguage}; path=/`;
-    //     setLanguageSelected(true);
-    // }; 
+      console.log('setLanguageSelected', selectedLanguage)
+      console.log('selectedDOB', selectedDOB)
 
-    const t = useTranslations('SignupPage');
+    // const handleLanguageChange = (e) => {
+    //     const newLanguage = e.target.value;
+    //     console.log('newLanguage', newLanguage)
+    //     setSelectedLanguage(newLanguage);
+    //     localStorage.setItem('language', newLanguage);
+    //     document.cookie = `locale=${newLanguage}; path=/`;
+    //     console.log(document.cookie)
+    //     router.refresh(); 
+    //     // setLanguageSelected(true);
+    //   };
+
+
+    const handleDOBChange = (e) => {
+        const selectedDate = new Date(e.target.value);
+        const today = new Date();
+        const minAllowedDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
+
+        if (selectedDate > minAllowedDate) {
+            setDobError( t('dobValidation') );
+            setSelectedDOB('');
+        } else {
+            setDobError('');
+            setSelectedDOB(e.target.value);
+        }
+    };
+
+
+    const handleNext = () => {
+        if (step === 'language') {
+            setStep('dob');
+        } else if (step === 'dob') {
+            setStep('signup');
+        }
+    };
+
+    
     const onSubmit = async (data) => {
         if (data.password !== data.confirmPassword) {
             setError("confirmPassword", {
@@ -82,6 +122,8 @@ function SignUp() {
         }
         const encryptedPassword = encryptText(data.password);
         data.password = encryptedPassword;
+
+        data.dob = selectedDOB; /* Adding the previously got date to the data */
 
         data.language = languageMapping[selectedLanguage] || selectedLanguage;
 
@@ -142,7 +184,8 @@ function SignUp() {
 
     const collegeStudent = watch("student");
 
-    if (!languageSelected) {
+    // if (!languageSelected) {
+    if (step === 'language') {
         return (
             <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
                 <Toaster />
@@ -153,7 +196,7 @@ function SignUp() {
                         <select
                             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                             value={selectedLanguage}
-                            onChange={handleLanguageChange}
+                            onChange={(e)=> (handleLanguageChange(e))}
                         >
                             <option value="en">English</option>
                             <option value="hi">Hindi</option>
@@ -166,8 +209,39 @@ function SignUp() {
                         </select>
                     </div>
                     <button
-                        onClick={() => setLanguageSelected(true)}
+                        // onClick={() => setLanguageSelected(true)}
+                        onClick={handleNext}
                         className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (step === 'dob') {
+        return (
+            <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
+                <Toaster />
+                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+                    <h1 className="text-xl font-bold mb-4 text-center">Enter Your Date of Birth</h1>
+                    <p className="text-center mb-4">You won't be able to modify it later, so enter carefully.</p>
+                    <div className="mb-4">
+                        <input
+                            type="date"
+                            value={selectedDOB}
+                            onChange={handleDOBChange}
+                            max={new Date().toISOString().split("T")[0]}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            required
+                        />
+                        {dobError && <p className="mt-2 text-sm text-red-600">{dobError}</p>}
+                    </div>
+                    <button
+                        onClick={handleNext}
+                        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        disabled={!selectedDOB || dobError}
                     >
                         Next
                     </button>
@@ -275,7 +349,7 @@ function SignUp() {
                         />
                     </div>
 
-                    <div>
+                    {/* <div>
                         <label htmlFor="dob" className="block text-sm font-medium text-gray-700">{t('dob')}</label>
                         <input
                             type="date"
@@ -294,7 +368,7 @@ function SignUp() {
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                         {errors.dob && <p className="mt-2 text-sm text-red-600">{errors.dob.message}</p>}
-                    </div>
+                    </div> */}
                     <br />
                     <div className="mb-4 flex items-center">
                         <label htmlFor="collegeStudent" className="block text-sm font-medium text-gray-700 mr-4">{t('collegeStudent')}</label>
