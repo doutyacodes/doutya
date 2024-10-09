@@ -6,6 +6,7 @@ import { and,eq } from 'drizzle-orm';
 import { RESULTS1 } from '@/utils/schema';
 import path from 'path';
 import fs from 'fs';
+import axios from 'axios';
 
 
 const languageOptions = {
@@ -18,6 +19,7 @@ const languageOptions = {
   assa: 'assamese',
   ge: 'german'
 };
+
 export async function GET(req) {
   console.log('got user id function')
   const authResult = await authenticate(req);
@@ -61,13 +63,58 @@ export async function GET(req) {
   // const results = await db.select().from(RESULTS1).where(eq(RESULTS1.type_sequence, type));
 
   const filteredResults = results.filter(result => result.type_sequence === type);
+
   if (filteredResults.length === 0) {
     return NextResponse.json({ error: "No matching results found" }, { status: 404 });
   }
+  // console.log(filteredResults)
 
-  console.log(filteredResults);
+  let careers = [];
+  if (Array.isArray(filteredResults[0].most_suitable_careers)) {
+    careers = filteredResults[0].most_suitable_careers;
+  } else if (typeof filteredResults[0].most_suitable_careers === 'string') {
+    // Regex to split by commas only outside parentheses
+    careers = filteredResults[0].most_suitable_careers.split(/,(?![^(]*\))/).map(career => career.trim());
+  }
+  
+  const description = filteredResults[0].description;
 
-  console.log(filteredResults)
+  const prompt = `
+    Based on the following personality description: "${description}", provide a match percentage for each of these careers: ${careers.join(', ')}.
+    The match percentage should reflect how well the personality fits each career. Give it as a single JSON data without any wrapping other than []`;
 
-  return NextResponse.json(filteredResults);
+  const response = await axios.post(
+    "https://api.openai.com/v1/chat/completions",
+    {
+      model: "gpt-4o-mini", // or 'gpt-4' if you have access
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 4000, // Adjust the token limit as needed
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  let responseText = response.data.choices[0].message.content.trim();
+  responseText = responseText.replace(/```json|```/g, "").trim();
+
+  
+
+  const careerMatches = JSON.parse(responseText);
+
+  
+
+  const updatedResults = filteredResults.map(result => ({
+    ...result,
+    most_suitable_careers: careers.map((career, index) => ({
+      career,
+      match_percentage: careerMatches[index] || "N/A" // Use index to align with the response
+    }))
+  }));
+
+  
+
+  return NextResponse.json(updatedResults);
 }

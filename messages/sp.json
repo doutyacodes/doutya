@@ -93,7 +93,8 @@
     "opportunities": "Oportunidades",
     "threats": "Amenazas",
     "careers": "Mejores carreras",
-    "loading": "Cargando"
+    "loading": "Cargando",
+    "matchPercentage": "Porcentaje de coincidencia"
   },
   "ProfilePage": {
     "backToDashboard": "Volver al panel",

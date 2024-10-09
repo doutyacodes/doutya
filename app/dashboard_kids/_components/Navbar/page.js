@@ -111,6 +111,15 @@ function Navbarkids() {
                     </a>
                   </MenuItem>
 
+                  <MenuItem key={"Your results"}>
+                    <Link
+                      href="/dashboard_kids/myResultsKids"
+                      className="block px-4 py-2 text-sm text-gray-700"
+                    >
+                      {"My results"}
+                    </Link>
+                  </MenuItem>
+
                   <MenuItem key={"Sign Out"}>
                     <a
                       onClick={handleLogout}

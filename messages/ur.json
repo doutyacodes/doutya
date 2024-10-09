@@ -93,7 +93,8 @@
     "opportunities": "مواقع",
     "threats": "خطرات",
     "careers": "بہترین کیریئر",
-    "loading": "لوڈ ہو رہا ہے"
+    "loading": "لوڈ ہو رہا ہے",
+    "matchPercentage": "موافقت فیصد"
   },
   "ProfilePage": {
     "backToDashboard": "ڈیش بورڈ پر واپس جائیں",

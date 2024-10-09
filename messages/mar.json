@@ -93,7 +93,8 @@
     "opportunities": "संधी",
     "threats": "धोक्याचे मुद्दे",
     "careers": "सर्वात योग्य करियर",
-    "loading": "लोड होत आहे"
+    "loading": "लोड होत आहे",
+    "matchPercentage": "जुळणारा टक्का"
   },
   "ProfilePage": {
     "backToDashboard": "डॅशबोर्डवर परत जा",

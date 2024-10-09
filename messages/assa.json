@@ -90,7 +90,8 @@
     "opportunities": "সুযোগ",
     "threats": "বিপদ",
     "careers": "শ্ৰেষ্ঠ কেরিয়াৰ",
-    "loading": "লোড হৈছে"
+    "loading": "লোড হৈছে",
+    "matchPercentage": "মিলাৰ শতাংশ"
   },
   "ProfilePage": {
     "backToDashboard": "ড্যাশবোর্ডলৈ উভতি যাওক",
