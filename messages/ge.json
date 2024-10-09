@@ -46,7 +46,8 @@
     "bachelorsDegree": "Bachelor-Abschluss",
     "associateDegree": "Associate Degree",
     "mastersDegree": "Master-Abschluss",
-    "dobRequired": "Geburtsdatum ist erforderlich"
+    "dobRequired": "Geburtsdatum ist erforderlich",
+    "passWord": "Das Passwort muss mindestens 6 Zeichen, Buchstaben, Zahlen und Sonderzeichen enthalten."
   },
   "Banner": {
     "title": "Persönlichkeit",
@@ -166,7 +167,9 @@
     "deselect": "Abwählen",
     "selectBelowIndustry":"Oder wählen Sie unten eine Branche aus",
     "industryAgnostic":"Ich bin branchenneutral",
-    "industrySpecific":"Ich bin branchenspezifisch"
+    "industrySpecific":"Ich bin branchenspezifisch",
+    "saving": "Speichern...",
+      "moveCareer": "Zu Karrieren wechseln"
   },
   "FeedbackPage": {
     "careerFeedback": "Karriere-Feedback",
@@ -218,5 +221,22 @@
     "selectCurrentCountry": "Wählen Sie Ihr aktuelles Land aus",
     "pleaseSelectBoth": "Bitte wählen Sie beide Länder aus",
     "submit": "Einreichen"
-  }
+  },
+  "QuizProgress":{
+    "title": "Setzen Sie Ihr Quiz fort",
+      "message": "Es sieht so aus, als hätten Sie dieses Quiz bereits begonnen, aber nicht abgeschlossen. Sie werden jetzt dort fortfahren, wo Sie aufgehört haben. Klicken Sie auf die Schaltfläche unten, um fortzufahren.",
+      "button": "Fortsetzen"
+  },
+  "IndustryAlert": {
+      "title": "Keine Branche ausgewählt",
+      "message": "Sind Sie sicher, dass Sie mit Agnostic in Ihrer Karriere fortfahren möchten?",
+      "continue": "Fortfahren",
+      "cancel": "Abbrechen"
+    },
+    "AddIndustry": {
+      "title": "Interessiert an einer neuen Karriere?",
+      "message": "Bitte geben Sie den Namen der Branche ein, an der Sie interessiert sind. Diese Informationen helfen uns, die Empfehlungen für Sie anzupassen.",
+      "cancel": "Abbrechen",
+      "submit": "Einreichen"
+    }
 }

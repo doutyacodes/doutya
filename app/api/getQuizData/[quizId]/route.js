@@ -52,48 +52,48 @@ export async function GET(req, { params }) {
             totalAnswered = totalQuestionsAnswered[0]?.countQuestionIds || 0;
         }
 
-        const quizWithOption = await db
-            .select({
-                questionId: ANALYTICS_QUESTION.id,
-                questionText: ANALYTICS_QUESTION.question_text,
-                answerId: OPTIONS.id,
-                answerText: OPTIONS.option_text,
-                analyticId: OPTIONS.analytic_id
+        // const quizWithOption = await db
+        //     .select({
+        //         questionId: ANALYTICS_QUESTION.id,
+        //         questionText: ANALYTICS_QUESTION.question_text,
+        //         answerId: OPTIONS.id,
+        //         answerText: OPTIONS.option_text,
+        //         analyticId: OPTIONS.analytic_id
 
-            })
-            .from(ANALYTICS_QUESTION)
-            .leftJoin(OPTIONS, eq(ANALYTICS_QUESTION.id, OPTIONS.question_id))
-            .where(eq(ANALYTICS_QUESTION.quiz_id, quizId))
-            .execute();
+        //     })
+        //     .from(ANALYTICS_QUESTION)
+        //     .leftJoin(OPTIONS, eq(ANALYTICS_QUESTION.id, OPTIONS.question_id))
+        //     .where(eq(ANALYTICS_QUESTION.quiz_id, quizId))
+        //     .execute();
             
-        if (quizWithOption.length === 0) {
-            return NextResponse.json({ message: 'No questions found for the given Task id' }, { status: 404 });
-        }
+        // if (quizWithOption.length === 0) {
+        //     return NextResponse.json({ message: 'No questions found for the given Task id' }, { status: 404 });
+        // }
 
-        // Grouping the answers by question
-        const result = quizWithOption.reduce((acc, curr) => {
-            const { questionId, questionText, answerId, answerText, analyticId } = curr;
-            if (!acc[questionId]) {
-                acc[questionId] = {
-                    id: questionId,
-                    question: questionText,
-                    answers: []
-                };
-            }
-            acc[questionId].answers.push({
-                id: answerId,
-                text: answerText,
-                analyticId: analyticId
-            });
-            return acc;
-        }, {});
+        // // Grouping the answers by question
+        // const result = quizWithOption.reduce((acc, curr) => {
+        //     const { questionId, questionText, answerId, answerText, analyticId } = curr;
+        //     if (!acc[questionId]) {
+        //         acc[questionId] = {
+        //             id: questionId,
+        //             question: questionText,
+        //             answers: []
+        //         };
+        //     }
+        //     acc[questionId].answers.push({
+        //         id: answerId,
+        //         text: answerText,
+        //         analyticId: analyticId
+        //     });
+        //     return acc;
+        // }, {});
 
         // return NextResponse.json({ questions: Object.values(result) });
 
         // Step 5: Return the questions and answers along with the highest question ID
         return NextResponse.json({ 
             quizProgress: totalAnswered,
-            questions: Object.values(result) 
+            // questions: Object.values(result) 
         });
 
     } catch (error) {

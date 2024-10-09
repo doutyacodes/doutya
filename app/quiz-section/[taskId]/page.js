@@ -59,6 +59,10 @@ function Page({ params }) {
     mal:{
       questions: "/analytics_questions/malyalam_questions.json",
       options: "/options/malyalam_options.json"
+    },
+    tam:{
+      questions: "/analytics_questions/tamil_questions.json",
+      options: "/options/tamil_options.json"
     }
   };
 
@@ -133,6 +137,12 @@ function Page({ params }) {
     const getQuizData = async () => {
       setIsLoading(true);
       try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const resp = await GlobalApi.GetQuizData(quizId, token);
+        setCurrentQuestionIndex(resp.data.quizProgress);
+        if (resp.data.quizProgress > 0) {
+            setShowAlert(true); 
+        }
         const savedLanguage = localStorage.getItem('language') || 'en';
         let questionsData = []; // Use a local variable for questions
         let optionsData = []; // Use a local variable for options

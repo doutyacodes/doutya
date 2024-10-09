@@ -46,7 +46,8 @@
     "bachelorsDegree": "Título de Licenciatura",
     "associateDegree": "Título de Asociado",
     "mastersDegree": "Título de Maestría",
-    "dobRequired": "La fecha de nacimiento es obligatoria"
+    "dobRequired": "La fecha de nacimiento es obligatoria",
+    "passWord": "La contraseña debe tener 6 o más caracteres, incluyendo letras, números y caracteres especiales."
   },
   "Banner": {
     "title": "Personalidad",
@@ -166,7 +167,9 @@
     "deselect": "Deseleccionar",
     "selectBelowIndustry":"O seleccione una industria de abajo",
     "industryAgnostic":"SOY AGNOSTICO DE LA INDUSTRIA",
-    "industrySpecific":"SOY ESPECÍFICA DE LA INDUSTRIA"
+    "industrySpecific":"SOY ESPECÍFICA DE LA INDUSTRIA",
+    "saving": "Guardando...",
+      "moveCareer": "Mover a Carreras"
   },
   "FeedbackPage": {
     "careerFeedback": "Opinión sobre la Carrera",
@@ -218,5 +221,22 @@
     "selectCurrentCountry": "Selecciona tu país actual",
     "pleaseSelectBoth": "Por favor, selecciona ambos países",
     "submit": "Enviar"
-  }
+  },
+  "QuizProgress":{
+    "title": "Reanuda tu examen",
+      "message": "Parece que ya has comenzado este examen, pero no lo completaste. Ahora reanudarás desde donde lo dejaste. Haz clic en el botón de abajo para continuar.",
+      "button":"Continuar"
+  },
+  "IndustryAlert": {
+      "title": "No se ha seleccionado ninguna industria",
+      "message": "¿Está seguro de continuar con Agnostic en su carrera?",
+      "continue": "Continuar",
+      "cancel": "Cancelar"
+    },
+    "AddIndustry": {
+      "title": "¿Interesado en una nueva carrera?",
+      "message": "Por favor, ingrese el nombre de la industria en la que está interesado. Esta información nos ayudará a personalizar las recomendaciones para usted.",
+      "cancel": "Cancelar",
+      "submit": "Enviar"
+    }
 }

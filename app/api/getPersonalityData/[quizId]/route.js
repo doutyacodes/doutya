@@ -56,33 +56,33 @@ export async function GET(req, { params }) {
 
 
         // Fetch questions for the given quizId
-        const questions = await db
-            .select({
-                questionId: PERSONALITY_QUESTIONS.id,
-                questionText: PERSONALITY_QUESTIONS.question_text,
-                personaTypeId: PERSONALITY_QUESTIONS.personality_types_id
-            })
-            .from(PERSONALITY_QUESTIONS)
-            .where(eq(PERSONALITY_QUESTIONS.quiz_id, quizId))
-            .execute();
+        // const questions = await db
+        //     .select({
+        //         questionId: PERSONALITY_QUESTIONS.id,
+        //         questionText: PERSONALITY_QUESTIONS.question_text,
+        //         personaTypeId: PERSONALITY_QUESTIONS.personality_types_id
+        //     })
+        //     .from(PERSONALITY_QUESTIONS)
+        //     .where(eq(PERSONALITY_QUESTIONS.quiz_id, quizId))
+        //     .execute();
 
-        if (questions.length === 0) {
-            return NextResponse.json({ message: 'No questions found for the given Quiz id' }, { status: 404 });
-        }
+        // if (questions.length === 0) {
+        //     return NextResponse.json({ message: 'No questions found for the given Quiz id' }, { status: 404 });
+        // }
 
         // Fetch choices only once
-        const choices = await db
-            .select({
-                choiceId: PERSONALITY_CHOICES.id,
-                choiceText: PERSONALITY_CHOICES.choice_text,
-            })
-            .from(PERSONALITY_CHOICES)
-            .execute();
+        // const choices = await db
+        //     .select({
+        //         choiceId: PERSONALITY_CHOICES.id,
+        //         choiceText: PERSONALITY_CHOICES.choice_text,
+        //     })
+        //     .from(PERSONALITY_CHOICES)
+        //     .execute();
 
         return NextResponse.json({
             quizProgress: totalAnswered,
-            questions: questions,
-            choices: choices // Send choices separately
+            // questions: questions,
+            // choices: choices // Send choices separately
         });
 
     } catch (error) {

@@ -519,10 +519,10 @@ export default function Results2() {
                       {saveResultloading ? (
                         <div className="flex items-center">
                           <LoaderIcon className="w-5 h-5 text-white animate-spin mr-2" />
-                          Saving...
+                          {t('saving')}
                         </div>
                       ) : (
-                        <p>Move to Careers</p>
+                        <p>{t('moveCareer')}</p>
                       )}
                       {/* {selectedCareers.includes(careerIndex) ? t('deselect') : t('selectCareer')} */}
                     </button>
