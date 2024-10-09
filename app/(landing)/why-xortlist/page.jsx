@@ -1,3 +1,4 @@
+import Header from "@/app/_components/Header";
 import { FlameKindling } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -29,8 +30,8 @@ const page = () => {
 
   return (
     <main className="relative w-full bg-[#fbf8ff] min-h-screen">
-      <header className="h-20 bg-red-400 w-full" />
-      <section className="max-w-[1200px] mx-auto p-3 items-center w-full flex flex-col gap-7">
+        <Header />
+        <section className="max-w-[1200px] mx-auto p-3 items-center w-full flex flex-col gap-7">
         <h6 className="text-center text-sm font-bold text-[#9069e7]">
           WHY XORTLIST?
         </h6>

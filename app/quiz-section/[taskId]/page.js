@@ -55,6 +55,10 @@ function Page({ params }) {
     en:{
       questions: "/analytics_questions/english_questions.json",
       options: "/options/english_options.json"
+    },
+    mal:{
+      questions: "/analytics_questions/malyalam_questions.json",
+      options: "/options/malyalam_options.json"
     }
   };
 

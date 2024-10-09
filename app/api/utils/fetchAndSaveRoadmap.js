@@ -16,7 +16,8 @@ const languageOptions = {
     sp: 'in Spanish',
     ben: 'in Bengali',
     assa: 'in Assamese',
-    ge: 'in German'
+    ge: 'in German',
+    mal:'in malyalam'
   };
 
 export async function fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language) {

@@ -93,7 +93,8 @@
     "opportunities": "Opportunities",
     "threats": "Threats",
     "careers": "Most Suitable Careers",
-    "loading": "Loading"
+    "loading": "Loading",
+    "matchPercentage":"Match percentage"
   },
   "ProfilePage": {
     "backToDashboard": "Back to Dashboard",

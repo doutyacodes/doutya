@@ -1,4 +1,5 @@
 import Footer from "@/app/_components/Footer";
+import Header from "@/app/_components/Header";
 import { Blend } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -98,8 +99,8 @@ const Principle = () => {
   return (
     <main className="relative w-full bg-white">
       <div className=" md:min-h-screen bg-[#3e0075] py-4">
-        <header className="h-20 bg-red-400 w-full" />
-        <div className="max-w-[1200px] mx-auto px-3">
+      <Header />
+      <div className="max-w-[1200px] mx-auto px-3">
           <div className="flex max-md:flex-col w-full pt-5">
             <div className="w-full space-y-10 flex flex-col justify-center">
               <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">

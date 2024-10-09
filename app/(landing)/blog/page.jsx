@@ -1,4 +1,5 @@
 import Footer from "@/app/_components/Footer";
+import Header from "@/app/_components/Header";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
@@ -127,7 +128,7 @@ const page = () => {
   ];
   return (
     <div className="w-full bg-[#fbf8ff] min-h-screen">
-      <header className="h-20 bg-red-400 w-full" />
+        <Header />
 
       <div className="w-full mx-auto max-w-[1200px] p-3 space-y-5">
         <div className="grid grid-cols-12 w-full gap-3">
