@@ -31,7 +31,7 @@ const page = () => {
   return (
     <main className="relative w-full bg-[#fbf8ff] min-h-screen">
         <Header />
-        <section className="max-w-[1200px] mx-auto p-3 items-center w-full flex flex-col gap-7">
+        <section className="max-w-[1240px] mx-auto p-3 items-center w-full flex flex-col gap-7">
         <h6 className="text-center text-sm font-bold text-[#9069e7]">
           WHY XORTLIST?
         </h6>
@@ -43,7 +43,7 @@ const page = () => {
           features.
         </p>
       </section>
-      <section className="max-w-[1200px] mx-auto p-3 w-full space-y-4">
+      <section className="max-w-[1240px] mx-auto p-3 w-full space-y-4">
         <div className="w-full flex gap-1 items-center">
           <p className=" font-bold text-sm text-[#3e0075]">
             What best describes your goal?
