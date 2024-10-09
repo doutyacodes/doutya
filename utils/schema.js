@@ -374,6 +374,10 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         subject_id: int('subject_id').notNull().references(() => SUBJECTS.subject_id),
         test_date: date('test_date').notNull(),
         age_group: int('age_group').notNull(),
+        year: int('year').notNull(),
+        month: int('month').notNull(),
+        week_number: int('week_number').notNull(),
+        created_at: timestamp('created_at').defaultNow(),
     });
 
     export const USER_TESTS = mysqlTable('user_tests', {
@@ -446,6 +450,7 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         title: varchar('title', 255).notNull(),
         image: varchar('image', 255),
         bgImg: varchar('bgImg', 255),
+        type:  mysqlEnum('type',['paid','free','disabled']).notNull(),
       });
 
       export const CHALLENGES = mysqlTable('challenges', {
