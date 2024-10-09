@@ -1,0 +1,23 @@
+[
+    {
+      "choiceId": 1,
+      "choiceText": "പൂർണ്ണമായും യോജിക്കില്ല"
+    },
+    {
+      "choiceId": 2,
+      "choiceText": "യോഗ്യമല്ല"
+    },
+    {
+      "choiceId": 3,
+      "choiceText": "നിരപേക്ഷം"
+    },
+    {
+      "choiceId": 4,
+      "choiceText": "യോഗ്യമാണ്"
+    },
+    {
+      "choiceId": 5,
+      "choiceText": "പൂർണ്ണമായും യോജിക്കുന്നു"
+    }
+  ]
+  

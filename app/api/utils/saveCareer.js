@@ -39,7 +39,9 @@ export async function saveCareer(careersArray, country, userId, type1, type2) {
 
             if (existingUserCareer.length > 0) {
                 console.log("Exixsting UISER Career")
-                throw new Error(`Career '${career}' is already saved for this user.`);
+                // Return a message and stop further processing if career exists
+                return { message: `Career '${career}' is already saved for this user.`, status: 409 };
+                // throw new Error(`Career '${career}' is already saved for this user.`);
             }
             console.log("Inserting User Career");
             const insertUserCareerResult = await db
@@ -65,6 +67,8 @@ export async function saveCareer(careersArray, country, userId, type1, type2) {
                 })
                 .execute();
         }
+        // Return a success response if no conflict occurs
+        return { message: 'Careers saved successfully', status: 201 };
     } catch (error) {
         console.error('Error saving career:', error);
         throw error;
