@@ -4,49 +4,52 @@ import Link from "next/link";
 import React, { useState } from "react";
 import ListComponents from "./ListComponents";
 import { IoIosClose, IoIosMenu } from "react-icons/io";
-
+import {
+  FaBriefcase,
+  FaInfoCircle,
+  FaNewspaper,
+  FaClipboardList,
+  FaUserTie,
+  FaStore,
+} from "react-icons/fa";
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-const companyData = [
-  {
-    "title": "Careers",
-    "description": "It’s a great time to join Xortlist",
-    "href": "/careers"
-  },
-  {
-    "title": "About",
-    "description": "Learn what binds us together at Xortlist",
-    "href": "/about"
-  },
-  {
-    "title": "Press",
-    "description": "The latest news on Xortlist",
-    "href": "/press"
-  },
-  // {
-  //   "title": "Outstanding Xortliststers",
-  //   "description": "Honoring our outstanding Xortliststers",
-  //   "href": "/outstanding-gongsters"
-  // },
-  {
-    "title": "Operating Principles",
-    "description": "The rules that drive our day to day",
-    "href": "/operating-principles"
-  },
-  {
-    "title": "Leadership Principles",
-    "description": "What it means to lead at Xortlist",
-    "href": "/leadership-principles"
-  },
-  {
-    "title": "Xortlist Merch Store",
-    "description": "Our exclusive merch made just for you",
-    "href": "/merch-store"
-  }
-]
+  const companyData = [
+    {
+      title: "Careers",
+      description: "It’s a great time to join Xortlist",
+      href: "/careers",
+      icon: <FaBriefcase className="w-5 h-5 text-[#3e0075]" />,
+    },
+    {
+      title: "About",
+      description: "Learn what binds us together at Xortlist",
+      href: "/about",
+      icon: <FaInfoCircle className="w-5 h-5 text-[#3e0075]" />,
+    },
+    {
+      title: "Press",
+      description: "The latest news on Xortlist",
+      href: "/press",
+      icon: <FaNewspaper className="w-5 h-5 text-[#3e0075]" />,
+    },
+    {
+      title: "Operating Principles",
+      description: "The rules that drive our day to day",
+      href: "/operating-principles",
+      icon: <FaClipboardList className="w-5 h-5 text-[#3e0075]" />,
+    },
+    {
+      title: "Leadership Principles",
+      description: "What it means to lead at Xortlist",
+      href: "/leadership-principles",
+      icon: <FaUserTie className="w-5 h-5 text-[#3e0075]" />,
+    },
+   
+  ];
 
   return (
     <header className="flex justify-between items-center max-w-[1200px] mx-auto px-4 relative">
@@ -60,7 +63,7 @@ const companyData = [
         </Link>
       </div>
       <ul className="lg:flex hidden gap-7 ">
-          {/* <li  className="group">
+        {/* <li  className="group">
             <div className="cursor-pointer relative z-20">
               <p className="text-white text-sm">Product</p>
             </div>
@@ -71,26 +74,35 @@ const companyData = [
              </div>
             </div>
           </li> */}
-          <li  className="group">
-            <div className="cursor-pointer relative z-20">
-              <p className="text-white text-sm">Company</p>
+        <li className="group">
+          <div className="cursor-pointer relative z-20">
+            <p className="text-white text-sm">Company</p>
+          </div>
+          <div
+            className={`absolute top-0 z-10 pt-20 left-0 w-full min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300`}
+          >
+            <div className="bg-white p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
+                {companyData.map((item, index) => (
+                  <div key={index} className="py-5 flex items-center">
+                    <Link href={item.href} className="flex flex-col gap-2">
+                      
+                      <div className="flex gap-2">
+                      {item.icon}
+                        <h2 className="text-[12px] font-semibold">
+                          {item.title}
+                        </h2>
+                      </div>
+                        <p className="text-[10px] text-[#3e0075] font-semibold">
+                          {item.description}
+                        </p>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className={`absolute top-0 z-10 pt-20 left-0 w-full min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300`}>
-             <div className={`bg-white p-4`}>
-
-             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {companyData.map((item, index) => (
-        <div key={index} className="bg-white p-4 shadow rounded">
-          <Link href={item.href}>
-            <h2 className="text-lg font-semibold">{item.title}</h2>
-          </Link>
-          <p className="text-xs text-[#3e0075] font-semibold">{item.description}</p>
-        </div>
-      ))}
-    </div>
-             </div>
-            </div>
-          </li>
+          </div>
+        </li>
       </ul>
 
       <div>
