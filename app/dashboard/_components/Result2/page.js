@@ -509,7 +509,15 @@ export default function Results2() {
                         setSingleCareer(null);
                       }}
                     >
-                      {selectedCareers.includes(careerIndex) ? t('deselect') : t('selectCareer')}
+                      {saveResultloading ? (
+                        <div className="flex items-center">
+                          <LoaderIcon className="w-5 h-5 text-white animate-spin mr-2" />
+                          {t('saving')}
+                        </div>
+                      ) : (
+                        <p>{t('moveCareer')}</p>
+                      )}
+                      {/* {selectedCareers.includes(careerIndex) ? t('deselect') : t('selectCareer')} */}
                     </button>
                   </div>
                 </div>

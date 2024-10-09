@@ -16,7 +16,9 @@ const languageOptions = {
   sp: 'spanish',
   ben: 'bengali',
   assa: 'assamese',
-  ge: 'german'
+  ge: 'german',
+  mal:'malyalam',
+  tam:'tamil'
 };
 export async function GET(req) {
   console.log('got user id function')

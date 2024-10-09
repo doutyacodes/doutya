@@ -215,7 +215,7 @@ function Page() {
             </div>
           </div>
           <div className="w-full h-full flex flex-col">
-            <div className="uppercase text-center text-white font-bold text-xl md:text-2xl bg-orange-400 py-3 md:py-5 border-4 border-white">{activeTab}</div>
+            <div className="uppercase text-center text-white font-bold text-xl md:text-2xl bg-orange-400 py-3 md:py-5 border-4 border-white">{t(activeTab)}</div>
             {/*Insert country in the span*/}
             <div className="text-center text-black text-lg md:text-xl py-3 md:py-5 mx-4 md:mx-10">{t('age')}: 
               <span className="font-bold"></span>
