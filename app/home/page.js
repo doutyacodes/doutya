@@ -32,7 +32,7 @@ const Home = () => {
     <div>
       <Navbar />
       <div className="p-4 ">
-        <div className="w-full flex gap-5 md:gap-20  max-sm:flex-col justify-center items-center max-w-[1200px] mx-auto min-h-[75vh] pt-4">
+        <div className="w-full flex gap-5 md:gap-20  max-sm:flex-col justify-center items-center max-w-[1240px] mx-auto min-h-[75vh] pt-4">
           {homeData?.length > 0 &&
             homeData?.map((item) => {
               return (

@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { useTranslations } from 'next-intl'
 
 function AddIndustry({ isOpen, onClose, fetchResults}) {
+    const t = useTranslations('AddIndustry');
     const [selectedIndustry, setSelectedIndustry] = useState("")
     const [loading, setLoading] = useState(false)
 
@@ -29,11 +31,11 @@ function AddIndustry({ isOpen, onClose, fetchResults}) {
                             <div className="sm:flex sm:items-start">
                                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                     <DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                                        Interested in a New Career?
+                                        {t('title')}
                                     </DialogTitle>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Please enter the name of the Industry you are interested in. This information will help us tailor the recommendations for you.
+                                            {t('message')}
                                         </p>
                                         <input
                                             type="text"
@@ -77,7 +79,7 @@ function AddIndustry({ isOpen, onClose, fetchResults}) {
                                     ></path>
                                 </svg>
                             ) : (
-                                'Submit'
+                                t('submit')
                             )}
                         </button>
                         <button
@@ -88,7 +90,7 @@ function AddIndustry({ isOpen, onClose, fetchResults}) {
                             `}
                         >
                             {/* ${roadMapLoading ? 'bg-gray-200 cursor-not-allowed text-gray-500' : 'bg-white text-gray-700 hover:bg-gray-50'} */}
-                            Cancel
+                            {t('cancel')}
                         </button>
                     </div>
                     </DialogPanel>

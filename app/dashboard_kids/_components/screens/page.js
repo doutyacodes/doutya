@@ -2,8 +2,27 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+// Custom hook to determine if the screen is mobile
+const useMediaQuery = (query) => {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    setMatches(media.matches);
+
+    const listener = () => setMatches(media.matches);
+    media.addEventListener('change', listener);
+
+    return () => media.removeEventListener('change', listener);
+  }, [query]);
+
+  return matches;
+};
+
 const QuizTransitionScreens = ({ currentScreen, handleNextScreen }) => {
   const [exitAnimation, setExitAnimation] = useState(false);
+  
+  const isMobile = useMediaQuery("(max-width: 768px)"); 
 
   useEffect(() => {
     setExitAnimation(false);
@@ -15,7 +34,7 @@ const QuizTransitionScreens = ({ currentScreen, handleNextScreen }) => {
     return () => clearTimeout(timer);
   }, [currentScreen]);
 
-  const colors = ["#FF6F61", "#6B5B95"]; 
+  const colors = ["#FF6F61", "#6B5B95"];
   const images = [
     { src: "/assets/images/water.png", alt: "Image 1", className: "animate-slide-in-bc" },
     { src: "/assets/images/hat.png", alt: "Image 2", className: "animate-slide-in-tl" },
@@ -49,13 +68,14 @@ const QuizTransitionScreens = ({ currentScreen, handleNextScreen }) => {
           className={`absolute ${imagePositions[currentScreen - 1][index]} ${
             exitAnimation ? "animate-slide-out-" + imagePositions[currentScreen - 1][index] : image.className
           }`}
+          style={{ marginBottom: isMobile && index >= 2 ? "60px" : "0" }} 
         >
           <Image
             src={image.src}
             alt={image.alt}
-            width={220}  
-            height={220} 
-            className={image.className}
+            width={isMobile ? 100 : 220} 
+            height={isMobile ? 100 : 220} 
+            className={`responsive-image ${image.className}`}
           />
         </div>
       ))}
@@ -63,19 +83,11 @@ const QuizTransitionScreens = ({ currentScreen, handleNextScreen }) => {
       <div className="flex justify-center items-center h-full">
         <div className="rounded-2xl p-6 w-4/4 max-w-2xl h-auto text-center flex flex-col justify-center items-center bg-opacity-20 mt-[-200px]">
           <Image
-            src={
-              currentScreen === 1
-                ? "/assets/images/start2.png"
-                : "/assets/images/areyouready.gif"
-            }
-            alt={
-              currentScreen === 1
-                ? "Quiz Start Image"
-                : "Are You Ready Image"
-            }
-            width={600}
-            height={600}
-            className="mb-3"
+            src={currentScreen === 1 ? "/assets/images/start2.png" : "/assets/images/areyouready.gif"}
+            alt={currentScreen === 1 ? "Quiz Start Image" : "Are You Ready Image"}
+            width={isMobile ? 300 : 600} 
+            height={isMobile ? 300 : 600} 
+            className="mb-3 responsive-main-image"
           />
           {currentScreen === 2 ? (
             <Link href="/quiz-section-kids/1">
@@ -252,6 +264,17 @@ const QuizTransitionScreens = ({ currentScreen, handleNextScreen }) => {
           width: 100%;
           height: 100%;
           object-fit: cover;
+        }
+
+        /* Responsive Image Scaling */
+        .responsive-image {
+          width: auto;
+          height: auto;
+        }
+
+        .responsive-main-image {
+          width: auto;
+          height: auto;
         }
       `}</style>
     </div>

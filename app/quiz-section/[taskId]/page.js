@@ -59,6 +59,10 @@ function Page({ params }) {
     mal:{
       questions: "/analytics_questions/malyalam_questions.json",
       options: "/options/malyalam_options.json"
+    },
+    tam:{
+      questions: "/analytics_questions/tamil_questions.json",
+      options: "/options/tamil_options.json"
     }
   };
 
@@ -133,6 +137,12 @@ function Page({ params }) {
     const getQuizData = async () => {
       setIsLoading(true);
       try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const resp = await GlobalApi.GetQuizData(quizId, token);
+        setCurrentQuestionIndex(resp.data.quizProgress);
+        if (resp.data.quizProgress > 0) {
+            setShowAlert(true); 
+        }
         const savedLanguage = localStorage.getItem('language') || 'en';
         let questionsData = []; // Use a local variable for questions
         let optionsData = []; // Use a local variable for options
@@ -349,7 +359,7 @@ function Page({ params }) {
               !progressLoading ? (
                 <div className="bg-[#1b143a] w-full p-3 rounded-2xl pt-6 ">
                   <div>
-                    <p className="font-bold p-2 text-xl text-center mb-6">
+                    <p className="font-bold p-2 text-xl max-sm:text-lg text-center mb-6">
                       {questions[currentQuestionIndex]?.question}
                     </p>
                   </div>
@@ -358,8 +368,8 @@ function Page({ params }) {
                       <button
                         key={index}
                         className={cn(
-                          `py-5 px-4 rounded-full hover:cursor-pointer
-                    hover:text-black  transition duration-300 ease-in-out `,
+                          `sm:py-5 p-3 sm:px-4 rounded-full hover:cursor-pointer
+                    hover:text-black  transition duration-300 ease-in-out max-sm:text-xs `,
                           selectedChoice?.id === choice.id
                             ? "bg-green-500"
                             : "bg-[#0070c0] hover:bg-green-500"

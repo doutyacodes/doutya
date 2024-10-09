@@ -72,7 +72,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Footer from "./_components/Footer";
 import { cn } from "@/lib/utils";
 import Header from "./_components/Header";
@@ -80,14 +80,14 @@ import Header from "./_components/Header";
 const Page = () => {
   const [activeLink, setActiveLink] = useState(1);
   const [featureLink, setFeatureLink] = useState(1);
- 
+
   const revenueList = [
     {
       id: 1,
       title: "Team Productivity",
       image:
-        "https://www.gong.io/wp-content/uploads/2024/02/Team-Productivity.png",
-      image2: "https://www.gong.io/wp-content/uploads/2024/02/pitchbook.svg",
+        "https://www.xortlist.io/wp-content/uploads/2024/02/Team-Productivity.png",
+      image2: "https://www.xortlist.io/wp-content/uploads/2024/02/pitchbook.svg",
       subTitle: "10x sales efficiency",
       description:
         "Save time and maximize team effectiveness with AI-powered insights and guidance.",
@@ -96,8 +96,8 @@ const Page = () => {
       id: 2,
       title: "Revenue Predictability",
       image:
-        "https://www.gong.io/wp-content/uploads/2024/02/Revenue-Predictability.png",
-      image2: "https://www.gong.io/wp-content/uploads/2024/02/image-42.svg",
+        "https://www.xortlist.io/wp-content/uploads/2024/02/Revenue-Predictability.png",
+      image2: "https://www.xortlist.io/wp-content/uploads/2024/02/image-42.svg",
       subTitle: "95% forecast accuracy",
       description:
         "Deliver a strong quarter every quarter with AI that powers precise pipeline management and accurate forecasts.",
@@ -106,8 +106,8 @@ const Page = () => {
       id: 3,
       title: "Pipeline Growth",
       image:
-        "https://www.gong.io/wp-content/uploads/2024/02/Pipeline-Growth.png",
-      image2: "https://www.gong.io/wp-content/uploads/2024/02/image-44.svg",
+        "https://www.xortlist.io/wp-content/uploads/2024/02/Pipeline-Growth.png",
+      image2: "https://www.xortlist.io/wp-content/uploads/2024/02/image-44.svg",
       subTitle: "80% increase in email response rate",
       description:
         "Create, accelerate, and close pipeline with customer-centric sales engagement.",
@@ -139,7 +139,7 @@ const Page = () => {
   const resources = [
     {
       type: "news",
-      title: "Gong named a leader in Forrester Wave 2024",
+      title: "Xortlist named a leader in Forrester Wave 2024",
       image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
       description: "Revenue Orchestration Platforms For B2B",
     },
@@ -156,13 +156,24 @@ const Page = () => {
       image: null,
     },
     {
-      type: "gong labs",
+      type: "xortlist labs",
       title:
         "Selling is more complex than ever, and 24M sales calls told us why",
       description: "",
       image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
     },
   ];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setActiveLink((prevLink) =>
+        prevLink < revenueList.length ? prevLink + 1 : 1
+      );
+    }, 3000); // Change active link every 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup timeout on component unmount
+  }, [activeLink]);
+
+  // Calculate progress percentage
 
   return (
     <main className="relative w-full max-lg:bg-white min-h-screen">
@@ -180,7 +191,7 @@ const Page = () => {
 
       <div className="lg:absolute max-md:hidden top-0 left-0 w-full h-full bg-black opacity-50 -z-10"></div>
       <div className=" container z-50 h-full w-full max-lg:mt-16  lg:h-screen lg:flex items-center">
-        <div className="space-y-5 max-w-[1200px] mx-auto px-4">
+        <div className="space-y-5 max-w-[1240px] mx-auto px-4">
           <h1 className="lg:text-white lg:text-5xl text-3xl font-bold lg:leading-relaxed leading-normal lg:w-3/5 max-lg:text-center uppercase">
             <span className="bg-blue-600  text-transparent bg-clip-text">
               Next-Generation AI{" "}
@@ -206,7 +217,7 @@ const Page = () => {
           The world’s leading companies power their revenue workflows with
           Xortlist
         </h1>
-        <div className="w-full flex justify-center items-center flex-col max-w-[1200px] mx-auto">
+        <div className="w-full flex justify-center items-center flex-col max-w-[1240px] mx-auto">
           <div className="mt-14 flex flex-wrap gap-5 mx-auto  p-3 md:gap-7">
             {revenueList?.length > 0 &&
               revenueList?.map((item) => {
@@ -217,13 +228,25 @@ const Page = () => {
                     className=" max-sm:w-full"
                   >
                     <p
-                      className="md:text-2xl text-center font-bold"
+                      className="md:text-2xl text-center font-bold cursor-pointer"
                       style={{
                         color: activeLink == item.id ? "#a572e8" : "black",
                       }}
                     >
                       {item.title}
                     </p>
+                    {activeLink == item.id && (
+                      <div className="w-full h-2 bg-gray-200 mb-4 rounded mt-5">
+                        <div
+                          className="h-full rounded-full bg-[#a572e8] transition-all duration-500 ease-in-out"
+                          style={{
+                            width: `${
+                              (activeLink / revenueList.length) * 100
+                            }%`,
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -265,7 +288,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full bg-gradient-to-tr from-[#b1aaf6] to-[#8054df]">
-        <div className="w-full max-w-[1200px] mx-auto px-3 py-5 space-y-4">
+        <div className="w-full max-w-[1240px] mx-auto px-3 py-5 space-y-4">
           <h1 className="text-white text-2xl md:text-4xl font-bold text-center">
             From Interactions to Insights to Revenue — All in One Platform
           </h1>
@@ -298,7 +321,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full bg-white">
-        <div className="mx-auto max-w-[1200px] p-3">
+        <div className="mx-auto max-w-[1240px] p-3">
           <div className="grid grid-cols-12 gap-3">
             <div className="col-span-12 md:col-span-4 space-y-5">
               <p className="text-center md:text-left uppercase font-semibold text-lg text-[#8039df]">

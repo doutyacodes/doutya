@@ -128,9 +128,9 @@ const page = () => {
   ];
   return (
     <div className="w-full bg-[#fbf8ff] min-h-screen">
-        <Header />
+        <Header dark={true} />
 
-      <div className="w-full mx-auto max-w-[1200px] p-3 space-y-5">
+      <div className="w-full mx-auto max-w-[1240px] p-3 space-y-5">
         <div className="grid grid-cols-12 w-full gap-3">
           {featured?.length > 0 &&
             featured?.map((item, index) => {
