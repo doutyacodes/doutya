@@ -145,7 +145,7 @@ const GreenSlider = ({ choices, selectedChoice, onChange, key }) => {
           },
           '& .MuiSlider-markLabel': {
             color: 'white',
-            fontSize: isSmallScreen ? '10px' : '13px',
+            fontSize: isSmallScreen ? '7px' : '13px',
             marginTop: '12px',
             maxWidth: '80px',
             lineHeight: '1.2',

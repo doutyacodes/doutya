@@ -134,10 +134,10 @@ export default function Results2() {
     }
   };
 
-  const handleSaveResult = async (careerIndex) => {
+  const handleSaveResult = async () => {
     setSaveResultLoading(true);
-    // if (selectedCareers.length > 0) {
-      const selectedCareerObjects = [resultData[careerIndex]];      
+    if (selectedCareers.length > 0) {
+      const selectedCareerObjects = selectedCareers.map((index) => resultData[index]);
       const payload = { results: selectedCareerObjects };
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -149,18 +149,17 @@ export default function Results2() {
       } catch (err) {
         console.error("Failed to save career data:", err);
         if (err.response && err.response.data && err.response.data.message) {
-          toast.error(`${err.response.data.message}`);
+          toast.error(`Error: ${err.response.data.message}`);
         } else {
           toast.error("Failed to save career data. Please try again later.");
         }
       } finally {
         setSaveResultLoading(false);
       }
-
-    // } else {
-    //   toast.error("Please select at least one result to continue.");
-    //   setSaveResultLoading(false);
-    // }
+    } else {
+      toast.error("Please select at least one result to continue.");
+      setSaveResultLoading(false);
+    }
   };
 
   const downloadResultsAsImage = async () => {
@@ -235,8 +234,7 @@ export default function Results2() {
   }
 
   return (
-    <>
-     <Toaster position="top-center" reverseOrder={false} />
+    <div className="max-sm:pb-5">
       {step === 1 && industries && (
         <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center">
@@ -246,7 +244,7 @@ export default function Results2() {
       )}
 
       {step === 2 && !singleCareer && (
-        <div className="bg-[#009be8] h-20 mb-5 justify-center items-center flex w-full">
+        <div className="bg-[#009be8] h-20 mb-5 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center md:text-xl">
             {t('careerSuggestion')}
           </p>
@@ -254,9 +252,9 @@ export default function Results2() {
       )}
 
       {singleCareer?.career_name && (
-        <div className="bg-[#009be8] py-5 mb-5 w-full">
-          <div className="flex flex-col md:flex-row justify-between items-center px-4 mx-auto h-full w-full px-10">
-            <div className="flex items-center gap-4 mb-2 md:mb-0">
+        <div className="bg-[#009be8] py-5 mb-5">
+          <div className="flex flex-col md:flex-row justify-between items-center px-4 mx-auto h-full max-w-[1280px]">
+            <div className="flex max-md:w-full md:items-center gap-4 mb-2 md:mb-0">
               <button 
                 onClick={() => {
                   setCareerIndex(null);
@@ -264,8 +262,8 @@ export default function Results2() {
                 }}
                 className="text-white flex items-center"
               >
-                <ChevronsLeft className="text-white md:text-lg" />
-                <span className="uppercase font-bold">{t('backToCareer')}</span>
+                <ChevronsLeft className="text-white md:text-lg  " />
+                <span className="uppercase font-bold md:flex hidden">{t('backToCareer')}</span>
               </button>
             </div>
             <div className="text-center">
@@ -288,7 +286,7 @@ export default function Results2() {
 
       <div className="flex flex-col text-white gap-5 w-full">
         {step === 1 && industries && (
-          <div className="p-6 rounded-lg text-white mt-6 w-full">
+          <div className="p-6 rounded-lg text-white mt-6 w-full max-sm:pb-24">
 
             {/* <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-4xl mx-auto">
 
@@ -346,7 +344,7 @@ export default function Results2() {
                       <button
                         key={index}
                         onClick={handleOptionSelect}
-                        className="sm:col-span-6 md:col-span-4 max-w-72 col-span-12 text-[#341e44] p-[1px] pt-8 rounded-lg hover:opacity-70"
+                        className="sm:col-span-6 md:col-span-4 max-w-72 col-span-12 text-[#341e44] p-[1px] pt-8 rounded-lg hover:opacity-70 max-sm:ml-6"
                         style={{ backgroundColor: color }}
                       >
                         <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
@@ -385,7 +383,7 @@ export default function Results2() {
               {resultData && !singleCareer ? (
                 <div className="grid grid-cols-12 gap-3 px-4">
                   {resultData?.map((career, index) => (
-                    <div key={index} className="col-span-12 sm:col-span-6 md:col-span-2 flex flex-col">
+                    <div key={index} className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-2 flex flex-col">
                       <div
                         className={`flex-grow flex flex-col relative p-[1px] text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer
                         ${selectedCareers.includes(index) ? 'border-4 border-blue-500 shadow-2xl' : ''}`}
@@ -394,11 +392,7 @@ export default function Results2() {
                             career?.type == "normal" ? "#0097b2" :
                             career?.type == "off beat" ? "#800080" : "#5dbb49",
                         }}
-                        // onClick={() => handleCareerClick(index)}
-                        onClick={() => {
-                          setSingleCareer(career);
-                          setCareerIndex(index);
-                        }}
+                        onClick={() => handleCareerClick(index)}
                       >
                         <p className="text-xl text-center text-white py-4 uppercase font-bold">
                           {career?.type == "normal" ? "BASIC" : career.type}
@@ -422,7 +416,7 @@ export default function Results2() {
                           </p>
                         </div>
                       </div>
-                      {/* <div className="w-full flex justify-center items-center py-7">
+                      <div className="w-full flex justify-center items-center py-7">
                         <button
                           onClick={() => {
                             setSingleCareer(career);
@@ -432,7 +426,7 @@ export default function Results2() {
                         >
                           {t('readMore')}
                         </button>
-                      </div> */}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -506,34 +500,25 @@ export default function Results2() {
                   </div>
                   <div className="flex justify-center items-center">
                     <button
-                      className={`text-white font-bold text-center py-4 px-7 uppercase rounded-lg bg-green-600 ${
-                        saveResultloading ? "opacity-50 cursor-not-allowed" : ""
+                      className={`text-white font-bold text-center py-4 px-7 uppercase rounded-lg ${
+                        selectedCareers.includes(careerIndex) ? 'bg-red-600' : 'bg-green-600'
                       }`}
                       onClick={() => {
-                        handleSaveResult(careerIndex);
-                        // setCareerIndex(null);
-                        // setSingleCareer(null);
+                        handleCareerClick(careerIndex);
+                        setCareerIndex(null);
+                        setSingleCareer(null);
                       }}
-                      disabled={saveResultloading}
                     >
-                      {saveResultloading ? (
-                        <div className="flex items-center">
-                          <LoaderIcon className="w-5 h-5 text-white animate-spin mr-2" />
-                          Saving...
-                        </div>
-                      ) : (
-                        <p>Move to Careers</p>
-                      )}
-                      {/* {selectedCareers.includes(careerIndex) ? t('deselect') : t('selectCareer')} */}
+                      {selectedCareers.includes(careerIndex) ? t('deselect') : t('selectCareer')}
                     </button>
                   </div>
                 </div>
               ) : null}
             </div>
-            {/* {resultData && prevSelectCount < 3 && (
-              <div>
+            {resultData && prevSelectCount < 3 && (
+              <div className="max-sm:flex max-sm:justify-center">
                 <button
-                  className={`w-full bg-blue-500 text-white py-2 rounded-lg mt-4 flex justify-center items-center ${
+                  className={`max-sm:w-4/5 w-full bg-blue-500 text-white py-2 rounded-lg mt-4 flex justify-center items-center max-sm:mx-4 ${
                     saveResultloading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                   onClick={handleSaveResult}
@@ -541,7 +526,7 @@ export default function Results2() {
                 >
                   {saveResultloading ? (
                     <>
-                      <LoaderIcon className="w-5 h-5 text-white animate-spin mr-2" />
+                      <LoaderIcon className="w-5 h-5 text-white animate-spin mr-2 max-sm:mx-4" />
                       Saving...
                     </>
                   ) : (
@@ -549,9 +534,9 @@ export default function Results2() {
                   )}
                 </button>
               </div>
-            )} */}
+            )}
             {displayResults && !feedbackGiven && (
-              <div className="bg-white p-5 rounded-lg text-gray-600">
+              <div className="bg-white p-5 rounded-lg text-gray-600 max-sm:mx-4">
                 <p className="text-center text-xl mb-4">{t('giveFeedback')}</p>
                 <div className="flex justify-center mb-4">
                   {[...Array(10)].map((_, index) => (
@@ -589,6 +574,6 @@ export default function Results2() {
           </>
         )}
       </div>
-    </>
+    </div>
   );
 }
