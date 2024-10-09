@@ -67,7 +67,7 @@ const page = () => {
             BECOME A GONGSTER
           </h1>
           <h6 className="text-white font-medium text-sm max-md:text-center">
-            Be part of Gong’s worldwide expansion!
+            Be part of Xortlist’s worldwide expansion!
           </h6>
           <Image
             src={"/assets/images/trophy1.webp"}

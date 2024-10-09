@@ -63,7 +63,7 @@ const Header = ({ dark = false }) => {
       </div>
       <ul className="lg:flex hidden gap-7 ">
         <li className="group">
-          <Link href={"/blog"} className="cursor-pointer relative z-20">
+          <Link href={"/blog"} className="cursor-pointer relative z-[9999]">
             <p
               className={`text-${
                 !dark ? "white" : "[#3e0075]"
@@ -74,7 +74,7 @@ const Header = ({ dark = false }) => {
           </Link>
         </li>
         <li className="group">
-          <div className="cursor-pointer relative z-20">
+          <div className="cursor-pointer relative z-[9999]">
             <p
               className={`text-${
                 !dark ? "white" : "[#3e0075]"

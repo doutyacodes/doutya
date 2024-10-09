@@ -72,7 +72,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Footer from "./_components/Footer";
 import { cn } from "@/lib/utils";
 import Header from "./_components/Header";
@@ -80,7 +80,7 @@ import Header from "./_components/Header";
 const Page = () => {
   const [activeLink, setActiveLink] = useState(1);
   const [featureLink, setFeatureLink] = useState(1);
- 
+
   const revenueList = [
     {
       id: 1,
@@ -139,7 +139,7 @@ const Page = () => {
   const resources = [
     {
       type: "news",
-      title: "Gong named a leader in Forrester Wave 2024",
+      title: "Xortlist named a leader in Forrester Wave 2024",
       image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
       description: "Revenue Orchestration Platforms For B2B",
     },
@@ -163,6 +163,17 @@ const Page = () => {
       image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
     },
   ];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setActiveLink((prevLink) =>
+        prevLink < revenueList.length ? prevLink + 1 : 1
+      );
+    }, 3000); // Change active link every 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup timeout on component unmount
+  }, [activeLink]);
+
+  // Calculate progress percentage
 
   return (
     <main className="relative w-full max-lg:bg-white min-h-screen">
@@ -224,6 +235,18 @@ const Page = () => {
                     >
                       {item.title}
                     </p>
+                    {activeLink == item.id && (
+                      <div className="w-full h-2 bg-gray-200 mb-4 rounded mt-5">
+                        <div
+                          className="h-full rounded-full bg-[#a572e8] transition-all duration-500 ease-in-out"
+                          style={{
+                            width: `${
+                              (activeLink / revenueList.length) * 100
+                            }%`,
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 );
               })}

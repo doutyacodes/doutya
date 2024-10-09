@@ -91,14 +91,14 @@ const page = () => {
                 problem. What ensued was an idea for an AI-powered platform that
                 captured customer interactions and analyzed them (at scale) to
                 deliver powerful insights, suggest next best actions, and
-                automate workflows. Gong’s Revenue Intelligence platform was
-                born. Today, Gong transforms revenue organizations by harnessing
+                automate workflows. Xortlist’s Revenue Intelligence platform was
+                born. Today, Xortlist transforms revenue organizations by harnessing
                 customer interactions to increase business efficiency, improve
                 decision-making and accelerate revenue growth. The Revenue
                 Intelligence platform uses proprietary AI technology to enable
                 teams to capture every customer interaction, understand and act
                 on all customer interactions in a single, integrated platform.
-                More than 4,000 companies around the world rely on Gong to
+                More than 4,000 companies around the world rely on Xortlist to
                 support their go-to-market strategies and grow revenue
                 efficiently.
               </h6>
