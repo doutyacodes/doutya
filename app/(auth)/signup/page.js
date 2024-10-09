@@ -30,6 +30,7 @@ function SignUp() {
     const [selectedCountry, setSelectedCountry] = useState(null);
     // const [languageSelected, setLanguageSelected] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('en'); 
+    const [educationLevel, setEducationLevel] = useState(0);
     const [dobError, setDobError] = useState('')
     
     const router = useRouter();
@@ -43,6 +44,12 @@ function SignUp() {
         reset,
         setError
     } = useForm();
+
+    const educationLevelMapping = {
+        0: 'College',
+        1: 'Student',
+        2: 'Other'
+    };
 
     // useEffect(() => {
     //     const storedLanguage = localStorage.getItem('language');
@@ -107,7 +114,9 @@ function SignUp() {
         if (step === 'language') {
             setStep('dob');
         } else if (step === 'dob') {
-            setStep('signup');
+            setStep('education_level');
+        }else if(step==='education_level'){
+            setStep('signup')
         }
     };
 
@@ -132,6 +141,7 @@ function SignUp() {
             data.university = encryptText(data.university);
         }
         data.country = selectedCountry?.label;
+        data.educationLevel = educationLevelMapping[educationLevel];
         try {
             const response = await GlobalApi.CreateNewUser(data);
 
@@ -249,6 +259,43 @@ function SignUp() {
             </div>
         );
     }
+
+    if (step === 'education_level') {
+        return (
+            <div className="flex items-center justify-center min-h-screen pt-8 pb-8">
+                <Toaster />
+                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+                    <h1 className="text-xl font-bold mb-4 text-center">Choose Your Education Level</h1>
+                    <p className="text-center mb-4">You won't be able to modify it later, so choose wisely.</p>
+                    <div className="mb-4">
+                        <label htmlFor="educationLevelSlider" className="block text-sm font-medium text-gray-700">Education Level</label>
+                        <input
+                            type="range"
+                            id="educationLevelSlider"
+                            min="0"
+                            max="2"
+                            step="1"
+                            value={educationLevel}
+                            onChange={(e) => setEducationLevel(e.target.value)}
+                            className="w-full mt-2"
+                        />
+                        <div className="flex justify-between mt-2">
+                            <span className={educationLevel == 0 ? "font-bold" : ""}>College</span>
+                            <span className={educationLevel == 1 ? "font-bold" : ""}>Student</span>
+                            <span className={educationLevel == 2 ? "font-bold" : ""}>Other</span>
+                        </div>
+                    </div>
+                    <button
+                        onClick={handleNext}
+                        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+        );
+    }    
+    
 
     return (
         <div className="flex items-center justify-center min-h-screen pt-8 pb-8">

@@ -93,7 +93,8 @@
         "opportunities": "अवसर",
         "threats": "खतरे",
         "careers": "सबसे उपयुक्त करियर",
-        "loading": "लोड हो रहा है"
+        "loading": "लोड हो रहा है",
+        "matchPercentage": "मिलान प्रतिशत"
     },
     "ProfilePage": {
         "backToDashboard": "डैशबोर्ड पर वापस जाएं",
