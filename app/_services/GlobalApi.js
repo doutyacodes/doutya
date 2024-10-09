@@ -111,9 +111,10 @@ const InterestResult = (data) => axios.post('/api/resultTwo', data, {
   }
 })
 
-const GetUserId=(token)=>axios.get('/api/getUserId',{
+const GetUserId=(token,language)=>axios.get('/api/getUserId',{
   headers: {
     Authorization: `Bearer ${token}`,
+    'Accept-Language': language
   }
 });
 

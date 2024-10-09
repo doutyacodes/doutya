@@ -82,7 +82,8 @@
     "home": "Inicio",
     "tests": "Pruebas",
     "careers": "Carreras",
-    "communities": "Comunidades"
+    "communities": "Comunidades",
+    "myResults": "Mis resultados"
   },
   "ResultsPage": {
     "title": "Resultados",

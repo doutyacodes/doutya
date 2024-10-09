@@ -11,7 +11,8 @@ function Results() {
         async function fetchResults() {
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const data = await GlobalApi.GetUserId(token);
+                const language = localStorage.getItem('language') || 'en';
+                const data = await GlobalApi.GetUserId(token,language);
                 console.log(data.data[0]);
                 setResultData(data.data[0]);
             } catch (err) {
@@ -46,7 +47,7 @@ function Results() {
                     <p>{t('strengths')}</p>
                     <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
                         {resultData.strengths ? (
-                            resultData.strengths.split('\r\n').map((strength, index) => (
+                            resultData.strengths.split(',').map((strength, index) => (
                                 <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
                                     {strength}
                                 </div>
@@ -63,7 +64,7 @@ function Results() {
                     <p>{t('weaknesses')}</p>
                     <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
                         {resultData.weaknesses ? (
-                            resultData.weaknesses.split('\r\n').map((weakness, index) => (
+                            resultData.weaknesses.split(',').map((weakness, index) => (
                                 <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
                                     {weakness}
                                 </div>
@@ -80,7 +81,7 @@ function Results() {
                     <p>{t('opportunities')}</p>
                     <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
                         {resultData.opportunities ? (
-                            resultData.opportunities.split('\r\n').map((opportunity, index) => (
+                            resultData.opportunities.split(',').map((opportunity, index) => (
                                 <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
                                     {opportunity}
                                 </div>
@@ -97,7 +98,7 @@ function Results() {
                     <p>{t('threats')}</p>
                     <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600'>
                         {resultData.threats ? (
-                            resultData.threats.split('\r\n').map((threat, index) => (
+                            resultData.threats.split(',').map((threat, index) => (
                                 <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
                                     {threat}
                                 </div>
@@ -114,7 +115,7 @@ function Results() {
                     <p>{t('careers')}</p>
                     <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600'>
                         {resultData.most_suitable_careers ? (
-                            resultData.most_suitable_careers.split('\r\n').map((career, index) => (
+                            resultData.most_suitable_careers.split(',').map((career, index) => (
                                 <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
                                     {career}
                                 </div>

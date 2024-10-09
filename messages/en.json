@@ -82,7 +82,8 @@
     "home": "Home",
     "tests": "Tests",
     "careers": "Careers",
-    "communities": "Communities"
+    "communities": "Communities",
+    "myResults": "My results"
   },
   "ResultsPage": {
     "title": "Results",
