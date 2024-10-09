@@ -50,11 +50,11 @@ const page = () => {
     <main className="relative w-full ">
       <div className=" md:min-h-screen bg-[#3e0075] py-4">
         <Header />
-        <div className="max-w-[1200px] mx-auto px-3">
+        <div className="max-w-[1240px] mx-auto px-3">
           <div className="flex max-md:flex-col w-full pt-5">
             <div className="w-full space-y-5 flex flex-col justify-center">
               <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
-                WE ARE GONG
+                WE ARE XORTLIST
               </h1>
               <h6 className="text-white font-medium text-sm max-md:text-center">
                 We’re on a mission to help companies transform their revenue
@@ -68,7 +68,7 @@ const page = () => {
         </div>
       </div>
       <div className=" md:min-h-screen bg-[#1d0254] py-4">
-        <div className="max-w-[1200px] mx-auto px-3">
+        <div className="max-w-[1240px] mx-auto px-3">
           <div className="flex max-md:flex-col w-full pt-5">
             <div className="w-full space-y-5 flex flex-col justify-center">
               <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
@@ -91,14 +91,14 @@ const page = () => {
                 problem. What ensued was an idea for an AI-powered platform that
                 captured customer interactions and analyzed them (at scale) to
                 deliver powerful insights, suggest next best actions, and
-                automate workflows. Gong’s Revenue Intelligence platform was
-                born. Today, Gong transforms revenue organizations by harnessing
+                automate workflows. Xortlist’s Revenue Intelligence platform was
+                born. Today, Xortlist transforms revenue organizations by harnessing
                 customer interactions to increase business efficiency, improve
                 decision-making and accelerate revenue growth. The Revenue
                 Intelligence platform uses proprietary AI technology to enable
                 teams to capture every customer interaction, understand and act
                 on all customer interactions in a single, integrated platform.
-                More than 4,000 companies around the world rely on Gong to
+                More than 4,000 companies around the world rely on Xortlist to
                 support their go-to-market strategies and grow revenue
                 efficiently.
               </h6>
@@ -107,7 +107,7 @@ const page = () => {
         </div>
       </div>
       <div className=" bg-white px-4 mx-auto py-10">
-        <div className="max-w-[1200px] px-4 mx-auto py-10">
+        <div className="max-w-[1240px] px-4 mx-auto py-10">
           <div className="grid grid-cols-12 gap-6">
             {data.sections.map((section, index) => (
               <div

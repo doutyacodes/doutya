@@ -64,10 +64,10 @@ const page = () => {
       <Header />
       <div className="py-4 justify-center items-center flex flex-col h-full w-full gap-7">
           <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
-            BECOME A GONGSTER
+            BECOME A XORTIAN
           </h1>
           <h6 className="text-white font-medium text-sm max-md:text-center">
-            Be part of Gong’s worldwide expansion!
+            Be part of Xortlist’s worldwide expansion!
           </h6>
           <Image
             src={"/assets/images/trophy1.webp"}
@@ -77,7 +77,7 @@ const page = () => {
         </div>
       </div>
       <div className=" md:min-h-screen bg-white ">
-        <div className=" max-w-[1200px] mx-auto p-3 ">
+        <div className=" max-w-[1240px] mx-auto p-3 ">
           <h1 className="text-[#3e0075] text-4xl max-md:text-3xl font-bold uppercase">
             Current Openings
           </h1>

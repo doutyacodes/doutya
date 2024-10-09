@@ -28,53 +28,53 @@ const Press = () => {
       {
         date: "September 4, 2024",
         title:
-          "Independent Research Firm Names Gong a Leader in Revenue Orchestration Platforms",
+          "Independent Research Firm Names Xortlist a Leader in Revenue Orchestration Platforms",
         category: "Company news",
       },
       {
         date: "August 6, 2024",
         title:
-          "Gong Named to the Forbes Cloud 100 for the Fifth Consecutive Year",
+          "Xortlist Named to the Forbes Cloud 100 for the Fifth Consecutive Year",
         category: "Company news",
       },
       {
         date: "July 25, 2024",
         title:
-          "IDC MarketScape Names Gong a Leader in Worldwide Revenue Intelligence Platforms 2024 Vendor Assessment",
+          "IDC MarketScape Names Xortlist a Leader in Worldwide Revenue Intelligence Platforms 2024 Vendor Assessment",
         category: "Company news",
       },
       {
         date: "June 26, 2024",
         title:
-          "Gong Named 'Best AI-Based Solution for Sales' in 2024 AI Breakthrough Awards",
+          "Xortlist Named 'Best AI-Based Solution for Sales' in 2024 AI Breakthrough Awards",
         category: "Company news",
       },
       {
         date: "June 25, 2024",
         title:
-          "Gong Unveils New AI Capabilities to Help Revenue Teams Drive Excellence in Execution",
+          "Xortlist Unveils New AI Capabilities to Help Revenue Teams Drive Excellence in Execution",
         category: "Company news",
       },
       {
         date: "May 15, 2024",
         title:
-          "Gong Recognizes Top Companies Harnessing AI for Revenue Success",
+          "Xortlist Recognizes Top Companies Harnessing AI for Revenue Success",
         category: "Company news",
       },
       {
         date: "May 15, 2024",
-        title: "Gong Appoints Emily He as Chief Marketing Officer",
+        title: "Xortlist Appoints Emily He as Chief Marketing Officer",
         category: "Company news",
       },
       {
         date: "March 26, 2024",
         title:
-          "Gong Introduces Industry’s First AI 'Ask Anything' Solution for Individual Contacts to Help Revenue Teams Gain More Complete Insights and Boost Efficiency",
+          "Xortlist Introduces Industry’s First AI 'Ask Anything' Solution for Individual Contacts to Help Revenue Teams Gain More Complete Insights and Boost Efficiency",
         category: "Company news",
       },
       {
         date: "March 5, 2024",
-        title: "Gong Named to Forbes' List of America’s Best Startup Employers",
+        title: "Xortlist Named to Forbes' List of America’s Best Startup Employers",
         category: "Company news",
       },
     ],
@@ -82,29 +82,29 @@ const Press = () => {
       {
         date: "September 10, 2024",
         title:
-          "Gong Launches Enhanced Conversation Intelligence Feature for Real-Time Sales Coaching",
+          "Xortlist Launches Enhanced Conversation Intelligence Feature for Real-Time Sales Coaching",
         category: "Product news",
       },
       {
         date: "August 22, 2024",
         title:
-          "Gong Expands AI-Powered Forecasting Tools to Improve Revenue Predictions",
+          "Xortlist Expands AI-Powered Forecasting Tools to Improve Revenue Predictions",
         category: "Product news",
       },
       {
         date: "July 12, 2024",
-        title: "Gong Adds Multilingual Support for Global Sales Teams",
+        title: "Xortlist Adds Multilingual Support for Global Sales Teams",
         category: "Product news",
       },
       {
         date: "June 30, 2024",
         title:
-          "Gong Integrates with Major CRM Systems to Provide Seamless Data Syncing",
+          "Xortlist Integrates with Major CRM Systems to Provide Seamless Data Syncing",
         category: "Product news",
       },
       {
         date: "May 20, 2024",
-        title: "Gong Introduces New Mobile App for On-the-Go Sales Insights",
+        title: "Xortlist Introduces New Mobile App for On-the-Go Sales Insights",
         category: "Product news",
       },
     ],
@@ -138,7 +138,7 @@ const Press = () => {
     <main className="relative w-full ">
       <div className="min-h-screen bg-white py-2">
       <Header />
-      <div className="max-w-[1200px] mx-auto px-3">
+      <div className="max-w-[1240px] mx-auto px-3">
           <h2 className="text-[#3e0075] text-center mt-28 text-6xl max-md:text-4xl font-bold">
             NEWSROOM
           </h2>
@@ -192,7 +192,7 @@ const Press = () => {
                 Latest Story
               </h6>
               <p className="text-white text-3xl font-medium">
-                Independent Research Firm Names Gong a Leader in Revenue
+                Independent Research Firm Names Xortlist a Leader in Revenue
                 Orchestration Platforms{" "}
               </p>
             </div>
