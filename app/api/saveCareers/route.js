@@ -52,9 +52,11 @@ export async function POST(req) {
         const careerNames = results.map(item => item.career_name);
         console.log("Career Names:", careerNames);
 
-        await saveCareer(careerNames, country, userId, type1, type2);
 
-        return NextResponse.json({ message: 'Careers saved successfully' }, { status: 201 });
+        // Call saveCareer and handle the response
+        const saveCareerResponse = await saveCareer(careerNames, country, userId, type1, type2);
+        // return NextResponse.json({ message: 'Careers saved successfully' }, { status: 201 });
+        return NextResponse.json({ message: saveCareerResponse.message }, { status: saveCareerResponse.status });
     } catch (error) {
         return NextResponse.json(
             { message: error.message || "An unexpected error occurred" },
