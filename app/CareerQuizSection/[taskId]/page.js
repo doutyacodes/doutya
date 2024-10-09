@@ -497,6 +497,10 @@ const languageFiles = {
   mal:{
     questions: "/personality_questions/malyalam_questions.json",
     options: "/personality_options/malyalam_options.json"
+  },
+  tam:{
+    questions: "/personality_questions/tamil_questions.json",
+    options: "/personality_options/tamil_options.json"
   }
 };
 
@@ -534,16 +538,16 @@ function Page({ params }) {
     const getQuizData = async () => {
       setIsLoading(true);
       try {
-        // const token =typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        // const resp = await GlobalApi.GetCareerQuiz(quizId, token);
+        const token =typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const resp = await GlobalApi.GetCareerQuiz(quizId, token);
         // setQuestions(resp.data.questions);
         // setChoices(resp.data.choices);
         // console.log(resp.data.choices)
-        // setCurrentQuestionIndex(resp.data.quizProgress);
+        setCurrentQuestionIndex(resp.data.quizProgress);
 
-        // if (resp.data.quizProgress > 0) {
-        //   setShowAlert(true);
-        // }
+        if (resp.data.quizProgress > 0) {
+          setShowAlert(true);
+        }
 
 
 

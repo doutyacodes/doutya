@@ -20,6 +20,8 @@ const languageMapping = {
     ben: 'Bengali',
     assa: 'Assamese',
     ge: 'German',
+    tam:'Tamil',
+    mal:'Malyalam'
 };
 
 function SignUp() {
@@ -216,6 +218,8 @@ function SignUp() {
                             <option value="ben">Bengali</option>
                             <option value="assa">Assamese</option>
                             <option value="ge">German</option>
+                            <option value="tam">Tamil</option>
+                            <option value="mal">Malyalam</option>
                         </select>
                     </div>
                     <button
@@ -368,7 +372,7 @@ function SignUp() {
                         {errors.confirmPassword && (
                             <p className="mt-2 text-sm text-red-600">{errors.confirmPassword.message}</p>
                         )}
-                        <div className='md:text-sm text-xs'>Password must be 6+ characters with letters, numbers, and special characters.</div>
+                        <div className='md:text-sm text-xs'>{t('passWord')}</div>
                     </div>
                     <div className="mb-4">
                         <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">{t('mobile')}</label>

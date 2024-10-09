@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { useTranslations } from 'next-intl'
 
 function AlertDialogue({fetchResults, setShowAlert}) {
+    const t = useTranslations('IndustryAlert');
     const [open, setOpen] = useState(true)
 
     const handleContinue = ()=>{
@@ -31,11 +33,11 @@ function AlertDialogue({fetchResults, setShowAlert}) {
                                 </div>
                                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                     <DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                                        No Industry Selected
+                                        {t('title')}
                                     </DialogTitle>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Are you sure to continue with Agnostic in career?
+                                            {t('message')}
                                         </p>
                                     </div>
                                 </div>
@@ -47,7 +49,7 @@ function AlertDialogue({fetchResults, setShowAlert}) {
                                 onClick={handleContinue}
                                 className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
                             >
-                                Continue
+                                {t('continue')}
                             </button>
 
                             <button
@@ -56,7 +58,7 @@ function AlertDialogue({fetchResults, setShowAlert}) {
                                 className={`inline-flex w-full justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-gray-300 sm:w-auto`}
                             >
                                 {/* ${roadMapLoading ? 'bg-gray-200 cursor-not-allowed text-gray-500' : 'bg-white text-gray-700 hover:bg-gray-50'} */}
-                                Cancel
+                                {t('cancel')}
                             </button>
                         </div>
                     </DialogPanel>

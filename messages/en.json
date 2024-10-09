@@ -46,7 +46,8 @@
     "bachelorsDegree": "Bachelor's Degree",
     "associateDegree": "Associate Degree",
     "mastersDegree": "Master's Degree",
-    "dobRequired": "Date of Birth is required"
+    "dobRequired": "Date of Birth is required",
+    "passWord":"Password must be 6+ characters with letters, numbers, and special characters."
   },
   "Banner": {
     "title": "Personality",
@@ -166,7 +167,9 @@
     "deselect":"Deselect",
     "selectBelowIndustry":"Or select an Industry from below",
     "industryAgnostic":"I AM INDUSTRY AGNOSTIC",
-    "industrySpecific":"I AM INDUSTRY SPECIFIC"
+    "industrySpecific":"I AM INDUSTRY SPECIFIC",
+    "saving":"Saving...",
+    "moveCareer":"Move to Careers"
   },
   "FeedbackPage": {
     "careerFeedback": "Career Feedback",
@@ -218,5 +221,22 @@
     "selectCurrentCountry": "Select Your Current Country",
     "pleaseSelectBoth": "Please select both countries",
     "submit": "Submit"
+  },
+  "QuizProgress":{
+      "title": "Resume Your Quiz",
+      "message": "It looks like you've already started this quiz but didn't complete it. You will now resume from where you left off. Click the button below to continue.",
+      "button": "Continue"
+  },
+  "IndustryAlert":{
+    "title":"No Industry Selected",
+    "message":"Are you sure to continue with Agnostic in career?",
+    "continue":"Continue",
+    "cancel":"Cancel"
+  },
+  "AddIndustry":{
+    "title":"Interested in a New Career?",
+    "message":"Please enter the name of the Industry you are interested in. This information will help us tailor the recommendations for you.",
+    "cancel":"Cancel",
+    "submit":"Submit"
   }
 }

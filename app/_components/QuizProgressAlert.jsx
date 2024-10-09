@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { useTranslations } from 'next-intl'
 
 function QuizProgressAlert() {
+    const t = useTranslations('QuizProgress');
     const [open, setOpen] = useState(true)
     return (
         <Dialog open={open} onClose={setOpen} className="relative z-10">
@@ -26,11 +28,11 @@ function QuizProgressAlert() {
                                 </div>
                                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                     <DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                                        Resume Your Quiz
+                                        {t('title')}
                                     </DialogTitle>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            It looks like you've already started this quiz but didn't complete it. You will now resume from where you left off. Click the button below to continue.
+                                            {t('message')}
                                         </p>
                                     </div>
                                 </div>
@@ -42,7 +44,7 @@ function QuizProgressAlert() {
                                 onClick={() => setOpen(false)}
                                 className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
                             >
-                                Continue
+                                {t('button')}
                             </button>
                         </div>
                     </DialogPanel>
