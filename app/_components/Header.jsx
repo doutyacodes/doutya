@@ -12,7 +12,7 @@ import {
   FaUserTie,
   FaStore,
 } from "react-icons/fa";
-const Header = ({dark=false}) => {
+const Header = ({ dark = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -48,7 +48,6 @@ const Header = ({dark=false}) => {
       href: "/leadership-principles",
       icon: <FaUserTie className="w-4 h-4 text-[#3e0075]" />,
     },
-   
   ];
 
   return (
@@ -63,34 +62,44 @@ const Header = ({dark=false}) => {
         </Link>
       </div>
       <ul className="lg:flex hidden gap-7 ">
-        <li  className="group">
-            <Link href={"/blog"} className="cursor-pointer relative z-20">
-              <p className={`text-${!dark ?"white":"[#3e0075]"} text-sm`}>Blog</p>
-            </Link>
-           
-          </li>
+        <li className="group">
+          <Link href={"/blog"} className="cursor-pointer relative z-20">
+            <p
+              className={`text-${
+                !dark ? "white" : "[#3e0075]"
+              } text-sm hover:font-bold`}
+            >
+              Blog
+            </p>
+          </Link>
+        </li>
         <li className="group">
           <div className="cursor-pointer relative z-20">
-            <p className={`text-${!dark ?"white":"[#3e0075]"} text-sm`}>Company</p>
+            <p
+              className={`text-${
+                !dark ? "white" : "[#3e0075]"
+              } text-sm hover:font-bold`}
+            >
+              Company
+            </p>
           </div>
           <div
-            className={`absolute top-0 z-10 pt-20 left-0 w-full min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300`}
+            className={`absolute top-0 z-[9999] pt-20 left-0 w-full min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300`}
           >
             <div className="bg-white p-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
                 {companyData.map((item, index) => (
                   <div key={index} className="py-5 flex items-center">
                     <Link href={item.href} className="flex flex-col gap-2">
-                      
                       <div className="flex gap-2 items-center">
-                      {item.icon}
+                        {item.icon}
                         <h2 className="text-[12px] font-semibold">
                           {item.title}
                         </h2>
                       </div>
-                        <p className="text-[10px] text-[#3e0075] font-semibold">
-                          {item.description}
-                        </p>
+                      <p className="text-[10px] text-[#3e0075] font-semibold">
+                        {item.description}
+                      </p>
                     </Link>
                   </div>
                 ))}
