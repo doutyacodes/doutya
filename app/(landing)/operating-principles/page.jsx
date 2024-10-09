@@ -50,7 +50,7 @@ const Principle = () => {
     },
     {
       id: 8,
-      title: "WE ARE ALL TEAM GONG",
+      title: "WE ARE ALL TEAM XORTLIST",
       description:
         "We’re all part of the same team—Team Xortlist. Xortlist’s long-term success will be determined by collaboration between teams. We won’t get there by narrowly focusing on our own team goals. Instead, we operate as one team to help us win.",
     },
@@ -104,7 +104,7 @@ const Principle = () => {
           <div className="flex max-md:flex-col w-full pt-5">
             <div className="w-full space-y-10 flex flex-col justify-center">
               <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
-                WE ARE GONG
+                WE ARE XORTLIST
               </h1>
               <h6 className="text-white font-medium text-sm max-md:text-center">
                 We’re on a mission to help companies transform their revenue
@@ -126,7 +126,7 @@ const Principle = () => {
         <div className="max-w-[1200px] py-5 mx-auto px-3">
           <div className="w-full space-y-10 flex flex-col justify-center">
             <h1 className="text-[#3e0075] text-4xl font-bold max-md:text-center">
-              WHAT DOES IT MEAN TO LEAD AT GONG?
+              WHAT DOES IT MEAN TO LEAD AT XORTLIST?
             </h1>
             <h6 className="text-[#3e0075] font-medium text-sm max-md:text-center">
               We’re on a mission to help companies transform their revenue

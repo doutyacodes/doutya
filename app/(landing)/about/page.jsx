@@ -54,7 +54,7 @@ const page = () => {
           <div className="flex max-md:flex-col w-full pt-5">
             <div className="w-full space-y-5 flex flex-col justify-center">
               <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
-                WE ARE GONG
+                WE ARE XORTLIST
               </h1>
               <h6 className="text-white font-medium text-sm max-md:text-center">
                 We’re on a mission to help companies transform their revenue
