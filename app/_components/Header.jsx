@@ -22,31 +22,31 @@ const Header = () => {
       title: "Careers",
       description: "It’s a great time to join Xortlist",
       href: "/careers",
-      icon: <FaBriefcase className="w-5 h-5 text-[#3e0075]" />,
+      icon: <FaBriefcase className="w-4 h-4 text-[#3e0075]" />,
     },
     {
       title: "About",
       description: "Learn what binds us together at Xortlist",
       href: "/about",
-      icon: <FaInfoCircle className="w-5 h-5 text-[#3e0075]" />,
+      icon: <FaInfoCircle className="w-4 h-4 text-[#3e0075]" />,
     },
     {
       title: "Press",
       description: "The latest news on Xortlist",
       href: "/press",
-      icon: <FaNewspaper className="w-5 h-5 text-[#3e0075]" />,
+      icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
     },
     {
       title: "Operating Principles",
       description: "The rules that drive our day to day",
       href: "/operating-principles",
-      icon: <FaClipboardList className="w-5 h-5 text-[#3e0075]" />,
+      icon: <FaClipboardList className="w-4 h-4 text-[#3e0075]" />,
     },
     {
       title: "Leadership Principles",
       description: "What it means to lead at Xortlist",
       href: "/leadership-principles",
-      icon: <FaUserTie className="w-5 h-5 text-[#3e0075]" />,
+      icon: <FaUserTie className="w-4 h-4 text-[#3e0075]" />,
     },
    
   ];
@@ -87,7 +87,7 @@ const Header = () => {
                   <div key={index} className="py-5 flex items-center">
                     <Link href={item.href} className="flex flex-col gap-2">
                       
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 items-center">
                       {item.icon}
                         <h2 className="text-[12px] font-semibold">
                           {item.title}
