@@ -100,7 +100,7 @@ const Principle = () => {
     <main className="relative w-full bg-white">
       <div className=" md:min-h-screen bg-[#3e0075] py-4">
       <Header />
-      <div className="max-w-[1200px] mx-auto px-3">
+      <div className="max-w-[1240px] mx-auto px-3">
           <div className="flex max-md:flex-col w-full pt-5">
             <div className="w-full space-y-10 flex flex-col justify-center">
               <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
@@ -123,7 +123,7 @@ const Principle = () => {
         </div>
       </div>
       <div className="bg-[#f5edff]">
-        <div className="max-w-[1200px] py-5 mx-auto px-3">
+        <div className="max-w-[1240px] py-5 mx-auto px-3">
           <div className="w-full space-y-10 flex flex-col justify-center">
             <h1 className="text-[#3e0075] text-4xl font-bold max-md:text-center">
               WHAT DOES IT MEAN TO LEAD AT XORTLIST?
@@ -138,7 +138,7 @@ const Principle = () => {
         </div>
       </div>
       <div className="bg-[#fefdfe]">
-        <div className="max-w-[1200px] py-5 mx-auto px-3">
+        <div className="max-w-[1240px] py-5 mx-auto px-3">
           <div className="grid grid-cols-1  md:grid-cols-3  gap-6 mt-10">
             {renderprincipleGrid()}
           </div>
