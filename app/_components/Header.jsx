@@ -12,7 +12,7 @@ import {
   FaUserTie,
   FaStore,
 } from "react-icons/fa";
-const Header = () => {
+const Header = ({dark=false}) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -63,17 +63,12 @@ const Header = () => {
         </Link>
       </div>
       <ul className="lg:flex hidden gap-7 ">
-        {/* <li  className="group">
-            <div className="cursor-pointer relative z-20">
-              <p className="text-white text-sm">Product</p>
-            </div>
-            <div className={`absolute top-0 z-10 pt-20 left-0 w-full min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300`}>
-             <div className={`bg-white`}>
-
-              <p className="text-white p-4">Content for Product</p>
-             </div>
-            </div>
-          </li> */}
+        <li  className="group">
+            <Link href={"/blog"} className="cursor-pointer relative z-20">
+              <p className="text-white text-sm">Blog</p>
+            </Link>
+           
+          </li>
         <li className="group">
           <div className="cursor-pointer relative z-20">
             <p className="text-white text-sm">Company</p>
