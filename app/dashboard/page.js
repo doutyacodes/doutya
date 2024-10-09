@@ -53,7 +53,7 @@ export default function Dashboard() {
 
 
   return (
-    <div className='md:pb-16 pb-24'>
+    <div>
       {!isTest2Completed ? (
         <>
           <Banner

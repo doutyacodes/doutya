@@ -228,7 +228,7 @@ const Page = () => {
                     className=" max-sm:w-full"
                   >
                     <p
-                      className="md:text-2xl text-center font-bold"
+                      className="md:text-2xl text-center font-bold cursor-pointer"
                       style={{
                         color: activeLink == item.id ? "#a572e8" : "black",
                       }}

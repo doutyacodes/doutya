@@ -31,8 +31,8 @@ function Navbar() {
 
   return (
     <div>
-      <nav className="pt-3 pb-4 md:px-16 px-8">
-        <div className=" mx-auto flex items-center md:justify-between justify-end">
+      <nav className="pt-3 pb-4 sm:px-16 px-8">
+        <div className=" mx-auto flex items-center sm:justify-between justify-end">
           {/* Logo */}
           <div className="flex items-center mr-16">
             <Image
@@ -43,11 +43,11 @@ function Navbar() {
           </div>
 
           {/* Navigation Links */}
-          <div className="md:flex items-center space-x-6 text-sm lg:text-base text-nowrap ">
+          <div className="sm:flex items-center space-x-6 text-sm lg:text-base text-nowrap ">
             
             <div className="flex items-center gap-3 ">
               {/* Profile dropdown */}
-              <div className=" text-white md:flex gap-12 mr-10 hidden">
+              <div className=" text-white sm:flex gap-12 mr-10 hidden">
                 <Link
                       href="/"
                       className="cursor-pointer"
@@ -134,7 +134,7 @@ function Navbar() {
       <div
         className={`fixed inset-0 bg-black bg-opacity-75 z-50 transform transition-transform ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        } md:hidden`}
+        } sm:hidden`}
       >
         <div className="w-64 h-full bg-white p-4">
           <button className="text-black float-right" onClick={toggleSidebar}>

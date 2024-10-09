@@ -151,14 +151,14 @@ function Page() {
         roadMapLoading={roadMapLoading}
       />
 
-<div className="flex flex-col sm:flex-row justify-start md:items-center items-start gap-4 sm:gap-10 text-white bg-gradient-to-r from-teal-200 to-orange-200 md:p-4 max-md:pb-4 sm:p-10 mb-5">
-  <p className="text-center font-bold text-black text-2xl sm:text-4xl md:pl-10 md:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">{t('careers')}</p>
+<div className="flex flex-col sm:flex-row justify-start sm:items-center items-start gap-4 sm:gap-5 lg:gap-10 text-white bg-gradient-to-r from-teal-200 to-orange-200 md:p-4 max-md:pb-4 sm:p-10 mb-5">
+  <p className="text-center font-bold text-black text-2xl sm:text-4xl md:pl-5 md:mr-10 lg:pl-16 lg:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">{t('careers')}</p>
   <div className="flex flex-wrap gap-4 justify-start items-center max-md:pl-4">
     {careerData.map((career, index) => (
       <div
         key={index}
         onClick={() => handleCareerClick(career)}
-        className={`w-20 h-20 sm:w-28 sm:h-28 p-1 sm:p-2 shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95 ${
+        className={`w-28 h-28 sm:w-32 sm:h-32  p-1 sm:p-2 shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95 ${
           selectedCareer && selectedCareer.id === career.id
             ? "bg-blue-100 border-2 border-blue-500"
             : "bg-white"
@@ -171,7 +171,7 @@ function Page() {
     ))}
     
     {roadMapLoading && (
-      <div className="w-20 h-20 sm:w-28 sm:h-28 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95">
+      <div className="w-28 h-28 sm:w-32 sm:h-32 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95">
         <p className="text-center text-xs sm:text-sm font-bold text-blue-900">
           {t('careerAdding')}
         </p>
@@ -179,7 +179,7 @@ function Page() {
     )}
 
     <div
-      className="w-20 h-20 sm:w-28 sm:h-28 p-2 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95"
+      className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95"
       onClick={handleAddCareerClick}
     >
       <PlusIcon className="text-gray-600 font-thin h-6 w-6 sm:h-8 sm:w-8" />
@@ -188,7 +188,7 @@ function Page() {
 </div>
 
       {selectedCareer && (
-        <div className="flex flex-col md:flex-row px-4 md:px-20 gap-6 md:gap-10 py-6 md:py-10 bg-gradient-to-r from-sky-200 to-green-200">
+        <div className="flex flex-col lg:flex-row px-4 md:px-20 gap-6 md:gap-10 py-6 md:py-10 bg-gradient-to-r from-sky-200 to-green-200">
           <div className="bg-white flex flex-col items-center w-full md:w-auto">
             <div className="flex justify-center w-full items-center py-4 md:py-10 px-4 md:w-56">
               <div className="text-xl md:text-2xl text-black font-bold text-center">
@@ -198,7 +198,7 @@ function Page() {
               </div>
             </div>
 
-            <div className="flex flex-row md:flex-col justify-start md:justify-center gap-2 md:gap-4 text-xs md:text-base w-full mb-4 overflow-x-scroll md:overflow-x-visible max-md:px-2">
+            <div className="flex flex-row lg:flex-col justify-start md:justify-center gap-2 md:gap-4 text-xs md:text-base w-full mb-4 overflow-x-scroll md:overflow-x-visible max-md:px-2">
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
@@ -206,7 +206,7 @@ function Page() {
                     activeTab === tab.key
                       ? "bg-green-400"
                       : "bg-neutral-300"
-                  } text-black font-semibold py-2 px-3 md:py-4 md:px-4 whitespace-nowrap md:w-full`}
+                  } text-black font-semibold py-2 px-3 md:py-4 md:px-4 whitespace-nowrap sm:w-full`}
                   onClick={() => setActiveTab(tab.key)}
                 >
                   {tab.label.toUpperCase()}

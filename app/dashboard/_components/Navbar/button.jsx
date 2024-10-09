@@ -41,7 +41,7 @@ const MobileNavigation = () => {
   }
 
   return (
-    <nav className="fixed bottom-4 left-4 right-4 lg:hidden z-50">
+    <nav className="fixed bottom-4 left-4 right-4 sm:hidden z-50">
       <div className="bg-teal-800 rounded-full p-1 shadow-lg items-center">
         <ul className="flex justify-around items-center">
           {navItems.map((item) => (
