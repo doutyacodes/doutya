@@ -136,6 +136,7 @@ const Principle = () => {
           </div>
         </div>
       </div>
+
       <div className="bg-[#fefdfe]">
         <div className="max-w-[1200px] py-5 mx-auto px-3">
           <div className="grid grid-cols-1  md:grid-cols-3  gap-6 mt-10">

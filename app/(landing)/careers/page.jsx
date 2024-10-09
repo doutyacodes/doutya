@@ -1,4 +1,5 @@
 import Footer from "@/app/_components/Footer";
+import Header from "@/app/_components/Header";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -60,8 +61,8 @@ const page = () => {
   return (
     <main className="relative w-full ">
       <div className=" md:min-h-screen bg-[#3e0075] ">
-        <header className="h-20 bg-red-400 w-full" />
-        <div className="py-4 justify-center items-center flex flex-col h-full w-full gap-7">
+      <Header />
+      <div className="py-4 justify-center items-center flex flex-col h-full w-full gap-7">
           <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
             BECOME A GONGSTER
           </h1>

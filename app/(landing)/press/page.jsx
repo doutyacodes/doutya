@@ -1,5 +1,6 @@
 "use client";
 import Footer from "@/app/_components/Footer";
+import Header from "@/app/_components/Header";
 import { ArrowDownToLine, Blend, Facebook, Instagram } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -136,8 +137,8 @@ const Press = () => {
   return (
     <main className="relative w-full ">
       <div className="min-h-screen bg-white py-2">
-        <header className="h-20 bg-red-400 w-full" />
-        <div className="max-w-[1200px] mx-auto px-3">
+      <Header />
+      <div className="max-w-[1200px] mx-auto px-3">
           <h2 className="text-[#3e0075] text-center mt-28 text-6xl max-md:text-4xl font-bold">
             NEWSROOM
           </h2>

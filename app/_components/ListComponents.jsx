@@ -14,12 +14,15 @@ import Link from "next/link";
 const ListComponents = () => {
   const [isProductVisible, setIsProductVisible] = useState(false);
   const [isResourcesVisible, setIsResourcesVisible] = useState(false);
+  const [companyVisible, setCompanyVisible] = useState(false);
   const [career, setCareer] = useState(false);
   // const [isResourcesVisible, setIsResourcesVisible] = useState(false);
 
   const toggleProductVisibility = () => setIsProductVisible(!isProductVisible);
   const toggleResourcesVisibility = () =>
     setIsResourcesVisible(!isResourcesVisible);
+  const toggleCompanyVisibility = () =>
+    setCompanyVisible(!isResourcesVisible);
 
   return (
     <>
@@ -93,11 +96,43 @@ const ListComponents = () => {
           <div className="w-full bg-[#f5edff] px-3 space-y-3 py-5">
             <ul className="space-y-5">
               <li>
-
-              <Link href={"/blog"} className="flex gap-2 items-center hover:scale-105 transition-transform">
-                <FaBlog color="brown" size={20} />
-                <p className="text-blue-600 text-sm font-semibold">Blogs</p>
-              </Link>
+                <Link
+                  href={"/blog"}
+                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                >
+                  <FaBlog color="brown" size={20} />
+                  <p className="text-blue-600 text-sm font-semibold">Blogs</p>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        )}
+      </li>
+      <li>
+        <div
+          className="flex w-full justify-between px-3"
+          onClick={toggleCompanyVisibility}
+        >
+          <p className="text-blue-600 text-sm cursor-pointer focus:underline">
+            Company
+          </p>
+          {companyVisible ? (
+            <IoChevronUpOutline size={20} color="red" />
+          ) : (
+            <IoChevronDownOutline size={20} color="blue" />
+          )}
+        </div>
+        {companyVisible && (
+          <div className="w-full bg-[#f5edff] px-3 space-y-3 py-5">
+            <ul className="space-y-5">
+              <li>
+                <Link
+                  href={"/blog"}
+                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                >
+                  <FaBlog color="brown" size={20} />
+                  <p className="text-blue-600 text-sm font-semibold">Blogs</p>
+                </Link>
               </li>
             </ul>
           </div>
