@@ -65,13 +65,13 @@ const Header = ({dark=false}) => {
       <ul className="lg:flex hidden gap-7 ">
         <li  className="group">
             <Link href={"/blog"} className="cursor-pointer relative z-20">
-              <p className="text-white text-sm">Blog</p>
+              <p className={`text-${!dark ?"white":"[#3e0075]"} text-sm`}>Blog</p>
             </Link>
            
           </li>
         <li className="group">
           <div className="cursor-pointer relative z-20">
-            <p className="text-white text-sm">Company</p>
+            <p className={`text-${!dark ?"white":"[#3e0075]"} text-sm`}>Company</p>
           </div>
           <div
             className={`absolute top-0 z-10 pt-20 left-0 w-full min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300`}
