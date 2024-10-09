@@ -93,7 +93,8 @@
     "opportunities": "সুযোগ",
     "threats": "হুমকি",
     "careers": "সর্বোত্তম ক্যারিয়ার",
-    "loading": "লোড হচ্ছে"
+    "loading": "লোড হচ্ছে",
+    "matchPercentage": "মিলের শতাংশ"
   },
   "ProfilePage": {
     "backToDashboard": "ড্যাশবোর্ডে ফিরে যান",

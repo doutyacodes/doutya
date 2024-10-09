@@ -439,6 +439,13 @@ const setCountries = (data, token) => {
   });
 };
 
+const GetKidsResult=(token,language)=>axios.get('/api/getKidsResult',{
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Accept-Language': language
+  }
+});
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -490,5 +497,6 @@ export default {
 
   UpdateMileStoneStatus,
   GetFeedBackData,
-  setCountries
+  setCountries,
+  GetKidsResult
 }

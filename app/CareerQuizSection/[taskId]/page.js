@@ -493,6 +493,10 @@ const languageFiles = {
   en:{
     questions: "/personality_questions/english_questions.json",
     options: "/personality_options/english_options.json"
+  },
+  mal:{
+    questions: "/personality_questions/malyalam_questions.json",
+    options: "/personality_options/malyalam_options.json"
   }
 };
 

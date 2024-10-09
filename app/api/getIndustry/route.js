@@ -13,7 +13,8 @@ const languageOptions = {
   sp: 'in Spanish',
   ben: 'in Bengali',
   assa: 'in Assamese',
-  ge: 'in German'
+  ge: 'in German',
+  mal:'in malyalam'
 };
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';

@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 export default getRequestConfig(async () => {
   // Provide a default locale
   const defaultLocale = 'en';
-  const supportedLocales = ['en', 'hi','assa','ben','ge','mar','sp','ur'];
+  const supportedLocales = ['en', 'hi','assa','ben','ge','mar','sp','ur','mal'];
 
   // Retrieve the locale from headers (sent by the client) or fallback to default
   const localeFromCookie = cookies().get('locale')?.value || defaultLocale;

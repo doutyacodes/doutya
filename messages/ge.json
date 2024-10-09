@@ -93,7 +93,8 @@
     "opportunities": "Chancen",
     "threats": "Bedrohungen",
     "careers": "Beste Karrieren",
-    "loading": "Wird geladen"
+    "loading": "Wird geladen",
+    "matchPercentage": "Übereinstimmungsprozentsatz"
   },
   "ProfilePage": {
     "backToDashboard": "Zurück zum Dashboard",
