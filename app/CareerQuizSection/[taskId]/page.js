@@ -607,10 +607,10 @@ function Page({ params }) {
 
   const handleNext = async () => {
     const answer = {
-      questionId: questions[currentQuestionIndex].questionId,
+      questionId: questions[currentQuestionIndex].id,
       optionId: selectedChoice.choiceId,
       optionText: selectedChoice.choiceText,
-      personaTypeId: questions[currentQuestionIndex].personaTypeId,
+      personaTypeId: questions[currentQuestionIndex].personality_types_id,
     };
     await quizProgressSubmit(answer);
 
