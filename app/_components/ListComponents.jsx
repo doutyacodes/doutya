@@ -8,6 +8,7 @@ import {
   FaChild,
   FaBuilding,
   FaBlog,
+  FaBriefcase, FaInfoCircle, FaNewspaper, FaBook, FaUsers
 } from "react-icons/fa";
 import Link from "next/link";
 
@@ -123,20 +124,56 @@ const ListComponents = () => {
           )}
         </div>
         {companyVisible && (
-          <div className="w-full bg-[#f5edff] px-3 space-y-3 py-5">
-            <ul className="space-y-5">
-              <li>
-                <Link
-                  href={"/blog"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
-                >
-                  <FaBlog color="brown" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">Blogs</p>
-                </Link>
-              </li>
-            </ul>
-          </div>
-        )}
+  <div className="w-full bg-[#f5edff] px-3 space-y-3 py-5">
+    <ul className="space-y-5">
+      <li>
+        <Link
+          href={"/careers"}
+          className="flex gap-2 items-center hover:scale-105 transition-transform"
+        >
+          <FaBriefcase color="#8B4513" size={20} /> {/* Brown color for careers */}
+          <p className="text-blue-600 text-sm font-semibold">Careers</p>
+        </Link>
+      </li>
+      <li>
+        <Link
+          href={"/about"}
+          className="flex gap-2 items-center hover:scale-105 transition-transform"
+        >
+          <FaInfoCircle color="#8B4513" size={20} /> {/* Brown color for about */}
+          <p className="text-blue-600 text-sm font-semibold">About</p>
+        </Link>
+      </li>
+      <li>
+        <Link
+          href={"/press"}
+          className="flex gap-2 items-center hover:scale-105 transition-transform"
+        >
+          <FaNewspaper color="#8B4513" size={20} /> {/* Brown color for press */}
+          <p className="text-blue-600 text-sm font-semibold">Press</p>
+        </Link>
+      </li>
+      <li>
+        <Link
+          href={"/operating-principles"}
+          className="flex gap-2 items-center hover:scale-105 transition-transform"
+        >
+          <FaBook color="#8B4513" size={20} /> {/* Brown color for operating principles */}
+          <p className="text-blue-600 text-sm font-semibold">Operating Principles</p>
+        </Link>
+      </li>
+      <li>
+        <Link
+          href={"/leadership-principles"}
+          className="flex gap-2 items-center hover:scale-105 transition-transform"
+        >
+          <FaUsers color="#8B4513" size={20} /> {/* Brown color for leadership principles */}
+          <p className="text-blue-600 text-sm font-semibold">Leadership Principles</p>
+        </Link>
+      </li>
+    </ul>
+  </div>
+)}
       </li>
     </>
   );
