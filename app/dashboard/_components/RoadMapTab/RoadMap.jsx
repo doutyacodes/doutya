@@ -2,6 +2,7 @@ import GlobalApi from '@/app/_services/GlobalApi';
 import { CheckCircle } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 function RoadMap({ selectedCareer , setAge}) {
   const [activeTab, setActiveTab] = useState('Educational Milestones');
@@ -10,6 +11,7 @@ function RoadMap({ selectedCareer , setAge}) {
   const [milestones, setMilestones] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [LoadMessage, setLoadMessage] = useState('')
+  const t = useTranslations('RoadMap');
 
   const language = localStorage.getItem('language') || 'en';
 
@@ -51,7 +53,7 @@ function RoadMap({ selectedCareer , setAge}) {
     setRoadMapData([]);
     setMilestones([]);
     setCompletedTasks({});
-    setLoadMessage("Fetching roadmap data, please wait...");
+    setLoadMessage(t('loadingMessage'));
 
 
     const currentRequestId = ++requestIdRef.current; // Increment the request ID
@@ -73,7 +75,7 @@ function RoadMap({ selectedCareer , setAge}) {
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(`Error: ${err.response.data.message}`);
       } else {
-        toast.error('Failed to fetch Road Map data. Please try again later.');
+        toast.error(t('errorMessages.fetchFailure'));
       }
     } finally {
       setIsLoading(false);
@@ -125,14 +127,14 @@ function RoadMap({ selectedCareer , setAge}) {
       const response = await GlobalApi.UpdateMileStoneStatus(data, token);
   
       if (response.status === 201) {
-        toast.success("Milestone status updated");
+        toast.success(t('errorMessages.updateSuccess'));
       } else {
-        const errorMessage = response.data?.message || "Failed to update status.";
+        const errorMessage = response.data?.message || t('errorMessages.updateFailure');
         toast.error(`Error: ${errorMessage}`);
       }
     } catch (err) {
       // Handle any errors that occurred during the API call
-      toast.error("An unexpected error occurred.");
+      toast.error(t('errorMessages.unexpectedError'));
     } finally {
       getRoadmap()
     }
@@ -191,10 +193,10 @@ function RoadMap({ selectedCareer , setAge}) {
                     >
                       {item.milestoneCompletionStatus ? (
                         <>
-                          <CheckCircle className="mr-2" /> Completed
+                          <CheckCircle className="mr-2" /> {t('buttons.completed')}
                         </>
                       ) : (
-                        'Complete'
+                        t('buttons.complete')
                       )}
                     </button>
 

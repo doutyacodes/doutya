@@ -114,7 +114,7 @@ function Page({ params }) {
             console.error("Language file not found for:", savedLanguage);
           }
           const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
-          console.log(optionsFile)
+          
           
           if (optionsFile) {
             const optionsResponse = await fetch(optionsFile);
@@ -262,9 +262,9 @@ function Page({ params }) {
         </p>
       </div>
       {showAlert && <QuizProgressAlert />}
-      <div className="flex justify-center items-center px-4">
+      <div className="flex justify-center items-center px-4 lg:min-h-96">
         {questions.length > 0 && (
-          <div className="mt-4 sm:pt-7 sm:min-h-[20rem] sm:min-w-[600px] flex flex-col sm:gap-8 justify-center items-center mx-auto text-white rounded-2xl p-[1px] bg-[#0097b2]">
+          <div className="mt-4 sm:pt-7 sm:min-h-[20rem] sm:min-w-[600px] lg:min-w-[1000px] flex flex-col sm:gap-8 justify-center items-center mx-auto text-white rounded-2xl p-[1px] bg-[#0097b2]">
             {
               !progressLoading ? (
                 <>
@@ -273,7 +273,7 @@ function Page({ params }) {
                   {currentQuestionIndex + 1}/30
                 </p>
                 </div>
-                <div className="bg-[#1b143a] p-3 rounded-2xl sm:w-[600px]">
+                <div className="bg-[#1b143a] flex flex-col gap-7 p-3 rounded-2xl sm:w-[600px] lg:w-[997px]">
                   <div className="w-full flex justify-center">
                     <p className="font-bold p-2 text-xl text-center w-full flex items-center justify-center h-24">
                       {questions[currentQuestionIndex].question_text}
