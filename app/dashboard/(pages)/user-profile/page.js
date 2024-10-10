@@ -1,36 +1,31 @@
 "use client";
 
-import { X, Edit3, Save, User, HelpCircle } from "lucide-react";
-
+import { X, Edit3, Save } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { FiX } from "react-icons/fi";
-import { FiEdit3 } from "react-icons/fi";
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Edit } from "lucide-react";
-import { EyeIcon, PencilIcon } from "@heroicons/react/24/outline";
 import GlobalApi from "@/app/_services/GlobalApi";
 import { encryptText } from "@/utils/encryption";
 import toast, { Toaster } from "react-hot-toast";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
-import { calculateAge } from "@/lib/ageCalculate";
+import { calculateAge } from "@/lib/ageCalculate"; // Ensure this utility exists and works correctly
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 
-function page() {
+function Page() {
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [userData, setUserdata] = useState(false);
+  const [userData, setUserData] = useState(null); // Initialized as null for better type handling
   const [isSubmit, setIsSubmit] = useState(false);
-  const [isEditing, setisEditing] = useState(false);
+  const [dashboardType, setDashboardType] = useState(''); // Possible values: 'kids', 'junior', 'senior'
   const t = useTranslations('ProfilePage');
 
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
+  // Authentication Check
   useEffect(() => {
     const authCheck = () => {
       if (typeof window !== "undefined") {
@@ -49,44 +44,21 @@ function page() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
     reset,
     setError,
   } = useForm();
 
-  // useEffect(() => {
-  //     const subscription = watch((value, { name, type }) => {
-  //         console.log("Form values:", value); // Log all form data
-  //         console.log("Changed field:", name, "Type of change:", type); // Log which field changed
-  //     });
-  //     return () => subscription.unsubscribe(); // Cleanup the subscription
-  // }, [watch]);
-
-  useEffect(() => {
-    if (userData) {
-      const age = calculateAge(userData.birth_date);
-      if (age <= 9) {
-        localStorage.setItem('dashboardUrl', '/dashboard_kids');
-      }
-      else if (age <= 13) {
-        localStorage.setItem('dashboardUrl', '/dashboard_junior');
-      }
-      else {
-        localStorage.setItem('dashboardUrl', '/dashboard');
-      }
-    }
-  }, [userData]);
-
+  // Fetch User Data
   const getUserData = async () => {
     setIsLoading(true);
     try {
-      const token =
-        typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const resp = await GlobalApi.GetUserData(token);
-      setUserdata(resp.data);
+      setUserData(resp.data);
     } catch (error) {
-      console.error("Error Fetching GetQuizData data:", error);
+      console.error("Error Fetching UserData:", error);
+      toast.error(t('errorFetchingData'));
     } finally {
       setIsLoading(false);
     }
@@ -96,83 +68,101 @@ function page() {
     getUserData();
   }, []);
 
-
+  // Determine Dashboard Type and Initialize Form
   useEffect(() => {
-    const yearMonth =
-      userData.yearOfPassing && userData.monthOfPassing
-        ? `${userData.yearOfPassing}-${userData.monthOfPassing.padStart(
-          2,
-          "0"
-        )}`
-        : "";
-    reset({
-      name: userData.name,
-      gender: userData.gender,
-      mobile: userData.mobile,
-      birth_date: userData.birth_date
-        ? new Date(userData.birth_date).toISOString().split("T")[0]
-        : "",
-      password: userData.password,
-      confirmPassword: userData.password,
-      username: userData.username,
-      education: userData.education,
-      student: userData.student,
-      college: userData.college,
-      university: userData.university,
-      yearMonthOfPassing: yearMonth,
-    });
-  }, [reset, userData]);
+    if (userData) {
+      // Calculate age using birth_date
+      const age = calculateAge(userData.birth_date);
+      let url = '/dashboard';
+      let type = 'senior';
 
+      if (age <= 9) {
+        url = '/dashboard_kids';
+        type = 'kids';
+      } else if (age <= 13) {
+        url = '/dashboard_junior';
+        type = 'junior';
+      }
+
+      localStorage.setItem('dashboardUrl', url);
+      setDashboardType(type);
+
+      // Initialize form fields (excluding birth_date)
+      const yearMonth =
+        userData.yearOfPassing && userData.monthOfPassing
+          ? `${userData.yearOfPassing}-${userData.monthOfPassing.padStart(2, "0")}`
+          : "";
+      reset({
+        name: userData.name,
+        gender: userData.gender,
+        mobile: userData.mobile,
+        password: userData.password,
+        confirmPassword: userData.password,
+        username: userData.username,
+        education: userData.education,
+        student: userData.student,
+        college: userData.college,
+        university: userData.university,
+        yearMonthOfPassing: yearMonth,
+      });
+    }
+  }, [reset, userData, t]);
+
+  // Form Submission Handler
   const onSubmit = async (data) => {
     setIsSubmit(true);
 
+    // Validate Passwords
     if (data.password !== data.confirmPassword) {
       setError("confirmPassword", {
         type: "manual",
-        message: t('passwordRequired'),
+        message: t('passwordsDoNotMatch'),
       });
+      setIsSubmit(false);
       return;
     }
+
+    // Encrypt Password
     const encryptedPassword = encryptText(data.password);
     data.password = encryptedPassword;
-    if (data.college != "" && data.university != "") {
+
+    // Encrypt College and University if provided
+    if (data.college !== "" && data.university !== "") {
       const encryptedCollege = encryptText(data.college);
       const encryptedUniversity = encryptText(data.university);
       data.college = encryptedCollege;
       data.university = encryptedUniversity;
     }
+
     try {
-      const token =
-        typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const response = await GlobalApi.UpdateUser(data, token);
 
-      if (response.status === 201) {
+      if (response.status === 200 || response.status === 201) {
         toast.success(t('userDataUpdated'));
         getUserData();
       } else {
-
         const errorMessage = response.data?.message || t('unexpectedError');
         toast.error(`Error: ${errorMessage}`);
       }
     } catch (err) {
-      // Handle any errors that occurred during the API call
+      // Handle API Errors
       if (err && err.response) {
         const { response } = err;
         if (response.status === 409) {
-          const errorMessage =
-            response.data?.message || t('usernameExists');
+          const errorMessage = response.data?.message || t('usernameExists');
           console.log("Error message:", errorMessage);
           setError("username", {
             type: "manual",
             message: errorMessage,
           });
-          toast.error(errorMessage); // Display toast error message
+          toast.error(errorMessage);
         } else {
-          const errorMessage = response.data?.message || t('unexpectedError');;
+          const errorMessage = response.data?.message || t('unexpectedError');
           toast.error(`Error: ${errorMessage}`);
         }
       } else {
-        // Handle unexpected errors
+        // Handle Unexpected Errors
         toast.error(t('unexpectedError'));
       }
     } finally {
@@ -180,6 +170,7 @@ function page() {
     }
   };
 
+  // Loading or Authentication State
   if (isLoading || !isAuthenticated) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
@@ -192,10 +183,11 @@ function page() {
     );
   }
 
+  // Dynamic Import for Mobile Navigation
   const MobileNavigation = dynamic(() => import('../../_components/Navbar/button.jsx'), { ssr: false });
 
   return (
-    <div className="min-h-screen  py-12 max-md:pb-24 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 max-md:pb-24 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
       <Link href={typeof window !== 'undefined' ? localStorage.getItem('dashboardUrl') : '/login'}>
         <button className="text-white bg-green-600 -mt-20 mb-7 ml-20 p-3 rounded-xl">
@@ -204,10 +196,11 @@ function page() {
       </Link>
       <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
         <div className="md:flex">
+          {/* User Profile Section */}
           <div className="md:flex-shrink-0 bg-gradient-to-b from-purple-600 to-indigo-700 p-8 text-white">
             <div className="flex flex-col items-center space-y-4">
               <div className="relative w-32 h-32 rounded-full border-4 border-white overflow-hidden">
-                {userData.profilePicture ? (
+                {userData?.profilePicture ? (
                   <img
                     src={userData.profilePicture}
                     alt="User Avatar"
@@ -221,23 +214,26 @@ function page() {
                   />
                 )}
               </div>
-              <h2 className="text-2xl font-bold">{userData.name || t('loading...')}</h2>
-              <p className="text-indigo-200">{userData.username || "Username"}</p>
+              <h2 className="text-2xl font-bold">{userData?.name || `${t('loading')}...`}</h2>
+              <p className="text-indigo-200">{userData?.username || "Username"}</p>
               <div className="flex items-center mt-2 text-sm">
                 <span className="bg-green-500 rounded-full w-3 h-3 mr-2"></span>
                 {t('verifiedProfile')}
               </div>
             </div>
           </div>
+
+          {/* Profile Form Section */}
           <div className="p-8 w-full">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-bold text-gray-900">{t('myProfile')}</h1>
               <button
                 onClick={() => setIsEditable(!isEditable)}
-                className={`p-2 rounded-full transition-colors duration-200 ${isEditable
-                  ? "bg-red-500 hover:bg-red-600"
-                  : "bg-indigo-500 hover:bg-indigo-600"
-                  }`}
+                className={`p-2 rounded-full transition-colors duration-200 ${
+                  isEditable
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-indigo-500 hover:bg-indigo-600"
+                }`}
               >
                 {isEditable ? (
                   <X className="w-5 h-5 text-white" />
@@ -246,8 +242,10 @@ function page() {
                 )}
               </button>
             </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                {/* Gender Field */}
                 <div>
                   <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
                     {t('gender')}
@@ -255,7 +253,6 @@ function page() {
                   <select
                     {...register("gender")}
                     disabled={!isEditable}
-
                     id="gender"
                     name="gender"
                     autoComplete="gender"
@@ -267,6 +264,8 @@ function page() {
                     <option value="Mrs">{t('mrs')}</option>
                   </select>
                 </div>
+
+                {/* Name Field */}
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                     {t('name')}
@@ -275,12 +274,14 @@ function page() {
                     id="name"
                     name="name"
                     type="text"
-                    {...register("name", { required: t('name') + " is required" })}
+                    {...register("name", { required: `${t('name')} ${t('isRequired')}` })}
                     disabled={!isEditable}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   />
                   {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
                 </div>
+
+                {/* Username Field */}
                 <div>
                   <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                     {t('username')}
@@ -289,12 +290,14 @@ function page() {
                     id="username"
                     name="username"
                     type="text"
-                    {...register("username", { required: t('username') + " is required" })}
+                    {...register("username", { required: `${t('username')} ${t('isRequired')}` })}
                     disabled={!isEditable}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                   />
                   {errors.username && <p className="mt-2 text-sm text-red-600">{errors.username.message}</p>}
                 </div>
+
+                {/* Password Field */}
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                     {t('password')}
@@ -304,7 +307,7 @@ function page() {
                     {...register("password", {
                       minLength: {
                         value: 6,
-                        message: t('passwordRequired')
+                        message: t('passwordMinLength'),
                       },
                       pattern: {
                         value: /(?=.*[!@#$%^&*])/,
@@ -316,18 +319,8 @@ function page() {
                   />
                   {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
                 </div>
-                {/* <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                    Confirm Password
-                  </label>
-                  <input
-                    type="password"
-                    {...register("confirmPassword")}
-                    disabled={!isEditable}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
-                  />
-                  {errors.confirmPassword && <p className="mt-2 text-sm text-red-600">{errors.confirmPassword.message}</p>}
-                </div> */}
+
+                {/* Mobile Number Field */}
                 <div>
                   <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">
                     {t('mobileNumber')}
@@ -335,10 +328,10 @@ function page() {
                   <input
                     type="tel"
                     {...register("mobile", {
-                      required: t('mobileNumber') + " is required",
+                      required: `${t('mobileNumber')} ${t('isRequired')}`,
                       pattern: {
                         value: /^[0-9]{10}$/,
-                        message: "Please enter a valid 10-digit mobile number",
+                        message: t('mobileValidation'),
                       },
                     })}
                     disabled={!isEditable}
@@ -346,29 +339,8 @@ function page() {
                   />
                   {errors.mobile && <p className="mt-2 text-sm text-red-600">{errors.mobile.message}</p>}
                 </div>
-                <div>
-                  <label htmlFor="birth_date" className="block text-sm font-medium text-gray-700">
-                    {t('dob')}
-                  </label>
-                  <input
-                    type="date"
-                    {...register("birth_date", {
-                      required: t('dob') + " is required",
-                      validate: {
-                        notTooYoung: (value) => {
-                          const today = new Date();
-                          const selectedDate = new Date(value);
-                          const minAllowedDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
-                          return selectedDate <= minAllowedDate || t('ageValidation');
-                        }
-                      }
-                    })}
-                    max={new Date().toISOString().split("T")[0]}
-                    disabled={!isEditable}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
-                  />
-                  {errors.birth_date && <p className="mt-2 text-sm text-red-600">{errors.birth_date.message}</p>}
-                </div>
+
+                {/* Student Status Field */}
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-gray-700">{t('student')}</label>
                   <div className="mt-2 space-x-6">
@@ -396,8 +368,11 @@ function page() {
                     </label>
                   </div>
                 </div>
-                {isCollegeStudent ? (
+
+                {/* Conditional Fields for College Students */}
+                {isCollegeStudent && (
                   <>
+                    {/* College Field */}
                     <div>
                       <label htmlFor="college" className="block text-sm font-medium text-gray-700">
                         {t('college')}
@@ -409,6 +384,8 @@ function page() {
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                       />
                     </div>
+
+                    {/* University Field */}
                     <div>
                       <label htmlFor="university" className="block text-sm font-medium text-gray-700">
                         {t('university')}
@@ -420,6 +397,8 @@ function page() {
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
                       />
                     </div>
+
+                    {/* Year and Month of Passing Field */}
                     <div>
                       <label htmlFor="yearMonthOfPassing" className="block text-sm font-medium text-gray-700">
                         {t('yearAndMonthOfPassing')}
@@ -434,6 +413,7 @@ function page() {
                       />
                     </div>
 
+                    {/* Current Enrollment Field */}
                     <div className="sm:col-span-2">
                       <label
                         htmlFor="currentEnrollment"
@@ -460,7 +440,10 @@ function page() {
                       </div>
                     </div>
                   </>
-                ) : (
+                )}
+
+                {/* Conditional "Highest Degree" Field for Non-Kids Dashboards */}
+                {!isCollegeStudent && dashboardType !== 'kids' && (
                   <div className="sm:col-span-2">
                     <label
                       htmlFor="highestDegree"
@@ -489,7 +472,8 @@ function page() {
                 )}
               </div>
 
-              {isEditable && (
+              {/* Submit Button for Editable Forms (Excluded for Kids Dashboard) */}
+              {isEditable && dashboardType !== 'kids' && (
                 <div className="flex justify-center">
                   <button
                     type="submit"
@@ -510,4 +494,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
