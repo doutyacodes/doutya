@@ -17,7 +17,7 @@ const languageOptions = {
     ben: 'in Bengali',
     assa: 'in Assamese',
     ge: 'in German',
-    mal:'in malyalam',
+    mal:'in malayalam',
     tam:'in Tamil'
   };
 

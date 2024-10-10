@@ -17,7 +17,7 @@ const languageOptions = {
   ben: 'bengali',
   assa: 'assamese',
   ge: 'german',
-  mal:'malyalam',
+  mal:'malayalam',
   tam:'tamil'
 };
 export async function GET(req) {

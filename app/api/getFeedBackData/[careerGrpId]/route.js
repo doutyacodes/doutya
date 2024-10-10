@@ -16,7 +16,7 @@ const languageOptions = {
   assa: 'in Assamese',
   ge: 'in German',
   tam:'in Tamil',
-  mal:'in malyalam'
+  mal:'in malayalam'
 };
 
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
