@@ -29,6 +29,7 @@ function Page() {
   const [activeTab, setActiveTab] = useState("roadmap");
   const [showFinalRoadMap, setShowFinalRoadMap] = useState(true);
   const [country, setCountry] = useState("");
+  const [age, setAge] = useState("")
   const router = useRouter();
   const [showRoadmap, setShowRoadmap] = useState(false);
   const [showRoadMapDetails, setShowRoadMapDetails] = useState(false);
@@ -78,7 +79,7 @@ function Page() {
       }
   
       const response = await GlobalApi.GetCarrerData(token);
-      // console.log("GetCarrerData",response.data)
+      console.log("GetCarrerData",response.data)
       if (response.status === 201 && response.data && response.data.length > 0) {
         setCareerData(response.data);
       } else {
@@ -217,10 +218,10 @@ function Page() {
           <div className="w-full h-full flex flex-col">
             <div className="uppercase text-center text-white font-bold text-xl md:text-2xl bg-orange-400 py-3 md:py-5 border-4 border-white">{t(activeTab)}</div>
             {/*Insert country in the span*/}
-            <div className="text-center text-black text-lg md:text-xl py-3 md:py-5 mx-4 md:mx-10">{t('age')}: 
+            <div className="text-center text-black text-lg md:text-xl py-3 md:py-5 mx-4 md:mx-10">{t('age')}:{age} 
               <span className="font-bold"></span>
             </div>
-            {activeTab === "roadmap" && <RoadMap selectedCareer={selectedCareer} />}
+            {activeTab === "roadmap" && <RoadMap selectedCareer={selectedCareer} setAge={setAge}/>}
             {activeTab === "contests" && <Contests selectedCareer={selectedCareer} />}
             {activeTab === "tests" && <Tests selectedCareer={selectedCareer} />}
             {activeTab === "feedback" && <Feedback selectedCareer={selectedCareer} />}

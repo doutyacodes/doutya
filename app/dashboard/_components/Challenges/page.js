@@ -96,6 +96,12 @@ export default function Challenge({ selectedCareer }) {
         }
     };
 
+    useEffect(() => {
+        if (activeTab === 'weekly' && selectedCareer && token) {
+            fetchWeeklyChallenges(); // Fetch challenges only when all required dependencies are available
+        }
+    }, [activeTab, selectedCareer, token]); // Ensure selectedCareer and token are valid dependencies
+    
     // Fetch data based on the active tab
     useEffect(() => {
         if (activeTab === 'weekly') {

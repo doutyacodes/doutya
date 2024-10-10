@@ -140,11 +140,11 @@ export async function GET(req, { params }) {
       
       // Respond with savedData
       const savedMilestones = await fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language);
-      return NextResponse.json(savedMilestones, { status: 200 });
+      return NextResponse.json({ userMilestones: savedMilestones, age }, { status: 200 });
     }
-
+  
     // Respond with fetched milestones data
-    return NextResponse.json(userMilestones, { status: 200 });
+    return NextResponse.json( { userMilestones, age }, { status: 200 });
 
   } catch (error) {
     console.error("Error fetching milestones data:", error);
