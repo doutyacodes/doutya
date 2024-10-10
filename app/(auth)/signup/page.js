@@ -493,6 +493,16 @@ function SignUp() {
                                     required={ageCategory !== 'kids'}
                                 >
                                     <option value="">{t('selectHighestEducation')}</option>
+                                    
+                                    {/* Options for Junior Users */}
+                                    {ageCategory === 'junior' && (
+                                        <>
+                                            <option value="10th Std">{t('10th Std')}</option>
+                                            <option value="12th Std">{t('12th Std')}</option>
+                                        </>
+                                    )}
+                                    
+                                    {/* Common Options for Junior and Senior */}
                                     <option value="Bachelor's Degree"> {t('bachelorsDegree')} </option>
                                     <option value="Associates Degree"> {t('associateDegree')} </option>
                                     <option value="Masters Degree"> {t('mastersDegree')} </option>
@@ -500,6 +510,7 @@ function SignUp() {
                                 {errors.education && <p className="text-red-500 text-sm mt-1">{errors.education.message}</p>}
                             </div>
                         )}
+
 
 
                     <div className="mb-4">
