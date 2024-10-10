@@ -47,7 +47,8 @@
     "associateDegree": "Título de Asociado",
     "mastersDegree": "Título de Maestría",
     "dobRequired": "La fecha de nacimiento es obligatoria",
-    "passWord": "La contraseña debe tener 6 o más caracteres, incluyendo letras, números y caracteres especiales."
+    "passWord": "La contraseña debe tener 6 o más caracteres, incluyendo letras, números y caracteres especiales.",
+    "passwordMismatch":"la contraseña no coincide"
   },
   "Banner": {
     "title": "Personalidad",
@@ -238,5 +239,18 @@
       "message": "Por favor, ingrese el nombre de la industria en la que está interesado. Esta información nos ayudará a personalizar las recomendaciones para usted.",
       "cancel": "Cancelar",
       "submit": "Enviar"
+    },
+    "RoadMap": {
+    "loadingMessage": "Cargando datos del mapa de ruta, por favor espere...",
+    "errorMessages": {
+      "fetchFailure": "Error al obtener los datos del mapa de ruta. Por favor, inténtelo más tarde.",
+      "updateSuccess": "Estado del hito actualizado correctamente",
+      "updateFailure": "Error al actualizar el estado.",
+      "unexpectedError": "Ocurrió un error inesperado."
+    },
+    "buttons": {
+      "complete": "Completar",
+      "completed": "Completado"
     }
+  }
 }

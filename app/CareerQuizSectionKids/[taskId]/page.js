@@ -8,6 +8,49 @@ import React, { useState, useEffect } from 'react';
 import GreenSlider from "@/app/dashboard/_components/GreenSlider";
 import { useTranslations } from "next-intl";
 
+const languageFiles = {
+  hi: {
+    questions: "/personality_questions_kids/hindi_questions.json",
+    options: "/personality_options/hindi_options.json"
+  },
+  ur: {
+    questions: "/personality_questions_kids/urdu_questions.json",
+    options: "/personality_options/urdu_options.json"
+  },
+  sp: {
+    questions: "/personality_questions_kids/spanish_questions.json",
+    options: "/personality_options/spanish_options.json"
+  },
+  ge: {
+    questions: "/personality_questions_kids/german_questions.json",
+    options: "/personality_options/german_options.json"
+  },
+  ben: {
+    questions: "/personality_questions_kids/bengali_questions.json",
+    options: "/personality_options/bengali_options.json"
+  },
+  assa: {
+    questions: "/personality_questions_kids/assamese_questions.json",
+    options: "/personality_options/assamese_options.json"
+  },
+  mar: {
+    questions: "/personality_questions_kids/marathi_questions.json",
+    options: "/personality_options/marathi_options.json"
+  },
+  en: {
+    questions: "/personality_questions_kids/english_questions.json",
+    options: "/personality_options/english_options.json"
+  },
+  mal: {
+    questions: "/personality_questions_kids/malyalam_questions.json",
+    options: "/personality_options/malyalam_options.json"
+  },
+  tam: {
+    questions: "/personality_questions_kids/tamil_questions.json",
+    options: "/personality_options/tamil_options.json"
+  }
+};
+
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState(null);
@@ -24,13 +67,13 @@ function Page({ params }) {
   const t = useTranslations('Quiz2');
 
   useEffect(() => {
-    const authCheck = ()=>{
+    const authCheck = () => {
       if (typeof window !== 'undefined') {
         const token = localStorage.getItem("token");
-        if(!token){
+        if (!token) {
           router.push('/login');
           setIsAuthenticated(false)
-        }else{
+        } else {
           setIsAuthenticated(true)
         }
       }
@@ -39,120 +82,142 @@ function Page({ params }) {
   }, [router]);
 
 
-    useEffect(() =>{
-        const getQuizData = async()=>{
-            setIsLoading(true)
-            try {
-                const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const resp = await GlobalApi.GetCareerQuizKids(quizId, token);
-                setQuestions(resp.data.questions); 
-                setChoices(resp.data.choices);
-                setCurrentQuestionIndex(resp.data.quizProgress);
+  useEffect(() => {
+    const getQuizData = async () => {
+      setIsLoading(true)
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+        const resp = await GlobalApi.GetCareerQuizKids(quizId, token);
+        // setQuestions(resp.data.questions); 
+        // setChoices(resp.data.choices);
+        setCurrentQuestionIndex(resp.data.quizProgress);
 
-                if (resp.data.quizProgress > 0) {
-                  setShowAlert(true);  // Set showAlert to true when resuming the quiz
-                }
-
-              } catch (error) {
-                console.error('Error Fetching GetQuizData data:', error);
-              }finally {
-                  setIsLoading(false);
-              }
+        if (resp.data.quizProgress > 0) {
+          setShowAlert(true);  // Set showAlert to true when resuming the quiz
         }
-        getQuizData()
-    }, [])
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        let questionsData = [];
+        let optionsData = [];
+        const languageFile = languageFiles[savedLanguage.toLowerCase()].questions;
 
-    useEffect(() => {
-        if (quizCompleted) {
-            // setIsLoading(true)
-            const interval = setInterval(() => {
-                setSecondsRemaining((prevSeconds) => prevSeconds - 1);
-            }, 1000);
-        
-            const timer = setTimeout(() => {
-                router.replace('/dashboard_junior'); 
-            }, 5000);
-        
-            return () => {
-                clearInterval(interval); 
-                clearTimeout(timer); 
-            };
+        if (languageFile) {
+          const response = await fetch(languageFile);
+          questionsData = await response.json();
+
+        } else {
+          console.error("Language file not found for:", savedLanguage);
         }
-    }, [quizCompleted, router]);
+        const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
+        if (optionsFile) {
+          const optionsResponse = await fetch(optionsFile);
+          optionsData = await optionsResponse.json();
+        } else {
+          console.error("Options file not found for:", savedLanguage);
+        }
+        setQuestions(questionsData);
+        setChoices(optionsData);
 
-    const handleChoiceSelect = (choice) => {      
-        setSelectedChoice(choice);
-    };
-
-    const handleNext = async () => {
-
-      const answer = 
-                { questionId: questions[currentQuestionIndex].questionId,
-                  optionId: selectedChoice.choiceId,
-                  optionText: selectedChoice.choiceText,
-                  personaTypeId: questions[currentQuestionIndex].personaTypeId
-                }
-      await quizProgressSubmit(answer); 
-
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedChoice(null); // Resetting selected choice for the next question
-      } else {
-
-        setQuizCompleted(true);      
-        quizSubmit()// Quiz finished, send data to API
+      } catch (error) {
+        console.error('Error Fetching GetQuizData data:', error);
+      } finally {
+        setIsLoading(false);
       }
-    };
-
-    const quizProgressSubmit = async (data) => {
-      setProgressLoading(true);
-        try {
-          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-          const resp = await GlobalApi.SaveCarrierQuizProgress(data, token, quizId);
-      
-          if (resp && resp.status === 201) {
-            console.log("Response");
-          } else {
-            console.error("Failed to save progress. Status code:", resp.status);
-            toast.error("There was a problem saving your progress. Please check your internet connection.");
-          }
-        } catch (error) {
-          console.error("Error submitting progress:", error.message);
-          toast.error("There was an error saving your progress. Please try again later.");
-        } finally {
-          setProgressLoading(false);
-        }
-    };
-    
-    const quizSubmit = async () => {
-      setIsLoading(true);
-      const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-        try {
-          const resp = await GlobalApi.SaveCareerQuizResult(token);
-          if (resp && resp.status === 201) {
-            toast.success('Quiz Completed successfully!');
-          } else {
-            toast.error('Failed to submit quiz.');
-            // alert('Failed Submitted results');
-          }
-        } catch (error) {
-          console.error('Error submitting quiz', error);
-          // toast.error('Error: Failed to create Challenge.');
-          toast.error('Error Error: Failed to submit quiz.');
-        } finally {
-          setIsLoading(false);
-        }
     }
+    getQuizData()
+  }, [])
 
-  if(isLoading || !isAuthenticated){
+  useEffect(() => {
+    if (quizCompleted) {
+      // setIsLoading(true)
+      const interval = setInterval(() => {
+        setSecondsRemaining((prevSeconds) => prevSeconds - 1);
+      }, 1000);
+
+      const timer = setTimeout(() => {
+        router.replace('/dashboard_junior');
+      }, 5000);
+
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timer);
+      };
+    }
+  }, [quizCompleted, router]);
+
+  const handleChoiceSelect = (choice) => {
+    setSelectedChoice(choice);
+  };
+
+  const handleNext = async () => {
+
+    const answer =
+    {
+      questionId: questions[currentQuestionIndex].id,
+      optionId: selectedChoice.choiceId,
+      optionText: selectedChoice.choiceText,
+      personaTypeId: questions[currentQuestionIndex].personality_types_id
+    }
+    await quizProgressSubmit(answer);
+
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedChoice(null); // Resetting selected choice for the next question
+    } else {
+
+      setQuizCompleted(true);
+      quizSubmit()// Quiz finished, send data to API
+    }
+  };
+
+  const quizProgressSubmit = async (data) => {
+    setProgressLoading(true);
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const resp = await GlobalApi.SaveCarrierQuizProgress(data, token, quizId);
+
+      if (resp && resp.status === 201) {
+        console.log("Response");
+      } else {
+        console.error("Failed to save progress. Status code:", resp.status);
+        toast.error("There was a problem saving your progress. Please check your internet connection.");
+      }
+    } catch (error) {
+      console.error("Error submitting progress:", error.message);
+      toast.error("There was an error saving your progress. Please try again later.");
+    } finally {
+      setProgressLoading(false);
+    }
+  };
+
+  const quizSubmit = async () => {
+    setIsLoading(true);
+    const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+    try {
+      const resp = await GlobalApi.SaveCareerQuizResult(token);
+      if (resp && resp.status === 201) {
+        toast.success('Quiz Completed successfully!');
+      } else {
+        toast.error('Failed to submit quiz.');
+        // alert('Failed Submitted results');
+      }
+    } catch (error) {
+      console.error('Error submitting quiz', error);
+      // toast.error('Error: Failed to create Challenge.');
+      toast.error('Error Error: Failed to submit quiz.');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  if (isLoading || !isAuthenticated) {
     return (
-        <div className='h-screen flex items-center justify-center text-white'>
-            <div>
-                <div className='font-semibold'>
-                     <LoadingOverlay loadText={t('loading')}/>
-                </div>
-            </div>
+      <div className='h-screen flex items-center justify-center text-white'>
+        <div>
+          <div className='font-semibold'>
+            <LoadingOverlay loadText={t('loading')} />
+          </div>
         </div>
+      </div>
     )
   }
 
@@ -160,78 +225,77 @@ function Page({ params }) {
     return (
       <div className='h-screen flex items-center justify-center text-white text-center'>
         <div>
-            <div className='text-4xl font-semibold'>
-              {t('quizCompleted')}essfully
-            </div>
+          <div className='text-4xl font-semibold'>
+          {t('quizCompleted')}
+          </div>
 
-            <p className='mt-4'>
-              {t('navigating')} {secondsRemaining} seconds
-            </p>
-            
+          <p className='mt-4'>
+            {t('navigating')} {secondsRemaining} seconds
+          </p>
+
         </div>
       </div>
     );
   }
-  
+
 
   return (
-    <div className='h-screen'> 
+    <div className='h-screen'>
       <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
         <p className="text-white uppercase font-bold text-center">
-           {t('interestRecognitionTest')}
+          {t('interestRecognitionTest')}
         </p>
       </div>
-      {showAlert && ( <QuizProgressAlert /> ) }
+      {showAlert && (<QuizProgressAlert />)}
       <div className="flex justify-center items-center px-4">
         {questions.length > 0 && (
           <div className="mt-4 pt-7 min-h-[20rem] min-w-[600px] flex flex-col gap-8 justify-center items-center mx-auto text-white rounded-2xl p-[1px] bg-[#0097b2]">
             {
               !progressLoading ? (
                 <>
-                <div>
-                <p className="font-extrabold text-center">
-                  {currentQuestionIndex + 1}/30
-                </p>
-                </div>
-                <div className="bg-[#1b143a] p-3 rounded-2xl w-[600px]">
-                  <div className="w-full flex justify-center">
-                    <p className="font-bold p-2 text-xl text-center w-full flex items-center justify-center h-24">
-                      {questions[currentQuestionIndex].questionText}
+                  <div>
+                    <p className="font-extrabold text-center">
+                      {currentQuestionIndex + 1}/30
                     </p>
                   </div>
-  
-                  <div className="w-full px-10 justify-center items-center flex">
-                    <div className="flex flex-col gap-2 w-full text-white">
-                      <GreenSlider
-                        key={currentQuestionIndex}
-                        choices={choices}
-                        selectedChoice={selectedChoice}
-                        onChange={handleChoiceSelect}
-                      />
+                  <div className="bg-[#1b143a] p-3 rounded-2xl w-[600px]">
+                    <div className="w-full flex justify-center">
+                      <p className="font-bold p-2 text-xl text-center w-full flex items-center justify-center h-24">
+                        {questions[currentQuestionIndex].question_text}
+                      </p>
+                    </div>
+
+                    <div className="w-full px-10 justify-center items-center flex">
+                      <div className="flex flex-col gap-2 w-full text-white">
+                        <GreenSlider
+                          key={currentQuestionIndex}
+                          choices={choices}
+                          selectedChoice={selectedChoice}
+                          onChange={handleChoiceSelect}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="w-full justify-center items-center flex my-5">
+                      <button
+                        className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${selectedChoice ? "" : "opacity-50 cursor-not-allowed"
+                          }`}
+                        onClick={handleNext}
+                        disabled={!selectedChoice}
+                      >
+                        {t('next')}
+                      </button>
                     </div>
                   </div>
-  
-                  <div className="w-full justify-center items-center flex my-5">
-                    <button
-                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
-                        selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-                      }`}
-                      onClick={handleNext}
-                      disabled={!selectedChoice}
-                    >
-                      {t('next')}
-                    </button>
-                  </div>
-                </div>
-              </>
+                </>
               ) : (
                 <div className="inset-0 flex items-center my-16 justify-center z-50">
-                <div className="flex items-center space-x-2">
-                  <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
-                  <span className="text-white">{t('loading')}</span>
+                  <div className="flex items-center space-x-2">
+                    <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
+                    <span className="text-white">{t('loading')}</span>
+                  </div>
                 </div>
-              </div>
               )
             }
           </div>
