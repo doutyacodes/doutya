@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 function Navbarkids() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [dashboardUrl, setDashboardUrl] = useState('/dashboard_kids/');
   const t = useTranslations('Navbar'); 
 
   const toggleSidebar = () => {
@@ -16,8 +17,11 @@ function Navbarkids() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const storedUrl = localStorage.getItem('dashboardUrl');
     if (token) {
       setIsLoggedIn(true);
+    }if (storedUrl) {
+      setDashboardUrl(storedUrl);
     }
   }, []);
 
@@ -60,7 +64,7 @@ function Navbarkids() {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-6">
-            <a href="/dashboard_kids">
+            <a href={dashboardUrl}>
               <button
                 style={{ ...styles.navButton, ...styles.navButtonHome }}
                 data-bg="#FF6F61"

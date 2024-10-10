@@ -17,7 +17,9 @@ const languageOptions = {
   sp: 'spanish',
   ben: 'bengali',
   assa: 'assamese',
-  ge: 'german'
+  ge: 'german',
+  mal:'malayalam',
+  tam:'tamil'
 };
 
 export async function GET(req) {
@@ -55,6 +57,7 @@ export async function GET(req) {
   console.log(type)
 
   const jsonFilePath = path.join(process.cwd(), 'public', 'results', `${language}_result.json`);
+  console.log(jsonFilePath)
   if (!fs.existsSync(jsonFilePath)) {
     return NextResponse.json({ error: "Results file not found" }, { status: 404 });
   }

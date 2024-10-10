@@ -13,7 +13,7 @@ function Results() {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
                 const language = localStorage.getItem('language') || 'en';
                 const data = await GlobalApi.GetUserId(token,language);
-                console.log(data.data[0]);
+                // console.log(data.data[0]);
                 setResultData(data.data[0]);
             } catch (err) {
                 // Handle error if necessary
@@ -30,7 +30,7 @@ function Results() {
         }
     }, [resultData]);
 
-    const { description, strengths, weaknesses, opportunities, threats, careers } = resultData;
+    const { description, strengths, weaknesses, opportunities, threats, most_suitable_careers  } = resultData;
 
     return (
         <div className='w-4/5 mx-auto'>
@@ -111,7 +111,7 @@ function Results() {
                     </div>
                 </div>
 
-                <div>
+                {/* <div>
                     <p>{t('careers')}</p>
                     <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600'>
                         {resultData.most_suitable_careers ? (
@@ -126,7 +126,29 @@ function Results() {
                             </div>
                         )}
                     </div>
+                </div> */}
+
+
+
+<div>
+                    <p>{t('careers')}</p>
+                    <div className='md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600'>
+                        {resultData.most_suitable_careers ? (
+                            resultData.most_suitable_careers.map((careerObj, index) => (
+                                <div key={index} className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                                    <p>{careerObj.career}</p>
+                                    <br />
+                                    <p className='text-amber-700 font-bold'>{t('matchPercentage')}: {careerObj.match_percentage.match_percentage}%</p> {/* Display the match percentage */}
+                                </div>
+                            ))
+                        ) : (
+                            <div className='bg-white px-8 py-5 rounded-xl flex-1 transition-transform transform hover:scale-105 cursor-pointer'>
+                                {t('loading')}
+                            </div>
+                        )}
+                    </div>
                 </div>
+
             </div>
         </div>
     );
