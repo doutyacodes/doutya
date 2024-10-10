@@ -33,7 +33,9 @@ function SignUp() {
     // const [languageSelected, setLanguageSelected] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('en'); 
     const [educationLevel, setEducationLevel] = useState(0);
-    const [dobError, setDobError] = useState('')
+    const [dobError, setDobError] = useState('');
+    const [ageCategory, setAgeCategory] = useState(''); // New state for age category
+
     
     const router = useRouter();
     const t = useTranslations('SignupPage');
@@ -101,15 +103,27 @@ function SignUp() {
         const selectedDate = new Date(e.target.value);
         const today = new Date();
         const minAllowedDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
-
+    
         if (selectedDate > minAllowedDate) {
-            setDobError( t('dobValidation') );
+            setDobError(t('dobValidation'));
             setSelectedDOB('');
+            setAgeCategory(''); // Reset age category if DOB is invalid
         } else {
             setDobError('');
             setSelectedDOB(e.target.value);
+    
+            // Calculate age and set age category
+            const age = calculateAge(e.target.value);
+            if (age <= 9) {
+                setAgeCategory('kids');
+            } else if (age <= 13) {
+                setAgeCategory('junior');
+            } else {
+                setAgeCategory('senior');
+            }
         }
     };
+    
 
 
     const handleNext = () => {
@@ -466,26 +480,38 @@ function SignUp() {
                         </>
                     )}
 
-                   {!isCollegeStudent && (
-                    <>
-                    <div className="mb-4">
-                        <label htmlFor="highestEducation" className="block text-sm font-medium text-gray-700">
-                            {t('education')}
-                        </label>
-                        <select
-                            id="highestEducation"
-                            {...register("education")} 
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            required
-                        >
-                            <option value="">{t('selectHighestEducation')}</option>
-                            <option value="Bachelor's Degree"> {t('bachelorsDegree')} </option>
-                            <option value="Associates Degree"> {t('associateDegree')} </option>
-                            <option value="Masters Degree"> {t('mastersDegree')} </option>
-                        </select>
-                    </div>
-                    </>
-                   )}
+                   {/* Conditional "Highest Education" Field for Junior and Senior Users */}
+                        {ageCategory !== 'kids' && !isCollegeStudent && (
+                            <div className="mb-4">
+                                <label htmlFor="highestEducation" className="block text-sm font-medium text-gray-700">
+                                    {t('education')}
+                                </label>
+                                <select
+                                    id="highestEducation"
+                                    {...register("education", { required: ageCategory !== 'kids' ? t('educationRequired') : false })}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    required={ageCategory !== 'kids'}
+                                >
+                                    <option value="">{t('selectHighestEducation')}</option>
+                                    
+                                    {/* Options for Junior Users */}
+                                    {ageCategory === 'junior' && (
+                                        <>
+                                            <option value="10th Std">{t('10th Std')}</option>
+                                            <option value="12th Std">{t('12th Std')}</option>
+                                        </>
+                                    )}
+                                    
+                                    {/* Common Options for Junior and Senior */}
+                                    <option value="Bachelor's Degree"> {t('bachelorsDegree')} </option>
+                                    <option value="Associates Degree"> {t('associateDegree')} </option>
+                                    <option value="Masters Degree"> {t('mastersDegree')} </option>
+                                </select>
+                                {errors.education && <p className="text-red-500 text-sm mt-1">{errors.education.message}</p>}
+                            </div>
+                        )}
+
+
 
                     <div className="mb-4">
                         <button

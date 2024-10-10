@@ -7,6 +7,7 @@ import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
 import { calculateAge } from "@/lib/ageCalculate";
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 function Login() {
   const router = useRouter();
@@ -64,7 +65,15 @@ function Login() {
   return (
     <div>
       <Toaster />
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center flex-col gap-2 justify-center min-h-screen">
+        <div>
+        <Image
+              
+              src={"/assets/images/logo-full.png"}
+              width={140}
+              height={120}
+            />
+        </div>
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
           
           <h1 className="text-2xl font-bold mb-6 text-center">{t('title')}</h1>

@@ -76,10 +76,17 @@ import React, { useEffect, useState } from "react";
 import Footer from "./_components/Footer";
 import { cn } from "@/lib/utils";
 import Header from "./_components/Header";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [activeLink, setActiveLink] = useState(1);
   const [featureLink, setFeatureLink] = useState(1);
+
+  const router = useRouter();
+
+  useEffect(() => {
+      router.replace("/login");
+  }, []);
 
   const revenueList = [
     {
@@ -87,7 +94,8 @@ const Page = () => {
       title: "Team Productivity",
       image:
         "https://www.xortlist.io/wp-content/uploads/2024/02/Team-Productivity.png",
-      image2: "https://www.xortlist.io/wp-content/uploads/2024/02/pitchbook.svg",
+      image2:
+        "https://www.xortlist.io/wp-content/uploads/2024/02/pitchbook.svg",
       subTitle: "10x sales efficiency",
       description:
         "Save time and maximize team effectiveness with AI-powered insights and guidance.",
@@ -175,197 +183,202 @@ const Page = () => {
 
   // Calculate progress percentage
 
-  return (
-    <main className="relative w-full max-lg:bg-white min-h-screen">
-      <Header />
-      <video
-        autoPlay
-        loop
-        muted
-        // controls
-        className="lg:absolute top-0 left-0 w-full h-full object-cover lg:h-screen -z-20 max-lg:rounded-lg"
-      >
-        <source src="/assets/videos/bg.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+//   return (
+//     <main className="relative w-full max-lg:bg-white min-h-screen">
+//       <Header />
+//       <video
+//         autoPlay
+//         loop
+//         muted
+//         // controls
+//         className="lg:absolute top-0 left-0 w-full h-full object-cover lg:h-screen -z-20 max-lg:rounded-lg"
+//       >
+//         <source src="/assets/videos/bg.mp4" type="video/mp4" />
+//         Your browser does not support the video tag.
+//       </video>
 
-      <div className="lg:absolute max-md:hidden top-0 left-0 w-full h-full bg-black opacity-50 -z-10"></div>
-      <div className=" container z-50 h-full w-full max-lg:mt-16  lg:h-screen lg:flex items-center">
-        <div className="space-y-5 max-w-[1240px] mx-auto px-4">
-          <h1 className="lg:text-white lg:text-5xl text-3xl font-bold lg:leading-relaxed leading-normal lg:w-3/5 max-lg:text-center uppercase">
-            <span className="bg-blue-600  text-transparent bg-clip-text">
-              Next-Generation AI{" "}
-            </span>
-            Powered SEO Content Generator
-          </h1>
-          <p className=" max-lg:text-center text-blue-600 font-medium lg:w-3/6">
-            Engage customers, forecast accurately, and improve team
-            productivity, all in one revenue intelligence platform.
-          </p>
-          <div className="flex max-lg:justify-center w-full">
-            <Link
-              href={"/login"}
-              className="bg-[#9069e7] text-white rounded-full px-7 py-3 font-semibold"
-            >
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div className="bg-white shadow-xl outline outline-slate-100 p-3 rounded-t-3xl mt-5 space-y-5 pt-10 w-full">
-        <h1 className="text-center text-[#3e0075] lg:text-5xl text-3xl font-bold w-4/5 mx-auto ">
-          The world’s leading companies power their revenue workflows with
-          Xortlist
-        </h1>
-        <div className="w-full flex justify-center items-center flex-col max-w-[1240px] mx-auto">
-          <div className="mt-14 flex flex-wrap gap-5 mx-auto  p-3 md:gap-7">
-            {revenueList?.length > 0 &&
-              revenueList?.map((item) => {
-                return (
-                  <div
-                    onClick={() => setActiveLink(item.id)}
-                    key={item.id}
-                    className=" max-sm:w-full"
-                  >
-                    <p
-                      className="md:text-2xl text-center font-bold cursor-pointer"
-                      style={{
-                        color: activeLink == item.id ? "#a572e8" : "black",
-                      }}
-                    >
-                      {item.title}
-                    </p>
-                    {activeLink == item.id && (
-                      <div className="w-full h-2 bg-gray-200 mb-4 rounded mt-5">
-                        <div
-                          className="h-full rounded-full bg-[#a572e8] transition-all duration-500 ease-in-out"
-                          style={{
-                            width: `${
-                              (activeLink / revenueList.length) * 100
-                            }%`,
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-          </div>
-          <div>
-            {activeItem && (
-              <div className="w-full p-6 mt-10">
-                <div className="flex flex-col md:flex-row items-center gap-6">
-                  {/* On md and above: image on the left, other content on the right */}
-                  <div className="md:w-1/2 w-full">
-                    <img
-                      src={activeItem.image}
-                      alt={activeItem.title}
-                      className="w-full h-auto object-cover"
-                    />
-                  </div>
+//       <div className="lg:absolute max-md:hidden top-0 left-0 w-full h-full bg-black opacity-50 -z-10"></div>
+//       <div className=" container z-50 h-full w-full max-lg:mt-16  lg:h-screen lg:flex items-center">
+//         <div className="space-y-5 max-w-[1240px] mx-auto px-4">
+//           <h1 className="lg:text-white lg:text-5xl text-3xl font-bold lg:leading-relaxed leading-normal lg:w-3/5 max-lg:text-center uppercase">
+//             <span className="bg-blue-600  text-transparent bg-clip-text">
+//               Next-Generation AI{" "}
+//             </span>
+//             Powered SEO Content Generator
+//           </h1>
+//           <p className=" max-lg:text-center text-blue-600 font-medium lg:w-3/6">
+//             Engage customers, forecast accurately, and improve team
+//             productivity, all in one revenue intelligence platform.
+//           </p>
+//           <div className="flex max-lg:justify-center w-full">
+//             <Link
+//               href={"/login"}
+//               className="bg-[#9069e7] text-white rounded-full px-7 py-3 font-semibold"
+//             >
+//               Sign In
+//             </Link>
+//           </div>
+//         </div>
+//       </div>
+//       <div className="bg-white shadow-xl outline outline-slate-100 p-3 rounded-t-3xl mt-5 space-y-5 pt-10 w-full">
+//         <h1 className="text-center text-[#3e0075] lg:text-5xl text-3xl font-bold w-4/5 mx-auto ">
+//           The world’s leading companies power their revenue workflows with
+//           Xortlist
+//         </h1>
+//         <div className="w-full flex justify-center items-center flex-col max-w-[1240px] mx-auto">
+//           <div className="mt-14 flex flex-wrap gap-5 mx-auto  p-3 md:gap-7">
+//             {revenueList?.length > 0 &&
+//               revenueList?.map((item) => {
+//                 return (
+//                   <div
+//                     onClick={() => setActiveLink(item.id)}
+//                     key={item.id}
+//                     className=" max-sm:w-full"
+//                   >
+//                     <p
+//                       className="md:text-2xl text-center font-bold cursor-pointer"
+//                       style={{
+//                         color: activeLink == item.id ? "#a572e8" : "black",
+//                       }}
+//                     >
+//                       {item.title}
+//                     </p>
+//                     {activeLink == item.id && (
+//                       <div className="w-full h-2 bg-gray-200 mb-4 rounded mt-5">
+//                         <div
+//                           className="h-full rounded-full bg-[#a572e8] transition-all duration-500 ease-in-out"
+//                           style={{
+//                             width: `${
+//                               (activeLink / revenueList.length) * 100
+//                             }%`,
+//                           }}
+//                         />
+//                       </div>
+//                     )}
+//                   </div>
+//                 );
+//               })}
+//           </div>
+//           <div>
+//             {activeItem && (
+//               <div className="w-full p-6 mt-10">
+//                 <div className="flex flex-col md:flex-row items-center gap-6">
+//                   {/* On md and above: image on the left, other content on the right */}
+//                   <div className="md:w-1/2 w-full">
+//                     <img
+//                       src={activeItem.image}
+//                       alt={activeItem.title}
+//                       className="w-full h-auto object-cover"
+//                     />
+//                   </div>
 
-                  <div className="md:w-1/2 w-full md:space-y-10">
-                    <Image
-                      src={activeItem.image2}
-                      alt={activeItem.title + " secondary"}
-                      width={240}
-                      height={240}
-                      className=" object-cover mb-4"
-                    />
-                    <h3 className="text-lg font-semibold mb-2 md:text-4xl">
-                      {activeItem.subTitle}
-                    </h3>
-                    <p className="text-gray-600 md:w-4/5">
-                      {activeItem.description}
-                    </p>
-                  </div>
-                </div>
+//                   <div className="md:w-1/2 w-full md:space-y-10">
+//                     <Image
+//                       src={activeItem.image2}
+//                       alt={activeItem.title + " secondary"}
+//                       width={240}
+//                       height={240}
+//                       className=" object-cover mb-4"
+//                     />
+//                     <h3 className="text-lg font-semibold mb-2 md:text-4xl">
+//                       {activeItem.subTitle}
+//                     </h3>
+//                     <p className="text-gray-600 md:w-4/5">
+//                       {activeItem.description}
+//                     </p>
+//                   </div>
+//                 </div>
 
-                {/* On small screens: stack images and content */}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="w-full bg-gradient-to-tr from-[#b1aaf6] to-[#8054df]">
-        <div className="w-full max-w-[1240px] mx-auto px-3 py-5 space-y-4">
-          <h1 className="text-white text-2xl md:text-4xl font-bold text-center">
-            From Interactions to Insights to Revenue — All in One Platform
-          </h1>
-          <div className="grid grid-cols-12 w-full gap-3">
-            <div className="col-span-12 w-full md:col-span-6 ">
-              <div className="h-[1px] bg-white w-full" />
-              {features?.length > 0 &&
-                features?.map((item, index) => {
-                  return (
-                    <div
-                      className="w-full"
-                      onClick={() => setFeatureLink(item.id)}
-                    >
-                      <p className="my-8 text-white/70 hover:text-white font-semibold text-lg">
-                        0{index + 1} {item.description}
-                      </p>
-                      <div className="h-[1px] bg-white w-full" />
-                    </div>
-                  );
-                })}
-            </div>
-            <div className="col-span-12 w-full md:col-span-6">
-              <Image
-                src={`/assets/images/${featureLink}.webp`}
-                width={600}
-                height={700}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="w-full bg-white">
-        <div className="mx-auto max-w-[1240px] p-3">
-          <div className="grid grid-cols-12 gap-3">
-            <div className="col-span-12 md:col-span-4 space-y-5">
-              <p className="text-center md:text-left uppercase font-semibold text-lg text-[#8039df]">
-                Resources
-              </p>
-              <p className="text-center md:text-left uppercase font-bold text-3xl text-[#3e0075] ">
-                Unlock your team’s revenue potential
-              </p>
-            </div>
-            <div className="col-span-12 md:col-span-8 space-y-5 grid grid-cols-12 gap-3">
-              {resources?.length > 0 &&
-                resources?.map((item, index) => {
-                  return (
-                    <div
-                      className={cn(
-                        "w-full shadow hover:shadow-lg  p-4 bg-white border border-slate-300 rounded-md",
-                        index == 0 || index == 3
-                          ? "col-span-12 md:col-span-8 md:flex"
-                          : "col-span-12 md:col-span-4"
-                      )}
-                    >
-                      <div className="space-y-4">
-                        <p className="uppercase font-semibold text-[#8039df]">
-                          {item.type}
-                        </p>
-                        <p className="uppercase text-xl font-semibold text-[#3e0075]">
-                          {item.title}
-                        </p>
-                      </div>
-                      {item.image && (
-                        <div className="w-full h-full relative max-md:hidden">
-                          <Image src={item.image} fill className="rounded-md" />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
-      </div>
-      <Footer />
-    </main>
-  );
-};
+//                 {/* On small screens: stack images and content */}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//       <div className="w-full bg-gradient-to-tr from-[#b1aaf6] to-[#8054df]">
+//         <div className="w-full max-w-[1240px] mx-auto px-3 py-5 space-y-4">
+//           <h1 className="text-white text-2xl md:text-4xl font-bold text-center">
+//             From Interactions to Insights to Revenue — All in One Platform
+//           </h1>
+//           <div className="grid grid-cols-12 w-full gap-3">
+//             <div className="col-span-12 w-full md:col-span-6 ">
+//               <div className="h-[1px] bg-white w-full" />
+//               {features?.length > 0 &&
+//                 features?.map((item, index) => {
+//                   return (
+//                     <div
+//                       className="w-full"
+//                       onClick={() => setFeatureLink(item.id)}
+//                     >
+//                       <p className="my-8 text-white/70 hover:text-white font-semibold text-lg">
+//                         0{index + 1} {item.description}
+//                       </p>
+//                       <div className="h-[1px] bg-white w-full" />
+//                     </div>
+//                   );
+//                 })}
+//             </div>
+//             <div className="col-span-12 w-full md:col-span-6">
+//               <Image
+//                 src={`/assets/images/${featureLink}.webp`}
+//                 width={600}
+//                 height={700}
+//               />
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//       <div className="w-full bg-white">
+//         <div className="mx-auto max-w-[1240px] p-3">
+//           <div className="grid grid-cols-12 gap-3">
+//             <div className="col-span-12 md:col-span-4 space-y-5">
+//               <p className="text-center md:text-left uppercase font-semibold text-lg text-[#8039df]">
+//                 Resources
+//               </p>
+//               <p className="text-center md:text-left uppercase font-bold text-3xl text-[#3e0075] ">
+//                 Unlock your team’s revenue potential
+//               </p>
+//             </div>
+//             <div className="col-span-12 md:col-span-8 space-y-5 grid grid-cols-12 gap-3">
+//               {resources?.length > 0 &&
+//                 resources?.map((item, index) => {
+//                   return (
+//                     <div
+//                       className={cn(
+//                         "w-full shadow hover:shadow-lg  p-4 bg-white border border-slate-300 rounded-md",
+//                         index == 0 || index == 3
+//                           ? "col-span-12 md:col-span-8 md:flex"
+//                           : "col-span-12 md:col-span-4"
+//                       )}
+//                     >
+//                       <div className="space-y-4">
+//                         <p className="uppercase font-semibold text-[#8039df]">
+//                           {item.type}
+//                         </p>
+//                         <p className="uppercase text-xl font-semibold text-[#3e0075]">
+//                           {item.title}
+//                         </p>
+//                       </div>
+//                       {item.image && (
+//                         <div className="w-full h-full relative max-md:hidden">
+//                           <Image src={item.image} fill className="rounded-md" />
+//                         </div>
+//                       )}
+//                     </div>
+//                   );
+//                 })}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//       <Footer />
+//     </main>
+//   );
+// };
+return(
+  <>
+  </>
+)
+}
 
 export default Page;
