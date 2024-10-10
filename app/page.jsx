@@ -85,9 +85,7 @@ const Page = () => {
   const router = useRouter();
 
   useEffect(() => {
-    return () => {
       router.replace("/login");
-    };
   }, []);
 
   const revenueList = [
