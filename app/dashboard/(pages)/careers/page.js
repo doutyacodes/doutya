@@ -1,5 +1,3 @@
-
-
 "use client";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import GlobalApi from "@/app/_services/GlobalApi";
@@ -36,11 +34,9 @@ function Page() {
   const t = useTranslations('CareerPage');
   const tabs = [
     { key: 'roadmap', label: t('roadmap') },
-    // { key: 'contests', label: t('contests') },
     { key: 'test', label: t('test') },
     { key: 'feedback', label: t('feedback') },
     { key: 'challenges', label: t('challenges') },
-    // { key: 'community', label: t('community') }
   ];
 
   useEffect(() => {
@@ -127,7 +123,6 @@ function Page() {
 
   const MobileNavigation = dynamic(() => import('../../_components/Navbar/button.jsx'), { ssr: false });
 
-
   if (isLoading || !isAuthenticated) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
@@ -152,49 +147,48 @@ function Page() {
         roadMapLoading={roadMapLoading}
       />
 
-<div className="flex flex-col sm:flex-row justify-start sm:items-center items-start gap-4 sm:gap-5 lg:gap-10 text-white bg-gradient-to-r from-teal-200 to-orange-200 md:p-4 max-md:pb-4 sm:p-10 mb-5">
-  <p className="text-center font-bold text-black text-2xl sm:text-4xl md:pl-5 md:mr-10 lg:pl-16 lg:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">{t('careers')}</p>
-  <div className="flex flex-wrap gap-4 justify-start items-center max-md:pl-4">
-    {careerData.map((career, index) => (
-      <div
-        key={index}
-        onClick={() => handleCareerClick(career)}
-        className={`w-28 h-28 sm:w-32 sm:h-32  p-1 sm:p-2 shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95 ${
-          selectedCareer && selectedCareer.id === career.id
-            ? "bg-blue-100 border-2 border-blue-500"
-            : "bg-white"
-        }`}
-      >
-        <p className="text-center text-xs sm:text-sm font-bold text-blue-900 break-words">
-          {career.career_name}
-        </p>
-      </div>
-    ))}
-    
-    {roadMapLoading && (
-      <div className="w-28 h-28 sm:w-32 sm:h-32 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95">
-        <p className="text-center text-xs sm:text-sm font-bold text-blue-900">
-          {t('careerAdding')}
-        </p>
-      </div>
-    )}
+      <div className="flex flex-col sm:flex-row justify-start sm:items-center items-start gap-4 sm:gap-5 lg:gap-10 text-white bg-gradient-to-r from-teal-200 to-orange-200 md:p-4 max-md:pb-4 sm:p-10 mb-5">
+        <p className="text-center font-bold text-black text-2xl sm:text-4xl md:pl-5 md:mr-10 lg:pl-16 lg:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">{t('careers')}</p>
+        <div className="flex flex-wrap gap-4 justify-start items-center max-md:pl-4">
+          {careerData.map((career, index) => (
+            <div
+              key={index}
+              onClick={() => handleCareerClick(career)}
+              className={`w-28 h-28 sm:w-32 sm:h-32 p-1 sm:p-2 shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95 ${
+                selectedCareer && selectedCareer.id === career.id
+                  ? "bg-blue-100 border-2 border-blue-500"
+                  : "bg-white"
+              }`}
+            >
+              <p className="text-center text-xs sm:text-sm font-bold text-blue-900 break-words overflow-hidden line-clamp-3">
+                {career.career_name}
+              </p>
+            </div>
+          ))}
+          
+          {roadMapLoading && (
+            <div className="w-28 h-28 sm:w-32 sm:h-32 p-2 bg-white shadow-xl rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95">
+              <p className="text-center text-xs sm:text-sm font-bold text-blue-900">
+                {t('careerAdding')}
+              </p>
+            </div>
+          )}
 
-    <div
-      className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95"
-      onClick={handleAddCareerClick}
-    >
-      <PlusIcon className="text-gray-600 font-thin h-6 w-6 sm:h-8 sm:w-8" />
-    </div>
-  </div>
-</div>
+          <div
+            className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-sm bg-white rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95"
+            onClick={handleAddCareerClick}
+          >
+            <PlusIcon className="text-gray-600 font-thin h-6 w-6 sm:h-8 sm:w-8" />
+          </div>
+        </div>
+      </div>
 
       {selectedCareer && (
         <div className="flex flex-col lg:flex-row px-4 md:px-20 gap-6 md:gap-10 py-6 md:py-10 bg-gradient-to-r from-sky-200 to-green-200">
           <div className="bg-white flex flex-col items-center w-full md:w-auto">
             <div className="flex justify-center w-full items-center py-4 md:py-10 px-4 md:w-56">
-              <div className="text-xl md:text-2xl text-black font-bold text-center">
-                <p className="flex">{selectedCareer.career_name}</p>
-                {/*Insert Country over here*/}
+              <div className="text-xl md:text-xl text-black font-bold text-center">
+                <p className="flex line-clamp-2  ">{selectedCareer.career_name}</p>
                 <p className="font-medium md:text-lg text-sm"></p>
               </div>
             </div>
@@ -217,7 +211,6 @@ function Page() {
           </div>
           <div className="w-full h-full flex flex-col">
             <div className="uppercase text-center text-white font-bold text-xl md:text-2xl bg-orange-400 py-3 md:py-5 border-4 border-white">{t(activeTab)}</div>
-            {/*Insert country in the span*/}
             <div className="text-center text-black text-lg md:text-xl py-3 md:py-5 mx-4 md:mx-10">{t('age')} : {age} - {age+0.5} 
               <span className="font-bold"></span>
             </div>

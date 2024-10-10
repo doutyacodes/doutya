@@ -1,105 +1,10 @@
-// // import React from 'react';
-// // import { Slider } from '@mui/material';
-// // import useMediaQuery from '@mui/material/useMediaQuery';
-
-// // const GreenSlider = ({ choices, selectedChoice, onChange, key }) => {
-// //   const isSmallScreen = useMediaQuery('(max-width:600px)');
-
-// //   const handleChange = (event, value) => {
-// //     onChange(choices[value]);
-// //   };
-
-// //   return (
-// //     <div className="flex flex-col items-center">
-// //       <Slider
-// //         key={key}
-// //         defaultValue={null}
-// //         min={0}
-// //         max={choices.length - 1}
-// //         step={1}
-// //         onChange={handleChange}
-// //         valueLabelDisplay="off"
-// //         marks={choices.map((choice, index) => ({
-// //           value: index,
-// //           label: choice.choiceText,
-// //         }))}
-// //         sx={{
-// //           color: '#00be61', // Slider color
-// //           height: 30, // Slider height
-// //           '& .MuiSlider-markLabel': {
-// //             color: 'white', // Text color
-// //             fontSize: isSmallScreen ? '10px' : '13px', // Font size adjustment for small screens
-// //             marginTop: '20px', // Margin-top for the text labels
-// //             maxWidth: '80px', // Limit the width of the label
-// //             lineHeight: '1.2', // Adjust line height for multi-line text
-// //             textAlign: 'center', // Center align text
-// //             wordWrap: 'break-word', // Ensure long words break into the next line
-// //             overflow: 'visible', // Allow overflow text to wrap
-// //           },
-// //         }}
-// //       />
-// //     </div>
-// //   );
-// // };
-
-// // export default GreenSlider;
-
-
-
-// import React from 'react';
-// import { Slider } from '@mui/material';
-// import useMediaQuery from '@mui/material/useMediaQuery';
-
-// const GreenSlider = ({ choices, selectedChoice, onChange, key }) => {
-//   const isSmallScreen = useMediaQuery('(max-width:600px)');
-
-//   // Calculate the middle index
-//   const middleIndex = Math.floor((choices.length - 1) / 2);
-
-//   const handleChange = (event, value) => {
-//     onChange(choices[value]);
-//   };
-
-//   return (
-//     <div className="flex flex-col items-center">
-//       <Slider
-//         key={key}
-//         defaultValue={middleIndex}
-//         min={0}
-//         max={choices.length - 1}
-//         step={1}
-//         onChange={handleChange}
-//         valueLabelDisplay="off"
-//         marks={choices.map((choice, index) => ({
-//           value: index,
-//           label: choice.choiceText,
-//         }))}
-//         sx={{
-//           color: '#00be61',
-//           height: 30,
-//           '& .MuiSlider-markLabel': {
-//             color: 'white',
-//             fontSize: isSmallScreen ? '10px' : '13px',
-//             marginTop: '20px',
-//             maxWidth: '80px',
-//             lineHeight: '1.2',
-//             textAlign: 'center',
-//             wordWrap: 'break-word',
-//             overflow: 'visible',
-//           },
-//         }}
-//       />
-//     </div>
-//   );
-// };
-
-// export default GreenSlider;
 import React from 'react';
 import { Slider } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const GreenSlider = ({ choices, selectedChoice, onChange, key }) => {
   const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isMediumScreen = useMediaQuery('(max-width:1024px)');
 
   // Calculate the middle index
   const middleIndex = Math.floor((choices.length - 1) / 2);
@@ -109,7 +14,7 @@ const GreenSlider = ({ choices, selectedChoice, onChange, key }) => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       <Slider
         key={key}
         defaultValue={middleIndex}
@@ -123,8 +28,9 @@ const GreenSlider = ({ choices, selectedChoice, onChange, key }) => {
           label: choice.choiceText,
         }))}
         sx={{
-          color: '#757575', // Neutral gray color
+          color: '#757575',
           height: 4,
+          width: '100%', // Ensure slider takes full width
           '& .MuiSlider-rail': {
             opacity: 0.5,
             backgroundColor: '#bfbfbf',
@@ -145,13 +51,25 @@ const GreenSlider = ({ choices, selectedChoice, onChange, key }) => {
           },
           '& .MuiSlider-markLabel': {
             color: 'white',
-            fontSize: isSmallScreen ? '7px' : '13px',
+            fontSize: isSmallScreen ? '8px' : isMediumScreen ? '10px' : '12px',
             marginTop: '12px',
-            maxWidth: '80px',
+            maxWidth: isSmallScreen ? '50px' : isMediumScreen ? '70px' : '90px',
             lineHeight: '1.2',
             textAlign: 'center',
             wordWrap: 'break-word',
             overflow: 'visible',
+            whiteSpace: 'normal',
+            transform: 'translateX(-50%)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              fontSize: isSmallScreen ? '9px' : isMediumScreen ? '11px' : '13px',
+              zIndex: 1,
+            },
+          },
+          '& .MuiSlider-mark': {
+            width: '2px',
+            height: '8px',
+            backgroundColor: '#bfbfbf',
           },
         }}
       />

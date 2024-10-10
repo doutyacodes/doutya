@@ -164,13 +164,15 @@ function Page({ params }) {
   };
 
   const handleNext = async () => {
-    const answer = {
-      questionId: questions[currentQuestionIndex].id,
-      optionId: selectedChoice.choiceId,
-      optionText: selectedChoice.choiceText,
-      personaTypeId: questions[currentQuestionIndex].personality_types_id,
-    };
-    await quizProgressSubmit(answer);
+    if (selectedChoice) {
+      const answer = {
+        questionId: questions[currentQuestionIndex].id,
+        optionId: selectedChoice.choiceId,
+        optionText: selectedChoice.choiceText,
+        personaTypeId: questions[currentQuestionIndex].personality_types_id,
+      };
+      await quizProgressSubmit(answer);
+    }
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -293,11 +295,9 @@ function Page({ params }) {
   
                   <div className="w-full justify-center items-center flex my-5">
                     <button
-                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
-                        selectedChoice ? "" : "opacity-50 cursor-not-allowed"
+                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white
                       }`}
                       onClick={handleNext}
-                      disabled={!selectedChoice}
                     >
                       {t('next')}
                     </button>
@@ -321,3 +321,4 @@ function Page({ params }) {
 }
 
 export default Page;
+

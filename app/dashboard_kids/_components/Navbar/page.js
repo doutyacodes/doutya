@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import Footer from "../Footer/page";
 import { useTranslations } from 'next-intl'; 
+import Image from "next/image";
 
 function Navbarkids() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -37,15 +38,12 @@ function Navbarkids() {
       <nav className="pt-6 pb-4">
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center">
-            <img
-              src="https://i.postimg.cc/pT86s6Zp/doutya-logo-removebg-preview.png"
-              alt="Logo"
-              className="h-8 w-8 mr-2"
+          <div className="flex items-center mr-16">
+            <Image
+              src={"/assets/images/logo-full.png"}
+              width={150}
+              height={150}
             />
-            <span className="text-white text-xl font-bold">
-              Pers<span className="text-blue-400">Analytics</span>
-            </span>
           </div>
 
           {/* Search Bar */}
