@@ -3,10 +3,12 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import Footer from "../Footer/page";
+import { useTranslations } from 'next-intl'; 
 
 function Navbarkids() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const t = useTranslations('Navbar'); 
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -63,24 +65,24 @@ function Navbarkids() {
                 style={{ ...styles.navButton, ...styles.navButtonHome }}
                 data-bg="#FF6F61"
               >
-                DASHBOARD
+                {t('tests')}
               </button>
             </a>
             {/* Updated "MY PROFILE" to link to user profile */}
-            <a href="/dashboard/user-profile">
+            {/* <a href="/dashboard/user-profile">
               <button
                 style={{ ...styles.navButton, ...styles.navButtonProfile }}
                 data-bg="#FFD700"
               >
                 MY PROFILE
               </button>
-            </a>
+            </a> */}
             <a href="/dashboard/careers">
               <button
                 style={{ ...styles.navButton, ...styles.navButtonCareer }}
                 data-bg="#4CAF50"
               >
-                CAREER
+                {t('careers')}
               </button>
             </a>
 
@@ -107,7 +109,7 @@ function Navbarkids() {
                       href="/dashboard/user-profile"
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                     >
-                      {"Your Profile"}
+                      {t('profileLink')}
                     </a>
                   </MenuItem>
 
@@ -116,7 +118,7 @@ function Navbarkids() {
                       href="/dashboard_kids/myResultsKids"
                       className="block px-4 py-2 text-sm text-gray-700"
                     >
-                      {"My results"}
+                      {t('myResults')}
                     </Link>
                   </MenuItem>
 
@@ -125,7 +127,7 @@ function Navbarkids() {
                       onClick={handleLogout}
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                     >
-                      {"Sign Out"}
+                      {t('signOutLink')}
                     </a>
                   </MenuItem>
                 </MenuItems>
@@ -147,19 +149,19 @@ function Navbarkids() {
           </button>
           <div className="mt-8">
             <a href="#" className="block py-2 text-black hover:bg-gray-200">
-              About Us
+            {t('aboutUsLink')}
             </a>
             <a
               href="./login"
               className="block py-2 text-black hover:bg-gray-200"
             >
-              Login
+              {t('sidebarLogin')}
             </a>
             <select className="bg-transparent text-black mt-4">
-              <option value="">Solutions</option>
-              <option value="">option1</option>
-              <option value="">option2</option>
-              <option value="">option3</option>
+              <option value="">{t('solutionsPlaceholder')}</option>
+              <option value="">{t('options.option1')}</option>
+              <option value="">{t('options.option2')}</option>
+              <option value="">{t('options.option3')}</option>
             </select>
           </div>
         </div>

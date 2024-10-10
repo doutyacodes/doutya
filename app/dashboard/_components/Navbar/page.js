@@ -9,6 +9,7 @@ import {IconMenu2} from '@tabler/icons-react'
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [dashboardUrl, setDashboardUrl] = useState('/dashboard/');
   const t = useTranslations('Navbar'); 
 
   const toggleSidebar = () => {
@@ -17,8 +18,12 @@ function Navbar() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const storedUrl = localStorage.getItem('dashboardUrl');
     if (token) {
       setIsLoggedIn(true);
+    }
+    if (storedUrl) {
+      setDashboardUrl(storedUrl);
     }
   }, []);
 
@@ -55,7 +60,7 @@ function Navbar() {
                   <div>{t('home')}</div>
                 </Link>
                 <Link
-                      href="/dashboard/"
+                      href={dashboardUrl}
                       className="cursor-pointer"
                     >
                   <div>{t('tests')}</div>
