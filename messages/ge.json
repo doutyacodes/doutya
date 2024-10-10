@@ -47,7 +47,8 @@
     "associateDegree": "Associate Degree",
     "mastersDegree": "Master-Abschluss",
     "dobRequired": "Geburtsdatum ist erforderlich",
-    "passWord": "Das Passwort muss mindestens 6 Zeichen, Buchstaben, Zahlen und Sonderzeichen enthalten."
+    "passWord": "Das Passwort muss mindestens 6 Zeichen, Buchstaben, Zahlen und Sonderzeichen enthalten.",
+    "passwordMismatch":"Passwort stimmt nicht überein"
   },
   "Banner": {
     "title": "Persönlichkeit",
@@ -238,5 +239,18 @@
       "message": "Bitte geben Sie den Namen der Branche ein, an der Sie interessiert sind. Diese Informationen helfen uns, die Empfehlungen für Sie anzupassen.",
       "cancel": "Abbrechen",
       "submit": "Einreichen"
+    },
+    "RoadMap": {
+    "loadingMessage": "Roadmap-Daten werden abgerufen, bitte warten...",
+    "errorMessages": {
+      "fetchFailure": "Fehler beim Abrufen der Roadmap-Daten. Bitte versuchen Sie es später erneut.",
+      "updateSuccess": "Meilensteinstatus erfolgreich aktualisiert",
+      "updateFailure": "Fehler beim Aktualisieren des Status.",
+      "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten."
+    },
+    "buttons": {
+      "complete": "Abschließen",
+      "completed": "Abgeschlossen"
     }
+  }
 }

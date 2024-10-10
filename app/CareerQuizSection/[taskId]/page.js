@@ -114,7 +114,7 @@ function Page({ params }) {
             console.error("Language file not found for:", savedLanguage);
           }
           const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
-          console.log(optionsFile)
+          
           
           if (optionsFile) {
             const optionsResponse = await fetch(optionsFile);

@@ -23,6 +23,49 @@ function Page({ params }) {
   const [isAuthenticated, setIsAuthenticated] = useState(true)
   const t = useTranslations('QuizPage');
 
+  const languageFiles = {
+    hi: {
+      questions: "/analytics_questions_kids/hindi_questions.json",
+      options: "/option_kids/hindi_options.json"
+    },
+    ur: {
+      questions: "/analytics_questions_kids/urdu_questions.json",
+      options: "/option_kids/urdu_options.json"
+    },
+    sp: {
+      questions: "/analytics_questions_kids/spanish_questions.json",
+      options: "/option_kids/spanish_options.json"
+    },
+    ge: {
+      questions: "/analytics_questions_kids/german_questions.json",
+      options: "/option_kids/german_options.json"
+    },
+    ben: {
+      questions: "/analytics_questions_kids/bengali_questions.json",
+      options: "/option_kids/bengali_options.json"
+    },
+    assa: {
+      questions: "/analytics_questions_kids/assamese_questions.json",
+      options: "/option_kids/assamese_options.json"
+    },
+    mar: {
+      questions: "/analytics_questions_kids/marathi_questions.json",
+      options: "/option_kids/marathi_options.json"
+    },
+    en:{
+      questions: "/analytics_questions_kids/english_questions.json",
+      options: "/option_kids/english_options.json"
+    },
+    mal:{
+      questions: "/analytics_questions_kids/malyalam_questions.json",
+      options: "/option_kids/malyalam_options.json"
+    },
+    tam:{
+      questions: "/analytics_questions_kids/tamil_questions.json",
+      options: "/option_kids/tamil_options.json"
+    }
+  };
+
   useEffect(() => {
     const authCheck = ()=>{
       if (typeof window !== 'undefined') {
@@ -45,11 +88,37 @@ function Page({ params }) {
       try {
         const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetQuizDataKids(quizId, token);
-        setQuestions(resp.data.questions);
+        // setQuestions(resp.data.questions);
         setCurrentQuestionIndex(resp.data.quizProgress);
         if (resp.data.quizProgress > 0) {
           setShowAlert(true);  // Set showAlert to true when resuming the quiz
         }
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        let questionsData = []; // Use a local variable for questions
+        let optionsData = [];
+        const languageFile = languageFiles[savedLanguage.toLowerCase()].questions;
+        if (languageFile) {
+          const response = await fetch(languageFile);
+          questionsData = await response.json(); 
+          
+        } else {
+          console.error("Language file not found for:", savedLanguage);
+        }
+        const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
+        console.log(optionsFile)
+        
+        if (optionsFile) {
+          const optionsResponse = await fetch(optionsFile);
+          optionsData = await optionsResponse.json(); 
+        } else {
+          console.error("Options file not found for:", savedLanguage);
+        }
+
+        questionsData = questionsData.map(question => ({
+          ...question,
+          options: optionsData.filter(option => option.question_id === question.id)
+        }));
+        setQuestions(questionsData); 
       } catch (error) {
         console.error("Error Fetching GetQuizData data:", error);
       } finally {
@@ -79,16 +148,25 @@ function Page({ params }) {
     }
   }, [quizCompleted, router]);
 
-  useEffect(() => {
-    // setIsLoading(true)
-    if (questions?.length > 0) {
-      // Shuffle choices when the component mounts or when the question changes
-      // const choices = questions[currentQuestionIndex].answers.map(answer => answer.text);
-      const choices = questions[currentQuestionIndex]?.answers;
-      setShuffledChoices(choices.sort(() => Math.random() - 0.5));
-    }
+  // useEffect(() => {
+  //   // setIsLoading(true)
+  //   if (questions?.length > 0) {
+  //     // Shuffle choices when the component mounts or when the question changes
+  //     // const choices = questions[currentQuestionIndex].answers.map(answer => answer.text);
+  //     const choices = questions[currentQuestionIndex]?.answers;
+  //     setShuffledChoices(choices.sort(() => Math.random() - 0.5));
+  //   }
 
-    // setIsLoading(false)
+  //   // setIsLoading(false)
+  // }, [currentQuestionIndex, questions]);
+
+  useEffect(() => {
+    // Shuffle and set options for the current question
+    if (questions.length > 0 && questions[currentQuestionIndex]?.options) {
+      const choices = questions[currentQuestionIndex].options;
+      console.log(choices)
+      setShuffledChoices([...choices].sort(() => Math.random() - 0.5));
+    }
   }, [currentQuestionIndex, questions]);
 
   const handleChoiceSelect = (choice) => {
@@ -101,7 +179,7 @@ function Page({ params }) {
                       questionId: questions[currentQuestionIndex].id,
                       optionId: selectedChoice.id,
                       optionText: selectedChoice.text,
-                      analyticId: selectedChoice.analyticId,
+                      analyticId: selectedChoice.analytic_id,
                     }
 
     await quizProgressSubmit(answer); 
@@ -268,7 +346,7 @@ function Page({ params }) {
                 <div className="inset-0 flex items-center my-16 justify-center z-50">
                   <div className="flex items-center space-x-2">
                     <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
-                    <span className="text-white">Loading..</span>
+                    <span className="text-white">{t('loading')}</span>
                   </div>
                 </div>
               )

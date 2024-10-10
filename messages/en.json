@@ -47,7 +47,8 @@
     "associateDegree": "Associate Degree",
     "mastersDegree": "Master's Degree",
     "dobRequired": "Date of Birth is required",
-    "passWord":"Password must be 6+ characters with letters, numbers, and special characters."
+    "passWord":"Password must be 6+ characters with letters, numbers, and special characters.",
+    "passwordMismatch":"password does not match"
   },
   "Banner": {
     "title": "Personality",
@@ -238,5 +239,18 @@
     "message":"Please enter the name of the Industry you are interested in. This information will help us tailor the recommendations for you.",
     "cancel":"Cancel",
     "submit":"Submit"
+  },
+  "RoadMap":{
+      "loadingMessage": "Fetching roadmap data, please wait...",
+      "errorMessages": {
+        "fetchFailure": "Failed to fetch RoadMap data. Please try again later.",
+        "updateSuccess": "Milestone status updated",
+        "updateFailure": "Failed to update status.",
+        "unexpectedError": "An unexpected error occurred."
+      },
+      "buttons": {
+        "complete": "Complete",
+        "completed": "Completed"
+      }
   }
 }

@@ -36,7 +36,7 @@ function Page() {
   const tabs = [
     { key: 'roadmap', label: t('roadmap') },
     // { key: 'contests', label: t('contests') },
-    { key: 'tests', label: t('test') },
+    { key: 'test', label: t('test') },
     { key: 'feedback', label: t('feedback') },
     { key: 'challenges', label: t('challenges') },
     // { key: 'community', label: t('community') }

@@ -406,7 +406,7 @@ function Page({ params }) {
                 <div className="inset-0 flex items-center my-16 justify-center z-50">
                   <div className="flex items-center space-x-2">
                     <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
-                    <span className="text-white">Loading..</span>
+                    <span className="text-white">{t('loading')}</span>
                   </div>
                 </div>
               )
