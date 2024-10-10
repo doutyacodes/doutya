@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 
-function RoadMap({ selectedCareer }) {
+function RoadMap({ selectedCareer , setAge}) {
   const [activeTab, setActiveTab] = useState('Educational Milestones');
   const [roadMapData, setRoadMapData] = useState([])
   const [completedTasks, setCompletedTasks] = useState({});
@@ -67,7 +67,8 @@ function RoadMap({ selectedCareer }) {
         if (currentRequestId === requestIdRef.current) { // Ensure this is the latest request
           const results = response.data;
           console.log(results);
-          setRoadMapData(results);
+          setRoadMapData(results.userMilestones);
+          setAge(results.age)
         }
       }
     } catch (err) {
