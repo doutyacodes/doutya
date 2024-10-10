@@ -16,7 +16,6 @@ export async function POST(req) {
     const userId = userData.userId;
     const { results } = await req.json(); // Directly destructuring to get quizId and results array
     const { questionId, answerId, marks, testId } = results
-
     try {
         try {
             // Check if the record already exists
