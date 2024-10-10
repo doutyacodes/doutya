@@ -65,9 +65,14 @@ function Login() {
   return (
     <div>
       <Toaster />
-      <div className="flex items-center flex-col gap-4 justify-center min-h-screen">
+      <div className="flex items-center flex-col gap-2 justify-center min-h-screen">
         <div>
-        <Image href={"/assets/images/logo-full.png"} width={140} height={120} />
+        <Image
+              
+              src={"/assets/images/logo-full.png"}
+              width={140}
+              height={120}
+            />
         </div>
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
           
