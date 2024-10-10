@@ -59,6 +59,7 @@ function Login() {
   };
 
   const t = useTranslations('LoginPage');
+  const s = useTranslations('SignupPage');
 
   return (
     <div>
@@ -85,6 +86,7 @@ function Login() {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
               />
+              <Link href="/" className="text-sm text-gray-500">{s('forgotPassword')}</Link>
             </div>
             <span className='text-emerald-600'>{t('NoAccount')} <Link className='text-gray-500 hover:text-black' href="/signup">{t('Signup')}</Link></span>
             <br /> <br />

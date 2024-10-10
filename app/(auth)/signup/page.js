@@ -498,7 +498,6 @@ function SignUp() {
                 </form>
                 <div className="flex justify-between">
                     <Link href="/login" className="text-sm text-gray-500">{t('alreadyRegistered')} {t('login')}</Link>
-                    <Link href="/" className="text-sm text-gray-500">{t('forgotPassword')}</Link>
                 </div>
             </div>
         </div>
