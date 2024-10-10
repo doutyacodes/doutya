@@ -186,7 +186,7 @@ export async function GET(req) {
           country ? " in " + country : ""
         }.
         user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
-        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data.Provide the response ${
+        Ensure that the response is valid JSON, strictly require 8 careers, using the specified field names, but do not include the terms '${type1}' in the data.Provide the response ${
     languageOptions[language] || "in English"
   } keeping the keys in english only but the career names should be ${
     languageOptions[language] || "in English"
@@ -199,7 +199,7 @@ export async function GET(req) {
     {
       model: "gpt-4o-mini", // or 'gpt-4' if you have access
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 4000, // Adjust the token limit as needed
+      max_tokens: 5000, // Adjust the token limit as needed
     },
     {
       headers: {
