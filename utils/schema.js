@@ -420,6 +420,7 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         user_id: int('user_id').notNull().references(() => USER_DETAILS.id), 
         created_at: timestamp('created_at').defaultNow(),
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
+        marks: decimal('marks', 10, 3).notNull(),
     });
 
     export const STAR_PERCENT = mysqlTable('star_percent', {

@@ -21,7 +21,6 @@ function Tests({selectedCareer}) {
                 if (response.status === 200) {  // Check for a 200 status code
                     
                     const results = response.data.tasks
-                    console.log(results)
                     setTestData(results);
 
                 } else {
@@ -80,18 +79,18 @@ function Tests({selectedCareer}) {
                         {/* Quiz Info */}
                         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                             {/* Quiz Title */}
-                            <h2 className="text-2xl font-bold">{test.task_name}</h2>
+                            <h2 className="text-2xl font-bold">{test.subjectName}</h2>
 
                             {/* Dates */}
                             <div className="flex flex-col gap-1 text-sm">
                                 <p>
                                 <span className="font-semibold">Posted:</span>{' '}
-                                {new Date(test.test_date).toLocaleDateString()}
+                                {new Date(test.testDate).toLocaleDateString()}
                                 </p>
-                                <p>
+                                {/* <p>
                                 <span className="font-semibold">Deadline:</span>{' '}
                                 {new Date(test.test_date).toLocaleDateString()}
-                                </p>
+                                </p> */}
                             </div>
                         </div>
 

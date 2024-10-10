@@ -134,32 +134,33 @@ export default function Results2() {
     }
   };
 
-  const handleSaveResult = async () => {
+  const handleSaveResult = async (careerIndex) => {
     setSaveResultLoading(true);
-    if (selectedCareers.length > 0) {
-      const selectedCareerObjects = selectedCareers.map((index) => resultData[index]);
+    // if (selectedCareers.length > 0) {
+    //   const selectedCareerObjects = selectedCareers.map((index) => resultData[index]);
+      const selectedCareerObjects = [resultData[careerIndex]];  
       const payload = { results: selectedCareerObjects };
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const response = await GlobalApi.SaveCarrerData(token, payload);
         if (response.status === 201) {
-          toast.success("Career Data Saved");
-          router.push("/dashboard/careers");
+          toast.success("Career Data Saved Successfully");
+          // router.push("/dashboard/careers");
         }
       } catch (err) {
         console.error("Failed to save career data:", err);
         if (err.response && err.response.data && err.response.data.message) {
-          toast.error(`Error: ${err.response.data.message}`);
+          toast.error(`${err.response.data.message}`);
         } else {
           toast.error("Failed to save career data. Please try again later.");
         }
       } finally {
         setSaveResultLoading(false);
       }
-    } else {
-      toast.error("Please select at least one result to continue.");
-      setSaveResultLoading(false);
-    }
+    // } else {
+    //   toast.error("Please select at least one result to continue.");
+    //   setSaveResultLoading(false);
+    // }
   };
 
   const downloadResultsAsImage = async () => {
@@ -235,6 +236,7 @@ export default function Results2() {
 
   return (
     <div className="max-sm:pb-5">
+      <Toaster position="top-center" reverseOrder={false} />
       {step === 1 && industries && (
         <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center">
@@ -392,7 +394,11 @@ export default function Results2() {
                             career?.type == "normal" ? "#0097b2" :
                             career?.type == "off beat" ? "#800080" : "#5dbb49",
                         }}
-                        onClick={() => handleCareerClick(index)}
+                        // onClick={() => handleCareerClick(index)}
+                        onClick={() => {
+                          setSingleCareer(career);
+                          setCareerIndex(index);
+                        }}
                       >
                         <p className="text-xl text-center text-white py-4 uppercase font-bold">
                           {career?.type == "normal" ? "BASIC" : career.type}
@@ -500,14 +506,13 @@ export default function Results2() {
                   </div>
                   <div className="flex justify-center items-center">
                     <button
-                      className={`text-white font-bold text-center py-4 px-7 uppercase rounded-lg ${
-                        selectedCareers.includes(careerIndex) ? 'bg-red-600' : 'bg-green-600'
+                      className={`text-white font-bold text-center py-4 px-7 uppercase rounded-lg bg-green-600${
+                        saveResultloading ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                       onClick={() => {
-                        handleCareerClick(careerIndex);
-                        setCareerIndex(null);
-                        setSingleCareer(null);
+                        handleSaveResult(careerIndex);
                       }}
+                      disabled={saveResultloading}
                     >
                       {saveResultloading ? (
                         <div className="flex items-center">
@@ -523,7 +528,7 @@ export default function Results2() {
                 </div>
               ) : null}
             </div>
-            {resultData && prevSelectCount < 3 && (
+            {/* {resultData && prevSelectCount < 3 && (
               <div className="max-sm:flex max-sm:justify-center">
                 <button
                   className={`max-sm:w-4/5 w-full bg-blue-500 text-white py-2 rounded-lg mt-4 flex justify-center items-center max-sm:mx-4 ${
@@ -542,7 +547,7 @@ export default function Results2() {
                   )}
                 </button>
               </div>
-            )}
+            )} */}
             {displayResults && !feedbackGiven && (
               <div className="bg-white p-5 rounded-lg text-gray-600 max-sm:mx-4">
                 <p className="text-center text-xl mb-4">{t('giveFeedback')}</p>
