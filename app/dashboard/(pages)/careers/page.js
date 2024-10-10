@@ -79,9 +79,9 @@ function Page() {
       }
   
       const response = await GlobalApi.GetCarrerData(token);
-      console.log("GetCarrerData",response.data)
-      if (response.status === 201 && response.data && response.data.length > 0) {
-        setCareerData(response.data);
+      if (response.status === 201 && response.data && response.data.carrerData.length > 0) {        
+        setCareerData(response.data.carrerData);
+        setAge(response.data.age)
       } else {
         toast.error("No career data available at the moment.");
       }
@@ -218,12 +218,12 @@ function Page() {
           <div className="w-full h-full flex flex-col">
             <div className="uppercase text-center text-white font-bold text-xl md:text-2xl bg-orange-400 py-3 md:py-5 border-4 border-white">{t(activeTab)}</div>
             {/*Insert country in the span*/}
-            <div className="text-center text-black text-lg md:text-xl py-3 md:py-5 mx-4 md:mx-10">{t('age')}:{age} 
+            <div className="text-center text-black text-lg md:text-xl py-3 md:py-5 mx-4 md:mx-10">{t('age')} : {age} - {age+0.5} 
               <span className="font-bold"></span>
             </div>
-            {activeTab === "roadmap" && <RoadMap selectedCareer={selectedCareer} setAge={setAge}/>}
+            {activeTab === "roadmap" && <RoadMap selectedCareer={selectedCareer}/>}
             {activeTab === "contests" && <Contests selectedCareer={selectedCareer} />}
-            {activeTab === "tests" && <Tests selectedCareer={selectedCareer} />}
+            {activeTab === "test" && <Tests selectedCareer={selectedCareer} />}
             {activeTab === "feedback" && <Feedback selectedCareer={selectedCareer} />}
             {activeTab === "activities" && <Activity selectedCareer={selectedCareer} />}
             {activeTab === "challenges" && <Challenge selectedCareer={selectedCareer} />}

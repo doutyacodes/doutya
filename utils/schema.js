@@ -446,6 +446,7 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         status: mysqlEnum('status', ['active', 'completed', 'skipped']).notNull(),
         updated_at: timestamp('updated_at').defaultNow(),
       });
+      
       export const SCHOOL = mysqlTable('school', {
         id: int('id').notNull().primaryKey().autoincrement(),
         title: varchar('title', 255).notNull(),

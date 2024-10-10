@@ -41,7 +41,6 @@ export default function Challenge({ selectedCareer }) {
         setFetching(true);
         try {
             const response = await GlobalApi.getChallenges(selectedCareer.career_group_id, token, language);
-            console.log(response)
             setChallenges(response.data.challenges);
 
             // Fetch the last submitted challenge for the current user
@@ -96,11 +95,11 @@ export default function Challenge({ selectedCareer }) {
         }
     };
 
-    useEffect(() => {
-        if (activeTab === 'weekly' && selectedCareer && token) {
-            fetchWeeklyChallenges(); // Fetch challenges only when all required dependencies are available
-        }
-    }, [activeTab, selectedCareer, token]); // Ensure selectedCareer and token are valid dependencies
+    // useEffect(() => {
+    //     if (activeTab === 'weekly' && selectedCareer && token) {
+    //         fetchWeeklyChallenges(); // Fetch challenges only when all required dependencies are available
+    //     }
+    // }, [activeTab, selectedCareer, token]); // Ensure selectedCareer and token are valid dependencies
     
     // Fetch data based on the active tab
     useEffect(() => {
@@ -183,7 +182,7 @@ export default function Challenge({ selectedCareer }) {
         }
     };
 
-    const renderChallenges = () => {
+    const renderChallenges = () => {        
         if (activeTab === 'weekly') {
             return challenges
                 .filter((challenge) => challenge.week === currentWeek )
