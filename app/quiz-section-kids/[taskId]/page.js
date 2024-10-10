@@ -57,8 +57,8 @@ function Page({ params }) {
       options: "/option_kids/english_options.json"
     },
     mal:{
-      questions: "/analytics_questions_kids/malyalam_questions.json",
-      options: "/option_kids/malyalam_options.json"
+      questions: "/analytics_questions_kids/malayalam_questions.json",
+      options: "/option_kids/malayalam_options.json"
     },
     tam:{
       questions: "/analytics_questions_kids/tamil_questions.json",

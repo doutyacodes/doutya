@@ -21,7 +21,7 @@ const languageMapping = {
     assa: 'Assamese',
     ge: 'German',
     tam:'Tamil',
-    mal:'Malyalam'
+    mal:'Malayalam'
 };
 
 function SignUp() {
@@ -219,7 +219,7 @@ function SignUp() {
                             <option value="assa">Assamese</option>
                             <option value="ge">German</option>
                             <option value="tam">Tamil</option>
-                            <option value="mal">Malyalam</option>
+                            <option value="mal">Malayalam</option>
                         </select>
                     </div>
                     <button

@@ -71,12 +71,12 @@ function Navbar() {
                     >
                   <div>{t('careers')}</div>
                 </Link>
-                <Link
+                {/* <Link
                       href="/dashboard/careers"
                       className="cursor-pointer"
                     >
                   <div>{t('communities')}</div>
-                </Link>
+                </Link> */}
               </div>
               <Menu as="div" className="relative ml-3">
                 <div className="flex items-center">
