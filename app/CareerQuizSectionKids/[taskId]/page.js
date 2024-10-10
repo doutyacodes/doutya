@@ -42,8 +42,8 @@ const languageFiles = {
     options: "/personality_options/english_options.json"
   },
   mal: {
-    questions: "/personality_questions_kids/malyalam_questions.json",
-    options: "/personality_options/malyalam_options.json"
+    questions: "/personality_questions_kids/malayalam_questions.json",
+    options: "/personality_options/malayalam_options.json"
   },
   tam: {
     questions: "/personality_questions_kids/tamil_questions.json",
