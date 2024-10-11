@@ -134,7 +134,9 @@
         "ageValidation": "आयु कम से कम 5 वर्ष होनी चाहिए।",
         "userDataUpdated": "उपयोगकर्ता डेटा अपडेट किया गया",
         "usernameExists": "उपयोगकर्ता नाम पहले से लिया जा चुका है",
-        "unexpectedError": "एक अप्रत्याशित त्रुटि हुई।"
+        "unexpectedError": "एक अप्रत्याशित त्रुटि हुई।",
+        "isRequired": "आवश्यक है",
+  "mobileValidation": "मोबाइल नंबर 10 अंकों का होना चाहिए"
     },
     "CareerPage": {
         "careers": "करियर",

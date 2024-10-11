@@ -307,7 +307,7 @@ function Page() {
                     {...register("password", {
                       minLength: {
                         value: 6,
-                        message: t('passwordMinLength'),
+                        message: t('passwordRequired'),
                       },
                       pattern: {
                         value: /(?=.*[!@#$%^&*])/,

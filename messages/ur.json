@@ -133,7 +133,9 @@
     "ageValidation": "عمر کم از کم 5 سال ہونی چاہیے۔",
     "userDataUpdated": "یوزر ڈیٹا کو اپ ڈیٹ کر دیا گیا ہے",
     "usernameExists": "یوزر نیم پہلے سے موجود ہے",
-    "unexpectedError": "ایک غیر متوقع خرابی پیش آئی۔"
+    "unexpectedError": "ایک غیر متوقع خرابی پیش آئی۔",
+    "isRequired": "ضروری ہے",
+  "mobileValidation": "موبائل نمبر 10 ہندسوں کا ہونا چاہئے"
   },
   "CareerPage": {
     "careers": "کیریئرز",

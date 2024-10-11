@@ -130,7 +130,9 @@
     "ageValidation": "বয়স কমেও ৫ বছৰ হ’ব লাগিব।",
     "userDataUpdated": "ব্যৱহাৰকাৰীৰ তথ্য সলনি হৈছে",
     "usernameExists": "ইউজাৰনেম আগতেৰে আছে",
-    "unexpectedError": "অপ্ৰত্যাশিত ত্ৰুটি।"
+    "unexpectedError": "অপ্ৰত্যাশিত ত্ৰুটি।",
+    "isRequired": "প্ৰয়োজনীয়",
+  "mobileValidation": "ম'বাইল নম্বৰ ১০ সংখ্যাৰ হ'ব লাগিব"
   },
   "CareerPage": {
     "careers": "কেরিয়াৰ",
