@@ -402,12 +402,14 @@ const getChallengesByStatus = (status, id, token) => {
   });
 };
 const getLastSubmittedChallenge = (id,token) => {
+  console.log("id",id)
+  console.log("token",token)
   return axios.get(`/api/getLastSubmittedChallenge`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
     params:{
-      id
+      id:id
     }
   });
 };

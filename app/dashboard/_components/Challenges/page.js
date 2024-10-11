@@ -153,7 +153,7 @@ export default function Challenge({ selectedCareer }) {
                 );
 
                 // Fetch updated challenge progress
-                const updatedProgress = await GlobalApi.getLastSubmittedChallenge(token);
+                const updatedProgress = await GlobalApi.getLastSubmittedChallenge(selectedCareer.career_group_id,token);
                 setLastSubmittedChallenge(updatedProgress.data.lastSubmittedChallenge);
 
                 // Update currentWeek for the next challenge

@@ -1179,7 +1179,7 @@ export default function Results2() {
                   </div>
                   <div className="flex justify-center items-center">
                     <button
-                      className={`text-white font-bold text-center py-4 px-7 uppercase rounded-lg bg-green-600${
+                      className={`text-white font-bold text-center py-4 px-7 uppercase rounded-lg bg-green-600 mb-4 ${
                         saveResultloading ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                       onClick={() => {
