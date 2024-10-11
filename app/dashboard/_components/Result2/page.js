@@ -1000,7 +1000,7 @@ export default function Results2() {
           </div>
         )}
         {step === 2 && (
-          <>
+          <div className="max-md:w-screen">
             <div ref={resultsRef} className="mt-8">
               {resultData && !singleCareer ? (
                 <>
@@ -1236,7 +1236,7 @@ export default function Results2() {
             )}
             <br />
             <br />
-          </>
+          </div>
         )}
       </div>
     </div>
