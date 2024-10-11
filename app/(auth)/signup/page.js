@@ -52,8 +52,23 @@ function SignUp() {
     formState: { errors },
     reset,
     setError,
+    clearErrors,
+    setValue,
   } = useForm();
 
+  const collegeStudent = watch("student");
+  useEffect(() => {    
+    if (collegeStudent !== undefined){
+      clearErrors("student");
+    }
+  }, [collegeStudent, clearErrors]);
+
+  const handleStudentChange = (value) => {
+    setValue("student", value);
+    setIsCollegeStudent(value === "yes");
+    clearErrors("student");
+  };
+  
   const educationLevelMapping = {
     0: "School",
     1: "College",
@@ -64,14 +79,6 @@ function SignUp() {
   //     const storedLanguage = localStorage.getItem('language');
   //     if (storedLanguage) {
   //         // setSelectedLanguage(storedLanguage);
-  //         setLanguageSelected(true);
-  //     }
-  // }, []);
-
-  // useEffect(() => {
-  //     const savedLanguage = localStorage.getItem('language');
-  //     if(savedLanguage){
-  //         setSelectedLanguage(savedLanguage);
   //         setLanguageSelected(true);
   //     }
   // }, []);
@@ -212,8 +219,6 @@ function SignUp() {
       }
     }
   };
-
-  const collegeStudent = watch("student");
 
   // if (!languageSelected) {
   if (step === "language") {
@@ -528,37 +533,47 @@ function SignUp() {
                         {errors.dob && <p className="mt-2 text-sm text-red-600">{errors.dob.message}</p>}
                     </div> */}
           <br />
-          <div className="mb-4 flex items-center">
-            <label
-              htmlFor="collegeStudent"
-              className="block text-sm font-medium text-gray-700 mr-4"
-            >
-              {t("collegeStudent")}
-            </label>
-            <div className="flex items-center space-x-4">
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  {...register("student")}
-                  value="no"
-                  onChange={() => setIsCollegeStudent(false)}
-                  className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-                />
-                <span className="ml-2 text-gray-700 mr-5">
-                  {t("studentOptions.no")}
-                </span>
-                <input
-                  type="radio"
-                  {...register("student")}
-                  value="yes"
-                  onChange={() => setIsCollegeStudent(true)}
-                  className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-                />
-                <span className="ml-2 text-gray-700">
-                  {t("studentOptions.yes")}
-                </span>
+          <div>
+            <div className="mb-4 flex items-center">
+              <label
+                htmlFor="collegeStudent"
+                className="block text-sm font-medium text-gray-700 mr-4"
+              >
+                {t("collegeStudent")}
               </label>
+              <div className="flex items-center space-x-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    {...register("student", { 
+                      required: "Please select whether you are a college student or not" 
+                    })}
+                    value="no"
+                    onChange={() => handleStudentChange("no")}
+                    className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                  />
+                  <span className="ml-2 text-gray-700 mr-5">
+                    {t("studentOptions.no")}
+                  </span>
+                  <input
+                    type="radio"
+                    {...register("student", { 
+                      required: "Please select whether you are a college student or not" 
+                    })}
+                    value="yes"
+                    onChange={() => handleStudentChange("yes")}
+                    className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                  />
+                  <span className="ml-2 text-gray-700">
+                    {t("studentOptions.yes")}
+                  </span>
+                </label>
+              </div>
             </div>
+  
+            {errors.student && (
+                <p className="text-red-500 text-sm mt-1">{errors.student.message}</p>
+              )}
           </div>
 
           {isCollegeStudent && (

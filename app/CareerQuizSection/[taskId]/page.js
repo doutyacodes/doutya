@@ -142,6 +142,17 @@ function Page({ params }) {
     getQuizData();
   }, [quizId]);
 
+  useEffect(() => { /* this is to se the default neutral value */
+    if (choices.length > 0) {
+      // Find the middle choice (neutral)
+      const middleIndex = Math.floor((choices.length - 1) / 2);
+      const neutralChoice = choices[middleIndex];
+  
+      // Set the selected choice to the neutral option
+      setSelectedChoice(neutralChoice);
+    }
+  }, [choices, currentQuestionIndex]);
+
   useEffect(() => {
     if (quizCompleted) {
       const interval = setInterval(() => {
