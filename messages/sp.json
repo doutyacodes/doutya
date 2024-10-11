@@ -133,7 +133,9 @@
     "ageValidation": "La edad mínima debe ser de 5 años.",
     "userDataUpdated": "Los datos del usuario han sido actualizados",
     "usernameExists": "El nombre de usuario ya existe",
-    "unexpectedError": "Se ha producido un error inesperado."
+    "unexpectedError": "Se ha producido un error inesperado.",
+    "isRequired": "es requerido",
+  "mobileValidation": "El número de móvil debe tener 10 dígitos"
   },
   "CareerPage": {
     "careers": "Carreras",

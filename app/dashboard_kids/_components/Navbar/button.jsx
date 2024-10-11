@@ -14,10 +14,16 @@ const MobileNavigation = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('');
   const [isMounted, setIsMounted] = useState(false); // State to check if mounted
+  const [dashboardUrl, setDashboardUrl] = useState("/dashboard/");
 
   // Set the mounted state to true after the first render
   useEffect(() => {
     setIsMounted(true);
+    const storedUrl = localStorage.getItem("dashboardUrl");
+    if (storedUrl) {
+      setDashboardUrl(storedUrl);
+    }
+    console.log(dashboardUrl)
   }, []);
 
   // Update activeTab when route changes (only if mounted)
@@ -28,7 +34,7 @@ const MobileNavigation = () => {
   }, [router, isMounted]);
 
   const navItems = [
-    { name: 'Dashboard', href: '/dashboard_kids', icon: <IoMdAnalytics /> },
+    { name: 'Dashboard', href: dashboardUrl, icon: <IoMdAnalytics /> },
     { name: 'My Results', href: '/dashboard_kids/myResultsKids', icon: <FaBriefcase /> },
     { name: 'Profile', href: '/dashboard/user-profile', icon: <RxAvatar /> },
   ];

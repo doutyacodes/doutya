@@ -35,7 +35,7 @@ function SignUp() {
   const [step, setStep] = useState("dob");
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
   const [countryOptions] = useState(countryList().getData());
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState("India");
   // const [languageSelected, setLanguageSelected] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [educationLevel, setEducationLevel] = useState(0);
@@ -52,23 +52,8 @@ function SignUp() {
     formState: { errors },
     reset,
     setError,
-    clearErrors,
-    setValue,
   } = useForm();
 
-  const collegeStudent = watch("student");
-  useEffect(() => {    
-    if (collegeStudent !== undefined){
-      clearErrors("student");
-    }
-  }, [collegeStudent, clearErrors]);
-
-  const handleStudentChange = (value) => {
-    setValue("student", value);
-    setIsCollegeStudent(value === "yes");
-    clearErrors("student");
-  };
-  
   const educationLevelMapping = {
     0: "School",
     1: "College",
@@ -79,6 +64,14 @@ function SignUp() {
   //     const storedLanguage = localStorage.getItem('language');
   //     if (storedLanguage) {
   //         // setSelectedLanguage(storedLanguage);
+  //         setLanguageSelected(true);
+  //     }
+  // }, []);
+
+  // useEffect(() => {
+  //     const savedLanguage = localStorage.getItem('language');
+  //     if(savedLanguage){
+  //         setSelectedLanguage(savedLanguage);
   //         setLanguageSelected(true);
   //     }
   // }, []);
@@ -220,6 +213,8 @@ function SignUp() {
     }
   };
 
+  const collegeStudent = watch("student");
+
   // if (!languageSelected) {
   if (step === "language") {
     return (
@@ -323,7 +318,14 @@ function SignUp() {
               max="2"
               step="1"
               value={educationLevel}
-              onChange={(e) => setEducationLevel(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value == 1) {
+                  setIsCollegeStudent(true);
+                } else {
+                  setIsCollegeStudent(false);
+                }
+                setEducationLevel(e.target.value);
+              }}
               className="w-full mt-2"
             />
             <div className="flex justify-between mt-2 gap-1">
@@ -497,7 +499,7 @@ function SignUp() {
             )}
           </div>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label
               htmlFor="country"
               className="block text-sm font-medium text-gray-700"
@@ -510,7 +512,7 @@ function SignUp() {
               onChange={setSelectedCountry}
               className="mt-1 block w-full"
             />
-          </div>
+          </div> */}
 
           {/* <div>
                         <label htmlFor="dob" className="block text-sm font-medium text-gray-700">{t('dob')}</label>
@@ -533,47 +535,39 @@ function SignUp() {
                         {errors.dob && <p className="mt-2 text-sm text-red-600">{errors.dob.message}</p>}
                     </div> */}
           <br />
-          <div>
-            <div className="mb-4 flex items-center">
-              <label
-                htmlFor="collegeStudent"
-                className="block text-sm font-medium text-gray-700 mr-4"
-              >
-                {t("collegeStudent")}
+          <div className="mb-4 flex items-center">
+            <label
+              htmlFor="collegeStudent"
+              className="block text-sm font-medium text-gray-700 mr-4"
+            >
+              {t("collegeStudent")}
+            </label>
+            <div className="flex items-center space-x-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  {...register("student")}
+                  value="no"
+                  checked={!isCollegeStudent}
+                  onChange={() => setIsCollegeStudent(false)}
+                  className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                />
+                <span className="ml-2 text-gray-700 mr-5">
+                  {t("studentOptions.no")}
+                </span>
+                <input
+                  type="radio"
+                  checked={isCollegeStudent}
+                  {...register("student")}
+                  value="yes"
+                  onChange={() => setIsCollegeStudent(true)}
+                  className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                />
+                <span className="ml-2 text-gray-700">
+                  {t("studentOptions.yes")}
+                </span>
               </label>
-              <div className="flex items-center space-x-4">
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    {...register("student", { 
-                      required: "Please select whether you are a college student or not" 
-                    })}
-                    value="no"
-                    onChange={() => handleStudentChange("no")}
-                    className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-                  />
-                  <span className="ml-2 text-gray-700 mr-5">
-                    {t("studentOptions.no")}
-                  </span>
-                  <input
-                    type="radio"
-                    {...register("student", { 
-                      required: "Please select whether you are a college student or not" 
-                    })}
-                    value="yes"
-                    onChange={() => handleStudentChange("yes")}
-                    className="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-                  />
-                  <span className="ml-2 text-gray-700">
-                    {t("studentOptions.yes")}
-                  </span>
-                </label>
-              </div>
             </div>
-  
-            {errors.student && (
-                <p className="text-red-500 text-sm mt-1">{errors.student.message}</p>
-              )}
           </div>
 
           {isCollegeStudent && (
@@ -608,13 +602,13 @@ function SignUp() {
           )}
 
           {/* Conditional "Highest Education" Field for Junior and Senior Users */}
-          {ageCategory !== "kids" && !isCollegeStudent && (
+          {ageCategory !== "kids" && educationLevel!==0 && !isCollegeStudent && (
             <div className="mb-4">
               <label
                 htmlFor="highestEducation"
                 className="block text-sm font-medium text-gray-700"
               >
-                {t("education")}
+                {isCollegeStudent ? "Current Education" : "Highest Education"}
               </label>
               <select
                 id="highestEducation"
@@ -625,7 +619,10 @@ function SignUp() {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required={ageCategory !== "kids"}
               >
-                <option value="">{t("selectHighestEducation")}</option>
+                <option value="">
+                  Select{" "}
+                  {isCollegeStudent ? "Current Education" : "Highest Education"}
+                </option>
 
                 {/* Options for Junior Users */}
                 {ageCategory === "junior" && (
