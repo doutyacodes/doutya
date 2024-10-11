@@ -160,10 +160,13 @@ function Page() {
         roadMapLoading={roadMapLoading}
       />
 
-      <p className="text-center font-bold text-black text-2xl sm:text-4xl md:pl-5 md:mr-10 lg:pl-16 lg:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">
+      <p className="text-center font-bold flex sm:hidden text-black text-2xl sm:text-4xl md:pl-5 md:mr-10 lg:pl-16 lg:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">
         {t("careers")}
       </p>
       <div className="flex flex-col pt-4 sm:flex-row justify-start sm:items-center items-start gap-4 sm:gap-5 lg:gap-10 text-white bg-gradient-to-r from-teal-200 to-orange-200 md:p-4 max-md:pb-4 sm:p-10 mb-5 overflow-x-scroll">
+      <p className="text-center font-bold flex text-black text-2xl sm:text-4xl md:pl-5 md:mr-10 lg:pl-16 lg:mr-24 max-sm:bg-white max-sm:w-full max-md:py-2">
+        {t("careers")}
+      </p>
         <div className="flex  gap-4 justify-start items-center max-md:pl-4 w-fit">
           {careerData.map((career, index) => (
             <div
@@ -198,15 +201,16 @@ function Page() {
         </div>
       </div>
 
-      {selectedCareer && (
+       {selectedCareer && (
         <div className="flex flex-col lg:flex-row px-4 md:px-20 gap-6 md:gap-10 py-6 md:py-10 bg-gradient-to-r from-sky-200 to-green-200">
           <div className="bg-white flex flex-col items-center w-full md:w-auto">
             <div className="flex justify-center w-full items-center py-4 md:py-10 px-4 md:w-56">
-              <div className="text-xl md:text-xl text-black font-bold text-center">
-                <p className="flex line-clamp-2  ">
-                  {selectedCareer.career_name}
+              <div className="text-xl md:text-xl text-black font-bold text-center w-full">
+                <p className="flex justify-center items-center h-full overflow-hidden">
+                  <span className="line-clamp-3 break-words">
+                    {selectedCareer.career_name}
+                  </span>
                 </p>
-                <p className="font-medium md:text-lg text-sm"></p>
               </div>
             </div>
 
