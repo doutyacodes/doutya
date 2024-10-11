@@ -1,5 +1,3 @@
-
-
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -14,60 +12,63 @@ import { useTranslations } from "next-intl";
 const languageFiles = {
   hi: {
     questions: "/personality_questions/hindi_questions.json",
-    options: "/personality_options/hindi_options.json"
+    options: "/personality_options/hindi_options.json",
   },
   ur: {
     questions: "/personality_questions/urdu_questions.json",
-    options: "/personality_options/urdu_options.json"
+    options: "/personality_options/urdu_options.json",
   },
   sp: {
     questions: "/personality_questions/spanish_questions.json",
-    options: "/personality_options/spanish_options.json"
+    options: "/personality_options/spanish_options.json",
   },
   ge: {
     questions: "/personality_questions/german_questions.json",
-    options: "/personality_options/german_options.json"
+    options: "/personality_options/german_options.json",
   },
   ben: {
     questions: "/personality_questions/bengali_questions.json",
-    options: "/personality_options/bengali_options.json"
+    options: "/personality_options/bengali_options.json",
   },
   assa: {
     questions: "/personality_questions/assamese_questions.json",
-    options: "/personality_options/assamese_options.json"
+    options: "/personality_options/assamese_options.json",
   },
   mar: {
     questions: "/personality_questions/marathi_questions.json",
-    options: "/personality_options/marathi_options.json"
+    options: "/personality_options/marathi_options.json",
   },
-  en:{
+  en: {
     questions: "/personality_questions/english_questions.json",
-    options: "/personality_options/english_options.json"
+    options: "/personality_options/english_options.json",
   },
-  mal:{
+  mal: {
     questions: "/personality_questions/malayalam_questions.json",
-    options: "/personality_options/malayalam_options.json"
+    options: "/personality_options/malayalam_options.json",
   },
-  tam:{
+  tam: {
     questions: "/personality_questions/tamil_questions.json",
-    options: "/personality_options/tamil_options.json"
-  }
+    options: "/personality_options/tamil_options.json",
+  },
 };
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedChoice, setSelectedChoice] = useState(null);
+  const [selectedChoice, setSelectedChoice] = useState({
+    choiceId: 3,
+    choiceText: "Neutral",
+  });
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [secondsRemaining, setSecondsRemaining] = useState(5);
   const [questions, setQuestions] = useState([]);
   const [choices, setChoices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [progressLoading, setProgressLoading] = useState(false)
+  const [progressLoading, setProgressLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
   const quizId = params.taskId;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const t = useTranslations('Quiz2');
+  const t = useTranslations("Quiz2");
 
   useEffect(() => {
     const authCheck = () => {
@@ -88,7 +89,8 @@ function Page({ params }) {
     const getQuizData = async () => {
       setIsLoading(true);
       try {
-        const token =typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetCareerQuiz(quizId, token);
         // setQuestions(resp.data.questions);
         // setChoices(resp.data.choices);
@@ -99,40 +101,37 @@ function Page({ params }) {
           setShowAlert(true);
         }
 
-
-
-        const savedLanguage = localStorage.getItem('language') || 'en';
-        let questionsData = []; 
+        const savedLanguage = localStorage.getItem("language") || "en";
+        let questionsData = [];
         let optionsData = [];
-        const languageFile = languageFiles[savedLanguage.toLowerCase()].questions;
+        const languageFile =
+          languageFiles[savedLanguage.toLowerCase()].questions;
 
-          if (languageFile) {
-            const response = await fetch(languageFile);
-            questionsData = await response.json(); 
-            
-          } else {
-            console.error("Language file not found for:", savedLanguage);
-          }
-          const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
-          
-          
-          if (optionsFile) {
-            const optionsResponse = await fetch(optionsFile);
-            optionsData = await optionsResponse.json();
-            console.log(optionsData) 
-          } else {
-            console.error("Options file not found for:", savedLanguage);
-          }
+        if (languageFile) {
+          const response = await fetch(languageFile);
+          questionsData = await response.json();
+        } else {
+          console.error("Language file not found for:", savedLanguage);
+        }
+        const optionsFile = languageFiles[savedLanguage.toLowerCase()].options;
 
-          // questionsData = questionsData.map(question => ({
-          //   ...question,
-          //   options: optionsData.filter(option => option.question_id === question.id)
-          // }));
-          // console.log(questionsData)
+        if (optionsFile) {
+          const optionsResponse = await fetch(optionsFile);
+          optionsData = await optionsResponse.json();
+          console.log(optionsData);
+        } else {
+          console.error("Options file not found for:", savedLanguage);
+        }
+
+        // questionsData = questionsData.map(question => ({
+        //   ...question,
+        //   options: optionsData.filter(option => option.question_id === question.id)
+        // }));
+        // console.log(questionsData)
         // }
 
         setQuestions(questionsData);
-        setChoices(optionsData); 
+        setChoices(optionsData);
       } catch (error) {
         console.error("Error Fetching GetQuizData data:", error);
       } finally {
@@ -142,12 +141,13 @@ function Page({ params }) {
     getQuizData();
   }, [quizId]);
 
-  useEffect(() => { /* this is to se the default neutral value */
+  useEffect(() => {
+    /* this is to se the default neutral value */
     if (choices.length > 0) {
       // Find the middle choice (neutral)
       const middleIndex = Math.floor((choices.length - 1) / 2);
       const neutralChoice = choices[middleIndex];
-  
+
       // Set the selected choice to the neutral option
       setSelectedChoice(neutralChoice);
     }
@@ -243,7 +243,7 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white">
         <div>
           <div className="font-semibold">
-            <LoadingOverlay loadText={t('loading')} />
+            <LoadingOverlay loadText={t("loading")} />
           </div>
         </div>
       </div>
@@ -254,12 +254,10 @@ function Page({ params }) {
     return (
       <div className="h-screen flex items-center justify-center text-white text-center">
         <div>
-          <div className="text-4xl font-semibold">
-            {t('quizCompleted')}
-          </div>
+          <div className="text-4xl font-semibold">{t("quizCompleted")}</div>
 
           <p className="mt-4">
-            {t('navigating')} {secondsRemaining} seconds
+            {t("navigating")} {secondsRemaining} seconds
           </p>
         </div>
       </div>
@@ -271,20 +269,19 @@ function Page({ params }) {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
         <p className="text-white uppercase font-bold text-center">
-           {t('interestRecognitionTest')}
+          {t("interestRecognitionTest")}
         </p>
       </div>
       {showAlert && <QuizProgressAlert />}
       <div className="flex justify-center items-center px-4 lg:min-h-96">
         {questions.length > 0 && (
           <div className="mt-4 sm:pt-7 sm:min-h-[20rem] sm:min-w-[600px] lg:min-w-[1000px] flex flex-col sm:gap-8 justify-center items-center mx-auto text-white rounded-2xl p-[1px] bg-[#0097b2]">
-            {
-              !progressLoading ? (
-                <>
+            {!progressLoading ? (
+              <>
                 <div>
-                <p className="font-extrabold text-center">
-                  {currentQuestionIndex + 1}/30
-                </p>
+                  <p className="font-extrabold text-center">
+                    {currentQuestionIndex + 1}/30
+                  </p>
                 </div>
                 <div className="bg-[#1b143a] flex flex-col gap-7 p-3 rounded-2xl sm:w-[600px] lg:w-[997px]">
                   <div className="w-full flex justify-center">
@@ -292,7 +289,7 @@ function Page({ params }) {
                       {questions[currentQuestionIndex].question_text}
                     </p>
                   </div>
-  
+
                   <div className="w-full sm:px-10 px-5 justify-center items-center flex">
                     <div className="flex flex-col gap-2 w-full text-white">
                       <GreenSlider
@@ -303,27 +300,26 @@ function Page({ params }) {
                       />
                     </div>
                   </div>
-  
+
                   <div className="w-full justify-center items-center flex my-5">
                     <button
                       className={`bg-[#7824f6] py-2 px-10 rounded-full text-white
                       }`}
                       onClick={handleNext}
                     >
-                      {t('next')}
+                      {t("next")}
                     </button>
                   </div>
                 </div>
               </>
-              ) : (
-                <div className="inset-0 flex items-center my-16 justify-center z-50 min-h-72 w-full max-sm:min-w-[90vw] sm:min-h-[20rem] sm:min-w-[600px] lg:min-w-[1000px] ">
+            ) : (
+              <div className="inset-0 flex items-center my-16 justify-center z-50 min-h-72 w-full max-sm:min-w-[90vw] sm:min-h-[20rem] sm:min-w-[600px] lg:min-w-[1000px] ">
                 <div className="flex items-center space-x-2">
                   <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
-                  <span className="text-white">{t('loading')}</span>
+                  <span className="text-white">{t("loading")}</span>
                 </div>
               </div>
-              )
-            }
+            )}
           </div>
         )}
       </div>
@@ -332,4 +328,3 @@ function Page({ params }) {
 }
 
 export default Page;
-
