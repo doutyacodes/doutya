@@ -125,7 +125,7 @@ function Bannerkids({ onToggleResults, showResults, onToggleQuiz2Results, showQu
   <Swiper
     modules={[Navigation]}
     spaceBetween={10}
-    slidesPerView={1}
+    // slidesPerView={1}
     onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
     onSwiper={(swiper) => (swiperRef.current = swiper)}
     className="pb-12"
@@ -148,7 +148,6 @@ function Bannerkids({ onToggleResults, showResults, onToggleQuiz2Results, showQu
               {t('personalityTestDescription')}
             </p>
           </div>
-        </div>
         {/* Adjusting the button placement */}
         <div className="flex justify-center items-center mt-4 mb-6"> {/* Increased margin */}
           {!getQuizStatus(1).isCompleted ? (
@@ -161,11 +160,12 @@ function Bannerkids({ onToggleResults, showResults, onToggleQuiz2Results, showQu
             <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p>
           )}
         </div>
+        </div>
       </div>
     </SwiperSlide>
   </Swiper>
   {/* Custom pagination dots */}
-  <div className="flex justify-center space-x-2 gap-2 mt-4 mb-16">
+  {/* <div className="flex justify-center space-x-2 gap-2 mt-4 mb-16">
     {paginationDots.map((_, index) => (
       <div
         key={index}
@@ -173,7 +173,7 @@ function Bannerkids({ onToggleResults, showResults, onToggleQuiz2Results, showQu
         onClick={() => swiperRef.current?.slideTo(index)}
       ></div>
     ))}
-  </div>
+  </div> */}
 </div>
       </div>
     </div>

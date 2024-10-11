@@ -28,9 +28,8 @@ const MobileNavigation = () => {
   }, [router, isMounted]);
 
   const navItems = [
-    { name: 'Home', href: '/', icon: <GoHomeFill /> },
-    { name: 'Dashboard', href: '/dashboard', icon: <IoMdAnalytics /> },
-    { name: 'My Careers', href: '/dashboard/careers', icon: <FaBriefcase /> },
+    { name: 'Dashboard', href: '/dashboard_kids', icon: <IoMdAnalytics /> },
+    { name: 'My Results', href: '/dashboard_kids/myResultsKids', icon: <FaBriefcase /> },
     { name: 'Profile', href: '/dashboard/user-profile', icon: <RxAvatar /> },
   ];
   
