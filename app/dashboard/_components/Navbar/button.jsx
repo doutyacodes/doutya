@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoHomeFill,GoBriefcase } from "react-icons/go";
-import { FaBriefcase,FaNotesMedical } from "react-icons/fa";
+import { FaBriefcase } from "react-icons/fa";
 import { RxAvatar } from "react-icons/rx";
 import { IoMdAnalytics } from "react-icons/io";
 
@@ -14,7 +14,6 @@ const MobileNavigation = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('');
   const [isMounted, setIsMounted] = useState(false); // State to check if mounted
-  const [dashboardUrl, setDashboardUrl] = useState("/dashboard/");
 
   // Set the mounted state to true after the first render
   useEffect(() => {
@@ -23,20 +22,15 @@ const MobileNavigation = () => {
 
   // Update activeTab when route changes (only if mounted)
   useEffect(() => {
-    const storedUrl = localStorage.getItem("dashboardUrl");
     if (isMounted) {
       setActiveTab(router.pathname);
-    }if (storedUrl) {
-      setDashboardUrl(storedUrl);
     }
-    console.log(dashboardUrl)
   }, [router, isMounted]);
 
   const navItems = [
-    // { name: 'Home', href: '/', icon: <GoHomeFill /> },
-    { name: 'Dashboard', href: dashboardUrl, icon: <IoMdAnalytics /> },
+    { name: 'Home', href: '/', icon: <GoHomeFill /> },
+    { name: 'Dashboard', href: '/dashboard', icon: <IoMdAnalytics /> },
     { name: 'My Careers', href: '/dashboard/careers', icon: <FaBriefcase /> },
-    { name: 'My Results', href: '/dashboard/myResults', icon: <FaNotesMedical /> },
     { name: 'Profile', href: '/dashboard/user-profile', icon: <RxAvatar /> },
   ];
   

@@ -15,11 +15,10 @@ const languageOptions = {
     ben: 'in Bengali',
     assa: 'in Assamese',
     ge: 'in German',
-    mal: 'in Malayalam',
-    tam: 'in Tamil'
-};
-
-export const maxDuration = 60; // This function can run for a maximum of 60 seconds
+    mal:'in malayalam',
+    tam:'in Tamil'
+  };
+export const maxDuration = 40; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
 export async function GET(req, { params }) {
@@ -42,22 +41,20 @@ export async function GET(req, { params }) {
             country: USER_DETAILS.country
         })
         .from(USER_DETAILS)
-        .where(eq(USER_DETAILS.id, userId));
-
-    const birth_date = user_data[0].birth_date;
-    const age = calculateAge(birth_date);
-    const country = user_data[0].country;
+        .where(eq(USER_DETAILS.id, userId))
+    const birth_date = user_data[0].birth_date
+    const age = calculateAge(birth_date)
+    const country = user_data[0].country
 
     const career_name = await db
         .select({
             career_name: CAREER_GROUP.career_name,
         })
         .from(CAREER_GROUP)
-        .where(eq(CAREER_GROUP.id, careerGrpId));
+        .where(eq(CAREER_GROUP.id, careerGrpId))
+    const career = career_name[0].career_name
 
-    const career = career_name[0].career_name;
-
-    const existingChallenges = await db
+        const existingChallenges = await db
         .select({
             week: CHALLENGES.week,
             challenge: CHALLENGES.challenge,
@@ -74,66 +71,60 @@ export async function GET(req, { params }) {
             )
         );
 
+    //     console.log(existingChallenges)
+    // const existingChallenges = await db
+    //     .select({
+    //         week: CHALLENGES.week,
+    //         challenge: CHALLENGES.challenge,
+    //         verification: CHALLENGES.verification,
+    //         id: CHALLENGES.id
+    //     })
+    //     .from(CHALLENGES)
+    //     .where(
+    //         and(
+    //             eq(CHALLENGES.age, age),
+    //             eq(CHALLENGES.career_id, careerGrpId)
+    //         )
+    //     );
+    // console.log('existinggg',existingChallenges)
     if (existingChallenges.length > 0) {
         return NextResponse.json({ challenges: existingChallenges }, { status: 200 });
-    } else {
-        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old, aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only.Provide single data per week.Give it as a single JSON data without any wrapping other than [].`;
+    }
+    else {
+        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGEs LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52 , for a ${age} year old , aspiring TO BE A ${career} IN ${country} and the challenges should be random.Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only. Give it as a single JSON data without any wrapping other than []`;
 
-        try {
-            const response = await axios.post(
-                "https://api.openai.com/v1/chat/completions",
-                {
-                    model: "gpt-4o-mini",
-                    messages: [{ role: "user", content: prompt }],
-                    max_tokens: 3000, // Adjust the token limit as needed
+        const response = await axios.post(
+            "https://api.openai.com/v1/chat/completions",
+            {
+                model: "gpt-4o-mini",
+                messages: [{ role: "user", content: prompt }],
+                max_tokens: 3000, // Adjust the token limit as needed
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                    "Content-Type": "application/json",
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            let responseText = response.data.choices[0].message.content.trim();
-            responseText = responseText.replace(/```json|```/g, "").trim();
-
-            const challengesList = JSON.parse(responseText);
-
-            // Insert the generated challenges into the database
-            for (const challenge of challengesList) {
-                await db.insert(CHALLENGES).values({
-                    age: age,
-                    country: country,
-                    career_id: careerGrpId,
-                    week: challenge.week,
-                    challenge: challenge.challenge,
-                    verification: challenge.verification,
-                    created_at: new Date(),
-                });
             }
+        );
+        let responseText = response.data.choices[0].message.content.trim();
+        responseText = responseText.replace(/```json|```/g, "").trim();
+        console.log(responseText)
+        const challengesList = JSON.parse(responseText);
+        // console.log('challengeee list:\n', challengesList)
 
-            // Fetch the newly inserted challenges from the database
-            const insertedChallenges = await db
-                .select({
-                    week: CHALLENGES.week,
-                    challenge: CHALLENGES.challenge,
-                    verification: CHALLENGES.verification,
-                    id: CHALLENGES.id
-                })
-                .from(CHALLENGES)
-                .where(
-                    and(
-                        eq(CHALLENGES.age, age),
-                        eq(CHALLENGES.career_id, careerGrpId)
-                    )
-                );
-
-            return NextResponse.json({ challenges: insertedChallenges }, { status: 200 });
-
-        } catch (error) {
-            console.error('Error fetching or parsing data from OpenAI API:', error);
-            return NextResponse.json({ error: 'Failed to generate challenges' }, { status: 500 });
+        for (const challenge of challengesList) {
+            await db.insert(CHALLENGES).values({
+                age: age,
+                country: country,
+                career_id: careerGrpId,
+                week: challenge.week,
+                challenge: challenge.challenge,
+                verification: challenge.verification,
+                created_at: new Date(),
+            });
         }
+
+        return NextResponse.json({ challenges: challengesList }, { status: 200 });
     }
 }

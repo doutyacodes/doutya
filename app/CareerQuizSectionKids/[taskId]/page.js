@@ -81,16 +81,19 @@ function Page({ params }) {
     authCheck()
   }, [router]);
 
+
   useEffect(() => {
     const getQuizData = async () => {
       setIsLoading(true)
       try {
         const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetCareerQuizKids(quizId, token);
+        // setQuestions(resp.data.questions); 
+        // setChoices(resp.data.choices);
         setCurrentQuestionIndex(resp.data.quizProgress);
 
         if (resp.data.quizProgress > 0) {
-          setShowAlert(true);
+          setShowAlert(true);  // Set showAlert to true when resuming the quiz
         }
         const savedLanguage = localStorage.getItem('language') || 'en';
         let questionsData = [];
@@ -100,6 +103,7 @@ function Page({ params }) {
         if (languageFile) {
           const response = await fetch(languageFile);
           questionsData = await response.json();
+
         } else {
           console.error("Language file not found for:", savedLanguage);
         }
@@ -120,21 +124,11 @@ function Page({ params }) {
       }
     }
     getQuizData()
-  }, [quizId])
+  }, [])
 
-  useEffect(() => { /* this is to se the default neutral value */
-    if (choices.length > 0) {
-      // Find the middle choice (neutral)
-      const middleIndex = Math.floor((choices.length - 1) / 2);
-      const neutralChoice = choices[middleIndex];
-  
-      // Set the selected choice to the neutral option
-      setSelectedChoice(neutralChoice);
-    }
-  }, [choices, currentQuestionIndex]);
-  
   useEffect(() => {
     if (quizCompleted) {
+      // setIsLoading(true)
       const interval = setInterval(() => {
         setSecondsRemaining((prevSeconds) => prevSeconds - 1);
       }, 1000);
@@ -155,22 +149,23 @@ function Page({ params }) {
   };
 
   const handleNext = async () => {
-    if (selectedChoice) {
-      const answer = {
-        questionId: questions[currentQuestionIndex].id,
-        optionId: selectedChoice.choiceId,
-        optionText: selectedChoice.choiceText,
-        personaTypeId: questions[currentQuestionIndex].personality_types_id
-      }
-      await quizProgressSubmit(answer);
+
+    const answer =
+    {
+      questionId: questions[currentQuestionIndex].id,
+      optionId: selectedChoice.choiceId,
+      optionText: selectedChoice.choiceText,
+      personaTypeId: questions[currentQuestionIndex].personality_types_id
     }
+    await quizProgressSubmit(answer);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedChoice(null);
+      setSelectedChoice(null); // Resetting selected choice for the next question
     } else {
+
       setQuizCompleted(true);
-      quizSubmit()
+      quizSubmit()// Quiz finished, send data to API
     }
   };
 
@@ -203,10 +198,12 @@ function Page({ params }) {
         toast.success('Quiz Completed successfully!');
       } else {
         toast.error('Failed to submit quiz.');
+        // alert('Failed Submitted results');
       }
     } catch (error) {
       console.error('Error submitting quiz', error);
-      toast.error('Error: Failed to submit quiz.');
+      // toast.error('Error: Failed to create Challenge.');
+      toast.error('Error Error: Failed to submit quiz.');
     } finally {
       setIsLoading(false);
     }
@@ -229,15 +226,18 @@ function Page({ params }) {
       <div className='h-screen flex items-center justify-center text-white text-center'>
         <div>
           <div className='text-4xl font-semibold'>
-            {t('quizCompleted')}
+          {t('quizCompleted')}
           </div>
+
           <p className='mt-4'>
             {t('navigating')} {secondsRemaining} seconds
           </p>
+
         </div>
       </div>
     );
   }
+
 
   return (
     <div className='h-screen'>
@@ -248,52 +248,54 @@ function Page({ params }) {
         </p>
       </div>
       {showAlert && (<QuizProgressAlert />)}
-      <div className="flex justify-center items-center px-4 lg:min-h-96">
+      <div className="flex justify-center items-center px-4">
         {questions.length > 0 && (
-          <div className="mt-4 sm:pt-7 sm:min-h-[20rem] sm:min-w-[600px] lg:min-w-[1000px] flex flex-col sm:gap-8 justify-center items-center mx-auto text-white rounded-2xl p-[1px] bg-[#0097b2]">
+          <div className="mt-4 pt-7 min-h-[20rem] min-w-[600px] flex flex-col gap-8 justify-center items-center mx-auto text-white rounded-2xl p-[1px] bg-[#0097b2]">
             {
               !progressLoading ? (
                 <>
-                <div>
-                <p className="font-extrabold text-center">
-                  {currentQuestionIndex + 1}/30
-                </p>
-                </div>
-                <div className="bg-[#1b143a] flex flex-col gap-7 p-3 rounded-2xl sm:w-[600px] lg:w-[997px]">
-                  <div className="w-full flex justify-center">
-                    <p className="font-bold p-2 text-xl text-center w-full flex items-center justify-center h-24">
-                      {questions[currentQuestionIndex].question_text}
+                  <div>
+                    <p className="font-extrabold text-center">
+                      {currentQuestionIndex + 1}/30
                     </p>
                   </div>
-  
-                  <div className="w-full sm:px-10 px-5 justify-center items-center flex">
-                    <div className="flex flex-col gap-2 w-full text-white">
-                      <GreenSlider
-                        key={currentQuestionIndex}
-                        choices={choices}
-                        selectedChoice={selectedChoice}
-                        onChange={handleChoiceSelect}
-                      />
+                  <div className="bg-[#1b143a] p-3 rounded-2xl w-[600px]">
+                    <div className="w-full flex justify-center">
+                      <p className="font-bold p-2 text-xl text-center w-full flex items-center justify-center h-24">
+                        {questions[currentQuestionIndex].question_text}
+                      </p>
+                    </div>
+
+                    <div className="w-full px-10 justify-center items-center flex">
+                      <div className="flex flex-col gap-2 w-full text-white">
+                        <GreenSlider
+                          key={currentQuestionIndex}
+                          choices={choices}
+                          selectedChoice={selectedChoice}
+                          onChange={handleChoiceSelect}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="w-full justify-center items-center flex my-5">
+                      <button
+                        className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${selectedChoice ? "" : "opacity-50 cursor-not-allowed"
+                          }`}
+                        onClick={handleNext}
+                        disabled={!selectedChoice}
+                      >
+                        {t('next')}
+                      </button>
                     </div>
                   </div>
-  
-                  <div className="w-full justify-center items-center flex my-5">
-                    <button
-                      className="bg-[#7824f6] py-2 px-10 rounded-full text-white"
-                      onClick={handleNext}
-                    >
-                      {t('next')}
-                    </button>
-                  </div>
-                </div>
-              </>
+                </>
               ) : (
                 <div className="inset-0 flex items-center my-16 justify-center z-50">
-                <div className="flex items-center space-x-2">
-                  <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
-                  <span className="text-white">{t('loading')}</span>
+                  <div className="flex items-center space-x-2">
+                    <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
+                    <span className="text-white">{t('loading')}</span>
+                  </div>
                 </div>
-              </div>
               )
             }
           </div>

@@ -133,9 +133,7 @@
     "ageValidation": "പ്രായം കുറഞ്ഞത് 5 വയസ്സ് വേണം.",
     "userDataUpdated": "ഉപയോക്തൃ ഡാറ്റ പുതുക്കി",
     "usernameExists": "ഉപയോക്തൃനാമം ഇതിനകം ഉള്ളതാണ്",
-    "unexpectedError": "ഒരു അനിഷ്ടമായ പിശക് സംഭവിച്ചു.",
-    "isRequired": "ആവശ്യമാണ്",
-  "mobileValidation": "മൊബൈൽ നമ്പർ 10 അക്കങ്ങൾ ഉണ്ടായിരിക്കണം"
+    "unexpectedError": "ഒരു അനിഷ്ടമായ പിശക് സംഭവിച്ചു."
   },
   "CareerPage": {
     "careers": "കാമിയേഴ്സ്",

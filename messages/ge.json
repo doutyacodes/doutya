@@ -133,9 +133,7 @@
     "ageValidation": "Das Mindestalter muss 5 Jahre betragen.",
     "userDataUpdated": "Benutzerdaten wurden aktualisiert",
     "usernameExists": "Benutzername bereits vergeben",
-    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten.",
-    "isRequired": "ist erforderlich",
-  "mobileValidation": "Die Handynummer muss 10-stellig sein"
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten."
   },
   "CareerPage": {
     "careers": "Karrieren",

@@ -134,9 +134,7 @@
     "ageValidation": "वय किमान 5 वर्ष असावे.",
     "userDataUpdated": "वापरकर्ता डेटा अपडेट केला गेला",
     "usernameExists": "वापरकर्तानाव आधीच घेतलेले आहे",
-    "unexpectedError": "अनपेक्षित त्रुटी आली.",
-    "isRequired": "आवश्यक आहे",
-  "mobileValidation": "मोबाईल नंबर 10 अंकी असावा"
+    "unexpectedError": "अनपेक्षित त्रुटी आली."
   },
   "CareerPage": {
     "careers": "करियर",

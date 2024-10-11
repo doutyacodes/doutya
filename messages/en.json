@@ -11,9 +11,9 @@
     "title": "Sign Up",
     "gender": "Gender",
     "genderOptions": {
-      "mr": "Male",
-      "miss": "Female",
-      "mrs": "Other"
+      "mr": "Mr",
+      "miss": "Miss",
+      "mrs": "Mrs"
     },
     "name": "Name",
     "username": "Username (Don't include space in your username)",
@@ -135,9 +135,7 @@
     "ageValidation": "Age must be a minimum of 5 years.",
     "userDataUpdated": "User Data Updated",
     "usernameExists": "Username is already taken",
-    "unexpectedError": "An unexpected error occurred.",
-    "isRequired":"is required",
-    "mobileValidation":"Mobile number should be of 10 digits"
+    "unexpectedError": "An unexpected error occurred."
   },
   "CareerPage": {
     "careers": "Careers",

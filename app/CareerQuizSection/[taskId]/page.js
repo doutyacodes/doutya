@@ -142,17 +142,6 @@ function Page({ params }) {
     getQuizData();
   }, [quizId]);
 
-  useEffect(() => { /* this is to se the default neutral value */
-    if (choices.length > 0) {
-      // Find the middle choice (neutral)
-      const middleIndex = Math.floor((choices.length - 1) / 2);
-      const neutralChoice = choices[middleIndex];
-  
-      // Set the selected choice to the neutral option
-      setSelectedChoice(neutralChoice);
-    }
-  }, [choices, currentQuestionIndex]);
-
   useEffect(() => {
     if (quizCompleted) {
       const interval = setInterval(() => {
@@ -175,15 +164,13 @@ function Page({ params }) {
   };
 
   const handleNext = async () => {
-    if (selectedChoice) {
-      const answer = {
-        questionId: questions[currentQuestionIndex].id,
-        optionId: selectedChoice.choiceId,
-        optionText: selectedChoice.choiceText,
-        personaTypeId: questions[currentQuestionIndex].personality_types_id,
-      };
-      await quizProgressSubmit(answer);
-    }
+    const answer = {
+      questionId: questions[currentQuestionIndex].id,
+      optionId: selectedChoice.choiceId,
+      optionText: selectedChoice.choiceText,
+      personaTypeId: questions[currentQuestionIndex].personality_types_id,
+    };
+    await quizProgressSubmit(answer);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -306,9 +293,11 @@ function Page({ params }) {
   
                   <div className="w-full justify-center items-center flex my-5">
                     <button
-                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white
+                      className={`bg-[#7824f6] py-2 px-10 rounded-full text-white ${
+                        selectedChoice ? "" : "opacity-50 cursor-not-allowed"
                       }`}
                       onClick={handleNext}
+                      disabled={!selectedChoice}
                     >
                       {t('next')}
                     </button>
@@ -316,7 +305,7 @@ function Page({ params }) {
                 </div>
               </>
               ) : (
-                <div className="inset-0 flex items-center my-16 justify-center z-50 min-h-72 w-full max-sm:min-w-[90vw] sm:min-h-[20rem] sm:min-w-[600px] lg:min-w-[1000px] ">
+                <div className="inset-0 flex items-center my-16 justify-center z-50">
                 <div className="flex items-center space-x-2">
                   <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
                   <span className="text-white">{t('loading')}</span>
@@ -332,4 +321,3 @@ function Page({ params }) {
 }
 
 export default Page;
-
