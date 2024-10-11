@@ -63,7 +63,7 @@ function BannerJunior({ onToggleResults, showResults, onToggleQuiz2Results, show
   const MobileNavigation = dynamic(() => import('../Button/button.jsx'), { ssr: false });
 
   return (
-    <div>
+    <div className="w-screen">
       <div className="w-full py-8 md:text-3xl text-xl font-bold text-white text-center bg-gradient-to-r from-[#2f87aa] to-green-300">{t('careerAssesment')}</div>
       <div className="p-4">
         <div className="mt-8 md:flex hidden justify-evenly gap-10 w-full">
