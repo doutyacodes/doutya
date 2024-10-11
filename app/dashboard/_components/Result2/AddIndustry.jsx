@@ -15,7 +15,7 @@ function AddIndustry({ isOpen, onClose, fetchResults}) {
     }
 
     return (
-        <Dialog open={isOpen} onClose={onClose} className="relative z-10">
+        <Dialog open={isOpen} onClose={onClose} className="relative z-[9999]">
             <DialogBackdrop
                 transition
                 className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
@@ -49,7 +49,7 @@ function AddIndustry({ isOpen, onClose, fetchResults}) {
                                 </div>
                             </div>
                         </div>
-                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6  max-sm:space-y-2">
                         <button
                             type="button"
                             onClick={handleSubmit}

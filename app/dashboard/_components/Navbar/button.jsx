@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoHomeFill,GoBriefcase } from "react-icons/go";
-import { FaBriefcase } from "react-icons/fa";
+import { FaBriefcase,FaNotesMedical } from "react-icons/fa";
 import { RxAvatar } from "react-icons/rx";
 import { IoMdAnalytics } from "react-icons/io";
 
@@ -28,9 +28,10 @@ const MobileNavigation = () => {
   }, [router, isMounted]);
 
   const navItems = [
-    { name: 'Home', href: '/', icon: <GoHomeFill /> },
+    // { name: 'Home', href: '/', icon: <GoHomeFill /> },
     { name: 'Dashboard', href: '/dashboard', icon: <IoMdAnalytics /> },
     { name: 'My Careers', href: '/dashboard/careers', icon: <FaBriefcase /> },
+    { name: 'My Results', href: '/dashboard/myResults', icon: <FaNotesMedical /> },
     { name: 'Profile', href: '/dashboard/user-profile', icon: <RxAvatar /> },
   ];
   

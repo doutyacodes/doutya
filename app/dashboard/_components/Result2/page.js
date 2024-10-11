@@ -298,21 +298,29 @@ export default function Results2() {
               {showAlert && <AlertDialogue fetchResults={fetchResults} setShowAlert={setShowAlert}/>}
               <button
                   onClick={() => (setShowAlert(true))}
-                  className="sm:col-span-6 md:col-span-6 col-span-12 text-[#341e44] p-[1px] pt-8 rounded-lg hover:opacity-70"
+                  className="sm:col-span-6 md:col-span-6 col-span-12 text-[#341e44] p-[1px] rounded-lg hover:opacity-70"
                   style={{ backgroundColor: '#FFA500' }}
                 >
+                  <div className="flex flex-col items-center justify-center py-3 text-white">
+                  {t('industryAgnostic')}
+
+                  </div>
                   <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
-                    {t('industryAgnostic')}
+                  Explore career suggestions across various industries
                   </div>
                 </button>
 
                 <button
                   onClick={handleAddIndustryClick}
-                  className="sm:col-span-6 md:col-span-6 col-span-12 text-[#341e44] p-[1px] pt-8 rounded-lg hover:opacity-70"
+                  className="sm:col-span-6 md:col-span-6 col-span-12 text-[#341e44] p-[1px] rounded-lg hover:opacity-70"
                   style={{ backgroundColor: '#008000' }}
                 >
-                  <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
+                  <div className="flex flex-col items-center justify-center py-3 text-white">
+
                     {t('industrySpecific')}
+                  </div>
+                  <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
+                  Enter your preferred industry to discover tailored career options
                   </div>
 
                   <AddIndustry
@@ -383,9 +391,10 @@ export default function Results2() {
           <>
             <div ref={resultsRef} className="mt-8">
               {resultData && !singleCareer ? (
-                <div className="grid grid-cols-12 gap-3 px-4">
+                <>
+                <div className="hidden md:grid grid-cols-12 gap-3 px-4">
                   {resultData?.map((career, index) => (
-                    <div key={index} className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-2 flex flex-col">
+                    <div key={index} className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-2 flex flex-col max-sm:min-h-[70vh]">
                       <div
                         className={`flex-grow flex flex-col relative p-[1px] text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer
                         ${selectedCareers.includes(index) ? 'border-4 border-blue-500 shadow-2xl' : ''}`}
@@ -436,6 +445,60 @@ export default function Results2() {
                     </div>
                   ))}
                 </div>
+                <div className="max-md:flex overflow-x-scroll py-3 hidden gap-3 px-4">
+                  {resultData?.map((career, index) => (
+                    <div key={index} className=" w-full min-w-[80vw] flex flex-col max-sm:min-h-[70vh]">
+                      <div
+                        className={`flex-grow flex flex-col relative p-[1px] text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer
+                        ${selectedCareers.includes(index) ? 'border-4 border-blue-500 shadow-2xl' : ''}`}
+                        style={{
+                          backgroundColor:
+                            career?.type == "normal" ? "#0097b2" :
+                            career?.type == "off beat" ? "#800080" : "#5dbb49",
+                        }}
+                        // onClick={() => handleCareerClick(index)}
+                        onClick={() => {
+                          setSingleCareer(career);
+                          setCareerIndex(index);
+                        }}
+                      >
+                        <p className="text-xl text-center text-white py-4 uppercase font-bold">
+                          {career?.type == "normal" ? "BASIC" : career.type}
+                        </p>
+                        <div className="flex-grow w-full bg-[#191235] p-3 rounded-xl text-white flex flex-col justify-between">
+                          {selectedCareers.includes(index) && (
+                            <div className="absolute inset-0 bg-blue-500 opacity-20 rounded-xl pointer-events-none"></div>
+                          )}
+
+                          <h2 className="text-lg font-bold text-white mb-4 md:h-[80px] h-[50px] flex items-center justify-center flex-wrap text-center">
+                            {career.career_name}
+                          </h2>
+                          <div className="p-4 bg-[#0097b2] rounded-md mb-4">
+                            <p className="text-center font-bold">
+                              {t('match')} - {career.match} %
+                            </p>
+                          </div>
+                          <p className="text-white flex-grow">
+                            <strong>{t('reasonForRecommendation')}:</strong>{" "}
+                            {career.reason_for_recommendation}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="w-full flex justify-center items-center py-7">
+                        <button
+                          onClick={() => {
+                            setSingleCareer(career);
+                            setCareerIndex(index);
+                          }}
+                          className="bg-[#7824f6] px-7 py-2 rounded-full text-white font-bold"
+                        >
+                          {t('readMore')}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                </>
               ) : singleCareer ? (
                 <div className="space-y-6 px-10">
                   <div className="grid grid-cols-12 gap-4">

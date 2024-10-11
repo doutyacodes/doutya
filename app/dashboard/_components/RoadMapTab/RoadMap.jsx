@@ -108,11 +108,11 @@ function RoadMap({ selectedCareer }) {
       ) : (
         <>
           {/* Tabs */}
-          <div className="flex mb-4 max-md:grid max-md:grid-cols-2 max-md:gap-1 lg:gap-2">
+          <div className="flex mb-4 overflow-x-scroll gap-2">
             {Object.keys(milestones).map((tab) => (
               <button
                 key={tab}
-                className={`flex-1 px-4 py-2 lg:py-3 font-semibold lg:text-lg text-sm text-center focus:outline-none ${
+                className={`flex-1 rounded px-4 py-2 lg:py-3 font-semibold lg:text-lg text-sm text-center focus:outline-none ${
                   activeTab === tab
                     ? 'bg-orange-400 text-white'
                     : 'bg-green-300 text-black hover:bg-green-400'

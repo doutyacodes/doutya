@@ -65,7 +65,7 @@ function Login() {
   return (
     <div>
       <Toaster />
-      <div className="flex items-center flex-col gap-2 justify-center min-h-screen">
+      <div className="flex items-center flex-col gap-2 justify-center min-h-screen px-3">
         <div>
         <Image
               
@@ -97,7 +97,7 @@ function Login() {
               />
               <Link href="/" className="text-sm text-gray-500">{s('forgotPassword')}</Link>
             </div>
-            <span className='text-emerald-600'>{t('NoAccount')} <Link className='text-gray-500 hover:text-black' href="/signup">{t('Signup')}</Link></span>
+            <span className='text-slate-400'>{t('NoAccount')} <Link className='text-blue-500 hover:text-blue-600' href="/signup">{t('Signup')}</Link></span>
             <br /> <br />
             <button
               type="submit"

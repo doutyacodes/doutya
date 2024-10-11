@@ -11,9 +11,9 @@
     "title": "Sign Up",
     "gender": "Gender",
     "genderOptions": {
-      "mr": "Mr",
-      "miss": "Miss",
-      "mrs": "Mrs"
+      "mr": "Male",
+      "miss": "Female",
+      "mrs": "Other"
     },
     "name": "Name",
     "username": "Username (Don't include space in your username)",
