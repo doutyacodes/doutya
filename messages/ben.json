@@ -133,7 +133,9 @@
     "ageValidation": "বয়স কমপক্ষে ৫ বছর হতে হবে।",
     "userDataUpdated": "ব্যবহারকারীর তথ্য আপডেট হয়েছে",
     "usernameExists": "ইউজারনেম আগে থেকেই নেওয়া হয়েছে",
-    "unexpectedError": "একটি অপ্রত্যাশিত ত্রুটি ঘটেছে।"
+    "unexpectedError": "একটি অপ্রত্যাশিত ত্রুটি ঘটেছে।",
+    "isRequired": "প্রয়োজন",
+  "mobileValidation": "মোবাইল নম্বর ১০ ডিজিটের হতে হবে"
   },
   "CareerPage": {
     "careers": "ক্যারিয়ার",
