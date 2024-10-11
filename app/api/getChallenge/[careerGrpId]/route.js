@@ -77,7 +77,7 @@ export async function GET(req, { params }) {
     if (existingChallenges.length > 0) {
         return NextResponse.json({ challenges: existingChallenges }, { status: 200 });
     } else {
-        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old, aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only. Give it as a single JSON data without any wrapping other than [].`;
+        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old, aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only.Provide single data per week.Give it as a single JSON data without any wrapping other than [].`;
 
         try {
             const response = await axios.post(
