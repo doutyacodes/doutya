@@ -3,14 +3,14 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import Image from "next/image";
-import { useTranslations } from 'next-intl'; // Import the useTranslations hook
-import {IconMenu2} from '@tabler/icons-react'
+import { useTranslations } from "next-intl"; // Import the useTranslations hook
+import { IconMenu2 } from "@tabler/icons-react";
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [dashboardUrl, setDashboardUrl] = useState('/dashboard/');
-  const t = useTranslations('Navbar'); 
+  const [dashboardUrl, setDashboardUrl] = useState("/dashboard/");
+  const t = useTranslations("Navbar");
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -18,7 +18,7 @@ function Navbar() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const storedUrl = localStorage.getItem('dashboardUrl');
+    const storedUrl = localStorage.getItem("dashboardUrl");
     if (token) {
       setIsLoggedIn(true);
     }
@@ -49,27 +49,17 @@ function Navbar() {
 
           {/* Navigation Links */}
           <div className="sm:flex items-center space-x-6 text-sm lg:text-base text-nowrap ">
-            
             <div className="flex items-center gap-3 ">
               {/* Profile dropdown */}
               <div className=" text-white sm:flex gap-12 mr-10 hidden">
-                <Link
-                      href="/dashboard"
-                      className="cursor-pointer"
-                    >
-                  <div>{t('home')}</div>
+                <Link href="/dashboard" className="cursor-pointer">
+                  <div>{t("home")}</div>
                 </Link>
-                <Link
-                      href={dashboardUrl}
-                      className="cursor-pointer"
-                    >
-                  <div>{t('tests')}</div>
+                <Link href={dashboardUrl} className="cursor-pointer">
+                  <div>{t("tests")}</div>
                 </Link>
-                <Link
-                      href="/dashboard/careers"
-                      className="cursor-pointer"
-                    >
-                  <div>{t('careers')}</div>
+                <Link href="/dashboard/careers" className="cursor-pointer">
+                  <div>{t("careers")}</div>
                 </Link>
                 {/* <Link
                       href="/dashboard/careers"
@@ -82,7 +72,7 @@ function Navbar() {
                 <div className="flex items-center">
                   <MenuButton className="">
                     <span className="absolute -inset-1.5" />
-                    <span className="sr-only">{t('profileAltText')}</span>
+                    <span className="sr-only">{t("profileAltText")}</span>
                     {/* <img
                       alt=""
                       src="/assets/images/avatar.png"
@@ -100,7 +90,7 @@ function Navbar() {
                       href="/dashboard/user-profile"
                       className="block px-4 py-2 text-sm text-gray-700"
                     >
-                      {t('profileLink')}
+                      {t("profileLink")}
                     </Link>
                   </MenuItem>
                   <MenuItem key={"Your results"}>
@@ -108,7 +98,7 @@ function Navbar() {
                       href="/dashboard/myResults"
                       className="block px-4 py-2 text-sm text-gray-700"
                     >
-                      {t('myResults')}
+                      {t("myResults")}
                     </Link>
                   </MenuItem>
                   {/* <MenuItem key={"Careers"}>
@@ -125,7 +115,7 @@ function Navbar() {
                       onClick={handleLogout}
                       className="block px-4 py-2 text-sm text-gray-700"
                     >
-                      {t('signOutLink')}
+                      {t("signOutLink")}
                     </a>
                   </MenuItem>
                 </MenuItems>
@@ -143,23 +133,23 @@ function Navbar() {
       >
         <div className="w-64 h-full bg-white p-4">
           <button className="text-black float-right" onClick={toggleSidebar}>
-            {t('sidebarCloseButton')}
+            {t("sidebarCloseButton")}
           </button>
           <div className="mt-8">
             <a href="#" className="block py-2 text-black hover:bg-gray-200">
-              {t('aboutUsLink')}
+              {t("aboutUsLink")}
             </a>
             <a
               href="./login"
               className="block py-2 text-black hover:bg-gray-200"
             >
-              {t('sidebarLogin')}
+              {t("sidebarLogin")}
             </a>
             <select className="bg-transparent text-black mt-4">
-              <option value="">{t('solutionsPlaceholder')}</option>
-              <option value="">{t('options.option1')}</option>
-              <option value="">{t('options.option2')}</option>
-              <option value="">{t('options.option3')}</option>
+              <option value="">{t("solutionsPlaceholder")}</option>
+              <option value="">{t("options.option1")}</option>
+              <option value="">{t("options.option2")}</option>
+              <option value="">{t("options.option3")}</option>
             </select>
           </div>
         </div>

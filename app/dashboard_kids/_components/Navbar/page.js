@@ -36,9 +36,10 @@ function Navbarkids() {
   return (
     <div>
       <nav className="pt-6 pb-4">
-        <div className="container mx-auto flex items-center justify-between">
+        <div className="container  flex items-center justify-between gap-5">
           {/* Logo */}
-          <div className="flex items-center mr-16">
+          <div />
+          <div className="flex items-center ">
             <Image
               src={"/assets/images/logo-full.png"}
               width={150}
@@ -46,23 +47,13 @@ function Navbarkids() {
             />
           </div>
 
-          {/* Search Bar */}
-          <div className="flex-1 mx-4 relative">
-            <input
-              type="text"
-              placeholder="Search...                                                           🔍"
-              className="w-full md:w-96 px-4 py-2 rounded-full bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 lg:ml-44"
-            />
-          </div>
+          
 
-          {/* Menu Button */}
-          <button className="md:hidden text-white" onClick={toggleSidebar}>
-            ☰
-          </button>
+         
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-6">
-            <a href={dashboardUrl}>
+          <div className=" flex items-center space-x-6">
+            <a href={dashboardUrl} className="hidden md:block">
               <button
                 style={{ ...styles.navButton, ...styles.navButtonHome }}
                 data-bg="#FF6F61"
@@ -79,7 +70,7 @@ function Navbarkids() {
                 MY PROFILE
               </button>
             </a> */}
-            <a href="/dashboard/careers">
+            <a href="/dashboard/careers" className="hidden md:block">
               <button
                 style={{ ...styles.navButton, ...styles.navButtonCareer }}
                 data-bg="#4CAF50"
@@ -139,35 +130,7 @@ function Navbarkids() {
         </div>
       </nav>
 
-      {/* Sidebar */}
-      <div
-        className={`fixed inset-0 bg-black bg-opacity-75 z-50 transform transition-transform ${
-          isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        } md:hidden`}
-      >
-        <div className="w-64 h-full bg-white p-4">
-          <button className="text-black float-right" onClick={toggleSidebar}>
-            ×
-          </button>
-          <div className="mt-8">
-            <a href="#" className="block py-2 text-black hover:bg-gray-200">
-            {t('aboutUsLink')}
-            </a>
-            <a
-              href="./login"
-              className="block py-2 text-black hover:bg-gray-200"
-            >
-              {t('sidebarLogin')}
-            </a>
-            <select className="bg-transparent text-black mt-4">
-              <option value="">{t('solutionsPlaceholder')}</option>
-              <option value="">{t('options.option1')}</option>
-              <option value="">{t('options.option2')}</option>
-              <option value="">{t('options.option3')}</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 }
