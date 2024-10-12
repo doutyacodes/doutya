@@ -307,6 +307,15 @@ const GetTests = (id, token) => {
   });
 };
 
+const GetSubjects = (id, token) => {
+
+  return axios.get(`/api/getSubjects/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 const GetTestsData = (id, token) => {
 
   return axios.get(`/api/getTestData/${id}`, {
@@ -488,6 +497,7 @@ export default {
   GetUserAge,
   SaveInterestedCareer,
   GetTests,
+  GetSubjects,
   GetTestsData,
   SaveTestProgress,
   UpdateTestData,
