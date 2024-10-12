@@ -4,31 +4,27 @@ import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl"; // Import useTranslations
 
 function Results() {
-  const [resultData, setResultData] = useState([]);
+  const [resultData, setResultData] = useState(null); // Set initial value to null
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const t = useTranslations("ResultsPage"); // Initialize translations
 
   useEffect(() => {
     async function fetchResults() {
+      setIsLoading(true); // Set loading state to true when fetch starts
       try {
         const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const language = localStorage.getItem("language") || "en";
         const data = await GlobalApi.GetUserId(token, language);
-        setResultData(data.data[0]);
+        setResultData(data.data[0]); // Store the result data
       } catch (err) {
         // Handle error if necessary
       } finally {
-        // Perform any cleanup if necessary
+        setIsLoading(false); // Set loading state to false when fetch completes
       }
     }
     fetchResults();
   }, []);
-
-  useEffect(() => {
-    if (resultData) {
-      console.log("Result Data Updated:", resultData);
-    }
-  }, [resultData]);
 
   const {
     description,
@@ -39,12 +35,23 @@ function Results() {
     most_suitable_careers,
   } = resultData || {}; // Destructure resultData safely
 
-  if (!resultData || Object.keys(resultData).length === 0) {
-    // Render black card when no data is found
+  if (isLoading) {
+    // Show loading state while data is being fetched
     return (
       <div className="flex justify-center items-center w-full h-full px-3">
         <div className="bg-white text-black text-center py-10 px-6 rounded-xl w-full min-h-[60vh] flex justify-center items-center">
-          <p className="text-2xl font-bold">{ "No Results"}</p>
+          <p className="text-2xl font-bold">{t("loading")}..</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!resultData || Object.keys(resultData).length === 0) {
+    // Render "No Results" when no data is found after loading
+    return (
+      <div className="flex justify-center items-center w-full h-full px-3">
+        <div className="bg-white text-black text-center py-10 px-6 rounded-xl w-full min-h-[60vh] flex justify-center items-center">
+          <p className="text-2xl font-bold">{"No Results"}</p>
         </div>
       </div>
     );
