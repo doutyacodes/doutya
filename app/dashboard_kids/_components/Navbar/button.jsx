@@ -35,7 +35,7 @@ const MobileNavigation = () => {
 
   const navItems = [
     { name: 'Dashboard', href: dashboardUrl, icon: <IoMdAnalytics /> },
-    { name: 'My Results', href: '/dashboard_kids/myResultsKids', icon: <FaBriefcase /> },
+    { name: 'My Analysis', href: '/dashboard_kids/myResultsKids', icon: <FaBriefcase /> },
     { name: 'Profile', href: '/dashboard/user-profile', icon: <RxAvatar /> },
   ];
   

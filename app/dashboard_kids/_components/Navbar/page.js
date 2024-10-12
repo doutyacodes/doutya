@@ -35,10 +35,10 @@ function Navbarkids() {
 
   return (
     <div>
-      <nav className="pt-6 pb-4">
-        <div className="container  flex items-center justify-between gap-5">
+      <nav className="py-1">
+        <div className="container  flex items-center justify-between gap-5 w-screen">
           {/* Logo */}
-          <div />
+          
           <div className="flex items-center ">
             <Image
               src={"/assets/images/logo-full.png"}
@@ -55,8 +55,8 @@ function Navbarkids() {
           <div className=" flex items-center space-x-6">
             <a href={dashboardUrl} className="hidden md:block">
               <button
-                style={{ ...styles.navButton, ...styles.navButtonHome }}
-                data-bg="#FF6F61"
+                                className="text-white"
+
               >
                 {t('tests')}
               </button>
@@ -70,12 +70,11 @@ function Navbarkids() {
                 MY PROFILE
               </button>
             </a> */}
-            <a href="/dashboard/careers" className="hidden md:block">
+            <a href="/dashboard_kids/myResultsKids" className="hidden md:block">
               <button
-                style={{ ...styles.navButton, ...styles.navButtonCareer }}
-                data-bg="#4CAF50"
+                className="text-white"
               >
-                {t('careers')}
+               My Analysis
               </button>
             </a>
 

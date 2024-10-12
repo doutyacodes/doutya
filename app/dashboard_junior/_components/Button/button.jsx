@@ -30,7 +30,7 @@ const MobileNavigation = () => {
   const navItems = [
     { name: 'Dashboard', href: '/dashboard_junior', icon: <IoMdAnalytics /> },
     { name: 'My Careers', href: '/dashboard/careers', icon: <FaBriefcase /> },
-    { name: 'My Results', href: '/dashboard/myResults', icon: <FaNotesMedical /> },
+    { name: 'My Analysis', href: '/dashboard/myResults', icon: <FaNotesMedical /> },
     { name: 'Profile', href: '/dashboard/user-profile', icon: <RxAvatar /> },
   ];
   

@@ -95,7 +95,7 @@ function Bannerkids({ onToggleResults, showResults, onToggleQuiz2Results, showQu
             <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
               {t('findStrength')}
             </h3>
-            <div className="bg-[#191134] h-[430px] rounded-lg p-3 gap-3 flex flex-col justify-between">
+            <div className="bg-[#191134] min-h-[240px] rounded-lg p-3 gap-3 flex flex-col justify-between">
               <div className="space-y-4">
                 <h3 className="font-bold text-2xl text-center py-3 text-white ">
                   <p>{t('personalityTestTitle')}</p>

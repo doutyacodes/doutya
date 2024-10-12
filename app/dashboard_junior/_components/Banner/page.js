@@ -74,7 +74,7 @@ function BannerJunior({ onToggleResults, showResults, onToggleQuiz2Results, show
             <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
               {t('findStrength')}
             </h3>
-            <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between h-full">
+            <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between">
               <div className="space-y-4 flex flex-col">
                 <h3 className="font-bold text-2xl text-center py-3 text-white">
                   {t('personalityTestTitle')}
@@ -106,7 +106,7 @@ function BannerJunior({ onToggleResults, showResults, onToggleQuiz2Results, show
             <h3 className="font-bold text-center text-black text-md pb-2 uppercase">
               {t('followCareer')}
             </h3>
-            <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between h-full">
+            <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between">
               <div className="space-y-4 flex flex-col">
                 <h3 className="font-bold text-2xl text-center py-3 text-white">
                   {t('interestTestTitle')}
@@ -150,7 +150,7 @@ function BannerJunior({ onToggleResults, showResults, onToggleQuiz2Results, show
                 <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
                   {t('findStrength')}
                 </h3>
-                <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between min-h-[430px]">
+                <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between min-h-[240px]">
                   <div className="space-y-4 flex flex-col">
                     <h3 className="font-bold text-2xl text-center py-3 text-white">
                       {t('personalityTestTitle')}
@@ -184,7 +184,7 @@ function BannerJunior({ onToggleResults, showResults, onToggleQuiz2Results, show
                 <h3 className="font-bold text-center text-black text-md pb-2 uppercase">
                   {t('followCareer')}
                 </h3>
-                <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between min-h-[430px]">
+                <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between min-h-[240px]">
                   <div className="space-y-4 flex flex-col">
                     <h3 className="font-bold text-2xl text-center py-3 text-white">
                       {t('interestTestTitle')}

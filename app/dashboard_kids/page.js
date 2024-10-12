@@ -106,14 +106,14 @@ const styles = {
     fontWeight: "600",
   },
   dashboardContainer: {
-    background: "linear-gradient(135deg, #ff0099 0%, #493240 100%)",
+    // background: "linear-gradient(135deg, #ff0099 0%, #493240 100%)",
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
     color: "white",
-    padding: "20px",
+    // padding: "20px",
     position: "relative",
   },
   animatedImage: {
