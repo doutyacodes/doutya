@@ -502,3 +502,10 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         user_career_id: int('user_career_id').notNull().references(() => USER_CAREER.id),
         milestone_id: int('milestone_id').notNull().references(() => MILESTONES.id),
     });
+
+    export const USER_RESULT_CAREER = mysqlTable('user_result_career', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id), // This will reference the user's ID from USER_DETAILS
+        career_name: varchar('career_name', { length: 150 }).notNull(),
+        description: text('description').default(null),
+    });

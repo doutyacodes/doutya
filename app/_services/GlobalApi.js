@@ -136,6 +136,15 @@ const GetResult2=(token,industryParam,language)=>axios.get('/api/getresult2',{
     industry: industryParam
   }
 });
+const getResult2Career=(token,career_name,language)=>axios.get('/api/getResult2Career',{
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Accept-Language': language
+  },
+  params: {
+    career_name: career_name
+  }
+});
 
 const GetIndustry = (token, language) => {
 
@@ -460,6 +469,7 @@ export default {
   SaveCareerQuizResult,
   GetDashboarCheck,
   GetResult2,
+  getResult2Career,
   SaveQuizProgress,
   SaveCarrierQuizProgress,
   GetUserData,

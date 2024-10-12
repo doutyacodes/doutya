@@ -31,7 +31,7 @@ function SignUp() {
     return date.toISOString().split("T")[0]; // Format it as YYYY-MM-DD
   };
 
-  const [selectedDOB, setSelectedDOB] = useState(getSixYearsAgo());
+  const [selectedDOB, setSelectedDOB] = useState(null);
   const [step, setStep] = useState("dob");
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
   const [countryOptions] = useState(countryList().getData());
@@ -272,6 +272,7 @@ function SignUp() {
             <input
               type="date"
               value={selectedDOB}
+              placeholder="Enter your Date of Birth"
               onChange={handleDOBChange}
               max={new Date().toISOString().split("T")[0]}
               className="mt-1 block w-full min-w-72 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"

@@ -14,10 +14,10 @@ const languageOptions = {
   ben: "in Bengali",
   assa: "in Assamese",
   ge: "in German",
-  mal:'in malayalam',
-  tam:'in Tamil'
+  mal: "in malayalam",
+  tam: "in Tamil",
 };
-export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 export const dynamic = "force-dynamic";
 
 export async function GET(req) {
@@ -94,7 +94,7 @@ export async function GET(req) {
       .where(and(eq(USER_RESULTS.user_id, userId)))
       .execute();
 
-    console.log(existingResult);
+    // console.log(existingResult);
 
     if (existingResult.length > 0 && existingResult[0].result2 !== null) {
       // If result2 is already present, return it
@@ -151,48 +151,33 @@ export async function GET(req) {
   //     user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
   //   Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`;
 
-  const prompt = `Provide a list of the 8 best careers ${
+  const prompt = `Provide a list of the most suitable careers ${
     industry === "any" ? "" : `in the ${industry}`
   } ${
     country ? "in " + country : ""
   } for an individual with an ${type1} personality type and RIASEC interest types of ${type2} ${
     type3 ? " and Gallup Strengths types of " + type3 : ""
-  } with 2 normal careers, 2 trending career, 2 off beat and ${
+  }. Include 3 traditional careers, 3 trending careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Additionally, provide ${
     finalAge >= 18
-      ? " 2 futuristic career for an individual with age " +
+      ? "3 futuristic careers for an individual aged " +
         finalAge +
-        " on the year " +
-        new Date().getFullYear() +
-        3
-      : " 2 futuristic career for an individual with age " +
+        " in the year " +
+        (new Date().getFullYear() + 3)
+      : "3 futuristic careers for an individual aged " +
         finalAge +
-        " till they reach the age 21 "
-  }.Provide careers atleast 90 percentage above of how the user compatible with the particular career. For each career, include the following information:
-        career_name: A brief title of the career?.
-        reason_for_recommendation: Why this career is suitable for someone with these interests${
-          country
-            ? " and explain the reason this career is suitable in " + country
-            : ""
-        }.
-        type:normal or off beat or trending.
-        match:percentage of the how the user compatible with the particular career.
-        roadmap: Detailed steps and milestones required to achieve this career (as an array).
-        expenses:price range to complete this career in ${country} and the price should in the ${country} currency in a small description.
-        opportunities:job opportunities in ${country} and also the country which have most opportunities.
-        present_trends: Current trends and opportunities in the field${
-          country ? " in " + country : ""
-        }.
-        future_prospects: Predictions and potential growth in this career${
-          country ? " in " + country : ""
-        }.
-        user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
-        Ensure that the response is valid JSON, strictly require 8 careers, using the specified field names, but do not include the terms '${type1}' in the data.Provide the response ${
+        " until they reach the age of 21."
+  } Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
+        career_name: A brief title of the career.
+        type: trending, offbeat, traditional, futuristic, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
+        match: percentage of how compatible the user is with the particular career.
+        
+        Ensure that the response is valid JSON, strictly requiring 8 careers, using the specified field names, but do not include the terms '${type1}' in the data. Provide the response ${
     languageOptions[language] || "in English"
-  } keeping the keys in english only but the career names should be ${
+  }, keeping the keys in English only, but the career names should be ${
     languageOptions[language] || "in English"
-  }. Give it as a single JSON data without any wrapping other than []`;
+  }. Present it as a single JSON data array without any wrapping other than []`;
 
-  console.log("prompt", prompt);
+  // console.log("prompt", prompt);
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",

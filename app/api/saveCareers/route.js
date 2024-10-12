@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/utils";
 import { eq } from "drizzle-orm/expressions";
 import { authenticate } from "@/lib/jwtMiddleware";
-import { QUIZ_SEQUENCES, USER_DETAILS } from "@/utils/schema";
+import { QUIZ_SEQUENCES, USER_CAREER, USER_DETAILS } from "@/utils/schema";
 import { saveCareer } from "../utils/saveCareer";
 
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
@@ -54,9 +54,16 @@ export async function POST(req) {
 
 
         // Call saveCareer and handle the response
+        const existingCareers = await db
+        .select()
+        .from(USER_CAREER) // Assuming USER_CAREERS is the table where career data is stored
+        .where(eq(USER_CAREER.user_id, userId))
+        .execute();
+
+    const isFirstTime = existingCareers.length === 0;
         const saveCareerResponse = await saveCareer(careerNames, country, userId, type1, type2);
         // return NextResponse.json({ message: 'Careers saved successfully' }, { status: 201 });
-        return NextResponse.json({ message: saveCareerResponse.message }, { status: saveCareerResponse.status });
+        return NextResponse.json({ message: saveCareerResponse.message,isFirstTime }, { status: saveCareerResponse.status });
     } catch (error) {
         return NextResponse.json(
             { message: error.message || "An unexpected error occurred" },
