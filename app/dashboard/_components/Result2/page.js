@@ -477,100 +477,97 @@ export default function Results2() {
           <div className="max-md:w-screen">
             <div ref={resultsRef} className="mt-8">
               {resultData && !singleCareer ? (
-                <>
-                  <div className="px-4">
-                    {[
-                      "trending",
-                      "offbeat",
-                      "traditional",
-                      "futuristic",
-                      "normal",
-                      "hybrid",
-                      "creative",
-                      "sustainable and green",
-                      "social impact",
-                      "tech-driven",
-                      "experiential",
-                      "digital and online",
-                    ].map((category) => {
-                      const careersInCategory = resultData.filter(
-                        (career) => career.type == category
-                      );
-
-                      // console.log("resultData", resultData);
-                      return (
-                        careersInCategory.length > 0 && (
-                          <div key={category} className="mb-8">
-                            <h2 className="text-2xl font-bold mb-1 capitalize">
-                              {category}
-                            </h2>
-                            <p className="text-sm text-white mb-4">
-                              {careerDescriptions[category]}
-                            </p>
-                            <div className="w-full h-[1px] bg-white mb-4" />
-                            <div className="flex overflow-x-scroll gap-3">
-                              {careersInCategory.map((career, index) => (
-                                <div
-                                  key={index}
-                                  className=" flex flex-col max-sm:min-w-[70vw] min-w-72"
-                                >
-                                  <div
-                                    className={`flex-grow flex flex-col relative p-[1px] text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer
-                ${
-                  selectedCareers.includes(index)
-                    ? "border-4 border-blue-500 shadow-2xl"
-                    : ""
-                }`}
-                                    style={{
-                                      backgroundColor:
-                                        careerColors[career.type] || "#5dbb49", // Default color if type is not recognized
-                                    }}
-                                    onClick={() => {
-                                      setCareerIndex(index);
-
-                                      fetchCareer(career.career_name);
-                                    }}
-                                  >
-                                    <p className="text-xl text-center text-white py-4 uppercase font-bold">
-                                      {career.type === "normal"
-                                        ? "BASIC"
-                                        : career.type}
+              <>
+              <div className="px-4">
+                {[
+                  "trending",
+                  "offbeat",
+                  "traditional",
+                  "futuristic",
+                  "normal",
+                  "hybrid",
+                  "creative",
+                  "sustainable and green",
+                  "social impact",
+                  "tech-driven",
+                  "experiential",
+                  "digital and online",
+                ].map((category) => {
+                  // Retrieve careers with their original indexes
+                  const careersInCategory = resultData
+                    .map((career, originalIndex) => ({ career, originalIndex })) // Map with original index
+                    .filter(({ career }) => career.type === category);
+            
+                  return (
+                    careersInCategory.length > 0 && (
+                      <div key={category} className="mb-8">
+                        <h2 className="text-2xl font-bold mb-1 capitalize">
+                          {category}
+                        </h2>
+                        <p className="text-sm text-white mb-4">
+                          {careerDescriptions[category]}
+                        </p>
+                        <div className="w-full h-[1px] bg-white mb-4" />
+                        <div className="flex overflow-x-scroll gap-3">
+                          {careersInCategory.map(({ career, originalIndex }) => (
+                            <div
+                              key={originalIndex} // Use originalIndex as the key
+                              className="flex flex-col max-sm:min-w-[70vw] min-w-72"
+                            >
+                              <div
+                                className={`flex-grow flex flex-col relative p-[1px] text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer
+                                  ${
+                                    selectedCareers.includes(originalIndex) // Check with original index
+                                      ? "border-4 border-blue-500 shadow-2xl"
+                                      : ""
+                                  }`}
+                                style={{
+                                  backgroundColor:
+                                    careerColors[career.type] || "#5dbb49", // Default color if type is not recognized
+                                }}
+                                onClick={() => {
+                                  setCareerIndex(originalIndex); // Set original index
+                                  fetchCareer(career.career_name);
+                                }}
+                              >
+                                <p className="text-xl text-center text-white py-4 uppercase font-bold">
+                                  {career.type === "normal" ? "BASIC" : career.type}
+                                </p>
+                                <div className="flex-grow w-full bg-[#191235] p-3 rounded-xl text-white flex flex-col justify-between">
+                                  {selectedCareers.includes(originalIndex) && (
+                                    <div className="absolute inset-0 bg-blue-500 opacity-20 rounded-xl pointer-events-none"></div>
+                                  )}
+                                  <h2 className="text-lg font-bold text-white mb-4 h-[80px] flex items-center justify-center flex-wrap text-center overflow-hidden">
+                                    {career.career_name}
+                                  </h2>
+                                  <div className="p-4 bg-[#0097b2] rounded-md mb-4">
+                                    <p className="text-center font-bold">
+                                      {t("match")} - {career.match} %
                                     </p>
-                                    <div className="flex-grow w-full bg-[#191235] p-3 rounded-xl text-white flex flex-col justify-between">
-                                      {selectedCareers.includes(index) && (
-                                        <div className="absolute inset-0 bg-blue-500 opacity-20 rounded-xl pointer-events-none"></div>
-                                      )}
-                                      <h2 className="text-lg font-bold text-white mb-4 h-[80px] flex items-center justify-center flex-wrap text-center overflow-hidden">
-                                        {career.career_name}
-                                      </h2>
-                                      <div className="p-4 bg-[#0097b2] rounded-md mb-4">
-                                        <p className="text-center font-bold">
-                                          {t("match")} - {career.match} %
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="w-full flex justify-center items-center py-7">
-                                    <button
-                                     onClick={() => {
-                                      setCareerIndex(index);
-
-                                      fetchCareer(career.career_name);
-                                    }}
-                                      className="bg-[#7824f6] px-7 py-2 rounded-full text-white font-bold"
-                                    >
-                                      {t("readMore")}
-                                    </button>
                                   </div>
                                 </div>
-                              ))}
+                              </div>
+                              <div className="w-full flex justify-center items-center py-7">
+                                <button
+                                  onClick={() => {
+                                    setCareerIndex(originalIndex); // Set original index
+                                    fetchCareer(career.career_name);
+                                  }}
+                                  className="bg-[#7824f6] px-7 py-2 rounded-full text-white font-bold"
+                                >
+                                  {t("readMore")}
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        )
-                      );
-                    })}
-                  </div>
-                </>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  );
+                })}
+              </div>
+            </>
+            
               ) : singleCareer ? (
                 <>
                   <div className="space-y-6 px-10">
@@ -581,7 +578,7 @@ export default function Results2() {
                             {t("careerSuitability")}
                           </p>
                           <div className="bg-[#1c143b] px-6 py-3 flex-1 flex min-h-[150px] items-center">
-                            <p className="text-justify text-sm overflow-hidden text-ellipsis " >
+                            <p className="text-justify text-sm overflow-hidden text-ellipsis ">
                               {singleCareer?.reason_for_recommendation}
                             </p>
                           </div>
