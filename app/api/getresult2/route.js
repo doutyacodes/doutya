@@ -66,24 +66,7 @@ export async function GET(req) {
   }
   const industry = url.searchParams.get("industry") || null; // Get industry from URL parameters
 
-  // console.log("country", country);
-  // console.log("industry", industry);
 
-  // let existingResult=[];
-  // if (industry == null) {
-  //   existingResult = await db
-  //     .select({
-  //       result2: USER_RESULTS.result2
-  //     })
-  //     .from(USER_RESULTS)
-  //     .where(
-  //         and(
-  //         eq(USER_RESULTS.user_id, userId),
-  //         eq(USER_RESULTS.type,'basic')
-  //         )
-  //     )
-  //     .execute();
-  //   }
 
   if (industry == null) {
     const existingResult = await db
@@ -108,13 +91,7 @@ export async function GET(req) {
     }
   }
 
-  // if (industry==null && existingResult.length > 0 && existingResult[0].result2 !== null) {
-  //   // If result2 is already present, return it
-  //   console.log('Returning cached result');
-  //   return NextResponse.json({ result: existingResult[0].result2 });
-  // }
-
-  // Get quiz sequences
+ 
   const personality2 = await db
     .select({
       typeSequence: QUIZ_SEQUENCES.type_sequence,
@@ -140,17 +117,7 @@ export async function GET(req) {
   const type1 = personality1[0].typeSequence;
   const type3 = null;
 
-  // // Define the prompt for GPT
-  // const prompt = `Provide a list of the 5 best careers in ${industry ? `the ${industry} industry in ` : ''}${country} for an individual with an ${type1} personality
-  //   type and RIASEC interest types of ${type2}. For each career, include the following information:
-  //     career_name: A brief title of the career.
-  //     reason_for_recommendation: Why this career is suitable for someone with these interests.
-  //     roadmap: Detailed steps and milestones required to achieve this career (as an array).
-  //     present_trends: Current trends and opportunities in the field.
-  //     future_prospects: Predictions and potential growth in this career.
-  //     user_description: Describe the personality traits, strengths, and preferences of the user that make these careers a good fit.
-  //   Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.`;
-
+  
   const prompt = `Provide a list of the most suitable careers ${
     industry === "any" ? "" : `in the ${industry}`
   } ${
@@ -171,7 +138,7 @@ export async function GET(req) {
         type: trending, offbeat, traditional, futuristic, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
         match: percentage of how compatible the user is with the particular career.
         
-        Ensure that the response is valid JSON, strictly requiring 8 careers, using the specified field names, but do not include the terms '${type1}' in the data. Provide the response ${
+        Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data. Provide the response ${
     languageOptions[language] || "in English"
   }, keeping the keys in English only, but the career names should be ${
     languageOptions[language] || "in English"

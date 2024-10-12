@@ -535,8 +535,7 @@ function SignUp() {
                         />
                         {errors.dob && <p className="mt-2 text-sm text-red-600">{errors.dob.message}</p>}
                     </div> */}
-          <br />
-          <div className="mb-4 flex items-center">
+          {/* <div className="mb-4 flex items-center">
             <label
               htmlFor="collegeStudent"
               className="block text-sm font-medium text-gray-700 mr-4"
@@ -569,41 +568,12 @@ function SignUp() {
                 </span>
               </label>
             </div>
-          </div>
+          </div> */}
 
-          {isCollegeStudent && (
-            <>
-              <div className="mb-4">
-                <label
-                  htmlFor="college"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {t("college")}
-                </label>
-                <input
-                  type="text"
-                  {...register("college")}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="university"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {t("university")}
-                </label>
-                <input
-                  type="text"
-                  {...register("university")}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-            </>
-          )}
+       
 
           {/* Conditional "Highest Education" Field for Junior and Senior Users */}
-          {ageCategory !== "kids" && educationLevel!==0 && !isCollegeStudent && (
+          {ageCategory !== "kids" && educationLevel!=0 && (
             <div className="mb-4">
               <label
                 htmlFor="highestEducation"
@@ -644,6 +614,36 @@ function SignUp() {
                 </option>
                 <option value="Masters Degree"> {t("mastersDegree")} </option>
               </select>
+              {isCollegeStudent && (
+            <>
+              <div className="my-4">
+                <label
+                  htmlFor="college"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  {t("college")}
+                </label>
+                <input
+                  type="text"
+                  {...register("college")}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="university"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  {t("university")}
+                </label>
+                <input
+                  type="text"
+                  {...register("university")}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
+            </>
+          )}
               {errors.education && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.education.message}

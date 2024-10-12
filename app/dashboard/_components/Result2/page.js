@@ -216,7 +216,7 @@ export default function Results2() {
         if (response.data.isFirstTime) {
           // Navigate to the careers page
           router.push("/dashboard/careers"); // Change "/careers" to your actual career page path
-      }
+        }
       }
     } catch (err) {
       console.error("Failed to save career data:", err);
@@ -552,10 +552,11 @@ export default function Results2() {
                                   </div>
                                   <div className="w-full flex justify-center items-center py-7">
                                     <button
-                                      onClick={() => {
-                                        setSingleCareer(career);
-                                        setCareerIndex(index);
-                                      }}
+                                     onClick={() => {
+                                      setCareerIndex(index);
+
+                                      fetchCareer(career.career_name);
+                                    }}
                                       className="bg-[#7824f6] px-7 py-2 rounded-full text-white font-bold"
                                     >
                                       {t("readMore")}
@@ -580,7 +581,7 @@ export default function Results2() {
                             {t("careerSuitability")}
                           </p>
                           <div className="bg-[#1c143b] px-6 py-3 flex-1 flex min-h-[150px] items-center">
-                            <p className="text-justify text-sm overflow-hidden text-ellipsis">
+                            <p className="text-justify text-sm overflow-hidden text-ellipsis " >
                               {singleCareer?.reason_for_recommendation}
                             </p>
                           </div>
@@ -681,7 +682,7 @@ export default function Results2() {
                 </>
               ) : null}
             </div>
-            {displayResults && !feedbackGiven && (
+            {/* {displayResults && !feedbackGiven && (
               <div className="bg-white p-5 rounded-lg text-gray-600 max-sm:mx-4">
                 <p className="text-center text-xl mb-4">{t("giveFeedback")}</p>
                 <div className="flex justify-center mb-4">
@@ -714,7 +715,7 @@ export default function Results2() {
                   </p>
                 )}
               </div>
-            )}
+            )} */}
             <br />
             <br />
           </div>

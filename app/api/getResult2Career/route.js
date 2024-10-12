@@ -125,8 +125,8 @@ export async function GET(req) {
         "career_name": "A brief title of the career.",
         "reason_for_recommendation": "Why this career is suitable for someone with these interests.",
         "match": "Percentage of how the user is compatible with this career.Only the number is needed",
-        "expenses": "Price range to complete this career, in local currency of ${country ? country:education_country} , mention the country and explain shortly in a sentence or two.",
-        "salary": "low level , mid level and high level salary scale in the country ${education_country ? education_country:country} in a short paragraph.",
+        "expenses": "Price range to complete this career, in local currency of ${education_country ? education_country:country} , mention the country and explain shortly in a sentence or two.",
+        "salary": "low level , mid level and high level salary scale in the country ${country ? country:education_country} in a short paragraph.",
         "present_trends": "Current trends and opportunities in the field.",
         "future_prospects": "Predictions and potential growth in this career from the year ${currentYear} to ${
       currentYear + 5
