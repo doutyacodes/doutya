@@ -16,7 +16,7 @@ export async function GET(req, { params }) {
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
 
-    const { careerGrpId } = params;
+    const { subjectId } = params;
 
     try {
 
@@ -52,10 +52,7 @@ export async function GET(req, { params }) {
             }
 
             const { country, careerName } = userCareerData[0];
-            console.log("country, careerName", country, careerName)
-
             await processCareerSubjects(careerName, careerGrpId, country); /* Generating Subjects */
-            console.log('after generate');
         }
 
         const birth_date=await db
@@ -86,33 +83,11 @@ export async function GET(req, { params }) {
             return NextResponse.json({ message: 'No subjects found for this career and user age.' }, { status: 400 });
             }
 
-        // Step 3: Fetch the tests for the subjects found
-        const subjectIds = subjectsForCareer.map((subject) => subject.subjectId);
-            console.log('subjectIds', subjectIds);
-            
-        const testsForCareer = await db
-            .select({
-                testId: TESTS.test_id,
-                testDate: TESTS.test_date,
-                ageGroup: TESTS.age_group,
-                subjectName: SUBJECTS.subject_name,  // Get subject name
-                completed: USER_TESTS.completed,    // Get completed status
-            })
-            .from(TESTS)
-            .innerJoin(SUBJECTS, eq(TESTS.subject_id, SUBJECTS.subject_id))  // Join with SUBJECTS to get subject name
-            .leftJoin(USER_TESTS, and(
-                eq(USER_TESTS.test_id, TESTS.test_id), 
-                eq(USER_TESTS.user_id, userId))  // Join with USER_TESTS to get completion status for the current user
-            )
-            .where(inArray(TESTS.subject_id, subjectIds)); // Filter by subject IDs
-            
-        console.log('tests', testsForCareer);
-
         // Return the tasks with their completion status
-        return NextResponse.json({ tasks: testsForCareer }, { status: 200 });
+        return NextResponse.json({ subjects: subjectsForCareer }, { status: 200 });
 
     } catch (error) {
-        console.error("Error fetching tasks:", error);
-        return NextResponse.json({ message: 'Error fetching tasks' }, { status: 500 });
+        console.error("Error fetching subjects:", error);
+        return NextResponse.json({ message: 'Error fetching subjects' }, { status: 500 });
     }
 }

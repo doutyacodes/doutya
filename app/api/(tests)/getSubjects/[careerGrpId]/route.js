@@ -1,7 +1,7 @@
 import { db } from '@/utils';
 import { USER_DETAILS, SUBJECTS, CAREER_SUBJECTS, TESTS, USER_TESTS, USER_CAREER, CAREER_GROUP  } from '@/utils/schema';
 import { NextResponse } from 'next/server';
-import { and, eq, gte, inArray, lte } from 'drizzle-orm'; // Adjust based on your ORM version
+import { and, eq, gte, inArray, isNull, lte } from 'drizzle-orm'; // Adjust based on your ORM version
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { processCareerSubjects } from '@/app/api/utils/fetchAndSaveSubjects';
@@ -25,7 +25,6 @@ export async function GET(req, { params }) {
             .select({ subjectId: CAREER_SUBJECTS.subject_id })
             .from(CAREER_SUBJECTS)
             .where(eq(CAREER_SUBJECTS.career_id, careerGrpId));
-        console.log("Exist subjst", careerSubjectsExist);
         
         // If no subjects are found for the career group, generate them
         if (!careerSubjectsExist.length) {
@@ -52,10 +51,8 @@ export async function GET(req, { params }) {
             }
 
             const { country, careerName } = userCareerData[0];
-            console.log("country, careerName", country, careerName)
 
             await processCareerSubjects(careerName, careerGrpId, country); /* Generating Subjects */
-            console.log('after generate');
         }
 
         const birth_date=await db
@@ -65,14 +62,19 @@ export async function GET(req, { params }) {
         const age = calculateAge(birth_date[0].birth_date)
         console.log(age)
 
-         // Step 2: Fetch the subjects for the career and filter by user age
-         const subjectsForCareer = await db
+        // Step 3: Fetch subjects for the career and filter by user age
+        const subjectsForCareer = await db
             .select({
                 subjectId: SUBJECTS.subject_id,
                 subjectName: SUBJECTS.subject_name,
+                testId: TESTS.test_id,
+                testAdded: TESTS.test_id, // Check if test exists
+                completed: USER_TESTS.completed,
             })
             .from(CAREER_SUBJECTS)
             .innerJoin(SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id))
+            .leftJoin(TESTS, and(eq(TESTS.subject_id, SUBJECTS.subject_id), lte(TESTS.age_group, age)))
+            .leftJoin(USER_TESTS, and(eq(USER_TESTS.user_id, userId), eq(USER_TESTS.test_id, TESTS.test_id)))
             .where(
                 and(
                     eq(CAREER_SUBJECTS.career_id, careerGrpId),
@@ -82,37 +84,25 @@ export async function GET(req, { params }) {
             );
 
         if (!subjectsForCareer.length) {
-            console.log('No subjects found for this career and user age.');
             return NextResponse.json({ message: 'No subjects found for this career and user age.' }, { status: 400 });
-            }
+        }
 
-        // Step 3: Fetch the tests for the subjects found
-        const subjectIds = subjectsForCareer.map((subject) => subject.subjectId);
-            console.log('subjectIds', subjectIds);
-            
-        const testsForCareer = await db
-            .select({
-                testId: TESTS.test_id,
-                testDate: TESTS.test_date,
-                ageGroup: TESTS.age_group,
-                subjectName: SUBJECTS.subject_name,  // Get subject name
-                completed: USER_TESTS.completed,    // Get completed status
-            })
-            .from(TESTS)
-            .innerJoin(SUBJECTS, eq(TESTS.subject_id, SUBJECTS.subject_id))  // Join with SUBJECTS to get subject name
-            .leftJoin(USER_TESTS, and(
-                eq(USER_TESTS.test_id, TESTS.test_id), 
-                eq(USER_TESTS.user_id, userId))  // Join with USER_TESTS to get completion status for the current user
-            )
-            .where(inArray(TESTS.subject_id, subjectIds)); // Filter by subject IDs
-            
-        console.log('tests', testsForCareer);
+        // Process subjects to include test completion status and test added status
+        const subjectsWithTestStatus = subjectsForCareer.map(subject => ({
+            subjectId: subject.subjectId,
+            subjectName: subject.subjectName,
+            testAdded: subject.testAdded ? 'yes' : 'no',  // If test is added or not
+            testId: subject.testAdded ? subject.testAdded : null, // sending the test id if the test is added
+            completed: subject.completed === 'yes' ? 'yes' : 'no',  // If user has completed the test
+        }));
+
+        return NextResponse.json({ subjects: subjectsWithTestStatus }, { status: 200 });
 
         // Return the tasks with their completion status
-        return NextResponse.json({ tasks: testsForCareer }, { status: 200 });
+        // return NextResponse.json({ subjects: subjectsForCareer }, { status: 200 });
 
     } catch (error) {
-        console.error("Error fetching tasks:", error);
-        return NextResponse.json({ message: 'Error fetching tasks' }, { status: 500 });
+        console.error("Error fetching subjects:", error);
+        return NextResponse.json({ message: 'Error fetching subjects' }, { status: 500 });
     }
 }
