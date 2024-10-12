@@ -52,7 +52,7 @@ function Navbar() {
             <div className="flex items-center gap-3 ">
               {/* Profile dropdown */}
               <div className=" text-white sm:flex gap-12 mr-10 hidden">
-                <Link href="/dashboard" className="cursor-pointer">
+                <Link href={dashboardUrl} className="cursor-pointer">
                   <div>{t("home")}</div>
                 </Link>
                 <Link href={dashboardUrl} className="cursor-pointer">

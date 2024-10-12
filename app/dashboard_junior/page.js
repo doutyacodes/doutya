@@ -5,7 +5,8 @@ import LoadingOverlay from "../_components/LoadingOverlay";
 import Results from "../dashboard/_components/Results/page";
 import Results2 from "../dashboard/_components/Result2/page";
 import BannerJunior from "./_components/Banner/page";
-import Navbarkids from "../dashboard_kids/_components/Navbar/page";
+// import Navbarkids from "../dashboard_kids/_components/Navbar/page";
+import Navbar from "../dashboard/_components/Navbar/page";
 import dynamic from 'next/dynamic';
 
 
@@ -55,8 +56,10 @@ export default function Dashboard() {
   const MobileNavigation = dynamic(() => import('./_components/Button/button.jsx'), { ssr: false });
 
   return (
+    <>
+    <Navbar/>
     <div style={styles.dashboardContainer}>
-      <Navbarkids />
+      {/* <Navbarkids /> */}
       {
         !isTest2Completed ?  (
           <>
@@ -101,6 +104,7 @@ export default function Dashboard() {
       }
       <MobileNavigation />
     </div>
+    </>
   )
 }
 
