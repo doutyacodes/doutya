@@ -99,7 +99,7 @@ function Page() {
   }, []);
 
   const handleAddCareerClick = () => {
-    if (careerData.length >= 5) {
+    if (careerData.length >= 10) {
       toast.error("You can only add up to 5 careers.");
       return;
     }
@@ -193,7 +193,7 @@ function Page() {
           )}
 
           <div
-            className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-sm bg-white max-md:rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95"
+            className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-sm rounded-xl bg-white max-md:rounded-xl flex justify-center items-center transition-transform transform hover:scale-[1.02] cursor-pointer duration-150 active:scale-95"
             onClick={handleAddCareerClick}
           >
             <PlusIcon className="text-gray-600 font-thin h-6 w-6 sm:h-8 sm:w-8" />

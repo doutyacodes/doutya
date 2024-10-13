@@ -13,16 +13,16 @@ export async function validateCareer(career) {
     }
 
     const validationPrompt = `
-        Please check if "${career}" is a recognized career name. 
-        If the name is valid, return true for "is_valid" and the same name as "career_name".
-        If the name is misspelled but recognized as a valid career, return true for "is_valid" and the correct spelling as "career_name".
-        If the name is not recognized as a valid career, return false for "is_valid" and an empty string for "career_name".
-        Respond with JSON in the following structure:
-        {
-            "is_valid": boolean,
-            "career_name": string
-        }
-    `;
+    If the career name "${career}" is correct, return true for "is_valid" and the same name as "career_name".
+    If the name is misspelled return true for "is_valid" and provide the corrected spelling as "career_name".
+    If the name is not recognized, return false for "is_valid" and an empty string for "career_name".
+    Only respond with JSON in the following structure:
+    {
+        "is_valid": boolean,
+        "career_name": string
+    }
+`;
+
 
 
     let validationResponseText;
