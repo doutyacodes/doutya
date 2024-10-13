@@ -99,7 +99,7 @@ function Page() {
   }, []);
 
   const handleAddCareerClick = () => {
-    if (careerData.length >= 10) {
+    if (careerData.length >= 5) {
       toast.error("You can only add up to 5 careers.");
       return;
     }
