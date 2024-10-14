@@ -356,9 +356,9 @@ export default function Results2() {
       )}
 
       {singleCareer?.career_name && (
-        <div className="bg-[#009be8] py-5 mb-5">
-          <div className="flex flex-col md:flex-row justify-between items-center px-4 mx-auto h-full container">
-            <div className="flex max-md:w-full md:items-center gap-4 mb-2 md:mb-0">
+        <div className="bg-[#009be8] md:py-5 md:mb-5 py-2">
+          <div className="max-sm:relative flex md:justify-between justify-center items-center md:px-4 mx-auto h-full container">
+            <div className="flex md:items-center gap-4 mb-2 md:mb-0 max-sm:absolute max-sm:top-0 max-sm:left-3">
               <button
                 onClick={() => {
                   setCareerIndex(null);
@@ -373,7 +373,7 @@ export default function Results2() {
               </button>
             </div>
             <div className="text-center">
-              <p className="text-white uppercase font-bold md:text-xl mb-2">
+              <p className="text-white uppercase font-bold md:text-xl md:mb-2">
                 {singleCareer.career_name}
               </p>
               <p className="text-white md:text-lg font-bold">
@@ -461,10 +461,10 @@ export default function Results2() {
                   <button
                     key={index}
                     onClick={handleOptionSelect}
-                    className="sm:col-span-6 md:col-span-4 max-w-72 col-span-12 text-[#341e44] p-[1px] pt-8 rounded-lg hover:opacity-70 max-sm:ml-6"
+                    className="sm:col-span-6 md:col-span-4 max-w-72 col-span-6 text-[#341e44] p-[1px] md:pt-8 pt-4 rounded-lg hover:opacity-70 "
                     style={{ backgroundColor: color }}
                   >
-                    <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
+                    <div className="bg-[#1a1236] w-full md:p-3 p-1 md:h-28 h-20 flex justify-center items-center rounded-lg text-white max-sm:text-sm flex-wrap">
                       {industry.industry_name}
                     </div>
                   </button>
@@ -655,7 +655,7 @@ export default function Results2() {
 
                     <div className="flex justify-center items-center">
                       <button
-                        className={`text-white font-bold text-center py-4 px-7 uppercase rounded-lg bg-green-600 mb-4 ${
+                        className={`text-white font-bold text-center md:py-4 md:px-7 py-2 px-4 max-md:text-sm uppercase rounded-lg bg-green-600 mb-4 ${
                           saveResultloading
                             ? "opacity-50 cursor-not-allowed"
                             : ""
