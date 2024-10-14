@@ -259,6 +259,9 @@ function Page() {
             {activeTab === "challenges" && (
               <Challenge selectedCareer={selectedCareer} />
             )}
+            {activeTab === "career overview" && (
+              <About selectedCareer={selectedCareer} />
+            )}
           </div>
         </div>
       )}
