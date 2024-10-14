@@ -189,11 +189,11 @@ function Page() {
   return (
     <div className="min-h-screen py-12 max-md:pb-24 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
-      <Link href={typeof window !== 'undefined' ? localStorage.getItem('dashboardUrl') : '/login'}>
-        <button className="text-white bg-green-600 -mt-20 mb-7 ml-20 p-3 rounded-xl">
-          {t('backToDashboard')}
-        </button>
-      </Link>
+        {/* <Link href={typeof window !== 'undefined' ? localStorage.getItem('dashboardUrl') : '/login'}>
+          <button className="text-white bg-green-600 -mt-20 mb-7 ml-20 p-3 rounded-xl">
+            {t('backToDashboard')}
+          </button>
+        </Link> */}
       <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
         <div className="md:flex">
           {/* User Profile Section */}
