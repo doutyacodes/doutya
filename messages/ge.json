@@ -208,12 +208,12 @@
     "quizSubmitSuccess": "Quiz erfolgreich abgeschlossen!.",
     "quizSubmitFailed": "Abschicken des Quiz fehlgeschlagen.",
     "errorSubmittingQuiz": "Fehler: Abschicken des Quiz fehlgeschlagen.",
-    "navigating": "Navigiere zur Startseite in"
+    "navigating": "Navigieren zur Testseite in"
   },
   "Quiz2": {
     "loading": "Wird geladen...",
     "quizCompleted": "Quiz erfolgreich abgeschlossen",
-    "navigating": "Navigiere zur Startseite in",
+    "navigating": "Navigieren zur Testseite in",
     "interestRecognitionTest": "Interessenerkennungstest",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "Weiter"

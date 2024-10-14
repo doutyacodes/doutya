@@ -205,12 +205,12 @@
     "quizSubmitSuccess": "কুইজ সফলভাৱে সম্পন্ন হৈছে!",
     "quizSubmitFailed": "কুইজ জমা দিবলৈ ব্যৰ্থ।",
     "errorSubmittingQuiz": "ত্রুটি: কুইজ জমা দিবলৈ ব্যৰ্থ।",
-    "navigating": "হোম পেজলৈ পৰিবৰ্তন কৰা হৈছে"
+    "navigating": "ত পৰীক্ষা পৃষ্ঠালৈ নেভিগেট কৰা হৈছে"
   },
   "Quiz2": {
     "loading": "লোড হৈ আছে...",
     "quizCompleted": "কুইজ সফলতাৰে সম্পূৰ্ণ",
-    "navigating": "হোম পেজলৈ পৰিবৰ্তন কৰা হৈছে",
+    "navigating": "ত পৰীক্ষা পৃষ্ঠালৈ নেভিগেট কৰা হৈছে",
     "interestRecognitionTest": "ইচ্ছা স্বীকৃতি পৰীক্ষা",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "পৰৱৰ্তী"

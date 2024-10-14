@@ -210,12 +210,12 @@
     "quizSubmitSuccess": "Quiz Completed successfully!.",
     "quizSubmitFailed": "Failed to submit quiz.",
     "errorSubmittingQuiz": "Error: Failed to submit quiz.",
-    "navigating": "Navigating to the Home page in"
+    "navigating": "Navigating to the Test page in"
   },
   "Quiz2": {
     "loading": "Loading...",
     "quizCompleted": "Quiz Completed successfully",
-    "navigating": "Navigating to the Home page in",
+    "navigating": "Navigating to the Test page in",
     "interestRecognitionTest": "Interest Recognition Test",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "Next"
