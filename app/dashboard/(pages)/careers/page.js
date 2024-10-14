@@ -12,6 +12,7 @@ import Activity from "../../_components/Activities/activity";
 import Challenge from "../../_components/Challenges/page";
 import Feedback from "../../_components/FeedbackTab/Feedback";
 import RoadMap from "../../_components/RoadMapTab/RoadMap";
+import About from "../../_components/About/page";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 
@@ -37,6 +38,7 @@ function Page() {
     { key: "test", label: t("test") },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
+    { key: "career overview",label:"Career Overview"},
   ];
 
   useEffect(() => {
@@ -251,6 +253,9 @@ function Page() {
             )}
             {activeTab === "challenges" && (
               <Challenge selectedCareer={selectedCareer} />
+            )}
+            {activeTab === "career overview" && (
+              <About selectedCareer={selectedCareer} />
             )}
           </div>
         </div>
