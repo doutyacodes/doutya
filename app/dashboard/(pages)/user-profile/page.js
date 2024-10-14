@@ -217,8 +217,8 @@ function Page() {
               <h2 className="text-2xl font-bold">{userData?.name || `${t('loading')}...`}</h2>
               <p className="text-indigo-200">{userData?.username || "Username"}</p>
               <div className="flex items-center mt-2 text-sm">
-                <span className="bg-green-500 rounded-full w-3 h-3 mr-2"></span>
-                {t('verifiedProfile')}
+                {/* <span className="bg-green-500 rounded-full w-3 h-3 mr-2"></span>
+                {t('verifiedProfile')} */}
               </div>
             </div>
           </div>
