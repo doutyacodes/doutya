@@ -208,12 +208,12 @@
     "quizSubmitSuccess": "¡Cuestionario completado con éxito!",
     "quizSubmitFailed": "Falló al enviar el cuestionario.",
     "errorSubmittingQuiz": "Error: Falló al enviar el cuestionario.",
-    "navigating": "Navegando a la página de inicio en"
+    "navigating": "Navegando a la página de prueba en"
   },
   "Quiz2": {
     "loading": "Cargando...",
     "quizCompleted": "Prueba completada con éxito",
-    "navigating": "Navegando a la página de inicio en",
+    "navigating": "Navegando a la página de prueba en",
     "interestRecognitionTest": "Prueba de Reconocimiento de Intereses",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "Siguiente"

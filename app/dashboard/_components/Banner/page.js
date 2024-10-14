@@ -68,6 +68,7 @@
                 <div className="p-4">
                 <div className="mt-8 md:flex hidden md:flex-row justify-evenly gap-10 w-full">
         {/* Personality Test */}
+        {!getQuizStatus(1).isCompleted && (
         <div className="pt-3 p-[1px] rounded-lg w-full md:w-[400px]" style={{
             backgroundImage: `linear-gradient(to right, #3294bb, #3294bb)`,
         }}>
@@ -85,19 +86,20 @@
                     </p>
                 </div>
                 <div className="flex justify-center items-center p-4 mt-auto">
-                    {!getQuizStatus(1).isCompleted ? (
+                    {/* {!getQuizStatus(1).isCompleted ? ( */}
                         <Link
                             href="/quiz-section/1"
                             className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400 p-3 rounded-full w-40"
                         >
                             <p className="text-white font-semibold text-lg text-center">{t('takeTest')}</p>
                         </Link>
-                    ) : (
-                        <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p>
-                    )}
+                     {/* ) : (
+                         <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p> */}
+                    {/* )} */}
                 </div>
             </div>
         </div>
+        )}
 
         {/* Interest Test */}
         <div className="pt-3 p-[1px] rounded-lg w-full md:w-[400px]" style={{

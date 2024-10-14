@@ -93,7 +93,7 @@ function SelectCountry() {
               className="mt-1 block w-full"
             />
             <p className="text-xs mt-1">
-              Select the country you wish to get career suggestions
+              Select a country to explore regional career opportunities
             </p>
           </div>
 
@@ -111,7 +111,7 @@ function SelectCountry() {
               className="mt-1 block w-full"
             />
             <p className="text-xs mt-1">
-              Select the country where you completed your education
+              Choose your highest education country
             </p>
           </div>
 

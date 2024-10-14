@@ -208,12 +208,12 @@
     "quizSubmitSuccess": "ക്വിസ് വിജയകരമായി സമർപ്പിച്ചു!.",
     "quizSubmitFailed": "ക്വിസ് സമർപ്പിക്കൽ പരാജയപ്പെട്ടു.",
     "errorSubmittingQuiz": "പിശക്: ക്വിസ് സമർപ്പിക്കാൻ പരാജയപ്പെട്ടു.",
-    "navigating": "ഹോം പേജിലേക്ക് നീങ്ങുന്നു"
+    "navigating": "ഇൻ ടെസ്റ്റ് പേജിലേക്ക് നാവിഗേറ്റ് ചെയ്യുന്നു"
   },
   "Quiz2": {
     "loading": "ലോഡിംഗ്...",
     "quizCompleted": "ക്വിസ് വിജയകരമായി പൂർത്തിയായി",
-    "navigating": "ഹോം പേജിലേക്ക് നീങ്ങുന്നു",
+    "navigating": "ഇൻ ടെസ്റ്റ് പേജിലേക്ക് നാവിഗേറ്റ് ചെയ്യുന്നു",
     "interestRecognitionTest": "ഇന്ററസ്റ്റ് റികഗ്നിഷൻ ടെസ്റ്റ്",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "അടുത്തത്"
