@@ -208,12 +208,12 @@
     "quizSubmitSuccess": "کویز کامیابی سے مکمل ہو گیا!",
     "quizSubmitFailed": "کویز جمع کروانے میں ناکام۔",
     "errorSubmittingQuiz": "خرابی: کویز جمع کروانے میں ناکام۔",
-    "navigating": "ہوم پیج پر منتقل ہو رہے ہیں"
+    "navigating": "میں ٹیسٹ پیج پر نیویگیٹ کرنا"
   },
   "Quiz2": {
     "loading": "لوڈ ہو رہا ہے...",
     "quizCompleted": "کوئز کامیابی سے مکمل ہو گیا",
-    "navigating": "ہوم پیج پر منتقل ہو رہے ہیں",
+    "navigating": "میں ٹیسٹ پیج پر نیویگیٹ کرنا",
     "interestRecognitionTest": "دلچسپی کی پہچان کا امتحان",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "اگلا"

@@ -209,12 +209,12 @@
         "quizSubmitSuccess": "क्विज़ सफलतापूर्वक पूरा हुआ!",
         "quizSubmitFailed": "क्विज़ सबमिट करने में विफल रहा।",
         "errorSubmittingQuiz": "त्रुटि: क्विज़ सबमिट करने में विफल।",
-        "navigating": "होम पेज पर जा रहे हैं"
+        "navigating": "परीक्षा पेज पर जा रहे हैं"
     },
     "Quiz2": {
         "loading": "लोड हो रहा है...",
         "quizCompleted": "प्रश्नोत्तरी सफलतापूर्वक पूरी हुई",
-        "navigating": "होम पेज पर जा रहे हैं",
+        "navigating": "परीक्षा पेज पर जा रहे हैं",
         "interestRecognitionTest": "रुचि मान्यता परीक्षण",
         "questionProgress": "{currentQuestionIndex + 1}/30",
         "next": "अगला"

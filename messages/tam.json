@@ -209,12 +209,12 @@
     "quizSubmitSuccess": "வினாடி வினா வெற்றிகரமாக முடிந்தது!",
     "quizSubmitFailed": "வினாடி வினாவைச் சமர்ப்பிக்க முடியவில்லை.",
     "errorSubmittingQuiz": "பிழை: வினாடி வினாவைச் சமர்ப்பிக்க முடியவில்லை.",
-    "navigating": "ஹோம் பக்கத்திற்குச் செல்வது"
+    "navigating": "சோதனை பக்கத்திற்கு செல்லவும்"
   },
   "Quiz2": {
     "loading": "லோடிங்...",
     "quizCompleted": "வினாடி வினா வெற்றிகரமாக முடிந்தது",
-    "navigating": "ஹோம் பக்கத்திற்குச் செல்வது",
+    "navigating": "சோதனை பக்கத்திற்கு செல்லவும்",
     "interestRecognitionTest": "விருப்பம் அடையாளம் காணும் சோதனை",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "அடுத்தது"

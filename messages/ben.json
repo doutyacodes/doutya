@@ -208,12 +208,12 @@
     "quizSubmitSuccess": "কুইজ সফলভাবে সম্পন্ন হয়েছে!",
     "quizSubmitFailed": "কুইজ জমা দিতে ব্যর্থ।",
     "errorSubmittingQuiz": "ত্রুটি: কুইজ জমা দিতে ব্যর্থ।",
-    "navigating": "হোম পেজে নিয়ে যাওয়া হচ্ছে"
+    "navigating": "টেস্ট পৃষ্ঠাতে নেভিগেট করা হচ্ছে"
   },
   "Quiz2": {
     "loading": "লোড হচ্ছে...",
     "quizCompleted": "কুইজ সফলভাবে সম্পন্ন হয়েছে",
-    "navigating": "হোম পেজে নিয়ে যাওয়া হচ্ছে",
+    "navigating": "টেস্ট পৃষ্ঠাতে নেভিগেট করা হচ্ছে",
     "interestRecognitionTest": "রুচি স্বীকৃতি পরীক্ষা",
     "questionProgress": "{currentQuestionIndex + 1}/30",
     "next": "পরবর্তী"
