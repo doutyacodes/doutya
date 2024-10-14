@@ -21,13 +21,11 @@ function Feedback({selectedCareer}) {
             setIsLoading(true)
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const response = await GlobalApi.GetFeedBackData(selectedCareer.career_group_id, token,language);
+                const response = await GlobalApi.GetFeedBackData(selectedCareer.career_group_id, token, language);
                 if (response.status === 200) {  
                     const feedback = response.data.feedback;
                     
-                    // Check if feedback is a string, or needs parsing (if it's stored as JSON in the DB)
                     const parsedFeedback = typeof feedback === 'string' ? feedback : JSON.parse(feedback);
-                    
                     console.log(parsedFeedback)
                     setfeedBackData(parsedFeedback); 
                 } else {
@@ -62,11 +60,11 @@ function Feedback({selectedCareer}) {
 
   return (
     <div>
-        <div className="grid grid-cols-1 gap-6 mt-4 bg-white p-10 rounded-lg">
+        <div className="grid grid-cols-1 gap-6 mt-4 bg-white p-4 sm:p-10 rounded-lg">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">{t('careerFeedback')}</h2>
             {feedBackData ? (
-                <div className="bg-gray-100 p-6 rounded-md shadow-md">
-                    <p className="text-lg text-gray-700">
+                <div className="bg-gray-100 p-4 sm:p-6 rounded-md shadow-md">
+                    <p className="text-base sm:text-lg text-gray-700">
                         {feedBackData}
                     </p>
                 </div>
