@@ -12,6 +12,7 @@ import Activity from "../../_components/Activities/activity";
 import Challenge from "../../_components/Challenges/page";
 import Feedback from "../../_components/FeedbackTab/Feedback";
 import RoadMap from "../../_components/RoadMapTab/RoadMap";
+import About from "../../_components/About/page";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 
@@ -37,6 +38,7 @@ function Page() {
     { key: "test", label: t("test") },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
+    { key: "career overview",label:"Career Overview"},
   ];
 
   useEffect(() => {
@@ -219,50 +221,52 @@ function Page() {
           </div>
         </div>
 
-        <div className="flex flex-row lg:flex-col justify-start md:justify-center gap-2 md:gap-4 text-xs md:text-base w-full mb-4 overflow-x-scroll md:overflow-x-visible max-md:px-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              className={`${
-                activeTab === tab.key ? "bg-green-400" : "bg-neutral-300"
-              } text-black font-semibold py-2 px-3 md:py-4 md:px-4 whitespace-nowrap sm:w-full max-md:rounded`}
-              onClick={() => setActiveTab(tab.key)}
-            >
-              {tab.label.toUpperCase()}
-            </button>
-          ))}
+            <div className="flex flex-row lg:flex-col justify-start md:justify-center gap-2 md:gap-4 text-xs md:text-base w-full mb-4 overflow-x-scroll md:overflow-x-visible max-md:px-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  className={`${
+                    activeTab === tab.key ? "bg-green-400" : "bg-neutral-300"
+                  } text-black font-semibold py-2 px-3 md:py-4 md:px-4 whitespace-nowrap sm:w-full max-md:rounded`}
+                  onClick={() => setActiveTab(tab.key)}
+                >
+                  {tab.label.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="w-full h-full flex flex-col">
+            <div className="uppercase text-center text-white font-bold text-xl md:text-2xl bg-orange-400 py-3 md:py-5 border-4 border-white">
+              {t(activeTab)}
+            </div>
+            <div className="text-center text-black text-lg md:text-xl py-3 md:py-5 mx-4 md:mx-10">
+              {t("age")} : {age} - {age + 0.5}
+              <span className="font-bold"></span>
+            </div>
+            {activeTab === "roadmap" && (
+              <RoadMap selectedCareer={selectedCareer} />
+            )}
+            {activeTab === "contests" && (
+              <Contests selectedCareer={selectedCareer} />
+            )}
+            {activeTab === "test" && <Tests selectedCareer={selectedCareer} />}
+            {activeTab === "feedback" && (
+              <Feedback selectedCareer={selectedCareer} />
+            )}
+            {activeTab === "activities" && (
+              <Activity selectedCareer={selectedCareer} />
+            )}
+            {activeTab === "challenges" && (
+              <Challenge selectedCareer={selectedCareer} />
+            )}
+            {activeTab === "career overview" && (
+              <About selectedCareer={selectedCareer} />
+            )}
+          </div>
         </div>
-      </div>
-      <div className="w-full h-full flex flex-col">
-        <div className="uppercase text-center text-white font-bold text-xl md:text-2xl bg-orange-400 py-3 md:py-5 border-4 border-white">
-          {t(activeTab)}
-        </div>
-        <div className="text-center text-black text-lg md:text-xl py-3 md:py-5 mx-4 md:mx-10">
-          {t("age")} : {age} - {age + 0.5}
-          <span className="font-bold"></span>
-        </div>
-        {activeTab === "roadmap" && (
-          <RoadMap selectedCareer={selectedCareer} />
-        )}
-        {activeTab === "contests" && (
-          <Contests selectedCareer={selectedCareer} />
-        )}
-        {activeTab === "test" && <Tests selectedCareer={selectedCareer} />}
-        {activeTab === "feedback" && (
-          <Feedback selectedCareer={selectedCareer} />
-        )}
-        {activeTab === "activities" && (
-          <Activity selectedCareer={selectedCareer} />
-        )}
-        {activeTab === "challenges" && (
-          <Challenge selectedCareer={selectedCareer} />
-        )}
-      </div>
+      )}
+      <MobileNavigation />
     </div>
-  )}
-  <MobileNavigation />
-</div>
-
   );
 }
 

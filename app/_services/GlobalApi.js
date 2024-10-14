@@ -21,7 +21,7 @@ const GetUserData = (token) => {
 
 const UpdateUser = (data, token) => {
 
-  return axios.put('/api/updateUser', data,{
+  return axios.put('/api/updateUser', data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -111,7 +111,7 @@ const InterestResult = (data) => axios.post('/api/resultTwo', data, {
   }
 })
 
-const GetUserId=(token,language)=>axios.get('/api/getUserId',{
+const GetUserId = (token, language) => axios.get('/api/getUserId', {
   headers: {
     Authorization: `Bearer ${token}`,
     'Accept-Language': language
@@ -127,7 +127,7 @@ const GetDashboarCheck = (token) => {
   });
 };
 
-const GetResult2=(token,industryParam,language)=>axios.get('/api/getresult2',{
+const GetResult2 = (token, industryParam, language) => axios.get('/api/getresult2', {
   headers: {
     Authorization: `Bearer ${token}`,
     'Accept-Language': language
@@ -136,7 +136,7 @@ const GetResult2=(token,industryParam,language)=>axios.get('/api/getresult2',{
     industry: industryParam
   }
 });
-const getResult2Career=(token,career_name,language)=>axios.get('/api/getResult2Career',{
+const getResult2Career = (token, career_name, language) => axios.get('/api/getResult2Career', {
   headers: {
     Authorization: `Bearer ${token}`,
     'Accept-Language': language
@@ -158,13 +158,13 @@ const GetIndustry = (token, language) => {
 
 
 
-const SubmitFeedback=(token,data)=>axios.post('/api/feedback',data,{
+const SubmitFeedback = (token, data) => axios.post('/api/feedback', data, {
   headers: {
     Authorization: `Bearer ${token}`,
   },
 });
 
-const CheckFeedback=(token)=>axios.get('/api/feedback',{
+const CheckFeedback = (token) => axios.get('/api/feedback', {
   headers: {
     Authorization: `Bearer ${token}`,
   }
@@ -186,7 +186,7 @@ const GetCarrerData = (token) => {
   });
 };
 
-const GetRoadMapData = (userCareerId, token,language) => {
+const GetRoadMapData = (userCareerId, token, language) => {
 
   return axios.get(`/api/getRoadmapData/${userCareerId}`, {
     headers: {
@@ -227,13 +227,13 @@ const SaveStrengthQuizResult = (token) => {
   });
 };
 
-const GetUserAge=(token)=>axios.get('/api/getUserAge',{
+const GetUserAge = (token) => axios.get('/api/getUserAge', {
   headers: {
     Authorization: `Bearer ${token}`,
   }
 });
 
-const SaveInterestedCareer = (token, careerName,country) => {
+const SaveInterestedCareer = (token, careerName, country) => {
   const payload = {
     career: careerName,
     country: country
@@ -377,20 +377,20 @@ const getActivities = (id, token) => {
   });
 };
 
-const updateActivityStatus = (token,activityId,status) => {
+const updateActivityStatus = (token, activityId, status) => {
   const payload = {
-    activityId,    
-    status,   
+    activityId,
+    status,
   };
 
   return axios.post(`/api/updateActivityStatus`, payload, {
     headers: {
-      Authorization: `Bearer ${token}`,   
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 
-const getChallenges = (id, token,language) => {
+const getChallenges = (id, token, language) => {
 
   return axios.get(`/api/getChallenge/${id}`, {
     headers: {
@@ -400,7 +400,7 @@ const getChallenges = (id, token,language) => {
   });
 };
 
-const submitChallenge = (formData,token) => {
+const submitChallenge = (formData, token) => {
   return axios.post(`/api/submitChallenge`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -409,39 +409,39 @@ const submitChallenge = (formData,token) => {
   });
 };
 const getChallengesByStatus = (status, id, token) => {
-  return axios.get(`/api/getChallengesStatus`,{
-      headers: {
-          Authorization: `Bearer ${token}`,
-      },
-      params: {
-        status,
-        id
+  return axios.get(`/api/getChallengesStatus`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      status,
+      id
     },
   });
 };
-const getLastSubmittedChallenge = (id,token) => {
-  console.log("id",id)
-  console.log("token",token)
+const getLastSubmittedChallenge = (id, token) => {
+  console.log("id", id)
+  console.log("token", token)
   return axios.get(`/api/getLastSubmittedChallenge`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    params:{
-      id:id
+    params: {
+      id: id
     }
   });
 };
 
 const UpdateMileStoneStatus = (data, token) => {
 
-  return axios.put('/api/updateMileStoneStatus', data,{
+  return axios.put('/api/updateMileStoneStatus', data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
 
-const GetFeedBackData = (id, token,language) => {
+const GetFeedBackData = (id, token, language) => {
 
   return axios.get(`/api/getFeedBackData/${id}`, {
     headers: {
@@ -452,19 +452,23 @@ const GetFeedBackData = (id, token,language) => {
 };
 const setCountries = (data, token) => {
 
-  return axios.put('/api/setCountry', data,{
+  return axios.put('/api/setCountry', data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
 
-const GetKidsResult=(token,language)=>axios.get('/api/getKidsResult',{
+const GetKidsResult = (token, language) => axios.get('/api/getKidsResult', {
   headers: {
     Authorization: `Bearer ${token}`,
     'Accept-Language': language
   }
 });
+
+const getCareerName = (id) => {
+  return axios.get(`/api/getCareerName/${id}`);
+};
 
 export default {
   CreateNewUser,
@@ -520,5 +524,6 @@ export default {
   UpdateMileStoneStatus,
   GetFeedBackData,
   setCountries,
-  GetKidsResult
+  GetKidsResult,
+  getCareerName
 }

@@ -52,7 +52,7 @@ export async function GET(req, { params }) {
             .where(and(eq(USER_CAREER.user_id, userId), eq(USER_CAREER.career_group_id, careerGrpId)));
 
             console.log("userCareer", userCareer);
-            
+
 
             // If feedback exists, return it
             if (userCareer.length > 0 && userCareer[0].feedback && userCareer[0].feedback !== 'null') {
@@ -62,11 +62,12 @@ export async function GET(req, { params }) {
 
             // Step 2: If feedback is not present, fetch required fields to generate feedback
             const birthDateResult = await db
-                .select({ birth_date: USER_DETAILS.birth_date })
+                .select({ birth_date: USER_DETAILS.birth_date, education:USER_DETAILS.education })
                 .from(USER_DETAILS)
                 .where(eq(USER_DETAILS.id, userId));
-
+            console.log(birthDateResult)
             const birth_date = birthDateResult[0]?.birth_date;
+            const education=birthDateResult[0]?.education
             const age = calculateAge(birth_date);
 
             // Fetch career name from the CAREER_GROUP table
@@ -79,7 +80,7 @@ export async function GET(req, { params }) {
             const { type1, type2, country } = userCareer[0];
           
             // const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career, such as time management, organizational skills, and other relevant skills. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the response ${languageOptions[language] || 'in English'}. Give it as a single JSON data without any wrapping other than {}`;
-            const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career, such as time management, organizational skills, and other relevant skills. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
+            const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} who have completed ${education} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career in order to excel in this career what the person has to change. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
           
               const response = await axios.post(
                 "https://api.openai.com/v1/chat/completions",
