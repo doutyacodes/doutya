@@ -129,8 +129,8 @@ export async function GET(request, { params }) {
         }
         
         const prompt = `
-                    Create 9 multiple-choice questions in ${subjectName} for a ${age}-year-old.
-                   Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
+                    Create 9 multiple-choice questions in ${subjectName} for a ${age} year old.
+                   Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}.  
                     Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
 
                     {
