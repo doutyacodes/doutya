@@ -12,11 +12,14 @@ import {
   FaUserTie,
   FaStore,
 } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 const Header = ({ dark = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+  const pathname = usePathname()
+  // console.log("pathname",pathname)
   const companyData = [
     {
       title: "Careers",
@@ -58,6 +61,13 @@ const Header = ({ dark = false }) => {
             src={dark ? "/assets/images/doutya4.png" : "/assets/images/logo-full.png"}
             width={150}
             height={150}
+            className={`${pathname=="/" && "max-md:hidden"}`}
+          />
+          <Image
+            src={ "/assets/images/doutya4.png"}
+            width={150}
+            height={150}
+            className={`${pathname=="/" ? "md:hidden" :"hidden"}`}
           />
         </Link>
       </div>
