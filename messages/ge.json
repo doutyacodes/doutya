@@ -48,7 +48,8 @@
     "mastersDegree": "Master-Abschluss",
     "dobRequired": "Geburtsdatum ist erforderlich",
     "passWord": "Das Passwort muss mindestens 6 Zeichen, Buchstaben, Zahlen und Sonderzeichen enthalten.",
-    "passwordMismatch":"Passwort stimmt nicht überein"
+    "passwordMismatch":"Passwort stimmt nicht überein",
+    "genderRequired": "Geschlecht ist erforderlich"
   },
   "Banner": {
     "title": "Persönlichkeit",

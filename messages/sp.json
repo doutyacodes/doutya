@@ -48,7 +48,8 @@
     "mastersDegree": "Título de Maestría",
     "dobRequired": "La fecha de nacimiento es obligatoria",
     "passWord": "La contraseña debe tener 6 o más caracteres, incluyendo letras, números y caracteres especiales.",
-    "passwordMismatch":"la contraseña no coincide"
+    "passwordMismatch":"la contraseña no coincide",
+    "genderRequired": "Se requiere género"
   },
   "Banner": {
     "title": "Personalidad",

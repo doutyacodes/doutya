@@ -48,7 +48,8 @@
         "mastersDegree": "स्नातकोत्तर डिग्री",
         "dobRequired": "जन्म तिथि आवश्यक है",
         "passWord": "पासवर्ड में 6 या उससे अधिक अक्षर, संख्या और विशेष अक्षर होने चाहिए।",
-        "passwordMismatch":"पासवर्ड मेल नहीं खाता"
+        "passwordMismatch":"पासवर्ड मेल नहीं खाता",
+        "genderRequired": "लिंग आवश्यक है"
 
     },
     "Banner": {

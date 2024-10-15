@@ -48,7 +48,8 @@
     "mastersDegree": "ماسٹر کی ڈگری",
     "dobRequired": "تاریخ پیدائش ضروری ہے",
     "passWord": "پاس ورڈ میں 6 یا اس سے زیادہ حروف، نمبرز، اور خصوصی علامات شامل ہونی چاہئیں۔",
-    "passwordMismatch":"پاس ورڈ میل نہیں کھاتا"
+    "passwordMismatch":"پاس ورڈ میل نہیں کھاتا",
+    "genderRequired": "جنس درکار ہے۔"
   },
   "Banner": {
     "title": "شخصیت",
