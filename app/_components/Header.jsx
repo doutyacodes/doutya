@@ -55,7 +55,7 @@ const Header = ({ dark = false }) => {
       <div>
         <Link href={"/"}>
           <Image
-            src={"/assets/images/logo-full.png"}
+            src={dark ? "/assets/images/doutya4.png" : "/assets/images/logo-full.png"}
             width={150}
             height={150}
           />
@@ -113,9 +113,9 @@ const Header = ({ dark = false }) => {
         <div className="hidden lg:flex justify-start md:justify-center w-full">
           <Link
             href={"/login"}
-            className="bg-[#9069e7] text-white rounded-full px-7 py-3 font-semibold"
+            className="bg-[#01bf61] text-white rounded-full px-7 py-3 font-semibold"
           >
-            Sign In
+            Explore Now
           </Link>
         </div>
         <div className="lg:hidden">
