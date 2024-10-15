@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import AddCareer from "../../_components/AddCareer/AddCareer";
-import Tests from "../../_components/TestTabBackup/Test";
 import Contests from "../../_components/ContestTab/Contests";
 import Activity from "../../_components/Activities/activity";
 import Challenge from "../../_components/Challenges/page";
