@@ -5,7 +5,7 @@ import React from 'react'
 const Footer = () => {
   return (
     <div className='w-full p-3 bg-[#261e33]'>
-        <div className="w-full flex flex-col items-center max-w-[1240px] mx-auto space-y-5 px-3 pb-5">
+        <div className="w-full flex flex-col items-center container mx-auto space-y-5 px-3 pb-5">
         <Image
                src={"/assets/images/logo-full.png"}
                width={150}

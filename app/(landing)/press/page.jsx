@@ -138,7 +138,7 @@ const Press = () => {
     <main className="relative w-full ">
       <div className="min-h-screen bg-white py-2">
       <Header dark />
-      <div className="max-w-[1240px] mx-auto px-3">
+      <div className="container mx-auto px-3">
           <h2 className="text-[#3e0075] text-center mt-28 text-6xl max-md:text-4xl font-bold">
             NEWSROOM
           </h2>

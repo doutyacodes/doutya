@@ -77,7 +77,7 @@ const page = () => {
         </div>
       </div>
       <div className=" md:min-h-screen bg-white ">
-        <div className=" max-w-[1240px] mx-auto p-3 ">
+        <div className=" container mx-auto p-3 ">
           <h1 className="text-[#3e0075] text-4xl max-md:text-3xl font-bold uppercase">
             Current Openings
           </h1>

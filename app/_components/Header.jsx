@@ -51,7 +51,7 @@ const Header = ({ dark = false }) => {
   ];
 
   return (
-    <header className="flex justify-between items-center max-w-[1240px] mx-auto px-4 relative">
+    <header className="flex justify-between items-center container mx-auto px-4 relative">
       <div>
         <Link href={"/"}>
           <Image

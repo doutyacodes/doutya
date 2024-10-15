@@ -161,7 +161,7 @@ function Tests({selectedCareer}) {
                         className="relative w-full h-full group cursor-pointer rounded-xl overflow-hidden"
                     >
                         <Card
-                            className={`shadow-lg transition-all duration-300 w-full h-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300`}
+                            className={`transition-all duration-300 w-full h-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white p-5 rounded-lg shadow-lg hover:shadow-xl `}
                         >
                             <CardHeader>
                                 <CardTitle className="text-lg font-semibold text-white text-center">
