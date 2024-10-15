@@ -1,5 +1,6 @@
 import Footer from "@/app/_components/Footer";
 import Header from "@/app/_components/Header";
+import NoCareersAvailable from "@/app/_components/NoCareersAvailable";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -78,11 +79,11 @@ const page = () => {
       </div>
       <div className=" md:min-h-screen bg-white ">
         <div className=" container mx-auto p-3 ">
-          <h1 className="text-[#3e0075] text-4xl max-md:text-3xl font-bold uppercase">
+          {/* <h1 className="text-[#3e0075] text-4xl max-md:text-3xl font-bold uppercase">
             Current Openings
-          </h1>
+          </h1> */}
 
-          <div className="grid gap-3 grid-cols-12 mt-6">
+          {/* <div className="grid gap-3 grid-cols-12 mt-6">
             {currentOpenings?.length > 0 &&
               currentOpenings?.map((item, index) => {
                 return (
@@ -100,8 +101,9 @@ const page = () => {
                   </div>
                 );
               })}
-          </div>
+          </div> */}
         </div>
+          <NoCareersAvailable />
       </div>
       <Footer />
     </main>

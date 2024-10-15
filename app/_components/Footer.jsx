@@ -21,16 +21,16 @@ const Footer = () => {
       href: '/about',
       icon: <FaInfoCircle className="w-4 h-4 text-cyan-300" />,
     },
-    {
-      title: 'Press',
-      href: '/press',
-      icon: <FaNewspaper className="w-4 h-4 text-cyan-300" />,
-    },
-    {
-      title: 'Leadership',
-      href: '/leadership-principles',
-      icon: <FaUserTie className="w-4 h-4 text-cyan-300" />,
-    },
+    // {
+    //   title: 'Press',
+    //   href: '/press',
+    //   icon: <FaNewspaper className="w-4 h-4 text-cyan-300" />,
+    // },
+    // {
+    //   title: 'Leadership',
+    //   href: '/leadership-principles',
+    //   icon: <FaUserTie className="w-4 h-4 text-cyan-300" />,
+    // },
   ];
 
   return (
