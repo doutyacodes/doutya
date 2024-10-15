@@ -213,8 +213,7 @@ const Page = () => {
       </div>
       <div className="bg-white shadow-xl outline outline-slate-100 p-3 rounded-t-3xl mt-5 space-y-5 pt-10 w-full">
         <h1 className="text-center text-[#3e0075] lg:text-5xl text-3xl font-bold w-4/5 mx-auto ">
-          The world’s leading companies power their revenue workflows with
-          Xortlist
+        Empowering Your Future with AI-Driven Career Guidance
         </h1>
         <div className="w-full flex justify-center items-center flex-col container mx-auto">
           <div className="mt-14 flex flex-wrap gap-5 mx-auto  p-3 md:gap-7">
