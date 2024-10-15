@@ -6,7 +6,7 @@ import axios from 'axios';
 import { and, eq, inArray } from 'drizzle-orm';
 
 
-export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
 // Function to fetch subjects from OpenAI

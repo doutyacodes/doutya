@@ -6,7 +6,7 @@ import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import axios from 'axios';
 
-export const maxDuration = 40; // This function can run for a maximum of 5 seconds
+export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
