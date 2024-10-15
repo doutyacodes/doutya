@@ -509,3 +509,56 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         career_name: varchar('career_name', { length: 150 }).notNull(),
         description: text('description').default(null),
     });
+
+    export const CAREER_PATH = mysqlTable('career_path', {
+        id: int('id').notNull().autoincrement().primaryKey(), // Auto-increment primary key
+        user_career_id: int('user_career_id').notNull().references(() => USER_CAREER.id), // Foreign key reference to user_career table
+        overview: text('overview').notNull(), // Overview field
+        education: text('education').notNull(), // Education field
+        specialized_skills_development: text('specialized_skills_development').notNull(), // Specialized skills development field
+        entry_level_jobs: text('entry_level_jobs').notNull(), // Entry-level jobs field
+        mid_level_career: text('mid_level_career').notNull(), // Mid-level career field
+        senior_roles: text('senior_roles').notNull(), // Senior roles field
+        entrepreneurial_path: text('entrepreneurial_path').default(null), // Optional entrepreneurial path field
+        key_learning_milestones: text('key_learning_milestones').notNull(), // Key learning milestones field
+        challenges: text('challenges').notNull(), // Challenges field
+        opportunities: text('opportunities').notNull(), // Opportunities field
+        future_prospects: text('future_prospects').notNull(), // Future prospects field
+        career_path_summary: text('career_path_summary').notNull(), // Career path summary field
+    });
+
+    export const SUBJECT_QUIZ = mysqlTable('subject_quiz', {
+        id: int('id').autoincrement().notNull().primaryKey(), // Auto-increment primary key
+        question: text('question').notNull(), // Question field
+        subject_id: int('subject_id').notNull().references(() => SUBJECTS.subject_id),
+        age: int('age').notNull(), // Age field
+        created_at: timestamp('created_at').defaultNow(), // Automatically set to current timestamp when created
+    });
+    
+    export const SUBJECT_QUIZ_OPTIONS = mysqlTable('subject_quiz_options', {
+        id: int('id').autoincrement().notNull().primaryKey(), // Auto-increment primary key
+        question_id: int('question_id').notNull().references(() => SUBJECT_QUIZ.id), // Foreign key reference to subject_quiz
+        option_text: text('option_text').notNull(), // Option text field
+        is_answer: mysqlEnum('is_answer', ['yes', 'no']).notNull(), // Answer field
+        created_at: timestamp('created_at').defaultNow(), // Automatically set to current timestamp when created
+    });
+    
+    export const SUBJECT_USER_PROGRESS = mysqlTable('subject_user_progress', {
+        id: int('id').autoincrement().notNull().primaryKey(), // Auto-increment primary key
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id),
+        quiz_id: int('quiz_id').notNull().references(() => SUBJECT_QUIZ.id), // Foreign key reference to subject_quiz
+        subject_id: int('subject_id').notNull().references(() => SUBJECTS.subject_id),
+        option_id: int('option_id').notNull(), // Option ID field
+        is_answer: mysqlEnum('is_answer', ['yes', 'no']).notNull(), // Answer field
+        created_at: timestamp('created_at').defaultNow(), // Automatically set to current timestamp when created
+    });
+
+    export const USER_SUBJECT_COMPLETION = mysqlTable('user_subject_completion', {
+        id: int('id').autoincrement().primaryKey(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id), // Assuming USER_DETAILS has an 'id'
+        skilled_age: int('skilled_age').default(null),
+        subject_id: int('subject_id').notNull().references(() => SUBJECTS.subject_id),
+        isStarted: boolean('isStarted').notNull().default(false),     // New boolean column
+        completed: mysqlEnum('completed', ['yes', 'no']).notNull(),
+        created_at: timestamp('created_at').defaultNow(),
+    });

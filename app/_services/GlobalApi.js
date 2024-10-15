@@ -309,7 +309,7 @@ const GetTests = (id, token) => {
 
 const GetSubjects = (id, token) => {
 
-  return axios.get(`/api/getSubjects/${id}`, {
+  return axios.get(`/api/getSubject/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -324,6 +324,16 @@ const GetTestsData = (id, token) => {
     },
   });
 };
+
+const GetSkillTestsData = (subjectName, token) => {
+
+  return axios.get(`/api/getSkillTestData/${subjectName}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 
 const SaveTestProgress = (data, token) => {
   const payload = {
@@ -470,6 +480,49 @@ const getCareerName = (id) => {
   return axios.get(`/api/getCareerName/${id}`);
 };
 
+const GetCareerPath = (id, token,language) => {
+
+  return axios.get(`/api/getCareerPath/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Accept-Language': language
+    },
+  });
+};
+
+const SkillTestProgress = (data, token) => {
+  const payload = {
+    results: data,
+  };
+
+  return axios.post(`/api/skillTestProgress`, payload, { /* saveTestProgress */
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const UpdateSkillTestData = (token, subjectId) => {
+  const payload = {
+    subjectId,
+  };
+
+  return axios.post(`/api/updateSkillTestData`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetSkillTestResult = (token,id) => {
+
+  return axios.get(`/api/getskillTestResult/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -525,5 +578,11 @@ export default {
   GetFeedBackData,
   setCountries,
   GetKidsResult,
-  getCareerName
+  getCareerName,
+
+  GetCareerPath,
+  GetSkillTestsData,
+  SkillTestProgress,
+  UpdateSkillTestData,
+  GetSkillTestResult
 }
