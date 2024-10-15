@@ -4,6 +4,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 import ListComponents from "./ListComponents";
 import { IoIosClose, IoIosMenu } from "react-icons/io";
+import { BsPersonWorkspace } from "react-icons/bs";
+
 import {
   FaBriefcase,
   FaInfoCircle,
@@ -15,30 +17,31 @@ import {
 import { usePathname } from "next/navigation";
 const Header = ({ dark = false }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [darks, setDarks] = useState(dark);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
   const pathname = usePathname()
   // console.log("pathname",pathname)
   const companyData = [
-    {
-      title: "Careers",
-      description: "It’s a great time to join Xortlist",
-      href: "/careers",
-      icon: <FaBriefcase className="w-4 h-4 text-[#3e0075]" />,
-    },
+    // {
+    //   title: "Careers",
+    //   description: "It’s a great time to join Xortlist",
+    //   href: "/careers",
+    //   icon: <FaBriefcase className="w-4 h-4 text-[#3e0075]" />,
+    // },
     {
       title: "About",
       description: "Learn what binds us together at Xortlist",
       href: "/about",
       icon: <FaInfoCircle className="w-4 h-4 text-[#3e0075]" />,
     },
-    {
-      title: "Press",
-      description: "The latest news on Xortlist",
-      href: "/press",
-      icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
-    },
+    // {
+    //   title: "Press",
+    //   description: "The latest news on Xortlist",
+    //   href: "/press",
+    //   icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
+    // },
     // {
     //   title: "Operating Principles",
     //   description: "The rules that drive our day to day",
@@ -51,14 +54,20 @@ const Header = ({ dark = false }) => {
       href: "/leadership-principles",
       icon: <FaUserTie className="w-4 h-4 text-[#3e0075]" />,
     },
+    {
+      title: "Operating Principles",
+      description: "The rules that drive our day to day",
+      href: "/operating-principles",
+      icon: <BsPersonWorkspace className="w-4 h-4 text-[#3e0075]" />,
+    },
   ];
 
   return (
-    <header className="flex justify-between items-center container mx-auto px-4 relative">
+    <header className="flex justify-between items-center container mx-auto px-4 ">
       <div>
         <Link href={"/"}>
           <Image
-            src={dark ? "/assets/images/doutya4.png" : "/assets/images/logo-full.png"}
+            src={darks ? "/assets/images/doutya4.png" : "/assets/images/logo-full.png"}
             width={150}
             height={150}
             className={`${pathname=="/" && "max-md:hidden"}`}
@@ -73,10 +82,22 @@ const Header = ({ dark = false }) => {
       </div>
       <ul className="lg:flex hidden gap-7 ">
         <li className="group">
+          <Link href={"/careers"} className="cursor-pointer relative z-[9999]">
+            <p
+              className={`text-${
+                !darks ? "white" : "[#3e0075]"
+              } text-sm hover:font-bold`}
+            >
+              Careers
+            </p>
+          </Link>
+          </li>
+          <li className="group">
+
           <Link href={"/blog"} className="cursor-pointer relative z-[9999]">
             <p
               className={`text-${
-                !dark ? "white" : "[#3e0075]"
+                !darks ? "white" : "[#3e0075]"
               } text-sm hover:font-bold`}
             >
               Blog
@@ -87,14 +108,16 @@ const Header = ({ dark = false }) => {
           <div className="cursor-pointer relative z-[9999]">
             <p
               className={`text-${
-                !dark ? "white" : "[#3e0075]"
+                !darks ? "white" : "[#3e0075]"
               } text-sm hover:font-bold`}
+              onMouseOver={() => setDarks(!dark)}
+              onMouseOut={() => setDarks(dark)}
             >
               Company
             </p>
           </div>
           <div
-            className={`absolute top-0 z-[9999] pt-20 left-0 w-full min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300`}
+            className={`absolute top-0 z-[9999] pt-20 left-0 min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300 w-screen`}
           >
             <div className="bg-white p-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
@@ -117,6 +140,17 @@ const Header = ({ dark = false }) => {
             </div>
           </div>
         </li>
+        <li className="group">
+          <Link href={"/our-story"} className="cursor-pointer relative z-[9999]">
+            <p
+              className={`text-${
+                !darks ? "white" : "[#3e0075]"
+              } text-sm hover:font-bold`}
+            >
+              Our Story
+            </p>
+          </Link>
+          </li>
       </ul>
 
       <div>

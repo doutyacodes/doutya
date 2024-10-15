@@ -38,24 +38,25 @@ const Footer = () => {
       <div className="container mx-auto flex flex-col items-center space-y-5">
         <Image src="/assets/images/logo-full.png" width={150} height={150} alt="Xortlist Logo" />
         
-        <Link href="/login" className="bg-[#00c061] text-white rounded-full px-7 py-3 font-semibold">
-          Sign In
-        </Link>
+       
 
-        <ul className="flex flex-wrap justify-center gap-4">
+        {/* <ul className="flex flex-wrap justify-center gap-4">
           {companyData.map((item, index) => (
             <li key={index} className="flex items-center space-x-2">
               {item.icon}
               <Link href={item.href} className="text-xs font-semibold">{item.title}</Link>
             </li>
           ))}
-        </ul>
+        </ul> */}
+
+<p className="text-center text-xs">
+  <span>AWHO, Whitefield - Hoskote Rd,</span><br />
+  <span>Whitefield, SV, Kannamangala,</span><br />
+  <span>Bengaluru, Karnataka 560067</span>
+</p>
 
         <p className="text-center text-xs">
-          AWHO, Whitefield - Hoskote Rd, Whitefield, SV, Kannamangala, Bengaluru, Karnataka 560067
-        </p>
-        <p className="text-center text-xs">
-          Copyright {new Date().getFullYear()} Xortlist Inc. All rights reserved. Various trademarks held by their respective owners.
+          Copyright {new Date().getFullYear()} Xortlist Inc. All rights reserved.
         </p>
       </div>
     </div>
