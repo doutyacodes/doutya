@@ -71,34 +71,37 @@ export async function GET(req, { params }) {
             const career_name = careerGroup[0]?.career_name;
             const { type1, type2, country } = userCareer[0];
 
-        const prompt = `I want you to generate a detailed career path description for a specific profession based on the following information. The output should be formatted as a JSON object with the following keys and values. **Make sure that all values are returned as strings** to ensure consistency. Avoid using arrays or other structures for the values.
-
-                        1. **Career Name**: ${career_name}
-                        2. **Personality Type**: ${type1}
-                        3. **Language of the output**: ${languageOptions[language] || 'English'}
-                        4. **Country**: ${country || 'India'}
-
-                        The JSON object should follow this structure:
-
-                        {
-                          "career_name": "${career_name}",
-                          "overview": "Provide a summary of the profession and why it is suitable for the given personality type.",
-                          "step_by_step_career_path": {
-                            "education": "Provide a detailed description of the education required (including duration, degrees, and fields of study).",
-                            "skill_development": "List the key skills and certifications required for this career as a single string, not as an array.",
-                            "entry_level_jobs": "Provide examples of entry-level roles and responsibilities in string format.",
-                            "mid_level_career": "Outline mid-career progression opportunities in string format.",
-                            "senior_level_roles": "Describe senior-level or leadership opportunities available as a string.",
-                            "entrepreneurial_path": "Optional: Describe any entrepreneurial opportunities available, presented as a single string."
-                          },
-                          "key_learning_milestones": "Highlight the specific skills and knowledge milestones at each stage of the career, as a single string.",
-                          "challenges_opportunities": {
-                            "challenges": "Describe key challenges faced in this career as a single string.",
-                            "opportunities": "Mention important growth and advancement opportunities, presented as a single string."
-                          },
-                          "future_prospects": "Provide insights into the future growth and evolution of this career as a string.",
-                          "career_path_summary": "Summarize the career path and explain why it's a good fit for the specified personality type, presented as a string."
-                        }`
+            const prompt = `
+            I want you to generate a detailed career path description for a specific profession based on the following information. Format the output as a JSON object with all values as strings for consistency, avoiding arrays or other data structures.
+            
+            Input:
+            1. **Career Name**: ${career_name}
+            2. **Personality Type**: ${type1}
+            3. **Language**: ${languageOptions[language] || 'English'}
+            4. **Country**: ${country || 'India'}
+            
+            Output Structure:
+            
+            {
+              "career_name": "${career_name}",
+              "overview": "A brief summary of the profession and its relevance to the given personality type.",
+              "step_by_step_career_path": {
+                "education": "Details of required education, including duration, degrees, and fields of study.",
+                "skill_development": "Key skills and certifications necessary for this career.",
+                "entry_level_jobs": "Examples of entry-level roles and responsibilities.",
+                "mid_level_career": "Opportunities for mid-career progression.",
+                "senior_level_roles": "Senior-level or leadership positions available.",
+                "entrepreneurial_path": "Optional: Entrepreneurial opportunities in this field."
+              },
+              "key_learning_milestones": "Important knowledge and skill milestones at various stages of the career.",
+              "challenges_opportunities": {
+                "challenges": "Key challenges commonly faced in this career.",
+                "opportunities": "Major growth and advancement opportunities."
+              },
+              "future_prospects": "Insights into the future growth and evolution of this career.",
+              "career_path_summary": "A summary of the career path, explaining its suitability for the specified personality type."
+            }`
+            
 
 
               const response = await axios.post(

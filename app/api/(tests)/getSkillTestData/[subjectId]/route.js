@@ -151,7 +151,7 @@ export async function GET(request, { params }) {
                 {
                   model: "gpt-4o-mini", // or 'gpt-4' if you have access
                   messages: [{ role: "user", content: prompt }],
-                  max_tokens: 1500,
+                  max_tokens: 2500,
                 },
                 {
                   headers: {
