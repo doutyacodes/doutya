@@ -18,6 +18,38 @@ html, body {
   overflow-x: hidden;
 }
 
+.tree-container {
+  position: relative;
+  padding-left: 20px;
+}
+
+.tree-node {
+  position: relative;
+  padding-left: 30px;
+  border-left: 2px dotted #cccccc; /* Dotted line connecting sections */
+}
+
+.tree-node h3 {
+  position: relative;
+}
+
+.tree-branch {
+  position: absolute;
+  left: -16px;
+  top: 0;
+  width: 16px;
+  height: 2px;
+  background-color: #cccccc;
+}
+
+.tree-container .tree-node:last-child {
+  border-left: none; /* Remove the dotted line for the last item */
+}
+
+.tree-node p {
+  margin-left: 15px;
+  transition: opacity 0.4s ease-in-out;
+}
 
 @layer base {
   :root {

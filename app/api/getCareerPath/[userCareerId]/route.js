@@ -153,7 +153,7 @@ export async function GET(req, { params }) {
             return NextResponse.json({ careerPath: newCareerPath[0] }, { status: 200 });
                         
     } catch (error) {
-        console.error("Error fetching or generating feedback:", error);
-        return NextResponse.json({ message: 'Error fetching or generating feedback' }, { status: 500 });
+        console.error("Error fetching or generating career path:", error);
+        return NextResponse.json({ message: 'Error fetching or generating career path' }, { status: 500 });
     }
 }

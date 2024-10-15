@@ -61,31 +61,41 @@ export default function About({ selectedCareer }) {
                     {/* Present Trends Section */}
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <h2 className="text-lg font-bold text-gray-800 mb-2">Present Trends</h2>
-                        <p className="text-gray-700">{singleCareer.present_trends}</p>
+                        <p className="text-gray-700">{singleCareer?.present_trends}</p>
                     </div>
     
                     {/* Future Prospects Section */}
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <h2 className="text-lg font-bold text-gray-800 mb-2">Future Prospects</h2>
-                        <p className="text-gray-700">{singleCareer.future_prospects}</p>
+                        <p className="text-gray-700">{singleCareer?.future_prospects}</p>
                     </div>
     
                     {/* Beyond Prospects Section */}
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <h2 className="text-lg font-bold text-gray-800 mb-2">Beyond Prospects</h2>
-                        <p className="text-gray-700">{singleCareer.beyond_prospects}</p>
+                        <p className="text-gray-700">{singleCareer?.beyond_prospects}</p>
                     </div>
     
                     {/* Expenses Section */}
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <h2 className="text-lg font-bold text-gray-800 mb-2">Expenses</h2>
-                        <p className="text-gray-700">{singleCareer.expenses}</p>
+                        <p className="text-gray-700">{singleCareer?.expenses}</p>
                     </div>
     
                     {/* Salary Section */}
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <h2 className="text-lg font-bold text-gray-800 mb-2">Salary</h2>
-                        <p className="text-gray-700">{singleCareer.salary}</p>
+                        <p className="text-gray-700">{singleCareer?.salary}</p>
+                    </div>
+                    {/* Leading Country Section */}
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        <h2 className="text-lg font-bold text-gray-800 mb-2">Leading Country</h2>
+                        <p className="text-gray-700">{singleCareer?.leading_country}</p>
+                    </div>
+                    {/* Similar Jobs Section */}
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        <h2 className="text-lg font-bold text-gray-800 mb-2">Similar Jobs</h2>
+                        <p className="text-gray-700">{singleCareer?.similar_jobs}</p>
                     </div>
                 </div>
             ) : (

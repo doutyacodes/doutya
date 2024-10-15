@@ -136,7 +136,9 @@ export async function GET(req) {
         } and beyond.",
         "currentYear":${currentYear},
         "tillYear":${currentYear + 5},
-        "user_description": "Personality traits, strengths, and preferences that make this career a good fit."
+        "user_description": "Personality traits, strengths, and preferences that make this career a good fit.",
+        "leading_country": "Name the country with most opportunities for the career ${careerName} with short description including the opportunity(in a sentence or two).",
+        "similar_jobs": "Provide similar careers name in a sentence for the career "${careerName}" for an individual with personality type ${type1} and RIASEC interest types of ${type2}."
       }.
       Ensure that the response is a valid JSON array with exactly one object, no explanations, and no additional text, using the specified field names, but do not include the terms '${type1}' and '${type2}' in the data.`;
   } else {

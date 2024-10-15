@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ListComponents from "./ListComponents";
 import { IoIosClose, IoIosMenu } from "react-icons/io";
 import { BsPersonWorkspace } from "react-icons/bs";
@@ -18,10 +18,27 @@ import { usePathname } from "next/navigation";
 const Header = ({ dark = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [darks, setDarks] = useState(dark);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-  const pathname = usePathname()
+  const pathname = usePathname();
   // console.log("pathname",pathname)
   const companyData = [
     // {
@@ -63,20 +80,28 @@ const Header = ({ dark = false }) => {
   ];
 
   return (
-    <header className="flex justify-between items-center container mx-auto px-4 ">
+    <header
+      className={`flex justify-between items-center w-screen mx-auto px-4 ${
+        isScrolled ? "fixed z-[9999999]" : "bg-transparent" 
+      }`}
+    >
       <div>
         <Link href={"/"}>
           <Image
-            src={darks ? "/assets/images/doutya4.png" : "/assets/images/logo-full.png"}
+            src={
+              darks
+                ? "/assets/images/doutya4.png"
+                : "/assets/images/logo-full.png"
+            }
             width={150}
             height={150}
-            className={`${pathname=="/" && "max-md:hidden"}`}
+            className={`${pathname == "/" && "max-md:hidden"}`}
           />
           <Image
-            src={ "/assets/images/doutya4.png"}
+            src={"/assets/images/doutya4.png"}
             width={150}
             height={150}
-            className={`${pathname=="/" ? "md:hidden" :"hidden"}`}
+            className={`${pathname == "/" ? "md:hidden" : "hidden"}`}
           />
         </Link>
       </div>
@@ -91,9 +116,8 @@ const Header = ({ dark = false }) => {
               Careers
             </p>
           </Link>
-          </li>
-          <li className="group">
-
+        </li>
+        <li className="group">
           <Link href={"/blog"} className="cursor-pointer relative z-[9999]">
             <p
               className={`text-${
@@ -119,7 +143,7 @@ const Header = ({ dark = false }) => {
           <div
             className={`absolute top-0 z-[9999] pt-20 left-0 min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300 w-screen`}
           >
-            <div className="bg-white p-4">
+            <div className={`bg-white p-4 shadow border-b-[0.5px] border-x-[0.5px] outline-slate-300`}>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
                 {companyData.map((item, index) => (
                   <div key={index} className="py-5 flex items-center">
@@ -141,7 +165,10 @@ const Header = ({ dark = false }) => {
           </div>
         </li>
         <li className="group">
-          <Link href={"/our-story"} className="cursor-pointer relative z-[9999]">
+          <Link
+            href={"/our-story"}
+            className="cursor-pointer relative z-[9999]"
+          >
             <p
               className={`text-${
                 !darks ? "white" : "[#3e0075]"
@@ -150,7 +177,7 @@ const Header = ({ dark = false }) => {
               Our Story
             </p>
           </Link>
-          </li>
+        </li>
       </ul>
 
       <div>
