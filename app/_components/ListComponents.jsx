@@ -31,7 +31,7 @@ const ListComponents = () => {
   return (
     <>
       {/* Product Section */}
-      <li>
+      {/* <li>
         <div
           className="flex w-full justify-between px-3"
           onClick={toggleProductVisibility}
@@ -79,7 +79,7 @@ const ListComponents = () => {
             </ul>
           </div>
         )}
-      </li>
+      </li> */}
 
       {/* Resources Section */}
       <li>
