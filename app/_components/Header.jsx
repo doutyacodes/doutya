@@ -36,12 +36,12 @@ const Header = ({ dark = false }) => {
       href: "/press",
       icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
     },
-    {
-      title: "Operating Principles",
-      description: "The rules that drive our day to day",
-      href: "/operating-principles",
-      icon: <FaClipboardList className="w-4 h-4 text-[#3e0075]" />,
-    },
+    // {
+    //   title: "Operating Principles",
+    //   description: "The rules that drive our day to day",
+    //   href: "/operating-principles",
+    //   icon: <FaClipboardList className="w-4 h-4 text-[#3e0075]" />,
+    // },
     {
       title: "Leadership Principles",
       description: "What it means to lead at Xortlist",
