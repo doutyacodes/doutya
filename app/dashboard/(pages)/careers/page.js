@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import AddCareer from "../../_components/AddCareer/AddCareer";
-import Tests from "../../_components/TestTab/Tests";
+import Tests from "../../_components/TestTabBackup/Test";
 import Contests from "../../_components/ContestTab/Contests";
 import Activity from "../../_components/Activities/activity";
 import Challenge from "../../_components/Challenges/page";
@@ -15,6 +15,9 @@ import RoadMap from "../../_components/RoadMapTab/RoadMap";
 import About from "../../_components/About/page";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
+import CareerPath from "../../_components/CareerPathTab/CareerPath";
+import Tests from "../../_components/TestTab/Tests";
+import ViewResult from "../../_components/ViewResult/ViewResult";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -36,6 +39,7 @@ function Page() {
   const tabs = [
     { key: "roadmap", label: t("roadmap") },
     { key: "test", label: t("test") },
+    { key: "careerPath", label: "Career Path" },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
     { key: "career overview",label:"Career Overview"},
@@ -246,10 +250,16 @@ function Page() {
             {activeTab === "roadmap" && (
               <RoadMap selectedCareer={selectedCareer} />
             )}
+            {activeTab === "careerPath" && (
+              <CareerPath selectedCareer={selectedCareer} />
+            )}
             {activeTab === "contests" && (
               <Contests selectedCareer={selectedCareer} />
             )}
-            {activeTab === "test" && <Tests selectedCareer={selectedCareer} />}
+            {/* {activeTab === "test" && <Tests selectedCareer={selectedCareer} />} */}
+            {activeTab === "test" && (
+              <Tests selectedCareer={selectedCareer}/>
+            )}
             {activeTab === "feedback" && (
               <Feedback selectedCareer={selectedCareer} />
             )}
