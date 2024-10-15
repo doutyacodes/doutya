@@ -15,7 +15,6 @@ export async function GET(req) {
   // Extract userId from decoded token
   const userData = authResult.decoded_Data;
   const userId = userData.userId;
-
   try {
     // Fetch only the required data: career_group_id and career_name
     const data = await db
@@ -29,10 +28,13 @@ export async function GET(req) {
       .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id)) // Join on the career_group_id
       .innerJoin(USER_DETAILS, eq(USER_CAREER.user_id, USER_DETAILS.id)) // Join with USER_DETAILS on user_id
       .where(eq(USER_CAREER.user_id, userId));
-
+      console.log("data");
       // Extract birth_date and calculate the age
       const birthDate = data[0]?.birth_date;
       const age = birthDate ? formattedAge(birthDate) : null;
+
+      console.log("age");
+      
 
     // Respond with the fetched data (career_group_id and career_name)
     return NextResponse.json({carrerData: data, age}, { status: 201 });
