@@ -82,7 +82,7 @@ const Header = ({ dark = false }) => {
   return (
     <header
       className={`flex justify-between items-center w-screen mx-auto px-4 ${
-        isScrolled ? "fixed z-[9999999]" : "bg-transparent" 
+        isScrolled ? "fixed z-[9999999] bg-[#3e0075]" : darks ? "bg-transparent": "bg-[#3e0075]" 
       }`}
     >
       <div>
