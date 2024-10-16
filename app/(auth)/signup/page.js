@@ -1127,29 +1127,30 @@ function SignUp() {
             <div className="md:text-sm text-xs">{t("passWord")}</div>
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="mobile"
-              className="block text-sm font-medium text-gray-700"
-            >
-              {t("mobile")}
-            </label>
-            <input
-              type="number"
-              {...register("mobile", {
-                minLength: {
-                  value: 10,
-                  message: t("mobileMinLength"),
-                },
-              })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
-            {errors.mobile && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.mobile.message}
-              </p>
-            )}
-          </div>
+              <label
+                htmlFor="mobile"
+                className="block text-sm font-medium text-gray-700"
+              >
+                {t("mobile")}
+              </label>
+              <input
+                type="tel" // Changed from 'number' to 'tel'
+                {...register("mobile", {
+                  minLength: {
+                    value: 10,
+                    message: t("mobileMinLength"),
+                  },
+                })}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
+              />
+              {errors.mobile && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.mobile.message}
+                </p>
+              )}
+            </div>
+
 
           {ageCategory !== "kids" && educationLevel!=0 && (
             <div className="mb-4">
