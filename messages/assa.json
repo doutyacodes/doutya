@@ -48,7 +48,8 @@
     "mastersDegree": "মাস্টাৰ ডিগ্ৰী",
     "dobRequired": "জন্ম তাৰিখ আৱশ্যক",
     "passWord": "পাছৱৰ্ডত ৬ বা তাতকৈ অধিক আখৰ, সংখ্যা আৰু বিশেষ চিহ্ন থকাটো আৱশ্যক।",
-    "passwordMismatch":"পাছৱৰ্ড মেলা নাপালে"
+    "passwordMismatch":"পাছৱৰ্ড মেলা নাপালে",
+    "genderRequired": "লিংগৰ প্ৰয়োজন"
   },
   "Banner": {
     "title": "ব্যক্তিত্ব",

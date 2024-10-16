@@ -48,7 +48,8 @@
     "mastersDegree": "স্নাতকোত্তর ডিগ্রি",
     "dobRequired": "জন্মতারিখ আবশ্যক",
     "passWord": "পাসওয়ার্ডে ৬ বা তার বেশি অক্ষর, সংখ্যা এবং বিশেষ অক্ষর থাকতে হবে।",
-    "passwordMismatch":"পাসওয়ার্ড মেলে না"
+    "passwordMismatch":"পাসওয়ার্ড মেলে না",
+    "genderRequired": "লিঙ্গ প্রয়োজন"
   },
   "Banner": {
     "title": "ব্যক্তিত্ব",

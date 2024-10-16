@@ -50,7 +50,8 @@
     "12th Std": "12th std",
     "dobRequired": "Date of Birth is required",
     "passWord":"Password must be 6+ characters with letters, numbers, and special characters.",
-    "passwordMismatch":"password does not match"
+    "passwordMismatch":"password does not match",
+    "genderRequired": "Gender is required"
   },
   "Banner": {
     "title": "Personality",
