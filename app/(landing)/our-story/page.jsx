@@ -71,9 +71,9 @@ Today, Xortlist stands as a beacon of hope for the next generation, transforming
 
                 <>
                   {content.split("\n").map((paragraph, index) => (
-                    <p className="prose lg:prose-xl  mx-auto text-white leading-8">
+                    <div className="prose lg:prose-xl  mx-auto text-white leading-8">
                       <p key={index}>{paragraph.trim()}</p>
-                    </p>
+                    </div>
                   ))}
                 </>
               </div>
