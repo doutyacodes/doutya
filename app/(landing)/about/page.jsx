@@ -24,14 +24,14 @@ const page = () => {
         title: "Trust",
         image:
           "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
-        shape: "rectangle",
+        shape: "hexagon",
         color: "bg-blue-500",
       },
       {
         title: "Innovation",
         image:
           "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
-        shape: "rectangle",
+        shape: "hexagon",
         color: "bg-pink-500",
       },
     ],

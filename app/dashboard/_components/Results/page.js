@@ -59,17 +59,17 @@ function Results() {
 
   return (
     <div className="w-4/5 mx-auto">
-      <p className="text-center text-white text-3xl">{t("title")}</p>
-      <div className="flex flex-col text-white gap-5">
+      <p className="text-center text-white text-3xl max-md:mb-7 mt-3">{t("title")}</p>
+      <div className="flex flex-col text-white gap-5 ">
         <div>
-          <p>{t("description")}</p>
+          <p className="max-sm:mb-5">{t("description")}</p>
           <div className="bg-white px-10 py-6 text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer">
             <p>{description}</p>
           </div>
         </div>
 
-        <div>
-          <p>{t("strengths")}</p>
+        <div className="mt-10">
+          <p className="max-sm:mb-5">{t("strengths")}</p>
           <div className="md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600">
             {strengths ? (
               strengths.split(",").map((strength, index) => (
@@ -88,8 +88,8 @@ function Results() {
           </div>
         </div>
 
-        <div>
-          <p>{t("weaknesses")}</p>
+        <div className="mt-10">
+          <p className="max-sm:mb-5">{t("weaknesses")}</p>
           <div className="md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600">
             {weaknesses ? (
               weaknesses.split(",").map((weakness, index) => (
@@ -108,8 +108,8 @@ function Results() {
           </div>
         </div>
 
-        <div>
-          <p>{t("opportunities")}</p>
+        <div className="mt-10">
+          <p className="max-sm:mb-5">{t("opportunities")}</p>
           <div className="md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600">
             {opportunities ? (
               opportunities.split(",").map((opportunity, index) => (
@@ -128,8 +128,8 @@ function Results() {
           </div>
         </div>
 
-        <div>
-          <p>{t("threats")}</p>
+        <div className="mt-10">
+          <p className="max-sm:mb-5">{t("threats")}</p>
           <div className="md:flex flex-wrap gap-4 max-md:space-y-4 text-center text-sm text-gray-600">
             {threats ? (
               threats.split(",").map((threat, index) => (
@@ -148,8 +148,8 @@ function Results() {
           </div>
         </div>
 
-        <div>
-          <p>{t("careers")}</p>
+        <div className="mt-10">
+          <p className="max-sm:mb-5">{t("careers")}</p>
           <div className="md:flex flex-wrap gap-4 max-md:space-y-4 text-sm text-gray-600">
             {most_suitable_careers ? (
               most_suitable_careers.map((careerObj, index) => (
