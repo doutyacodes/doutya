@@ -58,8 +58,8 @@ Today, Xortlist stands as a beacon of hope for the next generation, transforming
 
   return (
     <main className="relative w-full ">
-      <div className=" md:min-h-screen bg-[#3e0075] py-4">
         <Header />
+      <div className=" md:min-h-screen bg-[#3e0075] py-4">
 
         <div className=" md:min-h-screen  py-4">
           <div className="container mx-auto px-3">
