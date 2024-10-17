@@ -2,11 +2,10 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { GoHomeFill,GoBriefcase } from "react-icons/go";
-import { FaBriefcase,FaNotesMedical } from "react-icons/fa";
+import { GoHomeFill, GoBriefcase } from "react-icons/go";
+import { FaBriefcase, FaNotesMedical } from "react-icons/fa";
 import { RxAvatar } from "react-icons/rx";
 import { IoMdAnalytics } from "react-icons/io";
-
 
 const MobileNavigation = () => {
   const router = useRouter();
@@ -24,20 +23,19 @@ const MobileNavigation = () => {
     const storedUrl = localStorage.getItem("dashboardUrl");
     if (isMounted) {
       setActiveTab(router.pathname);
-    }if (storedUrl) {
+    }
+    if (storedUrl) {
       setDashboardUrl(storedUrl);
     }
-    console.log(dashboardUrl)
+    console.log(dashboardUrl);
   }, [router, isMounted]);
 
   const navItems = [
-    // { name: 'Home', href: '/', icon: <GoHomeFill /> },
     { name: 'Dashboard', href: dashboardUrl, icon: <IoMdAnalytics /> },
     { name: 'My Careers', href: '/dashboard/careers', icon: <FaBriefcase /> },
     { name: 'My Analysis', href: '/dashboard/myResults', icon: <FaNotesMedical /> },
     { name: 'Profile', href: '/dashboard/user-profile', icon: <RxAvatar /> },
   ];
-  
 
   // Prevent rendering until the component is mounted
   if (!isMounted) {
@@ -45,7 +43,7 @@ const MobileNavigation = () => {
   }
 
   return (
-    <nav className="fixed bottom-4 left-4 right-4 sm:hidden z-50">
+    <nav className="fixed bottom-0 left-4 right-4 sm:hidden z-50"> {/* Adjusted bottom value here */}
       <div className="bg-teal-800 rounded-full p-1 shadow-lg items-center">
         <ul className="flex justify-around items-center">
           {navItems.map((item) => (
