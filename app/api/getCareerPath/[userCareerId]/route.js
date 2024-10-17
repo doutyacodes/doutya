@@ -72,7 +72,7 @@ export async function GET(req, { params }) {
             const { type1, type2, country } = userCareer[0];
 
             const prompt = `
-            I want you to generate a detailed career path description for a specific profession based on the following information. Format the output as a JSON object with all values as strings for consistency, avoiding arrays or other data structures.
+            I want you to generate a detailed career path description for a specific profession based on the following information. Format the output as a JSON object with all values as strings for consistency, avoiding arrays or other data structures.Provide the data without mentioning the personality type "${type1}".
             
             Input:
             1. **Career Name**: ${career_name}
@@ -84,7 +84,7 @@ export async function GET(req, { params }) {
             
             {
               "career_name": "${career_name}",
-              "overview": "A brief summary of the profession and its relevance to the given personality type.",
+              "overview": "A brief summary of the profession and its relevance to the given personality type without mentioning the type "${type1}".",
               "step_by_step_career_path": {
                 "education": "Details of required education, including duration, degrees, and fields of study.",
                 "skill_development": "Key skills and certifications necessary for this career.",
