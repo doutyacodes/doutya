@@ -5,10 +5,9 @@ import GlobalApi from "@/app/_services/GlobalApi";
 // import { Toaster } from '@/components/ui/toaster';
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import toast, { LoaderIcon, Toaster } from "react-hot-toast";
 import 'react-circular-progressbar/dist/styles.css'; // Make sure to import the CSS
-
+import { useTranslations } from "next-intl";
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -17,19 +16,14 @@ function Page({ params }) {
   const [secondsRemaining, setSecondsRemaining] = useState(5);
   const [shuffledChoices, setShuffledChoices] = useState([]);
   const [questions, setQuestions] = useState([]);
-  const [timer, setTimer] = useState(0);
-  const [timerValue, setTimerValue] = useState(null)
-  const [challengeId, setChallengeId] = useState(null);
-  const [progressSubmitted, setProgressSubmitted] = useState(false);
-
-  // const [marks, setMarks] = useState(0)
-
+  const [progressLoading, setProgressLoading] = useState(false)
+  
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
   const subjectId = params.subjectId;
-  // const { testId } = router.query;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const t = useTranslations('QuizPage');
 
   useEffect(() => {
     const authCheck = () => {
@@ -57,6 +51,7 @@ function Page({ params }) {
         console.log(resp.data.questions);
         setQuestions(resp.data.questions);
 
+        setCurrentQuestionIndex(resp.data.quizProgress);
         if (resp.data.quizProgress > 0) {
           setShowAlert(true); // Set showAlert to true when resuming the quiz
         }
@@ -124,6 +119,7 @@ function Page({ params }) {
   };
 
   const quizProgressSubmit = async (data) => {
+    setProgressLoading(true);
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -143,6 +139,8 @@ function Page({ params }) {
       toast.error(
         "There was an error saving your progress. Please try again later."
       );
+    } finally {
+      setProgressLoading(false);
     }
   };
 
@@ -209,44 +207,58 @@ function Page({ params }) {
 
       {questions.length > 0 && (
         <div className="mt-4 pt-5 flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">
-          <div>
-            <p className="font">{currentQuestionIndex + 1}/{questions.length}</p>
-          </div>
-          
-          <div>
-            <p className="font-bold p-2 text-xl md:text-3xl">
-              {removeHtmlTags(questions[currentQuestionIndex].question)}
-            </p>
-          </div>
-          
-          <div className="flex flex-col gap-2 w-full text-white">
-            {shuffledChoices.map((choice, index) => (
-              <button
-                key={index}
-                className={`py-2 px-4 rounded-md hover:cursor-pointer
-                  hover:bg-purple-300 hover:text-black transition duration-300 ease-in-out ${
-                    selectedChoice?.id === choice.id
-                      ? "bg-green-500"
-                      : "bg-slate-400"
-                  }`}
-                onClick={() => handleChoiceSelect(choice)}
-              >
-                {removeHtmlTags(choice.text)}
-              </button>
-            ))}
-          </div>
+          {
+            progressLoading ? (
+              <div className="inset-0 flex items-center my-16 justify-center z-50">
+                <div className="flex items-center space-x-2">
+                  <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
+                  <span className="text-white">{t('loading')}</span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <p className="font">{currentQuestionIndex + 1}/{questions.length}</p>
+                </div>
+                
+                <div>
+                  <p className="font-bold p-2 text-xl md:text-3xl">
+                    {removeHtmlTags(questions[currentQuestionIndex].question)}
+                  </p>
+                </div>
+                
+                <div className="flex flex-col gap-2 w-full text-white">
+                  {shuffledChoices.map((choice, index) => (
+                    <button
+                      key={index}
+                      className={`py-2 px-4 rounded-md hover:cursor-pointer
+                        hover:bg-purple-300 hover:text-black transition duration-300 ease-in-out ${
+                          selectedChoice?.id === choice.id
+                            ? "bg-green-500"
+                            : "bg-slate-400"
+                        }`}
+                      onClick={() => handleChoiceSelect(choice)}
+                    >
+                      {removeHtmlTags(choice.text)}
+                    </button>
+                  ))}
+                </div>
+      
+                <div>
+                  <button
+                    className={`bg-green-600 py-2 px-5 rounded-lg text-white ${
+                      selectedChoice ? "" : "opacity-50 cursor-not-allowed"
+                    }`}
+                    onClick={handleNext}
+                    disabled={!selectedChoice || progressLoading}
+                  >
+                    Next
+                  </button>
+                </div>
+              </>
+            )
+          }
 
-          <div>
-            <button
-              className={`bg-green-600 py-2 px-5 rounded-lg text-white ${
-                selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-              }`}
-              onClick={handleNext}
-              disabled={!selectedChoice}
-            >
-              Next
-            </button>
-          </div>
         </div>
       )}
     </div>

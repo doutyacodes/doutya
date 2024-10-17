@@ -36,10 +36,24 @@ export async function GET(req, { params }) {
         console.log(`User age: ${age}, Effective age: ${effectiveAge}`);
 
         // Check if any subjects exist for the career group
+        // const careerSubjectsExist = await db
+        //     .select({ subjectId: CAREER_SUBJECTS.subject_id })
+        //     .from(CAREER_SUBJECTS)
+        //     .where(eq(CAREER_SUBJECTS.career_id, careerGrpId));
+        
         const careerSubjectsExist = await db
             .select({ subjectId: CAREER_SUBJECTS.subject_id })
             .from(CAREER_SUBJECTS)
-            .where(eq(CAREER_SUBJECTS.career_id, careerGrpId));
+            .innerJoin(SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id)) // Join with SUBJECTS table
+            .where(
+                and(
+                    eq(CAREER_SUBJECTS.career_id, careerGrpId), // Filter by career_id
+                    eq(SUBJECTS.min_age, age)                  // Filter by min_age
+                )
+            );
+
+        console.log("careerSubjectsExist", careerSubjectsExist );
+        
 
         if (!careerSubjectsExist.length) {
             console.log('No subjects found, generating subjects...');
@@ -82,8 +96,8 @@ export async function GET(req, { params }) {
             .where(
                 and(
                     eq(CAREER_SUBJECTS.career_id, careerGrpId),
-                    lte(SUBJECTS.min_age, effectiveAge),
-                    gte(SUBJECTS.max_age, effectiveAge)
+                    eq(SUBJECTS.min_age, effectiveAge)
+                    // gte(SUBJECTS.max_age, effectiveAge)
                 )
             );
 
