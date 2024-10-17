@@ -1,3 +1,4 @@
+"use client"
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -5,9 +6,6 @@ import { GoHomeFill,GoBriefcase } from "react-icons/go";
 import { FaBriefcase,FaNotesMedical } from "react-icons/fa";
 import { RxAvatar } from "react-icons/rx";
 import { IoMdAnalytics } from "react-icons/io";
-
-
-
 
 
 const MobileNavigation = () => {
