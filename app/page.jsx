@@ -192,13 +192,13 @@ const Page = () => {
       </video>
 
       <div className="lg:absolute max-md:hidden top-0 left-0 w-full h-full bg-black opacity-50 -z-10"></div>
-      <div className=" container z-50 h-full w-full max-lg:mt-16  lg:h-screen lg:flex items-center">
+      <div className=" container z-50 h-full w-full max-lg:mt-16  lg:h-screen lg:flex items-center max-md:pb-6">
         <div className="space-y-5 container mx-auto px-3">
-          <h1 className="lg:text-white lg:text-5xl text-3xl font-bold lg:leading-relaxed leading-normal lg:w-3/5 max-lg:text-center uppercase">
-          Your Future Awaits -
+          <h1 className="lg:text-white lg:text-5xl text-xl font-bold lg:leading-relaxed leading-normal lg:w-3/5 max-lg:text-center uppercase">
+          Your Future Awaits 
           </h1>
-         <p className="lg:text-white lg:text-5xl text-3xl font-bold lg:leading-relaxed leading-normal lg:w-2/5 max-lg:text-center uppercase"> Are You Ready to Discover It?</p>
-          <p className=" max-lg:text-center text-white font-medium lg:w-3/6">
+         <p className="lg:text-white lg:text-5xl text-xl font-bold lg:leading-relaxed leading-normal lg:w-2/5 max-lg:text-center uppercase"> Are You Ready to Discover It?</p>
+          <p className=" max-lg:text-center md:text-white text-black font-medium lg:w-3/6">
           Discover, navigate, and conquer your career options with Xortlist’s smart AI-driven insights.
           </p>
           <div className="flex max-lg:justify-center w-full">
@@ -211,12 +211,12 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className="bg-white shadow-xl outline outline-slate-100 p-3 rounded-t-3xl mt-5 space-y-5 pt-10 w-full">
-        <h1 className="text-center text-[#3e0075] lg:text-5xl text-3xl font-bold w-4/5 mx-auto ">
+      <div className="bg-white shadow-xl outline outline-slate-100 p-3 rounded-t-3xl mt-5 space-y-5 pt-5 md:pt-10 w-full">
+        <h1 className="text-center text-[#3e0075] lg:text-5xl text-2xl font-bold w-4/5 mx-auto ">
         Empowering Your Future with AI-Driven Career Guidance
         </h1>
         <div className="w-full flex justify-center items-center flex-col container mx-auto">
-          <div className="mt-14 flex flex-wrap gap-5 mx-auto  p-3 md:gap-7">
+          <div className="md:mt-14 mt-3 flex flex-wrap gap-5 mx-auto  p-3 md:gap-7">
             {revenueList?.length > 0 &&
               revenueList?.map((item) => {
                 return (
@@ -251,7 +251,7 @@ const Page = () => {
           </div>
           <div>
             {activeItem && (
-              <div className="w-full p-6 mt-10">
+              <div className="w-full p-6 md:mt-10 mt-5">
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   {/* On md and above: image on the left, other content on the right */}
                   <div className="md:w-1/2 w-full">
@@ -264,7 +264,7 @@ const Page = () => {
 
                   <div className="md:w-1/2 w-full md:space-y-10">
                     
-                    <p className="md:w-4/5 text-lg">
+                    <p className="md:w-4/5 text-lg text-justify">
                       {activeItem.description}
                     </p>
                   </div>

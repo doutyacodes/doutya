@@ -34,10 +34,10 @@ const Footer = () => {
   ];
 
   return (
-    <div className="w-full bg-[#261e33] p-6 text-white">
-      <div className="container mx-auto flex flex-col items-center space-y-5">
-        <Image src="/assets/images/logo-full.png" width={150} height={150} alt="Xortlist Logo" />
+    <div className="w-full bg-[#261e33] md:p-6 p-3 text-white flex md:items-center">
+      <div className="container md:mx-auto flex items-center space-y-5 justify-between md:justify-center md:gap-48 w-full">
         
+        <Image src="/assets/images/logo-full.png" width={150} height={150} alt="Xortlist Logo" className='max-md:w-24 ' />
        
 
         {/* <ul className="flex flex-wrap justify-center gap-4">
@@ -48,16 +48,17 @@ const Footer = () => {
             </li>
           ))}
         </ul> */}
+        <div className='flex md:flex-row flex-col justify-between md:justify-center md:gap-48'>
+          <p className="text-center text-xs w-full">
+            <span>AWHO, Whitefield - Hoskote Rd,</span><br />
+            <span>Whitefield, SV, Kannamangala,</span><br />
+            <span>Bengaluru, Karnataka 560067</span>
+          </p>
 
-<p className="text-center text-xs">
-  <span>AWHO, Whitefield - Hoskote Rd,</span><br />
-  <span>Whitefield, SV, Kannamangala,</span><br />
-  <span>Bengaluru, Karnataka 560067</span>
-</p>
-
-        <p className="text-center text-xs">
-          Copyright {new Date().getFullYear()} Xortlist Inc. All rights reserved.
-        </p>
+          <p className="text-center text-xs w-full">
+            Copyright {new Date().getFullYear()} Xortlist Inc. All rights reserved.
+          </p>
+        </div>
       </div>
     </div>
   );
