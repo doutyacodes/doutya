@@ -9,24 +9,17 @@ export const maxDuration = 60; // This function can run for a maximum of 5 secon
 export const dynamic = "force-dynamic";
 
 // Function to fetch subjects from OpenAI
-const fetchSubjectsFromOpenAI = async (careerName, country) => {
-  console.log("careerName, country", careerName, country);
+const fetchSubjectsFromOpenAI = async (careerName, country, age) => {
+  console.log("careerName, country", careerName, country, age);
+  const prompt = `For an individual aged ${age} pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
 
-  const prompt = `For someone pursuing a career in ${careerName}, identify the 5 most essential academic subjects that form a solid foundation for this career. Focus on the following age groups, and provide the key subjects relevant to each group based on the educational standards of ${country}. Ensure that the subjects are directly related to ${careerName} and not just general foundational subjects.
-
-1. Age Group 6-9
-2. Age Group 10-13
-3. Age Group 14-17
-
-Format the response as a JSON object where each age group is a key, and the value is an array of important subjects for that age group in ${country}. Only include subjects that can be effectively assessed through multiple-choice questions (MCQs). For example:
+Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where each age is a key, and the value is an array of important subjects. The format should be as follows:
 
 {
-  "6-9": ["Subject1", "Subject2", "Subject3", "Subject4", "Subject5"],
-  "10-13": ["Subject1", "Subject2", "Subject3", "Subject4", "Subject5"],
-  "14-17": ["Subject1", "Subject2", "Subject3", "Subject4", "Subject5"]
+  "subject-data": ["Subject1", "Subject2", "Subject3", ...]
 }
 
-Ensure each array includes only the most relevant subjects for the respective age group, considering the career's requirements and the educational standards of ${country}. Specifically, focus on subjects suitable for MCQs, such as those related to theoretical knowledge, history, or fundamental concepts, while excluding practical or subjective areas where MCQs may not be appropriate.`;
+Ensure each array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
 
   try {
     const response = await axios.post(
@@ -59,114 +52,124 @@ Ensure each array includes only the most relevant subjects for the respective ag
   }
 };
 
-const saveSubjectsToDatabase = async (careerId, subjectsByAge) => {
-  try {
-    const insertPromises = [];
-    const subjectIds = new Map();
-
-    for (const [ageGroup, subjects] of Object.entries(subjectsByAge)) {
-      const minAge = parseInt(ageGroup.split("-")[0]);
-      const maxAge = parseInt(ageGroup.split("-")[1]);
-      console.log("min:", minAge, "max:", maxAge);
-      const existingSubjects = await db
-        .select({
-          subject_name: SUBJECTS.subject_name,
-          subject_id: SUBJECTS.subject_id,
-        })
-        .from(SUBJECTS)
-        .where(
-          and(
-            inArray(SUBJECTS.subject_name, subjects),
-            eq(SUBJECTS.min_age, minAge),
-            eq(SUBJECTS.max_age, maxAge)
-          )
-        );
-
-      const existingSubjectNames = new Set(
-        existingSubjects.map((subject) => subject.subject_name)
-      );
-      const existingSubjectMap = new Map(
-        existingSubjects.map((subject) => [
-          subject.subject_name,
-          subject.subject_id,
-        ])
-      );
-      console.log("existingSubjectNames", existingSubjectNames);
-
-      // Filter out subjects that already exist
-      const newSubjects = subjects.filter(
-        (subject) => !existingSubjectNames.has(subject)
-      );
-      console.log("newSubjects", newSubjects);
-
-      // Insert new subjects
-      newSubjects.forEach((subject) => {
-        insertPromises.push(
-          db
-            .insert(SUBJECTS)
-            .values({ subject_name: subject, min_age: minAge, max_age: maxAge })
-            .execute()
-        );
-      });
-      console.log("InsertPRom");
-
-      // Await the insert promises
-      await Promise.all(insertPromises);
-
-      // Fetch IDs for all relevant subjects (existing + newly inserted)
-      const allSubjectNames = [...existingSubjectNames, ...newSubjects];
-
-      const ids = await db
-        .select({
-          subject_name: SUBJECTS.subject_name,
-          subject_id: SUBJECTS.subject_id,
-        })
-        .from(SUBJECTS)
-        .where(
-          and(
-            inArray(SUBJECTS.subject_name, allSubjectNames),
-            eq(SUBJECTS.min_age, minAge), // Filter by min_age
-            eq(SUBJECTS.max_age, maxAge) // Filter by max_age
-          )
-        )
-        .execute();
-
-      console.log("allSubjects");
-      ids.forEach((subject) => {
-        subjectIds.set(subject.subject_name, subject.subject_id);
-      });
-
-      const careerSubjectPromises = subjects.map((subject) => {
-        const subjectId = subjectIds.get(subject);
-        console.log(
-          `Inserting career_id: ${careerId}, subject_id: ${subjectId}`
-        );
-        return db
-          .insert(CAREER_SUBJECTS)
-          .values({
-            career_id: careerId,
-            subject_id: subjectId,
+const saveSubjectsToDatabase = async (careerId, subjectsByAge, age) => {
+    try {
+      const subjectIds = new Map();
+  
+      for (const [ageGroup, subjects] of Object.entries(subjectsByAge)) {
+        const minAge = age; 
+        const maxAge = age;
+  
+        // Ensure subjects is always an array
+        const subjectList = Array.isArray(subjects) ? subjects : [subjects];
+  
+        // Fetch existing subjects for the given age range
+        const existingSubjects = await db
+          .select({
+            subject_name: SUBJECTS.subject_name,
+            subject_id: SUBJECTS.subject_id,
           })
+          .from(SUBJECTS)
+          .where(
+            and(
+              inArray(SUBJECTS.subject_name, subjectList), // Ensure subjectList is an array
+              eq(SUBJECTS.min_age, minAge),
+              eq(SUBJECTS.max_age, maxAge)
+            )
+          );
+  
+        const existingSubjectNames = new Set(
+          existingSubjects.map((subject) => subject.subject_name)
+        );
+        const existingSubjectMap = new Map(
+          existingSubjects.map((subject) => [
+            subject.subject_name,
+            subject.subject_id,
+          ])
+        );
+  
+        // Filter out subjects that are already in the database
+        const newSubjects = subjectList.filter(
+          (subject) => !existingSubjectNames.has(subject)
+        );
+  
+        // Insert new subjects and await insertion
+        if (newSubjects.length > 0) {
+          await db
+            .insert(SUBJECTS)
+            .values(
+              newSubjects.map((subject) => ({
+                subject_name: subject,
+                min_age: minAge,
+                max_age: maxAge,
+              }))
+            )
+            .execute();
+        }
+  
+        // Fetch IDs for all subjects (both new and existing)
+        const allSubjectNames = [...existingSubjectNames, ...newSubjects];
+  
+        const ids = await db
+          .select({
+            subject_name: SUBJECTS.subject_name,
+            subject_id: SUBJECTS.subject_id,
+          })
+          .from(SUBJECTS)
+          .where(
+            and(
+              inArray(SUBJECTS.subject_name, allSubjectNames), // Ensure allSubjectNames is an array
+              eq(SUBJECTS.min_age, minAge),
+              eq(SUBJECTS.max_age, maxAge)
+            )
+          )
           .execute();
-      });
-      console.log("After CAreer Subject Pomise");
-      await Promise.all(careerSubjectPromises);
+  
+        ids.forEach((subject) => {
+          subjectIds.set(subject.subject_name, subject.subject_id);
+        });
+  
+        // Insert the relationships between career and subjects
+        const careerSubjectPromises = subjectList.map((subject) => {
+          const subjectId = subjectIds.get(subject);
+          return db
+            .insert(CAREER_SUBJECTS)
+            .values({
+              career_id: careerId,
+              subject_id: subjectId,
+            })
+            .execute();
+        });
+  
+        await Promise.all(careerSubjectPromises);
+      }
+  
+      console.log("Subjects and their relationships saved successfully.");
+    } catch (error) {
+      console.error("Error saving subjects to database:", error);
+      throw error;
     }
-
-    console.log("Subjects and their relationships saved successfully.");
-  } catch (error) {
-    console.error("Error saving subjects to database:", error);
-    throw error;
-  }
-};
+  };
+  
 
 // Main function to fetch and save subjects
-export const processCareerSubjects = async (careerName, careerId, country) => {
+export const processCareerSubjects = async (
+  careerName,
+  careerId,
+  country,
+  age
+) => {
   try {
-    const subjects = await fetchSubjectsFromOpenAI(careerName, country);
-    console.log("got subjexts");
+    const subjectsByAge = await fetchSubjectsFromOpenAI(
+      careerName,
+      country,
+      age
+    );
+    const subjects = subjectsByAge["subject-data"]; // Extract the array of subjects
 
-    await saveSubjectsToDatabase(careerId, subjects);
+    console.log("got subjects");
+
+    await saveSubjectsToDatabase(careerId, subjects, age); // Pass subjects array
   } catch (error) {
     console.error("Error processing career subjects:", error);
   }
