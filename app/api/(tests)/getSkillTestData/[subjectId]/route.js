@@ -1,7 +1,7 @@
 import { db } from '@/utils';
 import { SUBJECT_QUIZ, SUBJECT_QUIZ_OPTIONS, SUBJECT_USER_PROGRESS, SUBJECTS, TEST_ANSWERS, TEST_QUESTIONS, USER_DETAILS, USER_SUBJECT_COMPLETION } from '@/utils/schema';
 import { NextResponse } from 'next/server';
-import { and, eq, inArray } from 'drizzle-orm'; // Ensure these imports match your ORM version
+import { and, eq, inArray, sql } from 'drizzle-orm'; // Ensure these imports match your ORM version
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import axios from 'axios';
@@ -77,7 +77,7 @@ export async function GET(request, { params }) {
                                     )
                                 )
                                 .execute();
-                                
+
             // Proceed only if a progress exists and isStarted is true
             if (checkProgress.length > 0 && checkProgress[0].isStarted) { 
                 // Geting the total no of saved quiz from SUBJECT_USER_PROGRESS if isStarted is true
@@ -125,7 +125,7 @@ export async function GET(request, { params }) {
                 return acc;
             }, []);
 
-            return NextResponse.json({questions: formattedQuestions}, { status: 200 });
+            return NextResponse.json({quizProgress: totalAnswered, questions: formattedQuestions}, { status: 200 });
         }
         
         const prompt = `
