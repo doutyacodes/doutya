@@ -36,7 +36,7 @@ const page = () => {
             careers?.map((item) => {
               return (
                 <div
-                  className="pt-8 bg-[#303030] px-3 relative w-64 max-sm:w-full pb-3 rounded-md shadow hover:scale-105 transition-all ease-in-out duration-150 space-y-3 shadow-slate-800"
+                  className="pt-8 bg-[#303030] px-3 relative w-64 max-sm:w-full sm:w-80 pb-3 rounded-md shadow hover:scale-105 transition-all ease-in-out duration-150 space-y-3 shadow-slate-800"
                   key={item.id}
                 >
                   <p className="py-1 px-3 bg-blue-500 text-white font-semibold w-fit text-[10px] top-2 right-2 rounded-full absolute">
@@ -48,10 +48,7 @@ const page = () => {
                     </h4>
                   </div>
                   <div className=" text-xs text-gray-300">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Minima ad facilis placeat aliquam odit distinctio sapiente.
-                    Voluptates nesciunt soluta, facilis quam recusandae delectus
-                    ut ullam! Distinctio nihil veniam quo dolore!
+                  Traditional careers have stood the test of time and are more structured with established career paths. These are often linked to fields with consistent demand and clear educational requirements.
                   </div>
                   <div className="w-full flex justify-end items-end">
                     <button className="w-fit bg-[#7824f6]  rounded-full px-3 py-2 flex gap-2 items-center">
