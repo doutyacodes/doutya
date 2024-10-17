@@ -30,8 +30,6 @@ function Results() {
     }
     fetchResults();
   }, []);
-
-  console.log("setAlertMessage", alertMessage);
   
   const {
     description,
