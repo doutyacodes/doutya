@@ -377,9 +377,7 @@ export default function Results2() {
               <p className="text-white uppercase font-bold md:text-xl md:mb-2">
                 {singleCareer.career_name}
               </p>
-              <p className="text-white md:text-lg font-bold">
-                {t("match")} - {singleCareer.match}%
-              </p>
+              
             </div>
             {/* <button
               onClick={downloadResultsAsImage}
@@ -541,11 +539,7 @@ export default function Results2() {
                                   <h2 className="text-lg font-bold text-white mb-4 h-[80px] flex items-center justify-center flex-wrap text-center overflow-hidden">
                                     {career.career_name}
                                   </h2>
-                                  <div className="p-4 bg-[#0097b2] rounded-md mb-4">
-                                    <p className="text-center font-bold">
-                                      {t("match")} - {career.match} %
-                                    </p>
-                                  </div>
+                                  
                                 </div>
                               </div>
                               <div className="w-full flex justify-center items-center py-7">

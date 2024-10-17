@@ -136,7 +136,6 @@ export async function GET(req) {
   } Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
         career_name: A brief title of the career.
         type: trending, offbeat, traditional, futuristic, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
-        match: percentage of how compatible the user is with the particular career.
         
         Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data. Provide the response ${
     languageOptions[language] || "in English"
