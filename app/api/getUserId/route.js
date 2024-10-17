@@ -50,7 +50,14 @@ export async function GET(req) {
     .execute();
 
 
-  console.log(type_sequences)
+  // Check if type_sequences is an empty array
+  if (type_sequences.length === 0) {
+    return NextResponse.json(
+      { message: 'You need to complete the Personality test to view the results.' },
+      { status: 202 }
+    );
+  }
+
   const type = type_sequences[0].typeSequence
   console.log(type)
 
@@ -111,5 +118,5 @@ export async function GET(req) {
   }));
 
 
-  return NextResponse.json(updatedResults);
+  return NextResponse.json(updatedResults, { status: 200 });
 }

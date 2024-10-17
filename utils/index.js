@@ -12,7 +12,7 @@ import mysql from "mysql2/promise";
 // const connection = await mysql.createConnection({
 //   host: "localhost",
 //   user: "root",
-//   database: "doutya",
+//   database: "doutya3",
 //   password:'',
 //   port:'3306'
 // });

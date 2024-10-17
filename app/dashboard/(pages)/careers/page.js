@@ -41,7 +41,7 @@ function Page() {
     { key: "careerPath", label: "Career Path" },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
-    { key: "career overview",label:"Career Overview"},
+    { key: "careerOverview",label:"Career Overview"},
   ];
 
   useEffect(() => {
@@ -268,7 +268,7 @@ function Page() {
             {activeTab === "challenges" && (
               <Challenge selectedCareer={selectedCareer} />
             )}
-            {activeTab === "career overview" && (
+            {activeTab === "careerOverview" && (
               <About selectedCareer={selectedCareer} />
             )}
           </div>

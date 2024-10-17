@@ -39,6 +39,7 @@
     "usernameExists": "Username already exists",
     "phoneExists": "Phone number already exists",
     "mobileMinLength":"Phone number should be 10 digits",
+    "passwordRequired": "Password cannot be empty",
     "passwordMinLength": "Password should be at least 6 characters long",
     "passwordPattern": "Password must contain at least one special character (!@#$%^&*)",
     "education": "Highest Education",
@@ -149,6 +150,7 @@
     "feedback": "Feedback",
     "challenges": "Challenges",
     "community": "Community",
+    "careerOverview": "Career Overview",
     "careerAdding": "Career is being added. Please wait...",
     "age":"Age"
   },
@@ -168,6 +170,7 @@
     "PDFdownload": "Download PDF",
     "selectCareer": "Select this career",
     "saveResults": "Save Results",
+    "alreadyMoved": "Result Already Moved",
     "careerSuggestion": "Career Suggestions",
     "writeFeedback": "Write your feedback(optional).",
     "selectIndustry":"Select an Industry",

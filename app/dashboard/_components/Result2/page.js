@@ -203,7 +203,7 @@ export default function Results2() {
     }
   };
 
-  const handleSaveResult = async (careerIndex) => {
+  const handleSaveResult = async (careerIndex, careerName) => {
     setSaveResultLoading(true);
     const selectedCareerObjects = [resultData[careerIndex]];
     const payload = { results: selectedCareerObjects };
@@ -227,6 +227,7 @@ export default function Results2() {
       }
     } finally {
       setSaveResultLoading(false);
+      fetchCareer(careerName)
     }
   };
 
@@ -339,7 +340,7 @@ export default function Results2() {
   return (
     <div className="max-sm:pb-5">
       <Toaster position="top-center" reverseOrder={false} />
-      {step === 1 && industries && (
+      {step === 1 && industries.length>0 && (
         <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center">
             {t("selectIndustry")}
@@ -407,7 +408,7 @@ export default function Results2() {
       )}
 
       <div className="flex flex-col text-white gap-5 w-full">
-        {step === 1 && industries && (
+        {step === 1 && industries.length>0 && (
           <div className="p-6 rounded-lg text-white mt-6 w-full max-sm:pb-24">
             <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-4xl mx-auto">
               {showAlert && (
@@ -656,14 +657,14 @@ export default function Results2() {
                     <div className="flex justify-center items-center">
                       <button
                         className={`text-white font-bold text-center md:py-4 md:px-7 py-2 px-4 max-md:text-sm uppercase rounded-lg bg-green-600 mb-4 ${
-                          saveResultloading
+                          saveResultloading || singleCareer?.isCareerMoved
                             ? "opacity-50 cursor-not-allowed"
                             : ""
                         }`}
                         onClick={() => {
-                          handleSaveResult(careerIndex);
+                          handleSaveResult(careerIndex, singleCareer.career_name);
                         }}
-                        disabled={saveResultloading}
+                        disabled={saveResultloading || singleCareer?.isCareerMoved} // Disable when already moved
                       >
                         {saveResultloading ? (
                           <div className="flex items-center">
@@ -671,9 +672,10 @@ export default function Results2() {
                             {t("saving")}
                           </div>
                         ) : (
-                          <p>{t("moveCareer")}</p>
+                          <p>{singleCareer?.isCareerMoved ? t("alreadyMoved") : t("moveCareer")}</p> // Change text based on isCareerMoved
                         )}
                       </button>
+
                     </div>
                   </div>
                 </>

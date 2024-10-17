@@ -4,6 +4,8 @@ import {
   USER_RESULT_CAREER,
   QUIZ_SEQUENCES,
   USER_DETAILS,
+  USER_CAREER,
+  CAREER_GROUP,
 } from "@/utils/schema";
 import { eq, and } from "drizzle-orm";
 import { db } from "@/utils";
@@ -76,10 +78,28 @@ export async function GET(req) {
     //   console.log("Existing career result:", existingCareer); // Log the result from the query
 
     if (existingCareer.length > 0) {
-      // console.log("Returning existing career result");
+      
+        const userCareers = await db
+        .select({
+          career_name: CAREER_GROUP.career_name,
+        })
+        .from(USER_CAREER)
+        .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id))
+        .where(eq(USER_CAREER.user_id, userId))
+        .execute();
+        const userCareerNames = userCareers.map(career => career.career_name);
+
+
+        const parsedResult =  JSON.parse(existingCareer[0].description)
+
+        const updatedResults = parsedResult.map(career => ({
+          ...career,
+          isCareerMoved: userCareerNames.includes(career.career_name), // Add isCareerMoved field
+        }));
+
       return NextResponse.json(
         {
-          result: JSON.parse(existingCareer[0].description),
+          result: updatedResults,
           isFirstTimeStoring: false,
         },
         { status: 200 }
