@@ -137,15 +137,15 @@ const Press = () => {
   return (
     <main className="relative w-full ">
       <div className="min-h-screen bg-white py-2">
-      <Header dark />
-      <div className="container mx-auto px-3">
-          <h2 className="text-[#3e0075] text-center mt-28 text-6xl max-md:text-4xl font-bold">
+      <Header  />
+      <div className="container mx-auto px-3 max-md:flex max-md:flex-col gap-7">
+          <div className="text-[#3e0075] text-center md:mt-28 mt-10 text-6xl max-md:text-4xl font-bold">
             NEWSROOM
-          </h2>
-          <p className="text-[#3e0075] text-center mt-10 text-sm font-medium">
+          </div>
+          <p className="text-[#3e0075] text-center md:mt-10 text-sm font-medium">
             The latest news on Xortlist
           </p>
-          <div className="mt-10 flex justify-center items-center gap-5 flex-wrap">
+          <div className="md:mt-10 flex justify-center items-center gap-5 flex-wrap">
             <div className="p-4 bg-[#f2f2f2] min-w-72 rounded-md flex items-center justify-between">
               <h4 className="uppercase font-semibold text-[#8058e7]">
                 Contact
@@ -186,7 +186,7 @@ const Press = () => {
               </a>
             </div>
           </div>
-          <div className="mt-10 flex max-md:flex-col ">
+          <div className="md:mt-10 mt-3 flex max-md:flex-col ">
             <div className="w-full bg-[#3e0075] p-3 max-md:first:rounded-t-md md:rounded-l-md space-y-4">
               <h6 className="text-yellow-400 uppercase text-lg font-bold">
                 Latest Story
@@ -203,45 +203,45 @@ const Press = () => {
               height={500}
             />
           </div>
-          <div className="flex justify-center items-center gap-5 flex-wrap mt-10">
+          <div className="flex justify-center items-center md:gap-5 gap-3 flex-wrap md:mt-10">
             <div
               onClick={() => handleCategoryClick("All")}
-              className={`p-4 rounded-full cursor-pointer ${
+              className={`md:p-4 p-2 rounded-full cursor-pointer ${
                 selectedCategory === "All"
                   ? "bg-[#8058e7] text-white"
                   : "bg-[#f2f2f2] text-[#8058e7]"
               }`}
             >
-              <p className="uppercase font-medium text-center text-sm">All</p>
+              <p className="uppercase font-medium text-center text-xs">All</p>
             </div>
             <div
               onClick={() => handleCategoryClick("Company News")}
-              className={`p-4 rounded-full cursor-pointer ${
+              className={`md:p-4 p-2 rounded-full cursor-pointer ${
                 selectedCategory === "Company News"
                   ? "bg-[#8058e7] text-white"
                   : "bg-[#f2f2f2] text-[#8058e7]"
               }`}
             >
-              <p className="uppercase font-medium text-center text-sm">
+              <p className="uppercase font-medium text-center text-xs">
                 Company News
               </p>
             </div>
             <div
               onClick={() => handleCategoryClick("Product News")}
-              className={`p-4 rounded-full cursor-pointer ${
+              className={`md:p-4 p-2 rounded-full cursor-pointer ${
                 selectedCategory === "Product News"
                   ? "bg-[#8058e7] text-white"
                   : "bg-[#f2f2f2] text-[#8058e7]"
               }`}
             >
-              <p className="uppercase font-medium text-center text-sm">
+              <p className="uppercase font-medium text-center text-xs">
                 Product News
               </p>
             </div>
           </div>
 
           {/* News Grid */}
-          <div className="grid grid-cols-1  md:grid-cols-3  gap-6 mt-10">
+          <div className="grid grid-cols-1  md:grid-cols-3  gap-6 md:mt-10 md:mb-10 mb-5">
             {renderNewsGrid()}
           </div>
         </div>

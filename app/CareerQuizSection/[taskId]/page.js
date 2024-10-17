@@ -314,7 +314,7 @@ function Page({ params }) {
               </>
             ) : (
               <div className="inset-0 flex items-center my-16 justify-center z-50 min-h-72 w-full max-sm:min-w-[90vw] sm:min-h-[20rem] sm:min-w-[600px] lg:min-w-[1000px] ">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 ">
                   <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
                   <span className="text-white">{t("loading")}</span>
                 </div>
