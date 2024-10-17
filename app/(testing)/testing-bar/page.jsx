@@ -36,7 +36,7 @@ const page = () => {
             careers?.map((item) => {
               return (
                 <div
-                  className="pt-8 bg-[#303030] px-3 relative w-64 pb-3 rounded-md shadow hover:scale-105 transition-all ease-in-out duration-150 space-y-3 shadow-slate-800"
+                  className="pt-8 bg-[#303030] px-3 relative w-64 max-sm:w-full pb-3 rounded-md shadow hover:scale-105 transition-all ease-in-out duration-150 space-y-3 shadow-slate-800"
                   key={item.id}
                 >
                   <p className="py-1 px-3 bg-blue-500 text-white font-semibold w-fit text-[10px] top-2 right-2 rounded-full absolute">
