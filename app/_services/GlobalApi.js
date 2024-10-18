@@ -523,6 +523,15 @@ const GetSkillTestResult = (token,id) => {
   });
 };
 
+const GetUserCommunity = (token) => {
+
+  return axios.get(`/api/getUserCommunity`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -584,5 +593,6 @@ export default {
   GetSkillTestsData,
   SkillTestProgress,
   UpdateSkillTestData,
-  GetSkillTestResult
+  GetSkillTestResult,
+  GetUserCommunity
 }

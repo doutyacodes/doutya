@@ -562,3 +562,24 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         completed: mysqlEnum('completed', ['yes', 'no']).notNull(),
         created_at: timestamp('created_at').defaultNow(),
     });
+
+    export const COMMUNITY = mysqlTable('community', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        career: varchar('career', { length: 255 }).notNull(),
+        global: mysqlEnum('global', ['yes', 'no']).notNull().default('no'),
+        student: mysqlEnum('student', ['no', 'yes']).notNull().default('no'),
+        country: varchar('country', { length: 100 }).default(null),
+        created_at: timestamp('created_at').defaultNow(),
+        updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
+    });
+
+    export const USER_COMMUNITY = mysqlTable('user_community', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id, { onDelete: 'cascade' }),
+        community_id: int('community_id').notNull().references(() => COMMUNITY.id, { onDelete: 'cascade' }),
+        country: varchar('country', { length: 100 }).default(null),
+        created_at: timestamp('created_at').defaultNow(),
+        updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
+    }, (table) => ({
+        userCommunityUnique: table.unique(['user_id', 'community_id'])
+    }));
