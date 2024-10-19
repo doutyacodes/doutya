@@ -677,7 +677,6 @@
 // export default SignUp;
 
 
-
 "use client";
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -718,6 +717,7 @@ function SignUp() {
   const [selectedCountry, setSelectedCountry] = useState("India");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [educationLevel, setEducationLevel] = useState(0);
+  const [reason, setReason] = useState(0);
   const [dobError, setDobError] = useState("");
   const [ageCategory, setAgeCategory] = useState(""); // New state for age category
 
@@ -737,6 +737,11 @@ function SignUp() {
     0: "School",
     1: "College",
     2: "Completed Education",
+  };
+
+  const reasonMapping = {
+    0: "New Job",
+    1: "Career Change",
   };
 
   useEffect(() => {
@@ -790,11 +795,20 @@ function SignUp() {
     } else if (step === "dob") {
       setStep("education_level");
     } else if (step === "education_level") {
+      if (educationLevel == 2) {
+        setStep("reason");
+      } else {
+        setStep("signup");
+      }
+    } else if (step === "reason") {
+      setStep("additional_info");
+    } else if (step === "additional_info") {
       setStep("signup");
     }
   };
 
   const onSubmit = async (data) => {
+    
     if (!data.gender) {
       setError("gender", {
         type: "manual",
@@ -1013,6 +1027,111 @@ function SignUp() {
           >
             Next
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "reason") {
+    return (
+      <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
+        <Toaster />
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+          <h1 className="text-xl font-bold mb-4 text-center">
+            Why are you here?
+          </h1>
+          <div className="mb-4">
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="1"
+              value={reason}
+              onChange={(e) => setReason(parseInt(e.target.value))}
+              className="w-full mt-2"
+            />
+            <div className="flex justify-between mt-2 gap-1">
+              <span
+                className={
+                  reason == 0
+                    ? "font-bold text-wrap w-1/2 text-left"
+                    : " text-wrap w-1/2 text-left"
+                }
+              >
+                New Job
+              </span>
+              <span
+                className={
+                  reason == 1
+                    ? "font-bold text-wrap w-1/2 text-end"
+                    : " text-wrap w-1/2 text-end"
+                }
+              >
+                Career Change
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={handleNext}
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "additional_info") {
+    return (
+      <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
+        <Toaster />
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+          <h1 className="text-xl font-bold mb-4 text-center">
+            Additional Information
+          </h1>
+          <form>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Education Qualification</label>
+              <input
+                {...register("educationQualification", { required: true })}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">University</label>
+              <input
+                {...register("university", { required: true })}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+            {reason === 1 && (
+              <>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">Experience (Years)</label>
+                  <input
+                    type="number"
+                    {...register("experience", { required: true, min: 0 })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">Current Job</label>
+                  <input
+                    {...register("currentJob", { required: true })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                </div>
+              </>
+            )}
+            <button
+              type="submit"
+              onClick={handleNext}
+              className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+            >
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     );

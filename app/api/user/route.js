@@ -43,7 +43,11 @@ export async function POST(req) {
       monthOfPassing: data?.monthOfPassing,
       country: data?.country,
       language:data?.language,
-      education_level:data?.educationLevel
+      education_level:data?.educationLevel,
+      education_qualification: data?.educationQualification,
+      experience: data?.experience,
+      current_job: data?.currentJob,
+
     });
 
     if (!result) {
