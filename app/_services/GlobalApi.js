@@ -572,6 +572,16 @@ const AddPostLike = (token, data) => {
   });
 };
 
+const AddPostComment = (token, data) => {
+
+  return axios.post('/api/addPostComment', data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+
 
 
 export default {
@@ -641,5 +651,6 @@ export default {
   /* Community */
   AddPostToCommunity,
   GetCommunityPosts,
-  AddPostLike
+  AddPostLike,
+  AddPostComment
 }

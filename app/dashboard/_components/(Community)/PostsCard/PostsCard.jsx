@@ -2,11 +2,41 @@ import React, { useState } from 'react'
 import { Heart, MessageCircle, User } from 'lucide-react';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast from 'react-hot-toast';
+import { comment } from 'postcss';
 
 const PostsCard = ({ post }) => {
     const [liked, setLiked] = useState(false);
     const [commentOpen, setCommentOpen] = useState(false);
+    const [commentContent, setCommentContent] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    
+    const handleAddComment = async()=>{
+        setIsLoading(true);
+        const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        try {
+        
+        const data = {
+            postId: post.id,
+            comment: commentContent
+        }    
+          const resp = await GlobalApi.AddPostComment(token, data);
+    
+          if (resp && resp.status === 201) {
+            toast.success("Comment Added");
+          } else {
+            // toast.error('Failed to create Comment.');
+            toast.error("Failed to add Comment");
+          }
+        } catch (error) {
+          console.error("Error:", error.message);
+          toast.error("Failed to submit");
+        } finally {
+          setIsLoading(false);
+        }
+      
+}
 
     const handleLikeClick = async()=>{
             setLiked(!liked)
@@ -101,10 +131,12 @@ const PostsCard = ({ post }) => {
                     <input 
                         type="text" 
                         placeholder="Add a comment..." 
+                        onChange={(e) => setCommentContent(e.target.value)}
                         className="flex-grow p-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button 
                         type="submit" 
+                        onClick={(e)=>handleAddComment(e)}
                         className="bg-blue-500 text-white px-4 rounded-r-lg hover:bg-blue-600 transition"
                     >
                         Post
