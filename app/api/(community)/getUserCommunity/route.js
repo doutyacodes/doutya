@@ -26,6 +26,7 @@ export async function GET(req) {
         userDescription: USER_CAREER.user_description,
         createdAt: USER_CAREER.created_at,
         country: USER_CAREER.country,
+        careerId:USER_CAREER.career_group_id
       })
       .from(USER_CAREER)
       .leftJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id))

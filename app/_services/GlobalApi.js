@@ -532,6 +532,23 @@ const GetUserCommunity = (token) => {
   });
 };
 
+const GetAllCareerCommunity = (careerId, token) => {
+  const payload = {
+    careerId,
+  };
+  return axios.post(
+    `/api/getAllCareerCommunity`, 
+    payload, // Pass careerId in the request body
+    {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add token in headers
+      },
+    }
+  );
+};
+
+
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -594,5 +611,6 @@ export default {
   SkillTestProgress,
   UpdateSkillTestData,
   GetSkillTestResult,
-  GetUserCommunity
+  GetUserCommunity,
+  GetAllCareerCommunity
 }
