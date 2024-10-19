@@ -1,4 +1,4 @@
-import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, primaryKey, text, time, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, primaryKey, text, time, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
 
 export const USER_DETAILS= mysqlTable('user_details',{
     id:int('id').autoincrement().notNull().primaryKey(),
@@ -581,5 +581,32 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         created_at: timestamp('created_at').defaultNow(),
         updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
     }, (table) => ({
-        userCommunityUnique: table.unique(['user_id', 'community_id'])
+        // Define the unique constraint outside the main column definition
+        userCommunityUnique: uniqueIndex('user_community_unique_idx', ['user_id', 'community_id'])
     }));
+    
+    export const COMMUNITY_POST = mysqlTable('community_post', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id, { onDelete: 'cascade' }),
+        community_id: int('community_id').notNull().references(() => COMMUNITY.id, { onDelete: 'cascade' }),
+        file_url: varchar('file_url', { length: 255 }).default(null), // New field to store file path or filename
+        caption: text('caption').notNull(),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+
+    export const COMMUNITY_POST_LIKES = mysqlTable('community_post_likes', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        post_id: int('post_id').notNull().references(() => COMMUNITY_POST.id, { onDelete: 'cascade' }),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id, { onDelete: 'cascade' }),
+        created_at: timestamp('created_at').defaultNow(),
+    }, (table) => ({
+        uniqueLike: uniqueIndex('unique_like_idx', ['post_id', 'user_id']) // Prevent duplicate likes by a user
+    }));
+
+    export const COMMUNITY_COMMENTS = mysqlTable('community_post_comments', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        post_id: int('post_id').notNull().references(() => COMMUNITY_POST.id, { onDelete: 'cascade' }),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id, { onDelete: 'cascade' }),
+        comment: text('comment').notNull(),
+        created_at: timestamp('created_at').defaultNow(),
+    });
