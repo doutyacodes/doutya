@@ -4,16 +4,8 @@ import mysql from "mysql2/promise";
 // const connection = await mysql.createConnection({
 //   host: "localhost",
 //   user: "root",
-//   database: "project1",
-//   password:'',
-//   port:'3306'
-// });
-
-// const connection = await mysql.createConnection({
-//   host: "localhost",
-//   user: "root",
-//   database: "doutya3",
-//   password:'',
+//   database: "doutya",
+//   password:'jinoJINO',
 //   port:'3306'
 // });
 

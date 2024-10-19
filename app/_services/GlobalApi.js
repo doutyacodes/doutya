@@ -418,6 +418,7 @@ const submitChallenge = (formData, token) => {
     }
   });
 };
+
 const getChallengesByStatus = (status, id, token) => {
   return axios.get(`/api/getChallengesStatus`, {
     headers: {
@@ -532,6 +533,47 @@ const GetUserCommunity = (token) => {
   });
 };
 
+
+/* Community */
+
+const AddPostToCommunity = (token, payload) => {
+  return axios.post(`/api/addPostToCommunity`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
+    },
+  });
+}
+
+// const submitChallenge = (formData, token) => {
+//   return axios.post(`/api/submitChallenge`, formData, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       'Content-Type': 'multipart/form-data',
+//     }
+//   });
+// };
+
+const GetCommunityPosts = (token, id) => {
+
+  return axios.get(`/api/getCommunityPosts/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const AddPostLike = (token, data) => {
+
+  return axios.post('/api/addPostLike', data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -594,5 +636,10 @@ export default {
   SkillTestProgress,
   UpdateSkillTestData,
   GetSkillTestResult,
-  GetUserCommunity
+  GetUserCommunity,
+
+  /* Community */
+  AddPostToCommunity,
+  GetCommunityPosts,
+  AddPostLike
 }
