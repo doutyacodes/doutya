@@ -1,18 +1,19 @@
-const { default: axios } = require('axios')
+const { default: axios } = require("axios");
 
 // Set a global timeout of 35 seconds (35000 milliseconds)
 // axios.defaults.timeout = 35000; // 35 seconds
 
-const CreateNewUser = (data) => axios.post('/api/user', data)
-const LoginUser = (data) => axios.post('/api/login', data);
-const GetUser = (token) => axios.get('/api/getUser', {
-  headers: {
-    'Authorization': `Bearer ${token}`
-  }
-});
+const CreateNewUser = (data) => axios.post("/api/user", data);
+const LoginUser = (data) => axios.post("/api/login", data);
+const GetUser = (token) =>
+  axios.get("/api/getUser", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
 const GetUserData = (token) => {
-  return axios.get('/api/getUserData', {
+  return axios.get("/api/getUserData", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -20,8 +21,7 @@ const GetUserData = (token) => {
 };
 
 const UpdateUser = (data, token) => {
-
-  return axios.put('/api/updateUser', data, {
+  return axios.put("/api/updateUser", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -29,7 +29,6 @@ const UpdateUser = (data, token) => {
 };
 
 const GetQuizData = (id, token) => {
-
   return axios.get(`/api/getQuizData/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -37,7 +36,6 @@ const GetQuizData = (id, token) => {
   });
 };
 const GetQuizDataKids = (id, token) => {
-
   return axios.get(`/api/getQuizDataKids/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -58,16 +56,18 @@ const SaveQuizProgress = (data, token, quizId) => {
 };
 
 const SaveQuizResult = (token) => {
-
-  return axios.post('/api/quizResult', {}, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return axios.post(
+    "/api/quizResult",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
 const GetCareerQuiz = (id, token) => {
-
   return axios.get(`/api/getPersonalityData/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -75,7 +75,6 @@ const GetCareerQuiz = (id, token) => {
   });
 };
 const GetCareerQuizKids = (id, token) => {
-
   return axios.get(`/api/getPersonalityDataKids/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -97,27 +96,31 @@ const SaveCarrierQuizProgress = (data, token, quizId) => {
 };
 
 const SaveCareerQuizResult = (token) => {
-
-  return axios.post(`/api/CareerQuizResult`, {}, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return axios.post(
+    `/api/CareerQuizResult`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
-const InterestResult = (data) => axios.post('/api/resultTwo', data, {
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
+const InterestResult = (data) =>
+  axios.post("/api/resultTwo", data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-const GetUserId = (token, language) => axios.get('/api/getUserId', {
-  headers: {
-    Authorization: `Bearer ${token}`,
-    'Accept-Language': language
-  }
-});
-
+const GetUserId = (token, language) =>
+  axios.get("/api/getUserId", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Accept-Language": language,
+    },
+  });
 
 const GetDashboarCheck = (token) => {
   return axios.get(`/api/getDashboardCheckData`, {
@@ -127,48 +130,49 @@ const GetDashboarCheck = (token) => {
   });
 };
 
-const GetResult2 = (token, industryParam, language) => axios.get('/api/getresult2', {
-  headers: {
-    Authorization: `Bearer ${token}`,
-    'Accept-Language': language
-  },
-  params: {
-    industry: industryParam
-  }
-});
-const getResult2Career = (token, career_name, language) => axios.get('/api/getResult2Career', {
-  headers: {
-    Authorization: `Bearer ${token}`,
-    'Accept-Language': language
-  },
-  params: {
-    career_name: career_name
-  }
-});
+const GetResult2 = (token, industryParam, language) =>
+  axios.get("/api/getresult2", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Accept-Language": language,
+    },
+    params: {
+      industry: industryParam,
+    },
+  });
+const getResult2Career = (token, career_name, language) =>
+  axios.get("/api/getResult2Career", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Accept-Language": language,
+    },
+    params: {
+      career_name: career_name,
+    },
+  });
 
 const GetIndustry = (token, language) => {
-
   return axios.get(`/api/getIndustry`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Accept-Language': language,
-    }
+      "Accept-Language": language,
+    },
   });
 };
 
+const SubmitFeedback = (token, data) =>
+  axios.post("/api/feedback", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-
-const SubmitFeedback = (token, data) => axios.post('/api/feedback', data, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
-
-const CheckFeedback = (token) => axios.get('/api/feedback', {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  }
-});
+const CheckFeedback = (token) =>
+  axios.get("/api/feedback", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
 const SaveCarrerData = (token, data) => {
   return axios.post(`/api/saveCareers`, data, {
@@ -187,17 +191,15 @@ const GetCarrerData = (token) => {
 };
 
 const GetRoadMapData = (userCareerId, token, language) => {
-
   return axios.get(`/api/getRoadmapData/${userCareerId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Accept-Language': language
+      "Accept-Language": language,
     },
   });
 };
 
 const GetStrengthsQuiz = (id, token) => {
-
   return axios.get(`/api/getStrengthsQuizData/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -219,24 +221,28 @@ const SaveStrengthQuizProgress = (data, token, quizId) => {
 };
 
 const SaveStrengthQuizResult = (token) => {
+  return axios.post(
+    `/api/StrengthQuizResult`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
 
-  return axios.post(`/api/StrengthQuizResult`, {}, {
+const GetUserAge = (token) =>
+  axios.get("/api/getUserAge", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-};
-
-const GetUserAge = (token) => axios.get('/api/getUserAge', {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  }
-});
 
 const SaveInterestedCareer = (token, careerName, country) => {
   const payload = {
     career: careerName,
-    country: country
+    country: country,
   };
 
   return axios.post(`/api/saveInterestedCareers`, payload, {
@@ -247,7 +253,6 @@ const SaveInterestedCareer = (token, careerName, country) => {
 };
 
 const GetContests = (token) => {
-
   return axios.get(`/api/getContests/`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -256,7 +261,6 @@ const GetContests = (token) => {
 };
 
 const GetContestData = (id, token) => {
-
   return axios.get(`/api/getContestData/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -290,7 +294,6 @@ const UpdateContestData = (token, taskId) => {
 };
 
 const GetContestResultData = (token) => {
-
   return axios.get(`/api/getContestResultData/`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -299,7 +302,6 @@ const GetContestResultData = (token) => {
 };
 
 const GetTests = (id, token) => {
-
   return axios.get(`/api/getTests/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -308,7 +310,6 @@ const GetTests = (id, token) => {
 };
 
 const GetSubjects = (id, token) => {
-
   return axios.get(`/api/getSubject/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -317,7 +318,6 @@ const GetSubjects = (id, token) => {
 };
 
 const GetTestsData = (id, token) => {
-
   return axios.get(`/api/getTestData/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -326,14 +326,12 @@ const GetTestsData = (id, token) => {
 };
 
 const GetSkillTestsData = (subjectName, token) => {
-
   return axios.get(`/api/getSkillTestData/${subjectName}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
-
 
 const SaveTestProgress = (data, token) => {
   const payload = {
@@ -360,7 +358,6 @@ const UpdateTestData = (token, testId) => {
 };
 
 const GetTestResultData = (token) => {
-
   return axios.get(`/api/getTestResultData/`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -368,9 +365,7 @@ const GetTestResultData = (token) => {
   });
 };
 
-
 const GetLeaderboardData = (id, token) => {
-
   return axios.get(`/api/getLeaderboardData/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -379,7 +374,6 @@ const GetLeaderboardData = (id, token) => {
 };
 
 const getActivities = (id, token) => {
-
   return axios.get(`/api/getActivity/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -401,11 +395,10 @@ const updateActivityStatus = (token, activityId, status) => {
 };
 
 const getChallenges = (id, token, language) => {
-
   return axios.get(`/api/getChallenge/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Accept-Language': language
+      "Accept-Language": language,
     },
   });
 };
@@ -414,8 +407,8 @@ const submitChallenge = (formData, token) => {
   return axios.post(`/api/submitChallenge`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data',
-    }
+      "Content-Type": "multipart/form-data",
+    },
   });
 };
 
@@ -426,26 +419,25 @@ const getChallengesByStatus = (status, id, token) => {
     },
     params: {
       status,
-      id
+      id,
     },
   });
 };
 const getLastSubmittedChallenge = (id, token) => {
-  console.log("id", id)
-  console.log("token", token)
+  console.log("id", id);
+  console.log("token", token);
   return axios.get(`/api/getLastSubmittedChallenge`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
     params: {
-      id: id
-    }
+      id: id,
+    },
   });
 };
 
 const UpdateMileStoneStatus = (data, token) => {
-
-  return axios.put('/api/updateMileStoneStatus', data, {
+  return axios.put("/api/updateMileStoneStatus", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -453,40 +445,38 @@ const UpdateMileStoneStatus = (data, token) => {
 };
 
 const GetFeedBackData = (id, token, language) => {
-
   return axios.get(`/api/getFeedBackData/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Accept-Language': language
+      "Accept-Language": language,
     },
   });
 };
 const setCountries = (data, token) => {
-
-  return axios.put('/api/setCountry', data, {
+  return axios.put("/api/setCountry", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
 
-const GetKidsResult = (token, language) => axios.get('/api/getKidsResult', {
-  headers: {
-    Authorization: `Bearer ${token}`,
-    'Accept-Language': language
-  }
-});
+const GetKidsResult = (token, language) =>
+  axios.get("/api/getKidsResult", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Accept-Language": language,
+    },
+  });
 
 const getCareerName = (id) => {
   return axios.get(`/api/getCareerName/${id}`);
 };
 
-const GetCareerPath = (id, token,language) => {
-
+const GetCareerPath = (id, token, language) => {
   return axios.get(`/api/getCareerPath/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Accept-Language': language
+      "Accept-Language": language,
     },
   });
 };
@@ -496,7 +486,8 @@ const SkillTestProgress = (data, token) => {
     results: data,
   };
 
-  return axios.post(`/api/skillTestProgress`, payload, { /* saveTestProgress */
+  return axios.post(`/api/skillTestProgress`, payload, {
+    /* saveTestProgress */
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -515,8 +506,7 @@ const UpdateSkillTestData = (token, subjectId) => {
   });
 };
 
-const GetSkillTestResult = (token,id) => {
-
+const GetSkillTestResult = (token, id) => {
   return axios.get(`/api/getskillTestResult/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -525,7 +515,6 @@ const GetSkillTestResult = (token,id) => {
 };
 
 const GetUserCommunity = (token) => {
-
   return axios.get(`/api/getUserCommunity`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -533,29 +522,32 @@ const GetUserCommunity = (token) => {
   });
 };
 
-
+const GetAllCareerCommunity = (careerId, token) => {
+  const payload = {
+    careerId,
+  };
+  return axios.post(
+    `/api/getAllCareerCommunity`,
+    payload, // Pass careerId in the request body
+    {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add token in headers
+      },
+    }
+  );
+};
 /* Community */
 
 const AddPostToCommunity = (token, payload) => {
   return axios.post(`/api/addPostToCommunity`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data'
+      "Content-Type": "multipart/form-data",
     },
   });
-}
-
-// const submitChallenge = (formData, token) => {
-//   return axios.post(`/api/submitChallenge`, formData, {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//       'Content-Type': 'multipart/form-data',
-//     }
-//   });
-// };
+};
 
 const GetCommunityPosts = (token, id) => {
-
   return axios.get(`/api/getCommunityPosts/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -564,8 +556,7 @@ const GetCommunityPosts = (token, id) => {
 };
 
 const AddPostLike = (token, data) => {
-
-  return axios.post('/api/addPostLike', data, {
+  return axios.post("/api/addPostLike", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -573,16 +564,12 @@ const AddPostLike = (token, data) => {
 };
 
 const AddPostComment = (token, data) => {
-
-  return axios.post('/api/addPostComment', data, {
+  return axios.post("/api/addPostComment", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
-
-
-
 
 export default {
   CreateNewUser,
@@ -647,10 +634,9 @@ export default {
   UpdateSkillTestData,
   GetSkillTestResult,
   GetUserCommunity,
-
-  /* Community */
+  GetAllCareerCommunity,
   AddPostToCommunity,
   GetCommunityPosts,
   AddPostLike,
-  AddPostComment
-}
+  AddPostComment,
+};
