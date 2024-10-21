@@ -10,6 +10,7 @@ import PDFCareerPage from "./PDFCareerPage";
 import { useTranslations } from "next-intl";
 import AddIndustry from "./AddIndustry";
 import AlertDialogue from "./AlertDialogue";
+import { FaChevronRight } from "react-icons/fa";
 
 export default function Results2() {
   const [resultData, setResultData] = useState(null);
@@ -227,7 +228,7 @@ export default function Results2() {
       }
     } finally {
       setSaveResultLoading(false);
-      fetchCareer(careerName)
+      fetchCareer(careerName);
     }
   };
 
@@ -340,7 +341,7 @@ export default function Results2() {
   return (
     <div className="max-sm:pb-5">
       <Toaster position="top-center" reverseOrder={false} />
-      {step === 1 && industries.length>0 && (
+      {step === 1 && industries.length > 0 && (
         <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center">
             {t("selectIndustry")}
@@ -377,7 +378,6 @@ export default function Results2() {
               <p className="text-white uppercase font-bold md:text-xl md:mb-2">
                 {singleCareer.career_name}
               </p>
-              
             </div>
             {/* <button
               onClick={downloadResultsAsImage}
@@ -406,7 +406,7 @@ export default function Results2() {
       )}
 
       <div className="flex flex-col text-white gap-5 w-full">
-        {step === 1 && industries.length>0 && (
+        {step === 1 && industries.length > 0 && (
           <div className="p-6 rounded-lg text-white mt-6 w-full max-sm:pb-24">
             <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-4xl mx-auto">
               {showAlert && (
@@ -476,93 +476,137 @@ export default function Results2() {
           <div className="max-md:w-screen">
             <div ref={resultsRef} className="mt-8">
               {resultData && !singleCareer ? (
-              <>
-              <div className="px-4">
-                {[
-                  "trending",
-                  "offbeat",
-                  "traditional",
-                  "futuristic",
-                  "normal",
-                  "hybrid",
-                  "creative",
-                  "sustainable and green",
-                  "social impact",
-                  "tech-driven",
-                  "experiential",
-                  "digital and online",
-                ].map((category) => {
-                  // Retrieve careers with their original indexes
-                  const careersInCategory = resultData
-                    .map((career, originalIndex) => ({ career, originalIndex })) // Map with original index
-                    .filter(({ career }) => career.type === category);
-            
-                  return (
-                    careersInCategory.length > 0 && (
-                      <div key={category} className="mb-8">
-                        <h2 className="text-2xl font-bold mb-1 capitalize">
-                          {category}
-                        </h2>
-                        <p className="text-sm text-white mb-4">
-                          {careerDescriptions[category]}
-                        </p>
-                        <div className="w-full h-[1px] bg-white mb-4" />
-                        <div className="flex overflow-x-scroll gap-3">
-                          {careersInCategory.map(({ career, originalIndex }) => (
-                            <div
-                              key={originalIndex} // Use originalIndex as the key
-                              className="flex flex-col max-sm:min-w-[70vw] min-w-72"
-                            >
-                              <div
-                                className={`flex-grow flex flex-col relative p-[1px] text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer
+                <>
+                  <div className="px-4">
+                    {[
+                      "trending",
+                      "offbeat",
+                      "traditional",
+                      "futuristic",
+                      "normal",
+                      "hybrid",
+                      "creative",
+                      "sustainable and green",
+                      "social impact",
+                      "tech-driven",
+                      "experiential",
+                      "digital and online",
+                    ].map((category) => {
+                      // Retrieve careers with their original indexes
+                      const careersInCategory = resultData
+                        .map((career, originalIndex) => ({
+                          career,
+                          originalIndex,
+                        })) // Map with original index
+                        .filter(({ career }) => career.type === category);
+
+                      return (
+                        careersInCategory.length > 0 && (
+                          <div key={category} className="mb-8">
+                            <h2 className="text-2xl font-bold mb-1 capitalize">
+                              {category}
+                            </h2>
+                            <p className="text-sm text-white mb-4">
+                              {careerDescriptions[category]}
+                            </p>
+                            <div className="w-full h-[1px] bg-white mb-4" />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                              {careersInCategory.map(
+                                ({ career, originalIndex }) => (
+                                  <div
+                                    key={originalIndex} // Use originalIndex as the key
+                                    className="pt-8 bg-[#2a2b27] px-3 relative pb-3 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-150 space-y-3  "
+                                  >
+                                    <h3
+                                      className="py-1 px-3 text-white font-semibold w-fit text-[10px] top-2 right-2 rounded-full absolute"
+                                      style={{
+                                        backgroundColor:
+                                          careerColors[career.type] ||
+                                          "#5dbb49", // Default color if type is not recognized
+                                      }}
+                                    >
+                                      {career.type === "normal"
+                                        ? "BASIC"
+                                        : career.type}
+                                    </h3>
+                                    <div className="">
+                                      <h4 className="text-[#F0394F] text-wrap font-bold">
+                                        {career.career_name}
+                                      </h4>
+                                    </div>
+                                    <div className="text-xs">
+                                      {careerDescriptions[category]}
+                                    </div>
+                                    <div className="w-full flex justify-end items-end">
+                                      {/* Encrypt the careerId before passing it in the link */}
+                                      <div>
+                                        <button
+                                          onClick={() => {
+                                            setCareerIndex(originalIndex); // Set original index
+                                            fetchCareer(career.career_name);
+                                          }}
+                                          className="w-fit bg-[#7824f6] rounded-full px-3 py-2 flex gap-2 items-center"
+                                        >
+                                          <p className="text-xs text-white">
+                                            {t("readMore")}
+                                          </p>
+                                          <FaChevronRight
+                                            size={10}
+                                            color="white"
+                                          />
+                                        </button>
+                                      </div>
+                                    </div>
+                                    {/* <div
+                                      className={`flex-grow flex flex-col relative p-[1px] text-sm text-gray-600 rounded-xl transition-transform transform hover:scale-105 cursor-pointer
                                   ${
                                     selectedCareers.includes(originalIndex) // Check with original index
                                       ? "border-4 border-blue-500 shadow-2xl"
                                       : ""
                                   }`}
-                                style={{
-                                  backgroundColor:
-                                    careerColors[career.type] || "#5dbb49", // Default color if type is not recognized
-                                }}
-                                onClick={() => {
-                                  setCareerIndex(originalIndex); // Set original index
-                                  fetchCareer(career.career_name);
-                                }}
-                              >
-                                <p className="text-xl text-center text-white py-4 uppercase font-bold">
-                                  {career.type === "normal" ? "BASIC" : career.type}
-                                </p>
-                                <div className="flex-grow w-full bg-[#191235] p-3 rounded-xl text-white flex flex-col justify-between">
-                                  {selectedCareers.includes(originalIndex) && (
-                                    <div className="absolute inset-0 bg-blue-500 opacity-20 rounded-xl pointer-events-none"></div>
-                                  )}
-                                  <h2 className="text-lg font-bold text-white mb-4 h-[80px] flex items-center justify-center flex-wrap text-center overflow-hidden">
-                                    {career.career_name}
-                                  </h2>
-                                  
-                                </div>
-                              </div>
-                              <div className="w-full flex justify-center items-center py-7">
-                                <button
-                                  onClick={() => {
-                                    setCareerIndex(originalIndex); // Set original index
-                                    fetchCareer(career.career_name);
-                                  }}
-                                  className="bg-[#7824f6] px-7 py-2 rounded-full text-white font-bold"
-                                >
-                                  {t("readMore")}
-                                </button>
-                              </div>
+                                      style={{
+                                        backgroundColor:
+                                          careerColors[career.type] ||
+                                          "#5dbb49", // Default color if type is not recognized
+                                      }}
+                                    >
+                                      <p className="text-xl text-center text-white py-4 uppercase font-bold">
+                                        {career.type === "normal"
+                                          ? "BASIC"
+                                          : career.type}
+                                      </p>
+                                      <div className="flex-grow w-full bg-[#191235] p-3 rounded-xl text-white flex flex-col justify-between">
+                                        {selectedCareers.includes(
+                                          originalIndex
+                                        ) && (
+                                          <div className="absolute inset-0 bg-blue-500 opacity-20 rounded-xl pointer-events-none"></div>
+                                        )}
+                                        <h2 className="text-lg font-bold text-white mb-4 h-[80px] flex items-center justify-center flex-wrap text-center overflow-hidden">
+                                          {career.career_name}
+                                        </h2>
+                                      </div>
+                                    </div> */}
+                                    {/* <div className="w-full flex justify-center items-center py-7">
+                                      <button
+                                        onClick={() => {
+                                          setCareerIndex(originalIndex); // Set original index
+                                          fetchCareer(career.career_name);
+                                        }}
+                                        className="bg-[#7824f6] px-7 py-2 rounded-full text-white font-bold"
+                                      >
+                                        {t("readMore")}
+                                      </button>
+                                    </div> */}
+                                  </div>
+                                )
+                              )}
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  );
-                })}
-              </div>
-            </>
-            
+                          </div>
+                        )
+                      );
+                    })}
+                  </div>
+                </>
               ) : singleCareer ? (
                 <>
                   <div className="space-y-6 px-10">
@@ -656,9 +700,14 @@ export default function Results2() {
                             : ""
                         }`}
                         onClick={() => {
-                          handleSaveResult(careerIndex, singleCareer.career_name);
+                          handleSaveResult(
+                            careerIndex,
+                            singleCareer.career_name
+                          );
                         }}
-                        disabled={saveResultloading || singleCareer?.isCareerMoved} // Disable when already moved
+                        disabled={
+                          saveResultloading || singleCareer?.isCareerMoved
+                        } // Disable when already moved
                       >
                         {saveResultloading ? (
                           <div className="flex items-center">
@@ -666,10 +715,13 @@ export default function Results2() {
                             {t("saving")}
                           </div>
                         ) : (
-                          <p>{singleCareer?.isCareerMoved ? t("alreadyMoved") : t("moveCareer")}</p> // Change text based on isCareerMoved
+                          <p>
+                            {singleCareer?.isCareerMoved
+                              ? t("alreadyMoved")
+                              : t("moveCareer")}
+                          </p> // Change text based on isCareerMoved
                         )}
                       </button>
-
                     </div>
                   </div>
                 </>
