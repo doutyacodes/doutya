@@ -1,9 +1,12 @@
-import { Montserrat } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import "./globals.css";
 
-const montserrat = Montserrat({ subsets: ["latin"] });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"], // Choose the weights you want to include
+});
 
 export const metadata = {
   title: "Xortlist | Craft Your Career with Xortlist!",
@@ -16,7 +19,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang={locale}>
-      <body className={`${montserrat.className} bg-[url('https://i.postimg.cc/2SGmwV5P/artistic-blurry-colorful-wallpaper-background-58702-8553.jpg')] bg-cover bg-center bg-no-repeat min-h-screen`}>
+      <body className={`${poppins.className} bg-[#1f1f1f] bg-cover bg-center bg-no-repeat min-h-screen`}>
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
