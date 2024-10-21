@@ -2,11 +2,8 @@ import { db } from '@/utils';
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { COMMUNITY_POST } from '@/utils/schema';
-import fs from 'fs';
+import fs from 'fs/promises'; // For async file operations
 import path from 'path';
-import { Client } from 'basic-ftp';
-import { FTP_BASE_PATH, uploadToFtp } from '@/utils/ftpConfig';
-
 
 export async function POST(req) {
   try {
@@ -19,21 +16,20 @@ export async function POST(req) {
     const userId = userData.userId;
 
     const formData = await req.formData();
-    console.log(formData);
+    const contentType = formData.get('type');
+    const contentCaption = formData.get('content');
+    const file = formData.get('file');
+    const communityId = formData.get('communityId');
 
-    const contentType = formData.get('type'); // Post type: 'image', 'video', 'text'
-    const contentCaption = formData.get('content'); // The caption or text content
-    // const contentCaption = 'Sample Caption'
-    const file = formData.get('file'); // Image or video file, if uploaded
-    const communityId = formData.get('communityId')
+    // Log form data keys
+    console.log('Form data keys:', [...formData.keys()]);
 
-    console.log("contentType", contentType);
-
+    // Handle text content
     if (contentType === 'text') {
-      // Save post as text content, no file upload required
       await db.insert(COMMUNITY_POST).values({
         user_id: userId,
-        community_id: communityId, // Example community ID, adjust based on form data
+        community_id: communityId,
+        type: contentType,
         caption: contentCaption,
         created_at: new Date(),
       });
@@ -41,67 +37,59 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Text post submitted successfully' }, { status: 200 });
     }
 
-    // If contentType is 'image' or 'video', proceed with file upload
+    // Handle file upload (image/video)
     if (file && (contentType === 'image' || contentType === 'video')) {
       const ext = path.extname(file.name);
       const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, '');
 
-      // Generate a unique filename
+      // Generate unique filename
       const uniqueFilename = `${userId}_${timestamp}${ext}`;
-      let uploadDirectory = '';
-      let fileUrl = '';
+      const cpanelBaseDir = '/home/devusr/public_html/doutya-api';
 
-      // Set upload directory based on contentType
+      // Use forward slashes and replace any backslashes
+      let uploadDirectory = '';
       if (contentType === 'image') {
-        uploadDirectory = path.join(process.cwd(), 'public', 'uploads', 'posts','images', uniqueFilename);
-        fileUrl = `/uploads/posts/images/${uniqueFilename}`;
+        uploadDirectory = path.join(cpanelBaseDir, 'photos', uniqueFilename).replace(/\\/g, '/');
       } else if (contentType === 'video') {
-        uploadDirectory = path.join(process.cwd(), 'public', 'uploads', 'posts', 'videos', uniqueFilename);
-        fileUrl = `/uploads/posts/videos/${uniqueFilename}`;
+        uploadDirectory = path.join(cpanelBaseDir, 'videos', uniqueFilename).replace(/\\/g, '/');
       } else {
         return NextResponse.json({ message: 'Unsupported file type' }, { status: 400 });
       }
 
       // Ensure the directory exists
       const dir = path.dirname(uploadDirectory);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true }); // Create directory if it doesn't exist
+      try {
+        await fs.mkdir(dir, { recursive: true });
+        console.log('Directory created or already exists:', dir);
+      } catch (mkdirError) {
+        console.error('Error creating directory:', mkdirError);
+        return NextResponse.json({ message: 'Error creating directory' }, { status: 500 });
       }
 
-      // Save the file to the server
-      const buffer = Buffer.from(await file.arrayBuffer());
-      fs.writeFileSync(uploadDirectory, buffer);
+      // Read file as a buffer
+      const fileBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(fileBuffer);
 
-      // Set upload directory based on contentType
-      // if (contentType === 'image') {
-      //   uploadDirectory = '/uploads/posts/images/';
-      // } else if (contentType === 'video') {
-      //   uploadDirectory = '/uploads/posts/videos/';
-      // } else {
-      //   return NextResponse.json({ message: 'Unsupported file type' }, { status: 400 });
-      // }
+      // Write the file
+      try {
+        await fs.writeFile(uploadDirectory, buffer);
+        console.log('File successfully saved:', uploadDirectory);
 
-      // const filePath = `${FTP_BASE_PATH}${uploadDirectory}${uniqueFilename}`;
+        // Save post data in the database
+        await db.insert(COMMUNITY_POST).values({
+          user_id: userId,
+          community_id: communityId,
+          type: contentType,
+          caption: contentCaption,
+          created_at: new Date(),
+          file_url: uniqueFilename, // Store the filename in DB
+        });
 
-      // // Convert the file to buffer
-      // const buffer = Buffer.from(await file.arrayBuffer());
-
-      // // Upload the file via FTP
-      // await uploadToFtp(buffer, filePath); // Use the FTP utility function
-
-      // Save post data in the database
-      await db.insert(COMMUNITY_POST).values({
-        user_id: userId,
-        community_id: communityId, // Example community ID, adjust based on form data
-        caption: contentCaption,
-        created_at: new Date(),
-        file_url: `${fileUrl}`, // Save relative file URL to the DB
-      });
-
-      return NextResponse.json({ 
-        message: 'Post submitted successfully', 
-        fileUrl: `${uploadDirectory}${uniqueFilename}` 
-      }, { status: 200 });
+        return NextResponse.json({ message: 'Post submitted successfully', filename: uniqueFilename }, { status: 200 });
+      } catch (writeError) {
+        console.error('Error writing file:', writeError);
+        return NextResponse.json({ message: 'Error saving file' }, { status: 500 });
+      }
     }
 
     return NextResponse.json({ message: 'Invalid file type or no file uploaded' }, { status: 400 });

@@ -14,7 +14,7 @@ const connection = await mysql.createConnection({
   user: "devusr_wowfyuser",
   database: "devusr_quiz_project",
   password:'###Wowfy123',
-  port:'3306'
+  port:'3306',
 });
 
 export const db = drizzle(connection);

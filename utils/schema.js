@@ -589,10 +589,12 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         id: int('id').autoincrement().notNull().primaryKey(),
         user_id: int('user_id').notNull().references(() => USER_DETAILS.id, { onDelete: 'cascade' }),
         community_id: int('community_id').notNull().references(() => COMMUNITY.id, { onDelete: 'cascade' }),
-        file_url: varchar('file_url', { length: 255 }).default(null), // New field to store file path or filename
+        file_url: varchar('file_url', { length: 255 }).default(null), // Field to store file path or filename
         caption: text('caption').notNull(),
+        type: varchar('type', { length: 50 }).notNull(), // New field to store the post type (image, video, or text)
         created_at: timestamp('created_at').defaultNow(),
-    });
+      });
+      
 
     export const COMMUNITY_POST_LIKES = mysqlTable('community_post_likes', {
         id: int('id').autoincrement().notNull().primaryKey(),
