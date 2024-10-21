@@ -5,11 +5,11 @@ import toast from 'react-hot-toast';
 import { comment } from 'postcss';
 
 const PostsCard = ({ post }) => {
-    const [liked, setLiked] = useState(false);
+    // const [liked, setLiked] = useState(false);
+    const [liked, setLiked] = useState(post.likedByUser);
     const [commentOpen, setCommentOpen] = useState(false);
     const [commentContent, setCommentContent] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(false);    
     
     const handleAddComment = async()=>{
         setIsLoading(true);
@@ -38,29 +38,57 @@ const PostsCard = ({ post }) => {
       
 }
 
-    const handleLikeClick = async()=>{
-            setLiked(!liked)
-            setIsLoading(true);
-            const token =
-              typeof window !== "undefined" ? localStorage.getItem("token") : null;
-            try {
-                
-              const resp = await GlobalApi.AddPostLike(token, post.id);
-        
-              if (resp && resp.status === 201) {
-                toast.success("Like Added");
-              } else {
-                // toast.error('Failed to create Challenge.');
-                toast.error("Failed to add like");
-              }
-            } catch (error) {
-              console.error("Error:", error.message);
-              toast.error("Failed to submit");
-            } finally {
-              setIsLoading(false);
-            }
-          
+const handleLikeClick = async () => {
+    setLiked(!liked)
+    setIsLoading(true);
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    try {
+        const data = {
+            postId: post.id,
+        }
+      const resp = await GlobalApi.AddPostLike(token, data);
+  
+      if (resp && resp.status === 201) {
+        // If the like is added successfully
+        setLiked(true);
+        toast.success("Like added");
+      } else if (resp && resp.status === 200) {
+        // If the like is removed successfully
+        setLiked(false);
+        toast.success("Like removed");
+      } else {
+        toast.error("Failed to toggle like");
+      }
+    } catch (error) {
+      console.error("Error:", error.message);
+      toast.error("Failed to submit");
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+    // const handleLikeClick = async()=>{
+    //     setLiked(!liked)
+    //     setIsLoading(true);
+    //     const token =
+    //         typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    //     try {
+            
+    //         const resp = await GlobalApi.AddPostLike(token, post.id);
+    
+    //         if (resp && resp.status === 201) {
+    //         toast.success("Like Added");
+    //         } else {
+    //         // toast.error('Failed to create Challenge.');
+    //         toast.error("Failed to add like");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error:", error.message);
+    //         toast.error("Failed to submit");
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // }
  
     const renderContent = () => {
         switch (post.type) {
@@ -103,11 +131,18 @@ const PostsCard = ({ post }) => {
             )}
             
             <div className="flex items-center justify-between text-gray-500">
-                <button 
+                {/* <button 
                     onClick={() => handleLikeClick() } 
                     className={`flex items-center ${liked ? 'text-red-500' : ''}`}
                 >
                     <Heart className={`mr-1 ${liked ? 'fill-current' : ''}`} size={20} />
+                    <span>{post.likes + (liked ? 1 : 0)}</span>
+                </button> */}
+                <button
+                    onClick={() => handleLikeClick() } 
+                    className={`flex items-center ${liked && post.likedByUser ? 'text-red-500' : ''}`}
+                >
+                    <Heart className={`mr-1 ${liked && post.likedByUser ? 'fill-current' : ''}`} size={20} />
                     <span>{post.likes + (liked ? 1 : 0)}</span>
                 </button>
                 <button 

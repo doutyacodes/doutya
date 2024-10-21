@@ -14,45 +14,48 @@ export async function POST(req) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId; // Get the user ID from the token
-    const postId = await req.json(); // Get the request body
-    
+    const { postId } = await req.json(); // Get the request body with postId
     // Ensure postId is included in the request body
     if (!postId) {
       return NextResponse.json({ message: 'Post ID is required' }, { status: 400 });
     }
 
-    // Insert the like into the database
-    try {
-
-        // Check if the like already exists
+    // Check if the user has already liked the post
     const existingLike = await db
-        .select()
-        .from(COMMUNITY_POST_LIKES)
-        .where(
-            and(
-                eq(COMMUNITY_POST_LIKES.post_id, postId),
-                eq(COMMUNITY_POST_LIKES.user_id, userId)
-            )
+      .select()
+      .from(COMMUNITY_POST_LIKES)
+      .where(
+        and(
+          eq(COMMUNITY_POST_LIKES.post_id, postId),
+          eq(COMMUNITY_POST_LIKES.user_id, userId)
         )
-        if (existingLike.length > 0) {
-            return NextResponse.json({ message: 'User has already liked this post' }, { status: 409 }); // Conflict
-        }
+      );
 
+    if (existingLike.length > 0) {
+      // If a like exists, remove it (unlike)
+      await db
+        .delete(COMMUNITY_POST_LIKES)
+        .where(
+          and(
+            eq(COMMUNITY_POST_LIKES.post_id, postId),
+            eq(COMMUNITY_POST_LIKES.user_id, userId)
+          )
+        );
+      return NextResponse.json({ message: 'Like removed successfully' }, { status: 200 });
+    } else {
+      // If no like exists, add it
       await db
         .insert(COMMUNITY_POST_LIKES)
         .values({
-          post_id: postId, // Post ID from the request
+          post_id: postId,
           user_id: userId,  // User ID from the authenticated token
         });
 
       return NextResponse.json({ message: 'Like added successfully' }, { status: 201 });
-    } catch (dbError) {
-      console.error('Database error:', dbError);
-      return NextResponse.json({ message: 'Failed to add like' }, { status: 500 });
     }
 
   } catch (error) {
-    console.error('Error adding like:', error);
+    console.error('Error adding/removing like:', error);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }
