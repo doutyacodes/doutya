@@ -584,7 +584,6 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         created_at: timestamp('created_at').defaultNow(),
         updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
     }, (table) => ({
-        // Define the unique constraint outside the main column definition
         userCommunityUnique: uniqueIndex('user_community_unique_idx', ['user_id', 'community_id'])
     }));
     
@@ -615,3 +614,14 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         comment: text('comment').notNull(),
         created_at: timestamp('created_at').defaultNow(),
     });
+
+    export const COMMUNITY_POST_POINTS = mysqlTable('community_post_points', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        post_id: int('post_id').notNull().references(() => COMMUNITY_POST.id, { onDelete: 'cascade' }), // Foreign key to the post
+        like_points: int('like_points').default(0),       // Points from likes
+        comment_points: int('comment_points').default(0), // Points from unique comments
+        created_at: timestamp('created_at').defaultNow(),  // Timestamp for creation
+        updated_at: timestamp('updated_at').defaultNow().onUpdateNow(), // Timestamp for updates
+    }, (table) => ({
+        uniquePost: uniqueIndex('unique_post_idx', ['post_id']) // Ensure one entry per post
+    }));
