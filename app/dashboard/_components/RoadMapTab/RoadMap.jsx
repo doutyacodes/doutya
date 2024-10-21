@@ -67,7 +67,7 @@ function RoadMap({ selectedCareer }) {
     }
   }, [roadMapData])
   
-  const handleComplete = async (tab, milestoneId) => {
+  const handleComplete = async (tab, milestoneId, description, careerName) => {
     const isCompleted = !completedTasks[tab]?.[milestoneId];
     setCompletedTasks((prevState) => ({
       ...prevState,
@@ -82,6 +82,8 @@ function RoadMap({ selectedCareer }) {
       const data = {
         milestoneId,
         completed: isCompleted,
+        milestoneText: description,
+        careerName: careerName
       };
   
       const response = await GlobalApi.UpdateMileStoneStatus(data, token);
@@ -135,7 +137,7 @@ function RoadMap({ selectedCareer }) {
                     </h3>
                   </div>
                   <button
-                    onClick={() => handleComplete(activeTab, item.milestoneId)}
+                    onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
                     className={`ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 ${
                       item.milestoneCompletionStatus ? 'bg-green-500' : 'bg-sky-500'
                     }`}
