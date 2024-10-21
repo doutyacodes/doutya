@@ -61,7 +61,7 @@ const CommunityPage = () => {
           // console.log(community)
           return (
             <div
-              className="pt-8 poppins-regular bg-white px-3 relative pb-3 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-150 space-y-3  "
+              className="pt-8 poppins-regular bg-[#2a2b27] px-3 relative pb-3 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-150 space-y-3  "
               key={index}
             >
               <h3
@@ -76,7 +76,7 @@ const CommunityPage = () => {
                   {community.career}
                 </h4>
               </div>
-              <div className="text-xs">
+              <div className="text-xs text-white">
                 Traditional careers have stood the test of time and are more
                 structured with established career paths. These are often linked
                 to fields with consistent demand and clear educational
@@ -84,7 +84,7 @@ const CommunityPage = () => {
               </div>
               <div className="w-full flex justify-between items-center">
                 {community.already_in ? (
-                  <div className="w-fit border border-slate-500 text-xs rounded-full px-3 p-2 text-slate-600">
+                  <div className="w-fit border border-white/70 text-xs rounded-full px-3 p-2 text-white/70">
                     Joined
                   </div>
                 ) : (
