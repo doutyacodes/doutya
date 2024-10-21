@@ -7,77 +7,52 @@ import React from "react";
 const Principle = () => {
   const principles = [
     {
-      id: 1,
-      title: "INSIST ON GREAT TALENT",
-      description:
-        "Only with excellent people can Xortlist be successful in the long run. We’d rather grow slower than lower the bar for hiring and maintaining exceptional talent. Ideally we are looking for people who are as good if not better than us.",
+      "id": 1,
+      "title": "CREATE RAVING FANS",
+      "description": "We don’t want just customers; we only want raving fans. We prioritize selling to customers that are a great fit for Gong, and do our utmost to create the best possible product and service experience. You cannot go wrong by making a customer happy."
     },
     {
-      id: 2,
-      title: "CULTIVATE BELONGING AND DIVERSITY",
-      description:
-        "Our responsibility transcends hitting our goals and KPIs. We know that Xortlist—and the world—will be a better place when people from diverse backgrounds, races, genders, cultures, sexual orientations, ages, and experiences thrive. We work hard to ensure that everyone feels they belong at Xortlist and make the extra effort to bring them in.",
+      "id": 2,
+      "title": "WANT MORE",
+      "description": "We are never completely satisfied with our accomplishments. When we achieve new records, we celebrate, and then imagine new ones. Across the product and company we’re building, this applies to everything we do. Every individual and team at Gong strive to be the best at their craft."
     },
     {
-      id: 3,
-      title: "EMPOWER YOUR TEAM",
-      description:
-        "We hire, grow, and nurture great people so they can do great things at Xortlist. We provide our teams with direction and context, then trust and empower them to make it happen. Part of empowering your team is understanding that we all make mistakes. We see mistakes as opportunities for learning and development.",
+      "id": 3,
+      "title": "CHALLENGE CONVENTIONAL WISDOM",
+      "description": "Conventional wisdom yields conventional results. We want extraordinary results. We encourage ourselves to question common assumptions and 'axioms'. This doesn’t mean we’re doing the opposite of conventional wisdom, but the notion that 'everybody is doing it that way' just doesn’t cut it at Gong."
     },
     {
-      id: 4,
-      title: "SHARE. A LOT.",
-      description:
-        "Without information and context, Gongsters can’t make decisions and achieve great results. We promote a culture of open information sharing and encourage our teams to communicate transparently across the organization. We err on the side of over-sharing and communicate frequently and clearly to our teams and to our own leadership.",
+      "id": 4,
+      "title": "WIN AS A TEAM",
+      "description": "Gongsters optimize for the team win, and we strive to hire people who prioritize team wins above their own. We’re here to win as a team."
     },
     {
-      id: 5,
-      title: "ENCOURAGE DEBATE",
-      description:
-        "We don’t have all the answers. With great people by our side, we listen intently and encourage them to express their ideas and opinions, especially when they are different from our own. We celebrate and encourage their feedback. We don’t make decisions by committee, yet we are genuinely interested in hearing a diverse set of views prior to making a decision.",
+      "id": 5,
+      "title": "ACT NOW",
+      "description": "Instead of spending too much time discussing how we’re going to act, we simply act. We keep 'work about work' and 'plans for having plans' to the necessary minimum."
     },
     {
-      id: 6,
-      title: "DEVELOP AND GROW",
-      description:
-        "One of our core responsibilities is to mentor and coach our team members. We take time to develop and grow successful Gongsters and take pride in their success, even if it materializes in other teams or even other companies.",
+      "id": 6,
+      "title": "NO SUGAR",
+      "description": "As bitter as they may be, we prefer to know the facts. Sugar-coating does not help make decisions or solve problem quickly. We encourage every Gongster to be direct, speak their mind, and expect the same from their peers."
     },
     {
-      id: 7,
-      title: "Go Big",
-      description:
-        "We set ambitious goals that feel uncomfortable and are hard to achieve. We are aware we may not fully achieve them, but we’d rather strive for great things than take the easy route. We’re willing to take calculated risks to yield those big outcomes and experiment with new ideas so we can make Xortlist exceptional.",
+      "id": 7,
+      "title": "FAVOR THE LONG TERM",
+      "description": "Our vision will take a while to fulfill; When conflicted with taking a shortcut now vs. doing the right thing for the long term, we favor the long term."
     },
     {
-      id: 8,
-      title: "WE ARE ALL TEAM XORTLIST",
-      description:
-        "We’re all part of the same team—Team Xortlist. Xortlist’s long-term success will be determined by collaboration between teams. We won’t get there by narrowly focusing on our own team goals. Instead, we operate as one team to help us win.",
-    },
-    {
-      id: 9,
-      title: "MAKE TOUGH CALLS",
-      description:
-        "As leaders, we’re often required to make uncomfortable decisions that may make us or others around us unhappy. Letting inertia guide us or following the path of least resistance may be easier in the short term, but will not get us to where we need to be. Instead, we act swiftly and decisively, making the best choice for Xortlist.",
-    },
-    {
-      id: 10,
-      title: "NO ROYALTY",
-      description:
-        "Leadership is about responsibility, not superiority. We all play an important role in Xortlist’s success. We act humbly and modestly, serving our team members, and building relationships as humans regardless of our titles.",
-    },
-    {
-      id: 11,
-      title: "HONE YOUR CRAFT",
-      description:
-        "We aim to build one of the world’s best companies. We aim not only to grow bigger, but keep getting better at most things we do. This means to continuously improve and be the best at our craft, both within our area of expertise and as leaders. We learn from the best, encourage those who strive to excel, and help our teams achieve higher standards.",
-    },
-  ];
+      "id": 8,
+      "title": "ENJOY THE RIDE",
+      "description": "Last but not least: While we’re very serious about our work, we don’t take ourselves too seriously. Have fun and enjoy the ride!"
+    }
+  ]
+  
   const renderprincipleGrid = () => {
     return principles.map((principle, index) => (
       <div
         key={index}
-        className="relative p-4 border group rounded-xl min-h-[50vh] md:min-h-[70vh] bg-white shadow-xl overflow-hidden shadow-[#f5edff]"
+        className="relative p-4  group rounded-xl min-h-[50vh] md:min-h-[70vh] bg-white shadow-xl overflow-hidden shadow-[#f5edff]"
       >
         <div className="text-red-600 my-4">
           <Blend />
