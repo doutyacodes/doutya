@@ -15,73 +15,77 @@ export async function PUT(req) {
 
   try {
     const data = await req.json();
-    const { milestoneId, completed, milestoneText, careerName } = data;
+    const { milestoneId, completed, milestoneText, careerName, selectedCommunities } = data;
  
-    // Ensure the input data is valid
-    if (typeof milestoneId === 'number' && typeof completed === 'boolean' && typeof careerName === 'string') {
+    const { global, countrySpecific } = selectedCommunities;
+      
+    let communityIds = [];
 
-      // Fetch the communityId where the career name matches and global is 'yes'
-      const communityResult = await db
+    // Fetch global community if the flag is true
+    if (global) {
+      const globalCommunityResult = await db
         .select({ id: COMMUNITY.id })
         .from(COMMUNITY)
         .where(and(eq(COMMUNITY.career, careerName), eq(COMMUNITY.global, 'yes')))
         .execute();
 
-      if (!communityResult || communityResult.length === 0) {
-        return NextResponse.json(
-          { message: "No global community found for the specified career" },
-          { status: 404 }
-        );
+      if (globalCommunityResult.length > 0) {
+        communityIds.push(globalCommunityResult[0].id);
       }
+    }
 
-      const communityId = communityResult[0].id;  // Get the community ID
-      
-      // If completed, add a post for the completed milestone
-      if (completed) {
-        // Predefined image URL for the post (can be stored locally or on a cloud storage)
-        const predefinedImageUrl = "/assets/images/milestone_achieved.png"; // Update with your actual image path
-        const postCaption = `I have successfully completed the milestone: "${milestoneText}". Feeling great about this accomplishment!`;
+    // Fetch country-specific community if the flag is true
+    if (countrySpecific) {
+      const countrySpecificCommunityResult = await db
+        .select({ id: COMMUNITY.id })
+        .from(COMMUNITY)
+        .where(and(eq(COMMUNITY.career, careerName), eq(COMMUNITY.global, 'no')))
+        .execute();
 
-        // Insert a post with the image, caption, and communityId
+      if (countrySpecificCommunityResult.length > 0) {
+        communityIds.push(countrySpecificCommunityResult[0].id);
+      }
+    }
+
+    if (communityIds.length === 0) {
+      return NextResponse.json(
+        { message: "No community found matching the criteria" },
+        { status: 404 }
+      );
+    }
+
+    if (completed) {
+      const predefinedImageUrl = "/assets/images/milestone_achieved.png";
+      const postCaption = `I have successfully completed the milestone: "${milestoneText}". Feeling great about this accomplishment!`;
+
+      for (const communityId of communityIds) {
         await db.insert(COMMUNITY_POST).values({
           user_id: userId,
-          community_id: communityId,  // Set the community ID based on the career name
+          community_id: communityId,
           type: 'image',
           caption: postCaption,
           created_at: new Date(),
           file_url: predefinedImageUrl,
         });
-
-        // After successfully adding the post, update the milestone completion status
-        const result = await db
-          .update(MILESTONES)
-          .set({ completion_status: completed })  // Using correct field name
-          .where(eq(MILESTONES.id, milestoneId))
-          .execute();
-
-        if (!result) {
-          return NextResponse.json(
-            { message: "Failed to update milestone status" },
-            { status: 500 }
-          );
-        }
-
-        return NextResponse.json(
-          { message: "Milestone status updated and post created successfully" },
-          { status: 201 }
-        );
       }
 
+      // Update the milestone completion status
+      await db
+        .update(MILESTONES)
+        .set({ completion_status: completed })
+        .where(eq(MILESTONES.id, milestoneId))
+        .execute();
+
       return NextResponse.json(
-        { message: "Milestone status updated successfully" },
+        { message: "Milestone status updated and posts created successfully" },
         { status: 201 }
       );
-    } else {
-      return NextResponse.json(
-        { message: "Invalid data provided" },
-        { status: 400 }
-      );
     }
+
+    return NextResponse.json(
+      { message: "Milestone status updated successfully" },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error in PUT:", error);
     return NextResponse.json(
