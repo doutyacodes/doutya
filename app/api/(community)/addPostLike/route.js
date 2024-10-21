@@ -1,7 +1,7 @@
 import { db } from '@/utils'; // Database connection
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
-import { COMMUNITY_POST_LIKES } from '@/utils/schema'; // Import your schema for likes
+import { COMMUNITY_POST_LIKES, COMMUNITY_POST_POINTS } from '@/utils/schema'; // Import your schema for likes
 import { and, eq } from 'drizzle-orm';
 
 export async function POST(req) {
@@ -41,6 +41,18 @@ export async function POST(req) {
             eq(COMMUNITY_POST_LIKES.user_id, userId)
           )
         );
+
+      // Decrease the like points for the post
+      const pointsRecord = await db
+        .select()
+        .from(COMMUNITY_POST_POINTS)
+        .where(eq(COMMUNITY_POST_POINTS.post_id, postId));
+
+        await db
+        .update(COMMUNITY_POST_POINTS)
+        .set({ like_points: pointsRecord[0].like_points - 1 })
+        .where(eq(COMMUNITY_POST_POINTS.post_id, postId));
+
       return NextResponse.json({ message: 'Like removed successfully' }, { status: 200 });
     } else {
       // If no like exists, add it
@@ -50,6 +62,29 @@ export async function POST(req) {
           post_id: postId,
           user_id: userId,  // User ID from the authenticated token
         });
+
+      // Ensure the points entry exists
+      const pointsRecord = await db
+        .select()
+        .from(COMMUNITY_POST_POINTS)
+        .where(eq(COMMUNITY_POST_POINTS.post_id, postId));
+
+        if (pointsRecord.length === 0) {
+          // Initialize with default points if not present
+          await db
+            .insert(COMMUNITY_POST_POINTS)
+            .values({
+              post_id: postId,
+              like_points: 0,    
+              comment_points: 0,    
+            });
+        }
+
+        // Increase the like points for the post
+      await db
+      .update(COMMUNITY_POST_POINTS)
+      .set({ like_points: pointsRecord[0].like_points + 1 })
+      .where(eq(COMMUNITY_POST_POINTS.post_id, postId));
 
       return NextResponse.json({ message: 'Like added successfully' }, { status: 201 });
     }
