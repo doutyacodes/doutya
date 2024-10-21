@@ -17,7 +17,10 @@ export const USER_DETAILS= mysqlTable('user_details',{
     country:varchar('country',{length:30}).default(null),
     language:varchar('language',{length:50}).default('English'),
     education_country:varchar('education_country',{length:100}).default(null),
-    education_level:varchar('education_level',{length:255}).default('Other')
+    education_level:varchar('education_level',{length:255}).default('Other'),
+    experience: int('experience').default(null), 
+    education_qualification: varchar('education_qualification', { length: 255 }).default(null), 
+    current_job: varchar('current_job', { length: 200 }).default(null),
 });
 
 // Define the schema for the 'page' table
