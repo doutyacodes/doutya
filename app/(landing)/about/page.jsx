@@ -110,7 +110,7 @@ const page = () => {
               At Xortlist, we are dedicated to revolutionizing career guidance for the next generation. Our innovative platform leverages advanced AI technology to analyze individual strengths and interests, providing personalized career suggestions that align with each user’s unique personality. With a diverse database of career options—ranging from traditional to trending and offbeat paths—Xortlist empowers young people to explore a variety of opportunities. Our actionable roadmaps guide users every step of the way, offering milestone tracking and real-time feedback to inspire confidence and clarity in their career journeys. Join us as we help you discover and achieve a fulfilling career that resonates with your passions!
               </h6>
             </div>
-            <Image src={"/assets/images/about.svg"} width={800} height={800} />
+            <Image src={"/assets/images/trophy1.webp"} width={800} height={800} />
           </div>
         </div>
       </div>

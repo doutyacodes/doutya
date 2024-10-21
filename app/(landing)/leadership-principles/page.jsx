@@ -77,7 +77,7 @@ const Principle = () => {
     return principles.map((principle, index) => (
       <div
         key={index}
-        className="relative p-4 border group rounded-xl min-h-[50vh] md:min-h-[70vh] bg-white shadow-xl overflow-hidden shadow-[#f5edff]"
+        className="relative p-4 group rounded-xl min-h-[50vh] md:min-h-[70vh] bg-white shadow-xl overflow-hidden shadow-[#f5edff]"
       >
         <div className="text-red-600 my-4">
           <Blend />
