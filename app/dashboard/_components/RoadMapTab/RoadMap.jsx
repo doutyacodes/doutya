@@ -3,6 +3,7 @@ import { CheckCircle } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import SelectCommunity from '../SelectCommunityModal/SelectCommunity';
 
 function RoadMap({ selectedCareer }) {
   const [activeTab, setActiveTab] = useState('Educational Milestones');
@@ -12,6 +13,12 @@ function RoadMap({ selectedCareer }) {
   const [isLoading, setIsLoading] = useState(false)
   const [LoadMessage, setLoadMessage] = useState('')
   const t = useTranslations('RoadMap');
+  const [showCommunityModal, setShowCommunityModal] = useState(false); // Modal visibility
+  const [selectedCommunities, setSelectedCommunities] = useState({
+    global: false,
+    countrySpecific: false
+  });
+  const [selectedMilestoneData, setSelectedMilestoneData] = useState(null);
 
   const language = localStorage.getItem('language') || 'en';
 
@@ -51,7 +58,6 @@ function RoadMap({ selectedCareer }) {
     getRoadmap()
   }, [selectedCareer])
   
-  console.log("selectedCareer", selectedCareer);
 
   useEffect(() => {
     if(roadMapData.length > 0){
@@ -66,8 +72,20 @@ function RoadMap({ selectedCareer }) {
       setMilestones(milestones)
     }
   }, [roadMapData])
+
+  const handleComplete = (tab, milestoneId, description, careerName) => {
+    setShowCommunityModal(true); // Show modal before updating milestone
   
-  const handleComplete = async (tab, milestoneId) => {
+    // Save these values to be used later when the modal submits
+    setSelectedMilestoneData({
+      tab,
+      milestoneId,
+      description,
+      careerName
+    });
+  };
+  
+  const saveMilestone = async (tab, milestoneId, description, careerName, selectedCommunities) => {
     const isCompleted = !completedTasks[tab]?.[milestoneId];
     setCompletedTasks((prevState) => ({
       ...prevState,
@@ -82,8 +100,11 @@ function RoadMap({ selectedCareer }) {
       const data = {
         milestoneId,
         completed: isCompleted,
+        milestoneText: description,
+        careerName,
+        selectedCommunities, // Pass selected communities (global/country-specific)
       };
-  
+    
       const response = await GlobalApi.UpdateMileStoneStatus(data, token);
   
       if (response.status === 201) {
@@ -95,12 +116,41 @@ function RoadMap({ selectedCareer }) {
     } catch (err) {
       toast.error(t('errorMessages.unexpectedError'));
     } finally {
-      getRoadmap()
+      getRoadmap(); // Refresh the roadmap data
     }
   };
+  
+    // Handle checkbox changes
+    const handleCheckboxChange = (community, isChecked) => {
+      if (community === 'global') {
+        setSelectedCommunities((prevState) => ({ ...prevState, global: isChecked }));
+      } else if (community === 'countrySpecific') {
+        setSelectedCommunities((prevState) => ({ ...prevState, countrySpecific: isChecked }));
+      }
+    };
+
 
   return (
     <div className="p-4 bg-white">
+
+      {/* Modal for community selection */}
+      {showCommunityModal && (
+        <SelectCommunity
+        handleComplete={() => {
+          setShowCommunityModal(false); // Close modal after selection
+          saveMilestone(
+            selectedMilestoneData.tab,
+            selectedMilestoneData.milestoneId,
+            selectedMilestoneData.description,
+            selectedMilestoneData.careerName,
+            selectedCommunities // Communities selected from the modal
+          );
+        }}
+        handleCheckboxChange={handleCheckboxChange}
+        selectedCommunities={selectedCommunities}
+      />
+      )}
+
       {!milestones ? (
         <div className="flex items-center justify-center h-[300px]">
           <p className="text-gray-700">{LoadMessage}</p>
@@ -135,7 +185,7 @@ function RoadMap({ selectedCareer }) {
                     </h3>
                   </div>
                   <button
-                    onClick={() => handleComplete(activeTab, item.milestoneId)}
+                    onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
                     className={`ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 ${
                       item.milestoneCompletionStatus ? 'bg-green-500' : 'bg-sky-500'
                     }`}

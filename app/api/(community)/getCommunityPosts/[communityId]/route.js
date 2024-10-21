@@ -39,6 +39,17 @@ export async function GET(req, { params }) {
                 .select()
                 .from(COMMUNITY_POST_LIKES)
                 .where(eq(COMMUNITY_POST_LIKES.post_id, postId));
+
+            // Check if the current user has liked this post
+            const userLike = await db
+                .select()
+                .from(COMMUNITY_POST_LIKES)
+                .where(
+                    and(
+                        eq(COMMUNITY_POST_LIKES.post_id, postId),
+                        eq(COMMUNITY_POST_LIKES.user_id, userId)
+                    )
+                );
             
             // Fetch comments for the post
             const comments = await db
@@ -58,6 +69,7 @@ export async function GET(req, { params }) {
                 caption: post.caption,
                 userName: post.userName, // Now using the userName from the joined USER_DETAILS
                 likes: likesCount.length, // Count of likes
+                likedByUser: userLike.length > 0,
                 comments: comments.map(comment => ({
                     userName: comment.userName,
                     content: comment.content

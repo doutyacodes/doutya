@@ -15,8 +15,8 @@ const CommunityFeedsPage = ({ params }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const router = useRouter();
-//  const communityId = params.communityID;
-    const communityId = 1
+    const communityId = params.communityID;
+    // const communityId = 1
   
   useEffect(() => {
     const authCheck = () => {
