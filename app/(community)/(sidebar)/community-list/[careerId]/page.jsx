@@ -94,7 +94,7 @@ const CommunityPage = () => {
                 )}{" "}
                 <Link
                   href={{
-                    pathname: `/user-communities/${community.id}`,
+                    pathname: `/communityFeeds/${community.id}`,
                   }}
                 >
                   <button className="w-fit bg-[#7824f6] rounded-full px-3 py-2 flex gap-2 items-center">
