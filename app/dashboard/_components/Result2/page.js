@@ -515,7 +515,7 @@ export default function Results2() {
                                 ({ career, originalIndex }) => (
                                   <div
                                     key={originalIndex} // Use originalIndex as the key
-                                    className="pt-8 bg-[#2a2b27] px-3 relative pb-3 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-150 space-y-3  "
+                                    className="pt-8 bg-[#2a2b27] rounded-b-md px-3 relative pb-3 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-150 space-y-3  "
                                   >
                                     <h3
                                       className="py-1 px-3 text-white font-semibold w-fit text-[10px] top-2 right-2 rounded-full absolute"
@@ -612,11 +612,11 @@ export default function Results2() {
                   <div className="space-y-6 px-10">
                     <div className="grid grid-cols-12 gap-4">
                       {singleCareer?.reason_for_recommendation && (
-                        <div className="bg-[#00bf63] px-[1px] py-[1px] col-span-12 rounded-t-md flex flex-col">
-                          <p className="text-white font-bold text-lg uppercase text-center py-3">
+                        <div className="bg-[#00bf63] px-[1px] py-[1px] col-span-12 rounded-md flex flex-col">
+                          <p className="text-white font-bold text-lg uppercase text-center py-3 px-1">
                             {t("careerSuitability")}
                           </p>
-                          <div className="bg-[#1c143b] px-6 py-3 flex-1 flex min-h-[150px] items-center">
+                          <div className="bg-[#2a2b27] rounded-b-md px-6 py-3 flex-1 flex min-h-[150px] items-center">
                             <p className="text-justify text-sm overflow-hidden text-ellipsis ">
                               {singleCareer?.reason_for_recommendation}
                             </p>
@@ -625,11 +625,11 @@ export default function Results2() {
                       )}
 
                       {singleCareer?.present_trends && (
-                        <div className="bg-[#ffa000] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md flex flex-col">
+                        <div className="bg-[#ffa000] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-md flex flex-col">
                           <p className="text-white font-bold text-sm uppercase text-center py-3">
                             {t("presentTrends")}
                           </p>
-                          <div className="bg-[#1c143b] p-3 flex-1 flex items-center">
+                          <div className="bg-[#2a2b27] rounded-b-md p-3 flex-1 flex items-center">
                             <p className="text-justify text-sm overflow-hidden text-ellipsis">
                               {singleCareer?.present_trends}
                             </p>
@@ -638,12 +638,12 @@ export default function Results2() {
                       )}
 
                       {singleCareer?.future_prospects && (
-                        <div className="bg-[#7824f6] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md flex flex-col">
+                        <div className="bg-[#7824f6] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-md flex flex-col">
                           <p className="text-white font-bold text-sm uppercase text-center py-3">
                             {t("futureProspects")} ({singleCareer?.currentYear}{" "}
                             - {singleCareer?.tillYear})
                           </p>
-                          <div className="bg-[#1c143b] p-3 flex-1 flex items-center">
+                          <div className="bg-[#2a2b27] rounded-b-md p-3 flex-1 flex items-center">
                             <p className="text-justify text-sm overflow-hidden text-ellipsis">
                               {singleCareer?.future_prospects}
                             </p>
@@ -652,12 +652,12 @@ export default function Results2() {
                       )}
 
                       {singleCareer?.beyond_prospects && (
-                        <div className="bg-[#7824f6] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md flex flex-col">
+                        <div className="bg-[#7824f6] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-md flex flex-col">
                           <p className="text-white font-bold text-sm uppercase text-center py-3">
                             {t("futureProspects")} ({singleCareer?.tillYear + 1}{" "}
                             and beyond)
                           </p>
-                          <div className="bg-[#1c143b] p-3 flex-1 flex items-center">
+                          <div className="bg-[#2a2b27] rounded-b-md p-3 flex-1 flex items-center">
                             <p className="text-justify text-sm overflow-hidden text-ellipsis">
                               {singleCareer?.beyond_prospects}
                             </p>
@@ -666,11 +666,11 @@ export default function Results2() {
                       )}
 
                       {singleCareer?.expenses && (
-                        <div className="bg-[#ff0000] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md flex flex-col">
+                        <div className="bg-[#ff0000] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-md flex flex-col">
                           <p className="text-white font-bold text-sm uppercase text-center py-3">
                             {t("expenses")}
                           </p>
-                          <div className="bg-[#1c143b] p-3 flex-1 flex items-center">
+                          <div className="bg-[#2a2b27] rounded-b-md p-3 flex-1 flex items-center">
                             <p className="text-justify text-sm overflow-hidden text-ellipsis">
                               {singleCareer?.expenses}
                             </p>
@@ -679,11 +679,11 @@ export default function Results2() {
                       )}
 
                       {singleCareer?.salary && (
-                        <div className="bg-[#5ce1e6] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-t-md flex flex-col">
+                        <div className="bg-[#5ce1e6] px-[1px] py-[1px] col-span-12 sm:col-span-6 md:col-span-3 rounded-md flex flex-col">
                           <p className="text-white font-bold text-sm uppercase text-center py-3">
                             Salary
                           </p>
-                          <div className="bg-[#1c143b] p-3 flex-1 flex items-center">
+                          <div className="bg-[#2a2b27] rounded-b-md p-3 flex-1 flex items-center">
                             <p className="text-justify text-sm overflow-hidden text-ellipsis">
                               {singleCareer?.salary}
                             </p>
