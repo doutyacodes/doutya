@@ -15,7 +15,7 @@ const BlogPage = () => {
       id: 1,
       tag: "Technology",
       title: "The Birth of Xortlist: A New Era in Career Guidance",
-      name: "John Doe",
+      name: "Kiran Roice",
       date: "12 October, 2024",
     },
     // {
