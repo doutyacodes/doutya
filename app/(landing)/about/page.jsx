@@ -48,7 +48,7 @@ const page = () => {
   };
   return (
     <main className="relative w-full ">
-      <div className=" md:min-h-screen bg-[#3e0075] py-4">
+      <div className=" md:min-h-screen bg-[#1c143b] py-4">
         <Header />
           {/* <div className="  bg-[#1d0254] py-4">
             <div className="container mx-auto px-3">

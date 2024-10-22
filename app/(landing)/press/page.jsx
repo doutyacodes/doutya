@@ -187,7 +187,7 @@ const Press = () => {
             </div>
           </div>
           <div className="md:mt-10 mt-3 flex max-md:flex-col ">
-            <div className="w-full bg-[#3e0075] p-3 max-md:first:rounded-t-md md:rounded-l-md space-y-4">
+            <div className="w-full bg-[#1c143b] p-3 max-md:first:rounded-t-md md:rounded-l-md space-y-4">
               <h6 className="text-yellow-400 uppercase text-lg font-bold">
                 Latest Story
               </h6>
