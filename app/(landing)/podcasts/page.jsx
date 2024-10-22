@@ -1,3 +1,6 @@
+import Footer from "@/app/_components/Footer";
+import Header from "@/app/_components/Header";
+
 export default function PodcastPage() {
     const podcasts = [
       {
@@ -24,8 +27,9 @@ export default function PodcastPage() {
     ];
   
     return (
-      <div className="bg-gray-100 min-h-screen p-8">
-        <div className="max-w-6xl mx-auto">
+      <div className="bg-gray-100 min-h-screen ">
+        <Header />
+        <div className="max-w-6xl mx-auto p-8">
           {/* Featured Section */}
           <div className="bg-purple-600 text-white p-6 rounded-lg mb-12">
             <h1 className="text-4xl font-bold">A UX Case Study on Creating a Studious Environment</h1>
@@ -49,6 +53,8 @@ export default function PodcastPage() {
             ))}
           </div>
         </div>
+        <Footer />
+
       </div>
     );
   }

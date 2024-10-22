@@ -1,4 +1,6 @@
 'use client';
+import Footer from '@/app/_components/Footer';
+import Header from '@/app/_components/Header';
 import { useParams, useRouter } from 'next/navigation';
 
 const dummyNewsletters = [
@@ -61,8 +63,9 @@ export default function NewsletterDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 via-white to-gray-100 p-8">
-      <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-lg p-8 lg:p-12">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 via-white to-gray-100 ">
+        <Header />
+      <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-lg p-8 lg:p-12 my-6 ">
         {/* Header section */}
         <header className="mb-6">
           <h1 className="text-5xl font-extrabold text-gray-900 mb-4">{newsletter.title}</h1>
@@ -89,6 +92,7 @@ export default function NewsletterDetailPage() {
           </button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

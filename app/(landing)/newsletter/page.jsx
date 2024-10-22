@@ -1,4 +1,6 @@
 "use client"
+import Footer from "@/app/_components/Footer";
+import Header from "@/app/_components/Header";
 import { useRouter } from "next/navigation";
 
 export default function NewsletterPage() {
@@ -27,8 +29,9 @@ export default function NewsletterPage() {
   ];
   const router = useRouter();
   return (
-    <div className="bg-gray-100 min-h-screen p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="bg-gray-100 min-h-screen ">
+    <Header />
+    <div className="max-w-6xl mx-auto p-8">
         {/* Newsletter Subscription Section */}
         <div className="bg-green-600 text-white p-6 rounded-lg mb-12">
           <h1 className="text-4xl font-bold">Subscribe to Our Newsletter</h1>
@@ -91,6 +94,8 @@ export default function NewsletterPage() {
           ))}
         </div>
       </div>
+      <Footer />
+
     </div>
   );
 }
