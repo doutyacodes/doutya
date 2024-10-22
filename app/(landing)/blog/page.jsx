@@ -98,8 +98,8 @@ const router = useRouter()
               fill
             />
           </div>
-          <div className="md:absolute my-3 max-md:bg-white rounded-md p-2 bottom-10 shadow-md md:w-80 left-10 space-y-4">
-            <p className="text-white p-2 rounded-lg text-xs bg-violet-600 w-fit">
+          <div className="md:absolute my-3 max-md:bg-white rounded-md p-2 bottom-10 max-md:shadow-md md:w-80 left-10 space-y-4">
+            <p className="md:text-white p-2 rounded-lg text-xs bg-violet-600 w-fit">
               Technology
             </p>
             <h3 className="font-bold md:text-white">
