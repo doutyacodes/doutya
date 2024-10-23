@@ -26,6 +26,17 @@ function Login() {
     setSelectedLanguage(savedLanguage);
   }, []);
 
+  useEffect(() => {
+    const authCheck = () => {
+      if (typeof window !== "undefined") {
+        const token = localStorage.getItem("token");
+        if (token) {
+          router.push("/dashboard");
+        } 
+      }
+    };
+    authCheck();
+  }, [router]);
 
   const onSubmit = async (data) => {
     try {

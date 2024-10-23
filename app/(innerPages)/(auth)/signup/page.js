@@ -723,7 +723,17 @@ function SignUp() {
 
   const router = useRouter();
   const t = useTranslations("SignupPage");
-
+  useEffect(() => {
+    const authCheck = () => {
+      if (typeof window !== "undefined") {
+        const token = localStorage.getItem("token");
+        if (token) {
+          router.push("/dashboard");
+        } 
+      }
+    };
+    authCheck();
+  }, [router]);
   const {
     register,
     handleSubmit,
