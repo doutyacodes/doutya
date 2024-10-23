@@ -6,7 +6,7 @@ export default async function RootLayout({ children }) {
   return (
     <div className=" flex ">
       <LeftSideBar />
-      <div className="flex-grow  h-full">
+      <div className="flex-grow  h-full w-full">
         {children}
       </div>
     </div>

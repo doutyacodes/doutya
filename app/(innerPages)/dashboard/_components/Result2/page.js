@@ -506,9 +506,9 @@ export default function Results2() {
                             <h2 className="text-2xl font-bold mb-1 capitalize">
                               {category}
                             </h2>
-                            <p className="text-sm text-white mb-4">
+                            {/* <p className="text-sm text-white mb-4">
                               {careerDescriptions[category]}
-                            </p>
+                            </p> */}
                             <div className="w-full h-[1px] bg-white mb-4" />
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                               {careersInCategory.map(
