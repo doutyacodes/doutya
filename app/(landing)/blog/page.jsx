@@ -11,13 +11,13 @@ import { useRouter } from "next/navigation";
 
 const BlogPage = () => {
   const blogList = [
-    {
-      id: 1,
-      tag: "Technology",
-      title: "The Birth of Xortlist: A New Era in Career Guidance",
-      name: "Kiran Roice",
-      date: "12 October, 2024",
-    },
+    // {
+    //   id: 1,
+    //   tag: "Technology",
+    //   title: "The Birth of Xortlist: A New Era in Career Guidance",
+    //   name: "Kiran Roice",
+    //   date: "12 October, 2024",
+    // },
     // {
     //   id: 2,
     //   tag: "Technology",
@@ -87,7 +87,7 @@ const router = useRouter()
     <div className="w-full bg-[#f5f7fa] min-h-screen">
       <Header dark={true} />
       <div className="container mx-auto px-3 py-3">
-        <div onClick={()=>router.push("/blog/1")} className="w-full relative ">
+        <div onClick={()=>router.push("/blog/1")} className="w-full relative cursor-pointer">
           <div className="w-full h-full relative md:min-h-[70vh] min-h-[30vh] ">
             <Image
               src={
