@@ -4,9 +4,10 @@ import {
     MILESTONES,
     USER_MILESTONES,
     MILESTONE_CATEGORIES,
-    USER_CAREER_STATUS
+    USER_CAREER_STATUS,
+    CERTIFICATIONS
 } from "@/utils/schema"; // Ensure this path is correct
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const languageOptions = {
     en: 'in English',
@@ -21,9 +22,44 @@ const languageOptions = {
     tam:'in Tamil'
   };
 
-export async function fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language) {
+export async function fetchAndSaveRoadmap(userCareerID, age, education, careerGroupID, career, type1, type2,language) {
     console.log("userCareerID:",userCareerID, "age:",age, "education:",education, "career:",career, "type1:",type1, "type2:",type2);
     try {
+        // const prompt = `Provide detailed information for the career named "${career}" based on the following criteria:
+        // - Personality Type: ${type1}
+        // - RIASEC Interest Types: ${type2}
+        
+        // For this career, include the following information:
+        // - career_name: A brief title of the career.
+        // - reason_for_recommendation: Why this career is suitable for someone with these interests.
+        // - present_trends: Current trends and opportunities in the field.
+        // - future_prospects: Predictions and potential growth in this career.
+        // - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full-text format.
+        // - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old until the age of ${age + 1}-year-old aspiring to be a ${career}. The education level is '${education}'. 
+
+        // The roadmap should be broken down into intervals of every **6 months**, starting from the initial age (${age}), and include the following types of milestones:
+        // 1. Educational Milestones
+        // 2. Physical Milestones
+        // 3. Mental Milestones
+        // 4. Certification Milestones
+
+        // Each of these milestone types should have **at least three milestones**. If you have more milestones, please include them as well. Each milestone should be separated with a '|' symbol. 
+
+        // Ensure that the roadmap uses correct **half-year age intervals** (e.g., 6, 6.5, 7, 7.5, etc.) and that Certification Milestones are included and meaningful.
+
+        // The structure should follow this format for each age interval:
+        // {
+        // "age": <age>,
+        // "milestones": {
+        //     "Educational Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+        //     "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+        //     "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+        //     "Certification Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
+        // }
+        // }
+
+        // Ensure that the response is valid JSON, using the specified field names. Provide the response ${languageOptions[language] || 'in English'}.`;
+
         const prompt = `Provide detailed information for the career named "${career}" based on the following criteria:
         - Personality Type: ${type1}
         - RIASEC Interest Types: ${type2}
@@ -35,31 +71,47 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
         - future_prospects: Predictions and potential growth in this career.
         - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full-text format.
         - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old until the age of ${age + 1}-year-old aspiring to be a ${career}. The education level is '${education}'. 
-
+        
         The roadmap should be broken down into intervals of every **6 months**, starting from the initial age (${age}), and include the following types of milestones:
         1. Educational Milestones
         2. Physical Milestones
         3. Mental Milestones
         4. Certification Milestones
-
-        Each of these milestone types should have **at least three milestones**. If you have more milestones, please include them as well. Each milestone should be separated with a '|' symbol. 
-
+        
+        Each of the **Educational**, **Physical**, and **Mental Milestones** should have **at least three milestones**. If you have more milestones, please include them as well. Each milestone should be separated with a '|' symbol.
+        
+        For the **Certification Milestones**, provide each milestone with the following structure:
+        - **milestone_description**: A description of the certification activity.
+        - **certification_course_name**: Only the name of the course (do not include the platform or organization offering the course).
+        
         Ensure that the roadmap uses correct **half-year age intervals** (e.g., 6, 6.5, 7, 7.5, etc.) and that Certification Milestones are included and meaningful.
-
+        
         The structure should follow this format for each age interval:
         {
-        "age": <age>,
-        "milestones": {
+          "age": <age>,
+          "milestones": {
             "Educational Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
             "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
             "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-            "Certification Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
+            "Certification Milestones": [
+              {
+                "milestone_description": "<description1>",
+                "certification_course_name": "<certification_name1>"
+              },
+              {
+                "milestone_description": "<description2>",
+                "certification_course_name": "<certification_name2>"
+              },
+              {
+                "milestone_description": "<description3>",
+                "certification_course_name": "<certification_name3>"
+              }
+            ]
+          }
         }
-        }
-
+        
         Ensure that the response is valid JSON, using the specified field names. Provide the response ${languageOptions[language] || 'in English'}.`;
-
-
+        
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
@@ -74,7 +126,6 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
                 },
             }
         );
-
         let responseText = response.data.choices[0].message.content.trim();
         responseText = responseText.replace(/```json|```/g, "").trim();
         console.log("responseText", responseText)
@@ -109,14 +160,51 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
 
                             const categoryId = categoryResult[0].id;
 
-                            // Split the milestones string into an array
+                        //     // Split the milestones string into an array
+                        //     const milestoneEntries = milestones.split('|')
+                        //         .map(desc => desc.trim())
+                        //         .filter(desc => desc && desc !== '-' && desc !== "N/A");
+
+                        //     // Process each valid milestone entry
+                        //     for (const desc of milestoneEntries) {
+                        //         // Insert the milestone into the database
+                        //         const insertMilestone = await db
+                        //             .insert(MILESTONES)
+                        //             .values({
+                        //                 category_id: categoryId,
+                        //                 description: desc,
+                        //                 completion_status: false,
+                        //                 date_achieved: null,
+                        //                 milestone_age: milestoneAge
+                        //             })
+                        //             .execute();
+
+                        //         const milestoneId = insertMilestone[0].insertId;
+                        //         console.log(`Milestone milestoneId`, milestoneId, "userCareerID:", userCareerID);
+                        //         // Link the milestone with the user career
+                        //         await db.insert(USER_MILESTONES).values({
+                        //             user_career_id: userCareerID,
+                        //             milestone_id: milestoneId
+                        //         }).execute();
+
+                        //          // Push to the milestones array for the frontend
+                        //         milestonesForFrontend.push({
+                        //             milestoneId: milestoneId,
+                        //             milestoneDescription: desc,
+                        //             milestoneCategoryName: category,
+                        //             milestoneCompletionStatus: false,
+                        //             milestoneDateAchieved: null
+                        //         });
+                        //     }
+                        // }
+
+                        if (category !== "Certification Milestones") {
+                            // Split the milestones string into an array for non-certification milestones
                             const milestoneEntries = milestones.split('|')
                                 .map(desc => desc.trim())
                                 .filter(desc => desc && desc !== '-' && desc !== "N/A");
-
-                            // Process each valid milestone entry
+    
                             for (const desc of milestoneEntries) {
-                                // Insert the milestone into the database
                                 const insertMilestone = await db
                                     .insert(MILESTONES)
                                     .values({
@@ -127,34 +215,99 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
                                         milestone_age: milestoneAge
                                     })
                                     .execute();
-
+    
                                 const milestoneId = insertMilestone[0].insertId;
-                                console.log(`Milestone milestoneId`, milestoneId, "userCareerID:", userCareerID);
+    
                                 // Link the milestone with the user career
                                 await db.insert(USER_MILESTONES).values({
                                     user_career_id: userCareerID,
                                     milestone_id: milestoneId
                                 }).execute();
-
-                                 // Push to the milestones array for the frontend
-                                milestonesForFrontend.push({
-                                    milestoneId: milestoneId,
-                                    milestoneDescription: desc,
-                                    milestoneCategoryName: category,
-                                    milestoneCompletionStatus: false,
-                                    milestoneDateAchieved: null
-                                });
+    
+                                 // Push to frontend array only if milestoneAge matches the given age
+                                if (milestoneAge === age) {
+                                    milestonesForFrontend.push({
+                                        milestoneId: milestoneId,
+                                        milestoneDescription: desc,
+                                        milestoneCategoryName: category,
+                                        milestoneCompletionStatus: false,
+                                        milestoneDateAchieved: null
+                                    });
+                                }
+                            }
+                        } else {
+                            // Handle Certification Milestones
+                            for (const certification of milestones) {
+                                const { milestone_description, certification_course_name } = certification;
+    
+                                // Insert the certification milestone into MILESTONES table
+                                const insertMilestone = await db
+                                    .insert(MILESTONES)
+                                    .values({
+                                        category_id: categoryId,
+                                        description: milestone_description,
+                                        completion_status: false,
+                                        date_achieved: null,
+                                        milestone_age: milestoneAge
+                                    })
+                                    .execute();
+    
+                                const milestoneId = insertMilestone[0].insertId;
+    
+                                // Check if a certification with the same name, age, and career_group_id already exists
+                                const existingCertification = await db
+                                    .select()
+                                    .from(CERTIFICATIONS)
+                                    .where(
+                                        and(
+                                            eq(CERTIFICATIONS.certification_name, certification_course_name),
+                                            eq(CERTIFICATIONS.age, milestoneAge),
+                                            eq(CERTIFICATIONS.career_group_id, careerGroupID)
+                                        )
+                                    )
+                                    .execute();
+    
+                                if (existingCertification.length === 0) {
+                                    // Insert the certification if not found
+                                    await db
+                                        .insert(CERTIFICATIONS)
+                                        .values({
+                                            certification_name: certification_course_name,
+                                            age: milestoneAge,
+                                            career_group_id: careerGroupID,
+                                            milestone_id: milestoneId
+                                        })
+                                        .execute();
+                                }
+    
+                                // Link the certification milestone with the user career
+                                await db.insert(USER_MILESTONES).values({
+                                    user_career_id: userCareerID,
+                                    milestone_id: milestoneId
+                                }).execute();
+    
+                                // Push to frontend array only if milestoneAge matches the given age
+                                if (milestoneAge === age) {
+                                    milestonesForFrontend.push({
+                                        milestoneId: milestoneId,
+                                        milestoneDescription: milestone_description,
+                                        milestoneCategoryName: category,
+                                        milestoneCompletionStatus: false,
+                                        milestoneDateAchieved: null
+                                    });
+                                }
                             }
                         }
-
-                        // console.log("Milestones ready for frontend:", milestonesForFrontend);
-                        return milestonesForFrontend;  // Return the milestones array for the frontend
+                    }
 
                     } else {
                         console.error("Invalid milestone data:", milestoneData);
                         throw new Error("Invalid milestone data encountered.");
                     }
                 }
+
+                // console.log("Milestones ready for frontend:", milestonesForFrontend);
+                return milestonesForFrontend;  // Return the milestones array for the frontend
 
                 // After successful data generation, update the status to "completed"
                 // await db

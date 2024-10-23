@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 import SelectCommunity from '../SelectCommunityModal/SelectCommunity';
+import { useRouter } from 'next/navigation';
 
 function RoadMap({ selectedCareer }) {
   const [activeTab, setActiveTab] = useState('Educational Milestones');
@@ -18,6 +19,8 @@ function RoadMap({ selectedCareer }) {
     global: false,
     countrySpecific: false
   });
+
+  const router = useRouter();
   const [selectedMilestoneData, setSelectedMilestoneData] = useState(null);
 
   const language = localStorage.getItem('language') || 'en';
@@ -184,25 +187,45 @@ function RoadMap({ selectedCareer }) {
                       • <span className="font-normal break-words">{item.milestoneDescription}</span>
                     </h3>
                   </div>
-                  <button
-                    onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
-                    className={`ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 ${
-                      item.milestoneCompletionStatus ? 'bg-green-500' : 'bg-sky-500'
-                    }`}
-                  >
-                    {item.milestoneCompletionStatus ? (
-                      <>
-                        <CheckCircle className="mr-2" /> {t('buttons.completed')}
-                      </>
+                  {activeTab === "Certification Milestones" ? (
+                    item.certificationCompletedStatus === 'yes' ? (
+                      <button
+                        onClick={() => router.push(`/certification-results/${item.certificationId}`)}
+                        className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-green-500"
+                      >
+                        View Results
+                      </button>
                     ) : (
-                      t('buttons.complete')
-                    )}
-                  </button>
+                      <button
+                        onClick={() => router.push(`/certification/${item.certificationId}/${encodeURIComponent(item.certificationName)}`)}
+                        className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-orange-500"
+                        disabled={item.certificationCompletedStatus === 'yes'} // Disable button when certification is completed
+                      >
+                        Get Certified
+                      </button>
+                    )
+                  ) : (
+                    <button
+                      onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
+                      className={`ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 ${
+                        item.milestoneCompletionStatus ? 'bg-green-500' : 'bg-sky-500'
+                      }`}
+                    >
+                      {item.milestoneCompletionStatus ? (
+                        <>
+                          <CheckCircle className="mr-2" /> {t('buttons.completed')}
+                        </>
+                      ) : (
+                        t('buttons.complete')
+                      )}
+                    </button>
+                  )}
                 </div>
               ))
             ) : (
               <p className="text-gray-600 text-center">{LoadMessage}</p>
             )}
+
           </div>
         </>
       )}

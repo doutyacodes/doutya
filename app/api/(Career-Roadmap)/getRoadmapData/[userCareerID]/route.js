@@ -7,6 +7,8 @@ import {
   USER_MILESTONES,
   USER_DETAILS,
   USER_CAREER_STATUS,
+  CERTIFICATIONS,
+  USER_CERTIFICATION_COMPLETION,
 } from "@/utils/schema"; // Ensure this path is correct
 import { NextResponse } from "next/server";
 import { authenticate } from "@/lib/jwtMiddleware"; // Ensure this path is correct
@@ -66,6 +68,7 @@ export async function GET(req, { params }) {
     // Fetch career name, type1, and type2 from USER_CAREER
     const userCareerData = await db
       .select({
+        careerGroupID: CAREER_GROUP.id,
         career_name: CAREER_GROUP.career_name,
         type1: USER_CAREER.type1,
         type2: USER_CAREER.type2,
@@ -80,9 +83,50 @@ export async function GET(req, { params }) {
       return NextResponse.json({ message: "Career not found." }, { status: 404 });
     }
 
-    const { career_name: career, type1, type2 } = userCareerData[0];
+    const { careerGroupID, career_name: career, type1, type2 } = userCareerData[0];
 
-    // Fetch milestones for the found user career ID
+    // // Fetch milestones for the found user career ID
+    // const userMilestones = await db
+    //   .select({
+    //     milestoneId: USER_MILESTONES.milestone_id,
+    //     milestoneDescription: MILESTONES.description,
+    //     milestoneCategoryName: MILESTONE_CATEGORIES.name,
+    //     milestoneCompletionStatus: MILESTONES.completion_status,
+    //     milestoneDateAchieved: MILESTONES.date_achieved,
+    //   })
+    //   .from(USER_MILESTONES)
+    //   .innerJoin(MILESTONES, eq(USER_MILESTONES.milestone_id, MILESTONES.id))
+    //   .innerJoin(MILESTONE_CATEGORIES, eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id))
+    //   .where(
+    //     and(
+    //       eq(USER_MILESTONES.user_career_id, userCareerID),
+    //       eq(MILESTONES.milestone_age, age)
+    //     )
+    //   )
+    //   .execute();
+
+    // const userMilestones = await db
+    //   .select({
+    //     milestoneId: USER_MILESTONES.milestone_id,
+    //     milestoneDescription: MILESTONES.description,
+    //     milestoneCategoryName: MILESTONE_CATEGORIES.name,
+    //     milestoneCompletionStatus: MILESTONES.completion_status,
+    //     milestoneDateAchieved: MILESTONES.date_achieved,
+    //     certificationId: CERTIFICATIONS.id,  // Fetch certification ID
+    //     certificationName: CERTIFICATIONS.certification_name  // Fetch certification name
+    //   })
+    //   .from(USER_MILESTONES)
+    //   .innerJoin(MILESTONES, eq(USER_MILESTONES.milestone_id, MILESTONES.id))
+    //   .innerJoin(MILESTONE_CATEGORIES, eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id))
+    //   .leftJoin(CERTIFICATIONS, eq(CERTIFICATIONS.milestone_id, MILESTONES.id))  // Join with CERTIFICATIONS
+    //   .where(
+    //     and(
+    //       eq(USER_MILESTONES.user_career_id, userCareerID),
+    //       eq(MILESTONES.milestone_age, age)
+    //     )
+    //   )
+    //   .execute();
+
     const userMilestones = await db
       .select({
         milestoneId: USER_MILESTONES.milestone_id,
@@ -90,10 +134,21 @@ export async function GET(req, { params }) {
         milestoneCategoryName: MILESTONE_CATEGORIES.name,
         milestoneCompletionStatus: MILESTONES.completion_status,
         milestoneDateAchieved: MILESTONES.date_achieved,
+        certificationId: CERTIFICATIONS.id,  // Fetch certification ID
+        certificationName: CERTIFICATIONS.certification_name,  // Fetch certification name
+        certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed // Fetch certification completion status
       })
       .from(USER_MILESTONES)
       .innerJoin(MILESTONES, eq(USER_MILESTONES.milestone_id, MILESTONES.id))
       .innerJoin(MILESTONE_CATEGORIES, eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id))
+      .leftJoin(CERTIFICATIONS, eq(CERTIFICATIONS.milestone_id, MILESTONES.id))  // Join with CERTIFICATIONS
+      .leftJoin(
+        USER_CERTIFICATION_COMPLETION, 
+        and(
+          eq(USER_CERTIFICATION_COMPLETION.certification_id, CERTIFICATIONS.id),
+          eq(USER_CERTIFICATION_COMPLETION.user_id, userId) 
+        )
+      )
       .where(
         and(
           eq(USER_MILESTONES.user_career_id, userCareerID),
@@ -101,6 +156,8 @@ export async function GET(req, { params }) {
         )
       )
       .execute();
+
+
 
     // console.log("userMilestones", userMilestones);
       
@@ -139,7 +196,7 @@ export async function GET(req, { params }) {
       // });
       
       // Respond with savedData
-      const savedMilestones = await fetchAndSaveRoadmap(userCareerID, age, education, career, type1, type2,language);
+      const savedMilestones = await fetchAndSaveRoadmap(userCareerID, age, education, careerGroupID, career, type1, type2,language);
       return NextResponse.json(savedMilestones, { status: 200 });
     }
   

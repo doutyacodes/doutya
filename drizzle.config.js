@@ -16,7 +16,7 @@
 //         host: "localhost",
 //         user: "root",
 //         database: "doutya",
-//         password: 'jinoJINO'
+//         password: ''
 //     }
 // };
 

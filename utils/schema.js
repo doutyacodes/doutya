@@ -625,3 +625,50 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
     }, (table) => ({
         uniquePost: uniqueIndex('unique_post_idx', ['post_id']) // Ensure one entry per post
     }));
+
+    export const CERTIFICATIONS = mysqlTable('certifications', {
+        id: int('id').primaryKey().autoincrement(),  // AUTO_INCREMENT primary key
+        certification_name: varchar('certification_name', { length: 255 }).notNull(),  // Certification name
+        age: decimal('age', 3, 1).notNull(),  // Age with one decimal place
+        career_group_id: int('career_group_id').notNull().references(() => CAREER_GROUP.id, { onDelete: 'cascade' }), // Foreign key referencing career_group table
+        milestone_id: int('milestone_id').notNull().references(() => MILESTONES.id),  // Foreign key referencing milestones
+    });
+
+
+    export const CERTIFICATION_QUIZ = mysqlTable('certification_quiz', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        question: text('question').notNull(),
+        certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id),
+        age: decimal('age', 3, 1).notNull(),
+        created_at: timestamp('created_at').defaultNow(), 
+    });
+    
+    export const CERTIFICATION_QUIZ_OPTIONS = mysqlTable('certification_quiz_options', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        question_id: int('question_id').notNull().references(() => CERTIFICATION_QUIZ.id), 
+        option_text: text('option_text').notNull(), 
+        is_answer: mysqlEnum('is_answer', ['yes', 'no']).notNull(), 
+        created_at: timestamp('created_at').defaultNow(), 
+    });
+    
+    export const CERTIFICATION_USER_PROGRESS = mysqlTable('certification_user_progress', {
+        id: int('id').autoincrement().notNull().primaryKey(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id),
+        quiz_id: int('quiz_id').notNull().references(() => CERTIFICATION_QUIZ.id),
+        certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id),
+        option_id: int('option_id').notNull(),
+        is_answer: mysqlEnum('is_answer', ['yes', 'no']).notNull(), 
+        created_at: timestamp('created_at').defaultNow(), 
+    });
+
+    export const USER_CERTIFICATION_COMPLETION = mysqlTable('user_certification_completion', {
+        id: int('id').autoincrement().primaryKey(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id),
+        certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id),
+        isStarted: boolean('isStarted').notNull().default(false),     
+        completed: mysqlEnum('completed', ['yes', 'no']).notNull(),
+        score_percentage: decimal('score_percentage', 5, 2).default(null),
+        rating_stars: int('rating_stars').default(null),
+        created_at: timestamp('created_at').defaultNow(),
+        updated_at: timestamp('updated_at').defaultNow().onUpdateNow(), // Timestamp for updates
+    });
