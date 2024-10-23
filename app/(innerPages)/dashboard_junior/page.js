@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import LoadingOverlay from "../_components/LoadingOverlay";
 import Results from "../dashboard/_components/Results/page";
 import Results2 from "../dashboard/_components/Result2/page";
 import BannerJunior from "./_components/Banner/page";
 // import Navbarkids from "../dashboard_kids/_components/Navbar/page";
 import Navbar from "../dashboard/_components/Navbar/page";
 import dynamic from 'next/dynamic';
+import LoadingOverlay from "@/app/_components/LoadingOverlay";
 
 
 export default function Dashboard() {
