@@ -89,7 +89,7 @@ const LeftSideBar = () => {
                 className={`text-2xl p-2 mb-6 max-md:hidden transition-transform ${
                   isOpen ? "rotate-0" : "rotate-180"
                 }`}
-                onClick={toggleSidebar}
+                onClick={toggleSidebars}
               >
                 <FaBars />
               </button>
