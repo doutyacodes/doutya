@@ -5,8 +5,8 @@ export default function PodcastPage() {
     const podcasts = [
       {
         id: 1,
-        title: 'How to build a world-class business brand',
-        description: 'Lorem ipsum at vero eos et accusam et justo duo dolores et ea rebum.',
+        title: 'The Launch Of Xortlist',
+        description: 'Xortlist is an innovative AI-powered career guidance platform designed to help individuals discover their ideal career paths.',
         imageUrl: 'https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg',
         audioUrl: '/assets/podcasts/podcast1.mp3',
       },
@@ -45,7 +45,7 @@ export default function PodcastPage() {
                 <img src={podcast.imageUrl} alt={podcast.title} className="w-full h-40 object-cover rounded-md mb-4" />
                 <h3 className="text-xl font-semibold">{podcast.title}</h3>
                 <p className="text-gray-600 mt-2 mb-4">{podcast.description}</p>
-                <audio controls className="w-full">
+                <audio controls className="w-full rounded-full">
                   <source src={podcast.audioUrl} type="audio/mpeg" />
                   Your browser does not support the audio element.
                 </audio>

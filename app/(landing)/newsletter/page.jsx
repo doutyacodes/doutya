@@ -74,7 +74,7 @@ export default function NewsletterPage() {
           ))}
         </div>
         {/* Past Newsletters */}
-        <h2 className="text-3xl font-semibold mb-8 mt-8">Past Newsletters</h2>
+        {/* <h2 className="text-3xl font-semibold mb-8 mt-8">Past Newsletters</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {newsletters.map((newsletter) => (
             <div
@@ -92,7 +92,7 @@ export default function NewsletterPage() {
               </button>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
       <Footer />
 
