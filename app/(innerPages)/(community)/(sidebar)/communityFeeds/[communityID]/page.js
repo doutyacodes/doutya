@@ -4,8 +4,8 @@ import { Heart, MessageCircle, ArrowLeft, PlusCircle, User } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import toast, { Toaster } from "react-hot-toast";
 import GlobalApi from '@/app/_services/GlobalApi';
-import PostsCard from '@/app/(innerPages)/dashboard/_components/(Community)/PostsCard/PostsCard';
-import PostCreation from '@/app/(innerPages)/dashboard/_components/(Community)/PostCreation/PostCreation';
+import PostsCard from '@/app/dashboard/_components/(Community)/PostsCard/PostsCard';
+import PostCreation from '@/app/dashboard/_components/(Community)/PostCreation/PostCreation';
 
 const CommunityFeedsPage = ({ params }) => {
 

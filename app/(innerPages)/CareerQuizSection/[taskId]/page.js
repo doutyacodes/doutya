@@ -6,7 +6,7 @@ import QuizProgressAlert from "@/app/_components/QuizProgressAlert";
 import GlobalApi from "@/app/_services/GlobalApi";
 import { cn } from "@/lib/utils";
 import toast, { LoaderIcon, Toaster } from "react-hot-toast";
-import GreenSlider from "@/app/(innerPages)/dashboard/_components/GreenSlider";
+import GreenSlider from "@/app/dashboard/_components/GreenSlider";
 import { useTranslations } from "next-intl";
 
 const languageFiles = {
