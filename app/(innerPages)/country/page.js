@@ -5,8 +5,8 @@ import countryList from "react-select-country-list";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import toast, { Toaster } from "react-hot-toast";
-import GlobalApi from "../_services/GlobalApi";
 import { calculateAge } from "@/lib/ageCalculate";
+import GlobalApi from "@/app/_services/GlobalApi";
 
 function SelectCountry() {
   const [educationCountry, setEducationCountry] = useState(null);
