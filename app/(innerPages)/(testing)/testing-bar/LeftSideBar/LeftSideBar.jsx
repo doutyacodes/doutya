@@ -150,7 +150,7 @@ const LeftSideBar = () => {
                 {/* My Analysis Link */}
                 <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
                   <Link
-                    href="/myResults"
+                    href="/dashboard/myResults"
                     onClick={handleLinkClick}
                     className="flex items-center"
                   >
