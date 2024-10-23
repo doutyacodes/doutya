@@ -2,100 +2,100 @@
 import React, { useState } from "react";
 import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
 import {
-  FaSort,
   FaUserGraduate,
-  FaSchool,
   FaChild,
+  FaSchool,
   FaBuilding,
   FaBlog,
+  FaPodcast,
   FaBriefcase,
   FaInfoCircle,
   FaNewspaper,
   FaBook,
   FaUsers,
-  FaPodcast,
 } from "react-icons/fa";
 import Link from "next/link";
 
 const ListComponents = () => {
   const [isProductVisible, setIsProductVisible] = useState(false);
   const [isResourcesVisible, setIsResourcesVisible] = useState(false);
-  const [companyVisible, setCompanyVisible] = useState(false);
+  const [isCompanyVisible, setIsCompanyVisible] = useState(false);
 
   const toggleProductVisibility = () => setIsProductVisible(!isProductVisible);
   const toggleResourcesVisibility = () =>
     setIsResourcesVisible(!isResourcesVisible);
-  const toggleCompanyVisibility = () => setCompanyVisible(!companyVisible);
+  const toggleCompanyVisibility = () =>
+    setIsCompanyVisible(!isCompanyVisible);
 
   return (
     <>
       {/* Product Section */}
       {/* <li>
         <div
-          className="flex w-full justify-between px-3"
+          className="flex w-full justify-between items-center px-3 cursor-pointer transition-colors duration-300 hover:text-indigo-500"
           onClick={toggleProductVisibility}
         >
-          <p className="text-blue-600 text-sm cursor-pointer focus:underline">
-            Product
-          </p>
+          <p className="text-gray-700 text-sm font-medium">Product</p>
           {isProductVisible ? (
-            <IoChevronUpOutline size={20} color="red" />
+            <IoChevronUpOutline size={18} className="text-indigo-600" />
           ) : (
-            <IoChevronDownOutline size={20} color="blue" />
+            <IoChevronDownOutline size={18} className="text-gray-600" />
           )}
-        </div>
-        {isProductVisible && (
-          <div className="w-full bg-[#f5edff] px-3 space-y-3 py-5">
-            <ul className="space-y-5">
+        </div> */}
+        {/* {isProductVisible && (
+          <div className="w-full bg-[#f0f4ff] px-3 py-4 space-y-4">
+            <ul className="space-y-3">
               <li>
                 <Link
-                  href={"/xortlist"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/xortlist"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaUserGraduate color="purple" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">Xortlist</p>
+                  <FaUserGraduate color="#6a1b9a" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">
+                    Xortlist
+                  </p>
                 </Link>
               </li>
               <li>
                 <Link
-                  href={"/xortlist-junior"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/xortlist-junior"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaUserGraduate color="green" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">
+                  <FaUserGraduate color="#43a047" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">
                     Xortlist - Junior
                   </p>
                 </Link>
               </li>
               <li>
                 <Link
-                  href={"/xortlist-kids"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/xortlist-kids"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaChild color="orange" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">
+                  <FaChild color="#f4511e" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">
                     Xortlist - Kids
                   </p>
                 </Link>
               </li>
               <li>
                 <Link
-                  href={"/xortlist-schools"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/xortlist-schools"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaSchool color="blue" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">
+                  <FaSchool color="#1e88e5" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">
                     Xortlist - Schools
                   </p>
                 </Link>
               </li>
               <li>
                 <Link
-                  href={"/xortlist-college"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/xortlist-college"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaBuilding color="red" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">
+                  <FaBuilding color="#e53935" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">
                     Xortlist - College
                   </p>
                 </Link>
@@ -108,46 +108,35 @@ const ListComponents = () => {
       {/* Resources Section */}
       <li>
         <div
-          className="flex w-full justify-between px-3"
+          className="flex w-full justify-between items-center px-3 cursor-pointer transition-colors duration-300 hover:text-indigo-500"
           onClick={toggleResourcesVisibility}
         >
-          <p className="text-blue-600 text-sm cursor-pointer focus:underline">
-            Resources
-          </p>
+          <p className="text-gray-700 text-sm font-medium">Resources</p>
           {isResourcesVisible ? (
-            <IoChevronUpOutline size={20} color="red" />
+            <IoChevronUpOutline size={18} className="text-indigo-600" />
           ) : (
-            <IoChevronDownOutline size={20} color="blue" />
+            <IoChevronDownOutline size={18} className="text-gray-600" />
           )}
         </div>
         {isResourcesVisible && (
-          <div className="w-full bg-[#f5edff] px-3 space-y-3 py-5">
-            <ul className="space-y-5">
+          <div className="w-full bg-[#f0f4ff] px-3 py-4 space-y-4">
+            <ul className="space-y-3">
               <li>
                 <Link
-                  href={"/blog"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/blog"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaBlog color="brown" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">Blogs</p>
+                  <FaBlog color="#8d6e63" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">Blogs</p>
                 </Link>
               </li>
-              {/* <li>
-                <Link
-                  href={"/newsletter"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
-                >
-                  <FaNewspaper color="brown" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">Newsletter</p>
-                </Link>
-              </li> */}
               <li>
                 <Link
-                  href={"/podcasts"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/podcasts"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaPodcast color="brown" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">Podcasts</p>
+                  <FaPodcast color="#8d6e63" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">Podcasts</p>
                 </Link>
               </li>
             </ul>
@@ -158,66 +147,64 @@ const ListComponents = () => {
       {/* Company Section */}
       <li>
         <div
-          className="flex w-full justify-between px-3"
+          className="flex w-full justify-between items-center px-3 cursor-pointer transition-colors duration-300 hover:text-indigo-500"
           onClick={toggleCompanyVisibility}
         >
-          <p className="text-blue-600 text-sm cursor-pointer focus:underline">
-            Company
-          </p>
-          {companyVisible ? (
-            <IoChevronUpOutline size={20} color="red" />
+          <p className="text-gray-700 text-sm font-medium">Company</p>
+          {isCompanyVisible ? (
+            <IoChevronUpOutline size={18} className="text-indigo-600" />
           ) : (
-            <IoChevronDownOutline size={20} color="blue" />
+            <IoChevronDownOutline size={18} className="text-gray-600" />
           )}
         </div>
-        {companyVisible && (
-          <div className="w-full bg-[#f5edff] px-3 space-y-3 py-5">
-            <ul className="space-y-5">
+        {isCompanyVisible && (
+          <div className="w-full bg-[#f0f4ff] px-3 py-4 space-y-4">
+            <ul className="space-y-3">
               <li>
                 <Link
-                  href={"/careers"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/careers"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaBriefcase color="#8B4513" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">Careers</p>
+                  <FaBriefcase color="#5d4037" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">Careers</p>
                 </Link>
               </li>
               <li>
                 <Link
-                  href={"/about"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/about"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaInfoCircle color="#8B4513" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">About</p>
+                  <FaInfoCircle color="#5d4037" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">About</p>
                 </Link>
               </li>
               <li>
                 <Link
-                  href={"/press"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/press"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaNewspaper color="#8B4513" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">Press</p>
+                  <FaNewspaper color="#5d4037" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">Press</p>
                 </Link>
               </li>
               <li>
                 <Link
-                  href={"/operating-principles"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/operating-principles"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaBook color="#8B4513" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">
+                  <FaBook color="#5d4037" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">
                     Operating Principles
                   </p>
                 </Link>
               </li>
               <li>
                 <Link
-                  href={"/leadership-principles"}
-                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                  href="/leadership-principles"
+                  className="flex gap-3 items-center hover:scale-105 transition-transform"
                 >
-                  <FaUsers color="#8B4513" size={20} />
-                  <p className="text-blue-600 text-sm font-semibold">
+                  <FaUsers color="#5d4037" size={16} />
+                  <p className="text-gray-700 text-xs font-semibold">
                     Leadership Principles
                   </p>
                 </Link>
