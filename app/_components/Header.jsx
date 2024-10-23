@@ -111,178 +111,193 @@ const Header = ({ dark = false }) => {
       href: "/podcasts",
       icon: <FaPodcast className="w-4 h-4 text-[#3e0075]" />,
     },
-    {
-      title: "Newsletters",
-      description: "The rules that drive our day to day",
-      href: "/newsletter",
-      icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
-    },
+    // {
+    //   title: "Newsletters",
+    //   description: "The rules that drive our day to day",
+    //   href: "/newsletter",
+    //   icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
+    // },
   ];
 
   return (
     <header
-      className={`flex justify-between items-center w-screen mx-auto px-4 ${
-        isScrolled ? "fixed z-[9999999] bg-[#1c143b]" : darks ? "bg-transparent": "bg-[#1c143b]" 
+      className={`w-screen ${
+        isScrolled
+          ? "fixed z-[9999999] bg-[#1c143b]"
+          : darks
+          ? "bg-transparent"
+          : "bg-[#1c143b]"
       }`}
     >
-      <div>
-        <Link href={"/"}>
-          <Image
-            src={
-              darks
-                ? "/assets/images/doutya4.png"
-                : "/assets/images/logo-full.png"
-            }
-            width={150}
-            height={150}
-            className={`${pathname == "/" && "max-md:hidden"}`}
-          />
-          <Image
-            src={"/assets/images/doutya4.png"}
-            width={150}
-            height={150}
-            className={`${pathname == "/" ? "md:hidden" : "hidden"}`}
-          />
-        </Link>
-      </div>
-      <ul className="lg:flex hidden gap-7 ">
-        <li className="group">
-          <Link href={"/careers"} className="cursor-pointer relative z-[9999]">
-            <p
-              className={`text-${
-                !darks ? "white" : "[#3e0075]"
-              } text-sm hover:font-bold`}
-            >
-              Careers
-            </p>
-          </Link>
-        </li>
-        <li className="group">
-          <div className="cursor-pointer relative z-[9999]">
-            <p
-              className={`text-${
-                !darks ? "white" : "[#3e0075]"
-              } text-sm hover:font-bold`}
-              onMouseOver={() => setDarks(!dark)}
-              onMouseOut={() => setDarks(dark)}
-            >
-              Resources
-            </p>
-          </div>
-          <div
-            className={`absolute top-0 z-[9999] pt-20 left-0 min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300 w-screen`}
-          >
-            <div className={`bg-white p-4 shadow border-b-[0.5px] border-x-[0.5px] outline-slate-300`}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
-                {resourceData.map((item, index) => (
-                  <div key={index} className="py-5 flex items-center">
-                    <Link href={item.href} className="flex flex-col gap-2">
-                      <div className="flex gap-2 items-center">
-                        {item.icon}
-                        <h2 className="text-[12px] font-semibold">
-                          {item.title}
-                        </h2>
-                      </div>
-                      <p className="text-[10px] text-[#3e0075] font-semibold">
-                        {item.description}
-                      </p>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </li>
-        <li className="group">
-          <div className="cursor-pointer relative z-[9999]">
-            <p
-              className={`text-${
-                !darks ? "white" : "[#3e0075]"
-              } text-sm hover:font-bold`}
-              onMouseOver={() => setDarks(!dark)}
-              onMouseOut={() => setDarks(dark)}
-            >
-              Company
-            </p>
-          </div>
-          <div
-            className={`absolute top-0 z-[9999] pt-20 left-0 min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300 w-screen`}
-          >
-            <div className={`bg-white p-4 shadow border-b-[0.5px] border-x-[0.5px] outline-slate-300`}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
-                {companyData.map((item, index) => (
-                  <div key={index} className="py-5 flex items-center">
-                    <Link href={item.href} className="flex flex-col gap-2">
-                      <div className="flex gap-2 items-center">
-                        {item.icon}
-                        <h2 className="text-[12px] font-semibold">
-                          {item.title}
-                        </h2>
-                      </div>
-                      <p className="text-[10px] text-[#3e0075] font-semibold">
-                        {item.description}
-                      </p>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </li>
-        <li className="group">
-          <Link
-            href={"/our-story"}
-            className="cursor-pointer relative z-[9999]"
-          >
-            <p
-              className={`text-${
-                !darks ? "white" : "[#3e0075]"
-              } text-sm hover:font-bold`}
-            >
-              Our Story
-            </p>
-          </Link>
-        </li>
-      </ul>
-
-      <div>
-        <div className="hidden lg:flex justify-start md:justify-center w-full">
-          <Link
-            href={"/login"}
-            className="bg-[#01bf61] text-white rounded-full px-7 py-3 font-semibold"
-          >
-            Explore Now
+      <div
+        className={`mx-auto container w-full flex justify-between items-center px-4`}
+      >
+        <div>
+          <Link href={"/"}>
+            <Image
+              src={
+                darks
+                  ? "/assets/images/doutya4.png"
+                  : "/assets/images/logo-full.png"
+              }
+              width={150}
+              height={150}
+              className={`${pathname == "/" && "max-md:hidden"}`}
+            />
+            <Image
+              src={"/assets/images/doutya4.png"}
+              width={150}
+              height={150}
+              className={`${pathname == "/" ? "md:hidden" : "hidden"}`}
+            />
           </Link>
         </div>
-        <div className="lg:hidden">
-          <IoIosMenu
-            size={32}
-            color="blue"
-            onClick={toggleMenu}
-            className="cursor-pointer"
-          />
-
-          <div
-            className={`min-w-80 z-[9999] py-3 absolute lg:hidden right-3 top-3 bg-white h-[80vh] shadow-xl rounded-md outline outline-slate-100 transition-all duration-300 ease-in-out transform space-y-3 ${
-              isOpen
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 -translate-y-5 pointer-events-none"
-            }`}
-          >
-            <div className="flex justify-end items-center px-3">
-              <IoIosClose
-                size={37}
-                color="blue"
-                onClick={toggleMenu}
-                className="cursor-pointer"
-              />
+        <ul className="lg:flex hidden gap-7 ">
+          <li className="group">
+            <Link
+              href={"/careers"}
+              className="cursor-pointer relative z-[9999]"
+            >
+              <p
+                className={`text-${
+                  !darks ? "white" : "[#3e0075]"
+                } text-sm hover:font-bold`}
+              >
+                Careers
+              </p>
+            </Link>
+          </li>
+          <li className="group">
+            <div className="cursor-pointer relative z-[99999]">
+              <p
+                className={`text-${
+                  !darks ? "white" : "[#3e0075]"
+                } text-sm hover:font-bold`}
+                // onMouseOver={() => setDarks(!dark)}
+                // onMouseOut={() => setDarks(dark)}
+              >
+                Resources
+              </p>
             </div>
-            <p className="text-[#3e0075] text-sm cursor-pointer font-semibold focus:underline px-3 mb-2">
-              Why Xortlist?
-            </p>
-            <ul className="space-y-5">
-              <ListComponents />
-            </ul>
+            <div
+              className={`absolute top-0 z-[9999] pt-20 left-0 min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300 w-screen`}
+            >
+              <div
+                className={`bg-white p-4 shadow border-b-[0.5px] border-x-[0.5px] outline-slate-300`}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
+                  {resourceData.map((item, index) => (
+                    <div key={index} className="py-5 flex items-center">
+                      <Link href={item.href} className="flex flex-col gap-2">
+                        <div className="flex gap-2 items-center">
+                          {item.icon}
+                          <h2 className="text-[12px] font-semibold">
+                            {item.title}
+                          </h2>
+                        </div>
+                        <p className="text-[10px] text-[#3e0075] font-semibold">
+                          {item.description}
+                        </p>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </li>
+          <li className="group">
+            <div className="cursor-pointer relative z-[99999]">
+              <p
+                className={`text-${
+                  !darks ? "white" : "[#3e0075]"
+                } text-sm hover:font-bold`}
+                // onMouseOver={() => setDarks(!dark)}
+                // onMouseOut={() => setDarks(dark)}
+              >
+                Company
+              </p>
+            </div>
+            <div
+              className={`absolute top-0 z-[9999] pt-20 left-0 min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300 w-screen`}
+            >
+              <div
+                className={`bg-white p-4 shadow border-b-[0.5px] border-x-[0.5px] outline-slate-300`}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
+                  {companyData.map((item, index) => (
+                    <div key={index} className="py-5 flex items-center">
+                      <Link href={item.href} className="flex flex-col gap-2">
+                        <div className="flex gap-2 items-center">
+                          {item.icon}
+                          <h2 className="text-[12px] font-semibold">
+                            {item.title}
+                          </h2>
+                        </div>
+                        <p className="text-[10px] text-[#3e0075] font-semibold">
+                          {item.description}
+                        </p>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </li>
+          <li className="group">
+            <Link
+              href={"/our-story"}
+              className="cursor-pointer relative z-[9999]"
+            >
+              <p
+                className={`text-${
+                  !darks ? "white" : "[#3e0075]"
+                } text-sm hover:font-bold`}
+              >
+                Our Story
+              </p>
+            </Link>
+          </li>
+        </ul>
+
+        <div>
+          <div className="hidden lg:flex justify-start md:justify-center w-full">
+            <Link
+              href={"/login"}
+              className="bg-[#01bf61] text-white rounded-full px-7 py-3 font-semibold"
+            >
+              Explore Now
+            </Link>
+          </div>
+          <div className="lg:hidden">
+            <IoIosMenu
+              size={32}
+              color="blue"
+              onClick={toggleMenu}
+              className="cursor-pointer"
+            />
+
+            <div
+              className={`min-w-80 z-[9999] py-3 absolute lg:hidden right-3 top-3 bg-white h-[80vh] shadow-xl rounded-md outline outline-slate-100 transition-all duration-300 ease-in-out transform space-y-3 ${
+                isOpen
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-5 pointer-events-none"
+              }`}
+            >
+              <div className="flex justify-end items-center px-3">
+                <IoIosClose
+                  size={37}
+                  color="blue"
+                  onClick={toggleMenu}
+                  className="cursor-pointer"
+                />
+              </div>
+              <p className="text-[#3e0075] text-sm cursor-pointer font-semibold focus:underline px-3 mb-2">
+                Why Xortlist?
+              </p>
+              <ul className="space-y-5">
+                <ListComponents />
+              </ul>
+            </div>
           </div>
         </div>
       </div>

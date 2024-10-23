@@ -132,7 +132,7 @@ const ListComponents = () => {
                   <p className="text-blue-600 text-sm font-semibold">Blogs</p>
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href={"/newsletter"}
                   className="flex gap-2 items-center hover:scale-105 transition-transform"
@@ -140,7 +140,7 @@ const ListComponents = () => {
                   <FaNewspaper color="brown" size={20} />
                   <p className="text-blue-600 text-sm font-semibold">Newsletter</p>
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
                   href={"/podcasts"}
