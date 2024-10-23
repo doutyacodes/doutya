@@ -4,8 +4,8 @@ import Banner from './_components/Banner/page'
 import Results from './_components/Results/page'
 import Results2 from './_components/Result2/page'
 import { useRouter } from 'next/navigation'
-import LoadingOverlay from '../_components/LoadingOverlay'
 import dynamic from 'next/dynamic';
+import LoadingOverlay from '@/app/_components/LoadingOverlay'
 
 export default function Dashboard() {
   const [showResults, setShowResults] = useState(false);
