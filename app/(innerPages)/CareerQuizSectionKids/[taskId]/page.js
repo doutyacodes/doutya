@@ -5,8 +5,8 @@ import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { LoaderIcon, Toaster } from "react-hot-toast";
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import GreenSlider from "@/app/dashboard/_components/GreenSlider";
 import { useTranslations } from "next-intl";
+import GreenSlider from '../../dashboard/_components/GreenSlider';
 
 const languageFiles = {
   hi: {
