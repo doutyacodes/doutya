@@ -7,7 +7,7 @@ import html2canvas from 'html2canvas';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast from 'react-hot-toast';
 import LoadingOverlay from '@/app/_components/LoadingOverlay';
-import SelectCommunity from '@/app/dashboard/_components/SelectCommunityModal/SelectCommunity';
+import SelectCommunity from '@/app/(innerPages)/dashboard/_components/SelectCommunityModal/SelectCommunity';
 
 const CertificateDisplay = ({ params }) => {
   const { certificationId } = params;
