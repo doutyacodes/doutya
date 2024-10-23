@@ -61,7 +61,7 @@ const page = () => {
   ];
   return (
     <main className="relative w-full ">
-      <div className=" md:min-h-screen bg-[#3e0075] ">
+      <div className=" md:min-h-screen bg-[#1c143b] ">
       <Header />
       <div className="py-4 justify-center items-center flex flex-col h-full w-full gap-7">
           <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">

@@ -5,79 +5,148 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
+import { FaUserCircle } from "react-icons/fa";
+import { CircleUser } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const BlogPage = () => {
-  const blog = {
-    title: "The Birth of Xortlist: A New Era in Career Guidance",
-    author: "Kiran Roice",
-    date: "12 October, 2024",
-    image: "https://images.pexels.com/photos/3184290/pexels-photo-3184290.jpeg",
-    content: `
-      As I sit down to reflect on the journey that led to the creation of Xortlist, I am filled with gratitude and excitement for what lies ahead. This journey began with a simple realization: the traditional methods of career guidance were no longer sufficient for the challenges faced by today's youth. 
-      
-      For years, I worked in various roles within the corporate sector, where I had the privilege of meeting and interviewing countless aspiring candidates. Over time, I conducted interviews with nearly 3,000 young individuals, each one brimming with potential and ambition. However, what struck me the most was the overwhelming sense of confusion and uncertainty that many of them experienced.
-      
-     Despite their talents, so many young people were unsure of their strengths and what truly ignited their passions. They felt pressured to conform to conventional career paths, often led astray by misleading advice that resulted in poor decisions. I saw firsthand how this confusion could derail promising futures, leaving candidates with ill-suited degrees and limited opportunities. It was disheartening to witness the potential of these young minds going untapped, and it sparked something within me.
-
-     In that moment of reflection, I realized that there was a pressing need for a new approach to career guidance—one that was personalized, intuitive, and powered by technology. I envisioned a platform that would not only help individuals uncover their strengths and passions but also provide clear, actionable pathways to achieving their career goals.
-
-     Thus, the concept of Xortlist was born.
-
-      The journey to bring Xortlist to life was anything but easy. It took a dedicated team of passionate individuals, each committed to the vision of transforming career guidance. Shabeer, our lead developer, worked tirelessly, guiding our technical team with a relentless pursuit of excellence. Alongside him, our talented developers—Jino, Avni, Mrunal, Shristi, and Wachan—poured their hearts and souls into this project, often putting in sleepless nights to ensure that every detail was perfect.
-
-      
-    Together, we faced numerous challenges, from designing an intuitive user interface to developing advanced AI algorithms that would analyze individual strengths and interests effectively. Each team member brought their unique skills and perspectives, collaborating seamlessly to overcome obstacles and refine our platform. Their hard work and dedication were instrumental in shaping Xortlist into what it is today.
-
-      After months of brainstorming, development, and testing, we launched Xortlist with a simple yet powerful vision: to empower young individuals to take control of their career journeys. Our platform not only provides personalized career recommendations but also creates actionable roadmaps to guide users every step of the way. Through milestone tracking and real-time feedback, we aim to inspire confidence and clarity in their pursuits.
-
-     As we celebrate the launch of Xortlist, I am reminded that this is just the beginning. Our journey is about creating a supportive community that fosters growth, exploration, and achievement. We are committed to continuously improving our platform and adapting to the evolving needs of the next generation.
-
-     To all the young dreamers out there: Xortlist is here for you. We are excited to accompany you on your career journey, illuminating the paths that lead to your dreams. Together, let’s redefine career guidance and make your aspirations a reality.
-
-    `,
-  };
-
+  const blogList = [
+    {
+      id: 1,
+      tag: "Technology",
+      title: "The Birth of Xortlist: A New Era in Career Guidance",
+      name: "Kiran Roice",
+      date: "12 October, 2024",
+    },
+    // {
+    //   id: 2,
+    //   tag: "Technology",
+    //   title: "Revolutionizing Healthcare with Machine Learning",
+    //   name: "Jane Smith",
+    //   date: "12 October, 2024",
+    // },
+    // {
+    //   id: 3,
+    //   tag: "Technology",
+    //   title: "The Rise of Quantum Computing",
+    //   name: "David Johnson",
+    //   date: "12 October, 2024",
+    // },
+    // {
+    //   id: 4,
+    //   tag: "Technology",
+    //   title: "Blockchain Beyond Cryptocurrency",
+    //   name: "Emily Davis",
+    //   date: "12 October, 2024",
+    // },
+    // {
+    //   id: 5,
+    //   tag: "Technology",
+    //   title: "5G Networks: Ushering in a New Era of Connectivity",
+    //   name: "Michael Brown",
+    //   date: "12 October, 2024",
+    // },
+    // {
+    //   id: 6,
+    //   tag: "Technology",
+    //   title: "The Role of Augmented Reality in Retail",
+    //   name: "Sarah Wilson",
+    //   date: "12 October, 2024",
+    // },
+    // {
+    //   id: 7,
+    //   tag: "Technology",
+    //   title: "Cybersecurity Trends to Watch in 2024",
+    //   name: "Robert Miller",
+    //   date: "12 October, 2024",
+    // },
+    // {
+    //   id: 8,
+    //   tag: "Technology",
+    //   title: "How IoT is Transforming Smart Cities",
+    //   name: "Jessica Garcia",
+    //   date: "12 October, 2024",
+    // },
+    // {
+    //   id: 9,
+    //   tag: "Technology",
+    //   title: "Sustainable Tech: Innovations for a Greener Planet",
+    //   name: "William Martinez",
+    //   date: "12 October, 2024",
+    // },
+    // {
+    //   id: 10,
+    //   tag: "Technology",
+    //   title: "The Impact of Automation on the Workforce",
+    //   name: "Amanda Clark",
+    //   date: "12 October, 2024",
+    // },
+  ];
+const router = useRouter()
   return (
     <div className="w-full bg-[#f5f7fa] min-h-screen">
       <Header dark={true} />
-      <div className="container mx-auto p-6 space-y-10">
-        {/* Blog Header */}
-        <div className="w-full text-center space-y-5">
-          <h1 className="text-4xl font-extrabold text-gray-800">
-            {blog.title}
-          </h1>
-          <p className="text-md text-gray-500">By {blog.author}</p>
-          <p className="text-md text-gray-400">{blog.date}</p>
-        </div>
-
-        {/* Image Section */}
-        <div className="relative w-full h-96 rounded-lg overflow-hidden shadow-lg">
-          <Image
-            src={blog.image}
-            alt="Xortlist Blog Image"
-            fill
-            objectFit="cover"
-            className="transform hover:scale-105 transition duration-500 ease-in-out"
-          />
-        </div>
-
-        {/* Blog Content */}
-        <div className="prose lg:prose-xl  mx-auto text-gray-700 leading-8">
-          {blog.content.split("\n").map((paragraph, index) => (
-            <p key={index} className="animate-fadeIn">
-              {paragraph.trim()}
+      <div className="container mx-auto px-3 py-3">
+        <div onClick={()=>router.push("/blog/1")} className="w-full relative ">
+          <div className="w-full h-full relative md:min-h-[70vh] min-h-[30vh] ">
+            <Image
+              src={
+                "https://images.pexels.com/photos/3184290/pexels-photo-3184290.jpeg"
+              }
+              className="mx-auto rounded-lg"
+              objectFit="cover"
+              fill
+            />
+          </div>
+          <div className="md:absolute my-3 max-md:bg-white rounded-md p-2 bottom-10 max-md:shadow-md md:w-80 left-10 space-y-4">
+            <p className="md:text-white p-2 rounded-lg text-xs bg-violet-600 w-fit">
+              Technology
             </p>
-          ))}
+            <h3 className="font-bold md:text-white">
+            The Birth of Xortlist: A New Era in Career Guidance
+            </h3>
+            <div className="flex gap-5 items-center">
+              <div className="flex gap-2 items-center">
+                <CircleUser size={20} className="text-black md:text-white" />
+                <p className="text-black md:text-white text-xs">
+                  Kiran Roice
+                </p>
+              </div>
+              <p className="text-black md:text-white text-xs">
+              12 October, 2024
+              </p>
+            </div>
+          </div>
         </div>
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 rounded-lg mt-3">
+          {blogList?.length > 0 &&
+            blogList?.map((item) => {
+              return (
+                <Link href={"/blog/1"} className="w-full p-3 shadow-md bg-white rounded-md" key={item.id}>
+                  <div className="relative w-full h-72">
+                  <Image
+                    src={
+                      "https://images.pexels.com/photos/3184290/pexels-photo-3184290.jpeg"
+                    }
+                    fill
+                    className="rounded-md"
+                  />
+                  </div>
+                  <p className=" ml-3 px-3 p-1 bg-violet-200 text-violet-600 w-fit text-xs mt-2 rounded-xl">
+                    {item.tag}
+                  </p>
 
-        {/* Call to Action */}
-        <div className="flex justify-center mt-10">
-          <Link
-            href={"/"}
-            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-full text-lg font-semibold shadow-md transform hover:scale-105 transition duration-300 ease-in-out"
-          >
-            Discover More at Xortlist
-          </Link>
+                  <h1 className="mt-3 font-bold">{item.title}</h1>
+                  <div className="flex gap-5 items-center mt-3">
+                    <div className="flex gap-2 items-center">
+                      <CircleUser size={20} className="text-black " />
+                      <p className="text-black  text-xs">{item.name}</p>
+                    </div>
+                    <p className="text-black  text-xs">{item.date}</p>
+                  </div>
+                </Link>
+              );
+            })}
         </div>
       </div>
       <Footer />

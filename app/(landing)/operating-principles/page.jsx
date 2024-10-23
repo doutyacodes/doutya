@@ -73,7 +73,7 @@ const Principle = () => {
   };
   return (
     <main className="relative w-full bg-white">
-      <div className=" md:min-h-screen bg-[#3e0075] py-4">
+      <div className=" md:min-h-screen bg-[#1c143b]">
       <Header />
       <div className="container mx-auto px-3">
           <div className="flex max-md:flex-col w-full pt-5">

@@ -13,6 +13,7 @@ import {
   FaNewspaper,
   FaBook,
   FaUsers,
+  FaPodcast,
 } from "react-icons/fa";
 import Link from "next/link";
 
@@ -20,13 +21,11 @@ const ListComponents = () => {
   const [isProductVisible, setIsProductVisible] = useState(false);
   const [isResourcesVisible, setIsResourcesVisible] = useState(false);
   const [companyVisible, setCompanyVisible] = useState(false);
-  const [career, setCareer] = useState(false);
-  // const [isResourcesVisible, setIsResourcesVisible] = useState(false);
 
   const toggleProductVisibility = () => setIsProductVisible(!isProductVisible);
   const toggleResourcesVisibility = () =>
     setIsResourcesVisible(!isResourcesVisible);
-  const toggleCompanyVisibility = () => setCompanyVisible(!isResourcesVisible);
+  const toggleCompanyVisibility = () => setCompanyVisible(!companyVisible);
 
   return (
     <>
@@ -48,33 +47,58 @@ const ListComponents = () => {
         {isProductVisible && (
           <div className="w-full bg-[#f5edff] px-3 space-y-3 py-5">
             <ul className="space-y-5">
-              <li className="flex gap-2 items-center hover:scale-105 transition-transform">
-                <FaUserGraduate color="purple" size={20} />
-                <p className="text-blue-600 text-sm font-semibold">Xortlist</p>
+              <li>
+                <Link
+                  href={"/xortlist"}
+                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                >
+                  <FaUserGraduate color="purple" size={20} />
+                  <p className="text-blue-600 text-sm font-semibold">Xortlist</p>
+                </Link>
               </li>
-              <li className="flex gap-2 items-center hover:scale-105 transition-transform">
-                <FaUserGraduate color="green" size={20} />
-                <p className="text-blue-600 text-sm font-semibold">
-                  Xortlist - Junior
-                </p>
+              <li>
+                <Link
+                  href={"/xortlist-junior"}
+                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                >
+                  <FaUserGraduate color="green" size={20} />
+                  <p className="text-blue-600 text-sm font-semibold">
+                    Xortlist - Junior
+                  </p>
+                </Link>
               </li>
-              <li className="flex gap-2 items-center hover:scale-105 transition-transform">
-                <FaChild color="orange" size={20} />
-                <p className="text-blue-600 text-sm font-semibold">
-                  Xortlist - Kids
-                </p>
+              <li>
+                <Link
+                  href={"/xortlist-kids"}
+                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                >
+                  <FaChild color="orange" size={20} />
+                  <p className="text-blue-600 text-sm font-semibold">
+                    Xortlist - Kids
+                  </p>
+                </Link>
               </li>
-              <li className="flex gap-2 items-center hover:scale-105 transition-transform">
-                <FaSchool color="blue" size={20} />
-                <p className="text-blue-600 text-sm font-semibold">
-                  Xortlist - Schools
-                </p>
+              <li>
+                <Link
+                  href={"/xortlist-schools"}
+                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                >
+                  <FaSchool color="blue" size={20} />
+                  <p className="text-blue-600 text-sm font-semibold">
+                    Xortlist - Schools
+                  </p>
+                </Link>
               </li>
-              <li className="flex gap-2 items-center hover:scale-105 transition-transform">
-                <FaBuilding color="red" size={20} />
-                <p className="text-blue-600 text-sm font-semibold">
-                  Xortlist - College
-                </p>
+              <li>
+                <Link
+                  href={"/xortlist-college"}
+                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                >
+                  <FaBuilding color="red" size={20} />
+                  <p className="text-blue-600 text-sm font-semibold">
+                    Xortlist - College
+                  </p>
+                </Link>
               </li>
             </ul>
           </div>
@@ -108,10 +132,30 @@ const ListComponents = () => {
                   <p className="text-blue-600 text-sm font-semibold">Blogs</p>
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={"/newsletter"}
+                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                >
+                  <FaNewspaper color="brown" size={20} />
+                  <p className="text-blue-600 text-sm font-semibold">Newsletter</p>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={"/podcasts"}
+                  className="flex gap-2 items-center hover:scale-105 transition-transform"
+                >
+                  <FaPodcast color="brown" size={20} />
+                  <p className="text-blue-600 text-sm font-semibold">Podcasts</p>
+                </Link>
+              </li>
             </ul>
           </div>
         )}
       </li>
+
+      {/* Company Section */}
       <li>
         <div
           className="flex w-full justify-between px-3"
@@ -134,8 +178,7 @@ const ListComponents = () => {
                   href={"/careers"}
                   className="flex gap-2 items-center hover:scale-105 transition-transform"
                 >
-                  <FaBriefcase color="#8B4513" size={20} />{" "}
-                  {/* Brown color for careers */}
+                  <FaBriefcase color="#8B4513" size={20} />
                   <p className="text-blue-600 text-sm font-semibold">Careers</p>
                 </Link>
               </li>
@@ -144,8 +187,7 @@ const ListComponents = () => {
                   href={"/about"}
                   className="flex gap-2 items-center hover:scale-105 transition-transform"
                 >
-                  <FaInfoCircle color="#8B4513" size={20} />{" "}
-                  {/* Brown color for about */}
+                  <FaInfoCircle color="#8B4513" size={20} />
                   <p className="text-blue-600 text-sm font-semibold">About</p>
                 </Link>
               </li>
@@ -154,8 +196,7 @@ const ListComponents = () => {
                   href={"/press"}
                   className="flex gap-2 items-center hover:scale-105 transition-transform"
                 >
-                  <FaNewspaper color="#8B4513" size={20} />{" "}
-                  {/* Brown color for press */}
+                  <FaNewspaper color="#8B4513" size={20} />
                   <p className="text-blue-600 text-sm font-semibold">Press</p>
                 </Link>
               </li>
@@ -164,8 +205,7 @@ const ListComponents = () => {
                   href={"/operating-principles"}
                   className="flex gap-2 items-center hover:scale-105 transition-transform"
                 >
-                  <FaBook color="#8B4513" size={20} />{" "}
-                  {/* Brown color for operating principles */}
+                  <FaBook color="#8B4513" size={20} />
                   <p className="text-blue-600 text-sm font-semibold">
                     Operating Principles
                   </p>
@@ -176,8 +216,7 @@ const ListComponents = () => {
                   href={"/leadership-principles"}
                   className="flex gap-2 items-center hover:scale-105 transition-transform"
                 >
-                  <FaUsers color="#8B4513" size={20} />{" "}
-                  {/* Brown color for leadership principles */}
+                  <FaUsers color="#8B4513" size={20} />
                   <p className="text-blue-600 text-sm font-semibold">
                     Leadership Principles
                   </p>
