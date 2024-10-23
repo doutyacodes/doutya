@@ -13,6 +13,8 @@ import {
   FaClipboardList,
   FaUserTie,
   FaStore,
+  FaBlog,
+  FaPodcast,
 } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 const Header = ({ dark = false }) => {
@@ -78,6 +80,44 @@ const Header = ({ dark = false }) => {
       icon: <BsPersonWorkspace className="w-4 h-4 text-[#3e0075]" />,
     },
   ];
+  const resourceData = [
+    // {
+    //   title: "Careers",
+    //   description: "It’s a great time to join Xortlist",
+    //   href: "/careers",
+    //   icon: <FaBriefcase className="w-4 h-4 text-[#3e0075]" />,
+    // },
+    {
+      title: "Blog",
+      description: "Learn what binds us together at Xortlist",
+      href: "/blog",
+      icon: <FaBlog className="w-4 h-4 text-[#3e0075]" />,
+    },
+    // {
+    //   title: "Press",
+    //   description: "The latest news on Xortlist",
+    //   href: "/press",
+    //   icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
+    // },
+    // {
+    //   title: "Operating Principles",
+    //   description: "The rules that drive our day to day",
+    //   href: "/operating-principles",
+    //   icon: <FaClipboardList className="w-4 h-4 text-[#3e0075]" />,
+    // },
+    {
+      title: "Podcasts",
+      description: "What it means to lead at Xortlist",
+      href: "/podcasts",
+      icon: <FaPodcast className="w-4 h-4 text-[#3e0075]" />,
+    },
+    {
+      title: "Newsletters",
+      description: "The rules that drive our day to day",
+      href: "/newsletter",
+      icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
+    },
+  ];
 
   return (
     <header
@@ -118,15 +158,40 @@ const Header = ({ dark = false }) => {
           </Link>
         </li>
         <li className="group">
-          <Link href={"/blog"} className="cursor-pointer relative z-[9999]">
+          <div className="cursor-pointer relative z-[9999]">
             <p
               className={`text-${
                 !darks ? "white" : "[#3e0075]"
               } text-sm hover:font-bold`}
+              onMouseOver={() => setDarks(!dark)}
+              onMouseOut={() => setDarks(dark)}
             >
-              Blog
+              Resources
             </p>
-          </Link>
+          </div>
+          <div
+            className={`absolute top-0 z-[9999] pt-20 left-0 min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300 w-screen`}
+          >
+            <div className={`bg-white p-4 shadow border-b-[0.5px] border-x-[0.5px] outline-slate-300`}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
+                {resourceData.map((item, index) => (
+                  <div key={index} className="py-5 flex items-center">
+                    <Link href={item.href} className="flex flex-col gap-2">
+                      <div className="flex gap-2 items-center">
+                        {item.icon}
+                        <h2 className="text-[12px] font-semibold">
+                          {item.title}
+                        </h2>
+                      </div>
+                      <p className="text-[10px] text-[#3e0075] font-semibold">
+                        {item.description}
+                      </p>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </li>
         <li className="group">
           <div className="cursor-pointer relative z-[9999]">
