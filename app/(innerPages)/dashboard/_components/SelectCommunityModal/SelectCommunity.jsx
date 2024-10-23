@@ -6,7 +6,6 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
 
 function SelectCommunity({handleComplete, handleCheckboxChange, selectedCommunities}) {
-    const t = useTranslations('QuizProgress');
     const [open, setOpen] = useState(true);
     const [error, setError] = useState('');
 

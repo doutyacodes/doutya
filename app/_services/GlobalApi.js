@@ -496,7 +496,7 @@ const SkillTestProgress = (data, token) => {
 
 const UpdateSkillTestData = (token, subjectId) => {
   const payload = {
-    subjectId,
+    certificationId,
   };
 
   return axios.post(`/api/updateSkillTestData`, payload, {
@@ -571,6 +571,49 @@ const AddPostComment = (token, data) => {
   });
 };
 
+
+/* Certification */
+const GetCertificationTest = (id, token) => {
+  return axios.get(`/api/getCertificationTest/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const CertificationTestProgress = (data, token) => {
+  const payload = {
+    results: data,
+  };
+
+  return axios.post(`/api/saveCertificationTestProgress`, payload, {
+    /* saveTestProgress */
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const UpdateCertificationTest = (token, certificationId) => {
+  const payload = {
+    certificationId,
+  };
+
+  return axios.post(`/api/updateCertificationTest`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const GetCertificationResult = (token, id) => {
+  return axios.get(`/api/getCertificationResult/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -639,4 +682,10 @@ export default {
   GetCommunityPosts,
   AddPostLike,
   AddPostComment,
+
+  GetCertificationTest,
+  CertificationTestProgress,
+  UpdateCertificationTest,
+  GetCertificationResult
+
 };
