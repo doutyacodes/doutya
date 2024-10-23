@@ -50,17 +50,18 @@ function Login() {
         }
         toast.success("Logged in successfully");
         reset();
+        // console.log("response",resp.data)
         if (age <= 9) {
           localStorage.setItem('dashboardUrl', '/dashboard_kids');
           router.push('/dashboard_kids');
         } 
         else if (age <= 13) {
           localStorage.setItem('dashboardUrl', '/dashboard_junior');
-          router.push('/dashboard_junior');
+          resp.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard_junior');
         } 
         else {
           localStorage.setItem('dashboardUrl', '/dashboard');
-          router.push('/dashboard');
+          resp.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard');
         }
       } else {
         toast.error('Invalid username or password');
