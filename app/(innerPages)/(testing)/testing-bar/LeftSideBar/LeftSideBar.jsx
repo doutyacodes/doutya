@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { FaBars, FaHome, FaUser, FaCog } from "react-icons/fa";
+import { FaBars, FaHome, FaUser, FaCog, FaClipboardList, FaSuitcase } from "react-icons/fa";
+import { SiPytest  } from "react-icons/si";
 import Link from "next/link"; // Import Link from Next.js for navigation
 import { usePathname } from "next/navigation";
 
@@ -118,7 +119,7 @@ const LeftSideBar = () => {
                     onClick={handleLinkClick}
                     className="flex items-center"
                   >
-                    <FaCog className="text-2xl" />
+                    <FaClipboardList className="text-2xl" />
                     {isOpen && <span className="text-xl pl-3">Tests</span>}
                   </Link>
                 </li>
@@ -129,7 +130,7 @@ const LeftSideBar = () => {
                     onClick={handleLinkClick}
                     className="flex items-center"
                   >
-                    <FaCog className="text-2xl" />
+                    <FaSuitcase className="text-2xl" />
                     {isOpen && <span className="text-xl pl-3">Careers</span>}
                   </Link>
                 </li>
@@ -153,7 +154,7 @@ const LeftSideBar = () => {
                     onClick={handleLinkClick}
                     className="flex items-center"
                   >
-                    <FaCog className="text-2xl" />
+                    <SiPytest className="text-2xl" />
                     {isOpen && (
                       <span className="text-xl pl-3">My Analysis</span>
                     )}
