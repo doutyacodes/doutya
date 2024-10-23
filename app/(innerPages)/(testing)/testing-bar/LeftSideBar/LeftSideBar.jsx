@@ -77,7 +77,7 @@ const LeftSideBar = () => {
   return (
     <>
       {/* FAB for mobile view */}
-      {pathname != "/login" && pathname != "/signup" && (
+      {(pathname != "/login" && pathname != "/signup") && (
         <button
           className={`fixed bottom-4 right-4 bg-[#2a2b27] text-white p-4 rounded-full z-50 lg:hidden`}
           onClick={toggleSidebars}
@@ -87,7 +87,7 @@ const LeftSideBar = () => {
           <FaBars className="text-xl" />
         </button>
       )}
-      {!isTest2Completed && pathname != "/login" && pathname != "/signup" && (
+      {!isTest2Completed && (pathname != "/login" && pathname != "/signup") && (
         <button
         onClick={()=>router.push("/dashboard/careers")}
           className={`fixed top-4 right-4 bg-orange-500 text-white p-4 rounded-full z-50 flex items-center`}
@@ -99,7 +99,7 @@ const LeftSideBar = () => {
       <div className="min-h-screen poppins-regular">
         {/* Sidebar */}
         <div
-          className={`transition-all duration-300 ease-in-out bg-[#2a2b27] text-white h-full m-2 rounded-md p-4 ${
+          className={`transition-all duration-300 ease-in-out bg-[#2a2b27] ${(pathname == "/login" || pathname == "/signup") && "hidden"} text-white h-full m-2 rounded-md p-4 ${
             isOpen
               ? "w-72 max-md:fixed top-0 z-[99999999999]"
               : "md:w-20 max-md:hidden"
