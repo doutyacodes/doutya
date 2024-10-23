@@ -8,22 +8,22 @@ export default function PodcastPage() {
         title: 'How to build a world-class business brand',
         description: 'Lorem ipsum at vero eos et accusam et justo duo dolores et ea rebum.',
         imageUrl: 'https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg',
-        audioUrl: 'http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
+        audioUrl: '/assets/podcasts/podcast1.mp3',
       },
-      {
-        id: 2,
-        title: 'Getting the first 100 customers for your business',
-        description: 'Lorem ipsum at vero eos et accusam et justo duo dolores et ea rebum.',
-        imageUrl: 'https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg',
-        audioUrl: 'http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
-      },
-      {
-        id: 3,
-        title: 'Should I raise money for my startup, or not?',
-        description: 'Lorem ipsum at vero eos et accusam et justo duo dolores et ea rebum.',
-        imageUrl: 'https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg',
-        audioUrl: 'http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
-      },
+      // {
+      //   id: 2,
+      //   title: 'Getting the first 100 customers for your business',
+      //   description: 'Lorem ipsum at vero eos et accusam et justo duo dolores et ea rebum.',
+      //   imageUrl: 'https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg',
+      //   audioUrl: 'http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
+      // },
+      // {
+      //   id: 3,
+      //   title: 'Should I raise money for my startup, or not?',
+      //   description: 'Lorem ipsum at vero eos et accusam et justo duo dolores et ea rebum.',
+      //   imageUrl: 'https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg',
+      //   audioUrl: 'http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
+      // },
     ];
   
     return (
