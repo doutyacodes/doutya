@@ -187,7 +187,7 @@ export default function Challenge({ selectedCareer }) {
             return challenges
                 .filter((challenge) => challenge.week === currentWeek )
                 .map((challenge, index) => (
-                    <li key={index} className="border p-4 rounded bg-yellow-100 flex justify-between items-center">
+                    <li key={index} className="border p-4 rounded border-[#2f2f2f] text-white bg-[#2f2f2f] flex justify-between items-center">
                         <div>
                             <h3 className="font-bold text-lg">{t('week')} {challenge.week}</h3>
                             <p><strong>{t('challenge')}:</strong> {challenge.challenge}</p>

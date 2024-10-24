@@ -216,7 +216,7 @@ export default function Results2() {
         toast.success("Career Data Saved Successfully");
         if (response.data.isFirstTime) {
           // Navigate to the careers page
-          router.push("/dashboard/careers"); // Change "/careers" to your actual career page path
+          router.push("/dashboard/careers/career-guide"); // Change "/careers" to your actual career page path
         }
       }
     } catch (err) {
@@ -342,7 +342,7 @@ export default function Results2() {
     <div className="max-sm:pb-5">
       <Toaster position="top-center" reverseOrder={false} />
       {step === 1 && industries.length > 0 && (
-        <div className="bg-[#009be8] h-20 my-4 justify-center items-center flex">
+        <div className="bg-[#2c2c2c] h-20 my-4 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center">
             {t("selectIndustry")}
           </p>
@@ -350,7 +350,7 @@ export default function Results2() {
       )}
 
       {step === 2 && !singleCareer && (
-        <div className="bg-[#009be8] h-20 mb-5 justify-center items-center flex">
+        <div className="bg-[#2c2c2c] h-20 mb-5 justify-center items-center flex">
           <p className="text-white uppercase font-bold text-center md:text-xl">
             {t("careerSuggestion")}
           </p>
@@ -358,7 +358,7 @@ export default function Results2() {
       )}
 
       {singleCareer?.career_name && (
-        <div className="bg-[#009be8] md:py-5 md:mb-5 py-2">
+        <div className="bg-[#2c2c2c] md:py-5 md:mb-5 py-2">
           <div className="max-sm:relative flex md:justify-between justify-center items-center md:px-4 mx-auto h-full container">
             <div className="flex md:items-center gap-4 mb-2 md:mb-0 max-sm:absolute max-sm:top-0 max-sm:left-3">
               <button
@@ -504,13 +504,13 @@ export default function Results2() {
                         careersInCategory.length > 0 && (
                           <div key={category} className="mb-8">
                             <h2 className="text-2xl font-bold mb-1 capitalize">
-                              {category}
+                              {category} Careers
                             </h2>
-                            {/* <p className="text-sm text-white mb-4">
+                            <p className="text-sm text-white mb-4">
                               {careerDescriptions[category]}
-                            </p> */}
+                            </p>
                             <div className="w-full h-[1px] bg-white mb-4" />
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                               {careersInCategory.map(
                                 ({ career, originalIndex }) => (
                                   <div
@@ -530,13 +530,13 @@ export default function Results2() {
                                         : career.type}
                                     </h3>
                                     <div className="">
-                                      <h4 className="text-[#F0394F] text-wrap font-bold">
+                                      <h4 className="text-white text-wrap font-bold">
                                         {career.career_name}
                                       </h4>
                                     </div>
-                                    <div className="text-xs">
+                                    {/* <div className="text-xs">
                                       {careerDescriptions[category]}
-                                    </div>
+                                    </div> */}
                                     <div className="w-full flex justify-end items-end">
                                       {/* Encrypt the careerId before passing it in the link */}
                                       <div>

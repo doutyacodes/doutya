@@ -144,7 +144,7 @@ export default function Results2() {
         const response = await GlobalApi.SaveCarrerData(token, payload);
         if (response.status === 201) {
           toast.success("Career Data Saved");
-          router.push("/dashboard/careers");
+          router.push("/dashboard/careers/career-guide");
         }
       } catch (err) {
         console.error("Failed to save career data:", err);

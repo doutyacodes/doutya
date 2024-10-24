@@ -89,7 +89,7 @@ function Page({ params }) {
       }, 1000);
 
       const timer = setTimeout(() => {
-        router.replace("/dashboard/careers");
+        router.replace("/dashboard/careers/career-guide");
       }, 5000);
 
       return () => {

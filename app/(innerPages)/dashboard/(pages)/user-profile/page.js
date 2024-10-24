@@ -12,6 +12,7 @@ import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import { calculateAge } from "@/lib/ageCalculate"; // Ensure this utility exists and works correctly
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
+import CareerStripe from "@/app/_components/CareerStripe.jsx";
 
 function Page() {
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
@@ -188,6 +189,7 @@ function Page() {
 
   return (
     <div className="min-h-screen py-12 max-md:pb-24 px-4 sm:px-6 lg:px-8">
+      <CareerStripe />
       <Toaster position="top-center" reverseOrder={false} />
         {/* <Link href={typeof window !== 'undefined' ? localStorage.getItem('dashboardUrl') : '/login'}>
           <button className="text-white bg-green-600 -mt-20 mb-7 ml-20 p-3 rounded-xl">

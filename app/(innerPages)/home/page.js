@@ -25,7 +25,7 @@ const Home = () => {
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aut soluta nostrum debitis natus molestiae, aperiam iure a fugit quo sunt vitae? Voluptates aspernatur, ipsa pariatur illo soluta excepturi non assumenda.",
       color1: "#ffbd59",
       color2: "#ffbd59",
-      location: "/dashboard/careers",
+      location: "/dashboard/careers/career-guide",
     },
   ];
   return (

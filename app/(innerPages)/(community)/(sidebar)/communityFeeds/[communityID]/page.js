@@ -70,7 +70,7 @@ const CommunityFeedsPage = ({ params }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-[#1f1f1f]">
     <Toaster />
       <div className="container mx-auto p-4 md:px-8 lg:px-16 xl:px-24">
         <div className="flex justify-between items-center mb-6">
@@ -81,7 +81,7 @@ const CommunityFeedsPage = ({ params }) => {
             <ArrowLeft className="mr-2" size={24} />
             Back
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Community Feeds</h1>
+          <h1 className="text-2xl font-bold text-white">Community Feeds</h1>
           <button 
             onClick={() => setShowAddPost(true)} 
             className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"

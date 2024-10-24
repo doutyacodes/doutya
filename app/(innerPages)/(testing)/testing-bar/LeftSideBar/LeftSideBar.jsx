@@ -8,25 +8,40 @@ import {
   FaCog,
   FaClipboardList,
   FaSuitcase,
+  FaChevronDown,
 } from "react-icons/fa";
-import { SiPytest } from "react-icons/si";
+import {
+  PiCompassRoseFill
+} from "react-icons/pi";
 import Link from "next/link"; // Import Link from Next.js for navigation
 import { usePathname, useRouter } from "next/navigation";
+import GlobalApi from "@/app/_services/GlobalApi";
 
 const LeftSideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [dashboardUrl, setDashboardUrl] = useState("/dashboard_kids/");
   const [isTest2Completed, setIsTest2Completed] = useState(false);
+  const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
+  const [isCareersDropdownOpen, setIsCareersDropdownOpen] = useState(false);
 
   const toggleSidebars = () => {
     setIsOpen(!isOpen);
   };
+  
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const toggleLogoutPopup = () => {
+    setIsLogoutPopupOpen(!isLogoutPopupOpen);
+  };
+
+  const toggleCareersDropdown = () => {
+    setIsCareersDropdownOpen(!isCareersDropdownOpen);
+  };
+
   useEffect(() => {
     const getQuizData = async () => {
       try {
@@ -64,8 +79,7 @@ const LeftSideBar = () => {
     window.location.href = "/login";
   };
 
-  const router = useRouter()
-
+  const router = useRouter();
   const handleLinkClick = () => {
     if (isOpen) {
       toggleSidebars();
@@ -73,7 +87,6 @@ const LeftSideBar = () => {
   };
   const pathname = usePathname();
 
-  // console.log(pathname)
   return (
     <>
       {/* FAB for mobile view */}
@@ -89,35 +102,25 @@ const LeftSideBar = () => {
       )}
       {!isTest2Completed && (pathname != "/login" && pathname != "/signup") && (
         <button
-        onClick={()=>router.push("/dashboard/careers")}
+          onClick={() => router.push("/dashboard/careers/career-guide")}
           className={`fixed top-4 right-4 bg-orange-500 text-white p-4 rounded-full z-50 flex items-center`}
         >
           <FaSuitcase className="text-lg" />
-          { <span className="text-lg pl-3 hidden lg:block">Career Guide</span>}
+          <span className="text-lg pl-3 hidden lg:block">Career Guide</span>
         </button>
       )}
       <div className="min-h-screen poppins-regular">
         {/* Sidebar */}
         <div
           className={`transition-all duration-300 ease-in-out bg-[#2a2b27] ${(pathname == "/login" || pathname == "/signup") && "hidden"} text-white h-full m-2 rounded-md p-4 ${
-            isOpen
-              ? "w-72 max-md:fixed top-0 z-[99999999999]"
-              : "md:w-20 max-md:hidden"
+            isOpen ? "w-72 max-md:fixed top-0 z-[99999999999]" : "md:w-20 max-md:hidden"
           }`}
         >
           <div className="my-4">
             {/* Logo aligned to the right */}
-            <div
-              className={`${
-                isOpen ? "flex" : "block"
-              } items-center justify-between gap-3`}
-            >
+            <div className={`${isOpen ? "flex" : "block"} items-center justify-between gap-3`}>
               <Image
-                src={
-                  isOpen
-                    ? "/assets/images/logo-full.png"
-                    : "/assets/images/small-logo.png"
-                }
+                src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
                 alt="Logo"
                 width={150}
                 height={120}
@@ -125,9 +128,7 @@ const LeftSideBar = () => {
               />
               {/* Toggle button inside sidebar */}
               <button
-                className={`text-xl p-2 mb-6 max-md:hidden transition-transform ${
-                  isOpen ? "rotate-0" : "rotate-180"
-                }`}
+                className={`text-xl p-2 mb-6 max-md:hidden transition-transform ${isOpen ? "rotate-0" : "rotate-180"}`}
                 onClick={toggleSidebars}
               >
                 <FaBars />
@@ -137,74 +138,55 @@ const LeftSideBar = () => {
           {/* Sidebar content */}
           <div className="flex flex-col gap-5 h-full">
             <div className="mt-4">
-              {/* Navigation Links */}
               <ul className="space-y-4">
-                {/* Home Link */}
                 <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
-                  <Link
-                    href="/dashboard"
-                    onClick={handleLinkClick}
-                    className="flex items-center"
-                  >
-                    <FaHome className="text-xl" />
-                    {isOpen && <span className="text-xl pl-3">Home</span>}
-                  </Link>
-                </li>
-                {/* Tests Link */}
-                <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
-                  <Link
-                    href="/dashboard"
-                    onClick={handleLinkClick}
-                    className="flex items-center"
-                  >
+                  <Link href="/dashboard" onClick={handleLinkClick} className="flex items-center">
                     <FaClipboardList className="text-xl" />
-                    {isOpen && (
-                      <span className="text-xl pl-3">
-                        {isTest2Completed ? "Tests" : "Career Suggestions"}
-                      </span>
-                    )}
+                    {isOpen && <span className="text-xl pl-3">Tests</span>}
                   </Link>
                 </li>
-                {/* Careers Link */}
-                <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
-                  <Link
-                    href="/dashboard/careers"
-                    onClick={handleLinkClick}
-                    className="flex items-center"
+
+                {/* Careers Dropdown */}
+                <li className="relative">
+                  <div
+                    className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
+                    onClick={toggleCareersDropdown}
                   >
-                    <FaSuitcase className="text-xl" />
+                    <PiCompassRoseFill className="text-xl" />
                     {isOpen && (
-                      <span className="text-xl pl-3">Career Guide</span>
+                      <>
+                        <span className="text-xl pl-3">Careers</span>
+                        <FaChevronDown className="ml-auto" />
+                      </>
                     )}
-                  </Link>
+                  </div>
+                  {isCareersDropdownOpen && isOpen && (
+                    <ul className="ml-8 space-y-3 mt-3">
+                      <li>
+                        <Link href="/dashboard/careers/career-guide" className="text-white hover:underline">
+                          Career Guide
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/dashboard/careers/career-suggestions" className="text-white hover:underline">
+                          Career Suggestions
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
                 </li>
-                {/* Your Profile Link */}
+
+                {/* Profile Link */}
                 <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
-                  <Link
-                    href="/dashboard/user-profile"
-                    onClick={handleLinkClick}
-                    className="flex items-center"
-                  >
+                  <Link href="/dashboard/user-profile" onClick={handleLinkClick} className="flex items-center">
                     <FaUser className="text-xl" />
                     {isOpen && <span className="text-xl pl-3">My Profile</span>}
                   </Link>
                 </li>
-                {/* My Analysis Link */}
-                {/* <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
-                  <Link
-                    href="/dashboard/myResults"
-                    onClick={handleLinkClick}
-                    className="flex items-center"
-                  >
-                    <SiPytest className="text-xl" />
-                    {isOpen && (
-                      <span className="text-xl pl-3">My Analysis</span>
-                    )}
-                  </Link>
-                </li> */}
+
                 {/* Sign Out Link */}
                 <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
-                  <button onClick={handleLogout} className="flex items-center">
+                  <button onClick={toggleLogoutPopup} className="flex items-center">
                     <FaCog className="text-xl" />
                     {isOpen && <span className="text-xl pl-3">Sign Out</span>}
                   </button>
@@ -214,6 +196,29 @@ const LeftSideBar = () => {
           </div>
         </div>
       </div>
+
+      {/* Logout confirmation popup */}
+      {isLogoutPopupOpen && (
+        <div className="fixed inset-0 px-3 bg-black bg-opacity-50 z-[999999999999] flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-xl mb-4">Are you sure you want to sign out?</h2>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Sign Out
+              </button>
+              <button
+                onClick={toggleLogoutPopup}
+                className="bg-gray-300 px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

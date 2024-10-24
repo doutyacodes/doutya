@@ -15,29 +15,40 @@ export async function GET(req) {
   // Extract userId from decoded token
   const userData = authResult.decoded_Data;
   const userId = userData.userId;
+
   try {
-    // Fetch only the required data: career_group_id and career_name
+    // Fetch data including created_at timestamp
     const data = await db
       .select({
         id: USER_CAREER.id,
         career_group_id: CAREER_GROUP.id,
-        career_name: CAREER_GROUP.career_name, // This gets the career name from the CAREER_GROUP table
+        career_name: CAREER_GROUP.career_name, // Get career name from CAREER_GROUP table
         birth_date: USER_DETAILS.birth_date, // Get birth_date from USER_DETAILS table
+        created_at: USER_CAREER.created_at, // Get created_at from USER_CAREER
       })
       .from(USER_CAREER)
-      .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id)) // Join on the career_group_id
-      .innerJoin(USER_DETAILS, eq(USER_CAREER.user_id, USER_DETAILS.id)) // Join with USER_DETAILS on user_id
+      .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id)) // Join on career_group_id
+      .innerJoin(USER_DETAILS, eq(USER_CAREER.user_id, USER_DETAILS.id)) // Join on user_id
       .where(eq(USER_CAREER.user_id, userId));
-      console.log("data");
-      // Extract birth_date and calculate the age
-      const birthDate = data[0]?.birth_date;
-      const age = birthDate ? formattedAge(birthDate) : null;
 
-      console.log("age");
-      
+    // Extract birth_date and calculate the age
+    const birthDate = data[0]?.birth_date;
+    const age = birthDate ? formattedAge(birthDate) : null;
 
-    // Respond with the fetched data (career_group_id and career_name)
-    return NextResponse.json({carrerData: data, age}, { status: 201 });
+    // Loop through the career data and calculate the weekData for each entry
+    const carrerData = data.map((career) => {
+      const createdAt = career.created_at;
+      const weekData = createdAt ? calculateWeekFromTimestamp(createdAt) : null;
+
+      // Add weekData to each career entry
+      return {
+        ...career,
+        weekData,
+      };
+    });
+
+    // Respond with the modified career data and age
+    return NextResponse.json({ carrerData, age }, { status: 201 });
   } catch (error) {
     console.error("Error fetching career data:", error);
     return NextResponse.json(
@@ -46,3 +57,38 @@ export async function GET(req) {
     );
   }
 }
+
+// Helper function to calculate the week number, start of the week, and number of years since created_at
+function calculateWeekFromTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  const currentDate = new Date();
+
+  // Set the start of the week to Monday 12:00 AM
+  const day = date.getDay();
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust when the day is Sunday
+  const startOfWeek = new Date(date.setDate(diff));
+  startOfWeek.setHours(0, 0, 0, 0); // Reset to 12:00 AM Monday
+
+  // Calculate the week number of the year
+  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+  const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+
+  // Calculate the number of years since created_at
+  let yearsSinceCreated = currentDate.getFullYear() - date.getFullYear(); // Use 'let' instead of 'const'
+
+  // Check if the current month/day is earlier than created_at's month/day to adjust the year count
+  if (
+    currentDate.getMonth() < date.getMonth() ||
+    (currentDate.getMonth() === date.getMonth() && currentDate.getDate() < date.getDate())
+  ) {
+    yearsSinceCreated -= 1; // Now it's safe to reassign
+  }
+
+  // Return the week number, start of the week, and number of years since created_at
+  return {
+    weekNumber: Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7),
+    startOfWeek,
+    yearsSinceCreated, // Number of years since the created_at timestamp
+  };
+}
+

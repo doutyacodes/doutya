@@ -59,7 +59,7 @@ export default function Footer() {
         MY PROFILE
       </button>
       </a>
-       <a href="/dashboard/careers">
+       <a href="/dashboard/careers/career-guide">
       <button style={{ ...styles.navButton, ...styles.navButtonCareer }} data-bg="#4CAF50">
         CAREER
       </button>
