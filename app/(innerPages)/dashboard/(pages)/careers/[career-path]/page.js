@@ -72,7 +72,7 @@ function Page() {
   }, [router]);
 
   useEffect(() => {
-    if (careerData.length > 0) {
+    if (pathname == "/dashboard/careers/career-guide" && careerData.length > 0) {
       setSelectedCareer(careerData[0]);
     }
   }, [careerData]);
@@ -95,9 +95,10 @@ function Page() {
       ) {
         setCareerData(response.data.carrerData);
         setAge(response.data.age);
-      } else {
-        toast.error("No career data available at the moment.");
-      }
+      } 
+      // else {
+      //   toast.error("No career data available at the moment.");
+      // }
     } catch (err) {
       toast.error("Failed to fetch career data. Please try again later.");
     } finally {
