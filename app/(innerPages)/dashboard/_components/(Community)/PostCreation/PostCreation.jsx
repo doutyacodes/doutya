@@ -58,7 +58,7 @@ const PostCreation = ({ onClose }) => {
     };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg">
+    <div className="bg-[#2f2f2f] p-6 rounded-lg shadow-lg">
         <h3 className="text-xl font-bold mb-4">Create a Post</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -66,7 +66,7 @@ const PostCreation = ({ onClose }) => {
             <select
             value={postType}
             onChange={(e) => setPostType(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-[#2f2f2f]"
             >
             <option value="text">Text</option>
             <option value="image">Image</option>

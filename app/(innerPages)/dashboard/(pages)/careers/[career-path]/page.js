@@ -17,6 +17,7 @@ import dynamic from "next/dynamic";
 import CareerPath from "../../../_components/CareerPathTab/CareerPath";
 import Tests from "../../../_components/TestTab/Tests";
 import Results2 from "../../../_components/Result2/page";
+import CommunityList from "@/app/_components/CommunityList";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -52,6 +53,7 @@ function Page() {
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
     { key: "careerOverview", label: "Career Overview" },
+    { key: "community", label: "Community" },
   ];
 
   useEffect(() => {
@@ -243,6 +245,9 @@ function Page() {
                 )}
                 {activeTab === "careerOverview" && (
                   <About selectedCareer={selectedCareer} />
+                )}
+                {activeTab === "community" && (
+                  <CommunityList careerId={selectedCareer?.career_group_id} />
                 )}
               </div>
             </div>
