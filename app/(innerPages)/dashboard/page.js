@@ -100,8 +100,6 @@ export default function Dashboard() {
             showQuiz2Results={showQuiz2Results}
             isTest2Completed={isTest2Completed}
             setIsTest2Completed={setIsTest2Completed}
-            loading={loading}
-            setLoading={setLoading}
           />
           <br />
           <br />
