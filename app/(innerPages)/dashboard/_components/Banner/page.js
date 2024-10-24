@@ -17,10 +17,8 @@ function Banner({
   showQuiz2Results,
   isTest2Completed,
   setIsTest2Completed,
-  loading,
-  setLoading,
 }) {
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [dashboardData, setDashboardData] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
@@ -58,17 +56,17 @@ function Banner({
 
   const isTest1Completed = getQuizStatus(1).isCompleted;
 
-  // if (loading) {
-  //   return (
-  //     <div className="h-screen flex items-center justify-center text-white">
-  //       <div>
-  //         <div className="font-semibold">
-  //           <LoadingOverlay loadText={t("loadingText")} />
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center text-white">
+        <div>
+          <div className="font-semibold">
+            <LoadingOverlay loadText={t("loadingText")} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const MobileNavigation = dynamic(() => import("../Navbar/button.jsx"), {
     ssr: false,
