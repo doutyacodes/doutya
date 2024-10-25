@@ -245,7 +245,7 @@ const Header = ({ dark = false }) => {
           </li>
           <li className="group">
             <Link
-              href={"/our-story"}
+              href={"/faq"}
               className="cursor-pointer relative z-[9999]"
             >
               <p
@@ -253,7 +253,7 @@ const Header = ({ dark = false }) => {
                   !darks ? "white" : "[#3e0075]"
                 } text-sm hover:font-bold`}
               >
-                Our Story
+                FAQ
               </p>
             </Link>
           </li>
