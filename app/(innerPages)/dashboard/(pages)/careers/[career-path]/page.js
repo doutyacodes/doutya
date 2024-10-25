@@ -28,12 +28,32 @@ function Page() {
   const [showDialogue, setShowDialogue] = useState(false);
   const [careerName, setCareerName] = useState("");
   const [roadMapLoading, setRoadMapLoading] = useState(false);
+  const [isTest2Completed, setIsTest2Completed] = useState(false);
   const [activeTab, setActiveTab] = useState("roadmap");
   const [age, setAge] = useState("");
   const router = useRouter();
   const t = useTranslations("CareerPage");
 
   const pathname = usePathname();
+
+  useEffect(() => {
+    const getQuizData = async () => {
+      try {
+        const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const resp = await GlobalApi.GetDashboarCheck(token);
+
+        // Check if Test 2 is completed
+        const test2 = resp.data.find((q) => q.quiz_id === 2);
+        if (test2 && test2.isCompleted) {
+          setIsTest2Completed(true);
+        }
+      } catch (error) {
+        console.error("Error Fetching data:", error);
+      } 
+    };
+    getQuizData();
+  }, [setIsTest2Completed]);
 
   useEffect(() => {
     const PathChange = () => {
@@ -256,7 +276,11 @@ function Page() {
           )}
         </>
       ) : (
-        <Results2 />
+        <>
+        {
+          isTest2Completed && (<Results2 />)
+        }
+        </>
       )}
     </div>
   );
