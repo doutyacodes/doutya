@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import Navbar from "../dashboard/_components/Navbar/page";
+import CareerStripe from "@/app/_components/CareerStripe";
 
 const Home = () => {
   const router = useRouter();
@@ -30,7 +31,7 @@ const Home = () => {
   ];
   return (
     <div>
-      <Navbar />
+      <CareerStripe />
       <div className="p-4 ">
         <div className="w-full flex gap-5 md:gap-20  max-sm:flex-col justify-center items-center container mx-auto min-h-[75vh] pt-4">
           {homeData?.length > 0 &&
