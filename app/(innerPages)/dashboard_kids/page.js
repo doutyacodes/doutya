@@ -1,12 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Bannerkids from "./_components/Banner/page";
 import Navbarkids from "./_components/Navbar/page";
 import Results from "../dashboard/_components/Results/page";
 import Results2 from "../dashboard/_components/Result2/page";
 import dynamic from 'next/dynamic';
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
+import CareerStripe from "@/app/_components/CareerStripe";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -55,9 +56,10 @@ export default function Dashboard() {
   return (
     <div style={styles.dashboardContainer}>
       
-      <Navbarkids />
+      <CareerStripe/>
 
-      {!isTest2Completed ? (
+
+      {!isTest2Completed && (
         <>
           <Bannerkids
             onToggleResults={toggleResults}
@@ -82,12 +84,10 @@ export default function Dashboard() {
     
           <br />
           <br />
-          {showResults && <Results />} 
-          {showQuiz2Results && <Results2/>}
+          {showResults && <Results />}
+          {showQuiz2Results && redirect("/dashboard/careers/career-suggestions")}
         </>
-      ) : (
-        <Results2 />
-      )
+      ) 
     }
     {/* <MobileNavigation /> */}
     </div>
