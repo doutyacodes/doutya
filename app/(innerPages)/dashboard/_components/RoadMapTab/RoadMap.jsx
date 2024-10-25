@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 
 function RoadMap({ selectedCareer }) {
   const [activeTab, setActiveTab] = useState('Educational Milestones');
+  const [activeEducationalSubTab, setActiveEducationalSubTab] = useState('Academic Milestones'); 
   const [roadMapData, setRoadMapData] = useState([]);
   const [completedTasks, setCompletedTasks] = useState({});
   const [milestones, setMilestones] = useState([]);
@@ -60,19 +61,36 @@ function RoadMap({ selectedCareer }) {
     getRoadmap();
   }, [selectedCareer]);
 
-  useEffect(() => {
-    if (roadMapData.length > 0) {
-      const milestones = roadMapData.reduce((acc, milestone) => {
-        const { milestoneCategoryName, ...milestoneData } = milestone;
-        if (!acc[milestoneCategoryName]) {
-          acc[milestoneCategoryName] = [];
-        }
-        acc[milestoneCategoryName].push(milestoneData);
-        return acc;
-      }, {});
-      setMilestones(milestones);
-    }
-  }, [roadMapData]);
+  // Modify this useEffect for organizing milestones
+    useEffect(() => {
+      if (roadMapData.length > 0) {
+        const milestones = roadMapData.reduce((acc, milestone) => {
+          const { milestoneCategoryName, milestoneSubcategoryName, ...milestoneData } = milestone;
+          
+          // Handle Educational Milestones differently due to subcategories
+          if (milestoneCategoryName === 'Educational Milestones') {
+            if (!acc[milestoneCategoryName]) {
+              acc[milestoneCategoryName] = {};
+            }
+            // Organize by subcategory
+            if (milestoneSubcategoryName) {
+              if (!acc[milestoneCategoryName][milestoneSubcategoryName]) {
+                acc[milestoneCategoryName][milestoneSubcategoryName] = [];
+              }
+              acc[milestoneCategoryName][milestoneSubcategoryName].push(milestoneData);
+            }
+          } else {
+            // Handle other categories as before
+            if (!acc[milestoneCategoryName]) {
+              acc[milestoneCategoryName] = [];
+            }
+            acc[milestoneCategoryName].push(milestoneData);
+          }
+          return acc;
+        }, {});
+        setMilestones(milestones);
+      }
+    }, [roadMapData]);
 
   const handleComplete = (tab, milestoneId, description, careerName) => {
     setShowCommunityModal(true); // Show modal before updating milestone
@@ -149,13 +167,14 @@ function RoadMap({ selectedCareer }) {
         />
       )}
 
-      {!milestones ? (
+ {/* Modify the JSX in the return statement, specifically the tab content section: */}
+      {milestones.length == 0 ? (
         <div className="flex items-center justify-center h-[300px]">
           <p className="text-gray-400">{LoadMessage}</p>
         </div>
       ) : (
         <>
-          {/* Tabs */}
+          {/* Main Tabs */}
           <div className="flex mb-4 overflow-x-scroll gap-2">
             {Object.keys(milestones).map((tab) => (
               <button
@@ -172,34 +191,116 @@ function RoadMap({ selectedCareer }) {
             ))}
           </div>
 
+          {/* Educational Subtabs */}
+          {activeTab === 'Educational Milestones' && (
+            <div className="flex gap-2 mb-4">
+              {Object.keys(milestones['Educational Milestones']).map((subTab) => (
+                <button
+                  key={subTab}
+                  className={`rounded px-4 py-2 font-semibold text-sm focus:outline-none ${
+                    activeEducationalSubTab === subTab
+                      ? 'bg-sky-500 text-white'
+                      : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
+                  }`}
+                  onClick={() => setActiveEducationalSubTab(subTab)}
+                >
+                  {subTab}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Tab Content */}
           <div className="bg-gray-800 p-6 shadow-lg min-h-[300px]">
-            {milestones[activeTab]?.length > 0 ? (
-              milestones[activeTab]?.map((item) => (
-                <div key={item.milestoneId} className="mb-6 flex sm:flex-row flex-col max-md:gap-2 items-start justify-between">
-                  <div className="flex-1 pr-4">
-                    <h3 className="font-bold text-lg text-white">
-                      • <span className="font-normal break-words">{item.milestoneDescription}</span>
-                    </h3>
-                  </div>
-                  {activeTab === "Certification Milestones" ? (
-                    item.certificationCompletedStatus === 'yes' ? (
-                      <button
-                        onClick={() => router.push(`/certification-results/${item.certificationId}`)}
-                        className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-green-500"
-                      >
-                        View Results
-                      </button>
+            {activeTab === 'Educational Milestones' ? (
+              // Render Educational milestones with subcategories
+              milestones[activeTab]?.[activeEducationalSubTab]?.length > 0 ? (
+                milestones[activeTab][activeEducationalSubTab]?.map((item) => (
+                  <div key={item.milestoneId} className="mb-6 flex sm:flex-row flex-col max-md:gap-2 items-start justify-between">
+                    <div className="flex-1 pr-4">
+                      <h3 className="font-bold text-lg text-white">
+                        • <span className="font-normal break-words">{item.milestoneDescription}</span>
+                      </h3>
+                    </div>
+                    {activeEducationalSubTab === "Certification Milestones" ? (
+                      <>
+                        {item.certificationCompletedStatus === 'yes' ? (
+                          <button
+                            onClick={() => router.push(`/certification-results/${item.certificationId}`)}
+                            className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-green-500"
+                          >
+                            View Results
+                          </button>
+                        ) : (
+                          <>
+                          <button
+                              onClick={() => router.push(`/certification/${item.certificationId}/${encodeURIComponent(item.certificationName)}`)}
+                              className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-orange-500"
+                            >
+                              Get Certified
+                            </button>
+                          </>
+                        )}
+                        
+                        
+                        {
+                          item.courseStatus === 'in_progress' ? (
+                          <button
+                            onClick={() => router.push(`/certification-course/${item.certificationId}`)}
+                            className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-blue-500"
+                          >
+                            Continue Course
+                          </button>
+                        ) : item.courseStatus === null ? (
+                          <button
+                            onClick={() => router.push(`/course-overview/${item.certificationId}`)}
+                            className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-blue-500"
+                          >
+                            Get Course
+                          </button>
+                        ) : item.courseStatus === "completed" ? (
+                          <button
+                            disabled
+                            className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-gray-300"
+                          >
+                            Course Completed
+                          </button>
+                        ) : null
+                      }
+                      </>
+
                     ) : (
                       <button
-                        onClick={() => router.push(`/certification/${item.certificationId}/${encodeURIComponent(item.certificationName)}`)}
-                        className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-orange-500"
-                        disabled={item.certificationCompletedStatus === 'yes'} // Disable button when certification is completed
+                        onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
+                        className={`ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 ${
+                          item.milestoneCompletionStatus ? 'bg-green-600' : 'bg-sky-600'
+                        }`}
                       >
-                        Get Certified
+                        {item.milestoneCompletionStatus ? (
+                          <>
+                            <CheckCircle className="mr-2" /> {t('buttons.completed')}
+                          </>
+                        ) : (
+                          t('buttons.complete')
+                        )}
                       </button>
-                    )
-                  ) : (
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-400 text-center">{LoadMessage}</p>
+              )
+            ) : (
+              // Render other milestone categories as before
+              milestones[activeTab]?.length > 0 ? (
+                milestones[activeTab]?.map((item) => (
+                  // ... existing milestone rendering code for non-educational milestones ...
+                  <div key={item.milestoneId} className="mb-6 flex sm:flex-row flex-col max-md:gap-2 items-start justify-between">
+                    <div className="flex-1 pr-4">
+                      <h3 className="font-bold text-lg text-white">
+                        • <span className="font-normal break-words">{item.milestoneDescription}</span>
+                      </h3>
+                    </div>
                     <button
                       onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
                       className={`ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 ${
@@ -214,16 +315,17 @@ function RoadMap({ selectedCareer }) {
                         t('buttons.complete')
                       )}
                     </button>
-                  )}
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-400 text-center">{LoadMessage}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-400 text-center">{LoadMessage}</p>
+              )
             )}
-
           </div>
         </>
       )}
+      
+      
     </div>
   );
 }
