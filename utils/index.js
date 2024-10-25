@@ -5,7 +5,7 @@ import mysql from "mysql2/promise";
 //   host: "localhost",
 //   user: "root",
 //   database: "doutya",
-//   password:'',
+//   password:'jinoJINO',
 //   port:'3306'
 // });
 

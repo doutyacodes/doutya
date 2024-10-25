@@ -1,4 +1,4 @@
-import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, primaryKey, text, time, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
+import { boolean, date, datetime, decimal, float, int, json, mysqlEnum, mysqlTable, primaryKey, text, time, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
 
 export const USER_DETAILS= mysqlTable('user_details',{
     id:int('id').autoincrement().notNull().primaryKey(),
@@ -491,15 +491,22 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         name: varchar('name', { length: 255 }).notNull().unique(),
       });
 
-    export const MILESTONES = mysqlTable('milestones', {
+      export const MILESTONE_SUBCATEGORIES = mysqlTable('milestone_subcategories', {
         id: int('id').notNull().autoincrement().primaryKey(),
-        category_id: int('category_id').notNull().references(() => MILESTONE_CATEGORIES.id),
+        category_id: int('category_id').notNull().references(() => MILESTONE_CATEGORIES.id), // Links to milestone_categories
+        name: varchar('name', { length: 255 }).notNull(), // Subcategory names like 'Academic', 'Certification'
+      });
+      
+      export const MILESTONES = mysqlTable('milestones', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        category_id: int('category_id').notNull().references(() => MILESTONE_CATEGORIES.id), // Category reference
+        subcategory_id: int('subcategory_id').default(null).references(() => MILESTONE_SUBCATEGORIES.id), // New subcategory reference
         description: text('description').default(null),
         completion_status: boolean('completion_status').default(false),
         date_achieved: timestamp('date_achieved').default(null),
         milestone_age: decimal('milestone_age', { precision: 3, scale: 1 }).default(null),
-    });
-
+      });
+      
     export const USER_MILESTONES = mysqlTable('user_milestones', {
         id: int('id').notNull().autoincrement().primaryKey(),
         user_career_id: int('user_career_id').notNull().references(() => USER_CAREER.id),
@@ -634,7 +641,6 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         milestone_id: int('milestone_id').notNull().references(() => MILESTONES.id),  // Foreign key referencing milestones
     });
 
-
     export const CERTIFICATION_QUIZ = mysqlTable('certification_quiz', {
         id: int('id').autoincrement().notNull().primaryKey(),
         question: text('question').notNull(),
@@ -671,4 +677,52 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         rating_stars: int('rating_stars').default(null),
         created_at: timestamp('created_at').defaultNow(),
         updated_at: timestamp('updated_at').defaultNow().onUpdateNow(), // Timestamp for updates
+    });
+
+    // CourseWeeks Table
+    export const COURSE_WEEKS = mysqlTable('course_weeks', {
+        id: int('id').primaryKey().autoincrement(),
+        week_number: int('week_number').notNull(),
+    });
+
+    // TopicsCovered Table
+    export const TOPICS_COVERED = mysqlTable('topics_covered', {
+        id: int('id').primaryKey().autoincrement(),
+        week_id: int('week_id').notNull().references(() => COURSE_WEEKS.id, { onDelete: 'cascade' }),
+        certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id, { onDelete: 'cascade' }),
+        topic_name: text('topic_name').notNull(),
+    });
+
+    // Assignments Table
+    export const ASSIGNMENTS = mysqlTable('assignments', {
+        id: int('id').primaryKey().autoincrement(),
+        week_id: int('week_id').notNull().references(() => COURSE_WEEKS.id, { onDelete: 'cascade' }),
+        certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id, { onDelete: 'cascade' }),
+        assignment_description: text('assignment_description').notNull(),
+    });
+
+    // LearningOutcomes Table
+    export const LEARNING_OUTCOMES = mysqlTable('learning_outcomes', {
+        id: int('id').primaryKey().autoincrement(),
+        week_id: int('week_id').notNull().references(() => COURSE_WEEKS.id, { onDelete: 'cascade' }),
+        certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id, { onDelete: 'cascade' }),
+        outcome_description: text('outcome_description').notNull(),
+    });
+
+    // CourseOverview Table
+    export const COURSE_OVERVIEW = mysqlTable('course_overview', {
+        id: int('id').primaryKey().autoincrement(),
+        certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id, { onDelete: 'cascade' }),
+        prerequisite_description: json('prerequisite_description').notNull(), // Array stored as JSON
+        skill_description: json('skill_description').notNull(),               // Array stored as JSON
+        application_description: json('application_description').notNull(),   // Array stored as JSON
+    });
+
+    export const USER_COURSE_PROGRESS = mysqlTable('user_course_progress', {
+        id: int('id').primaryKey().autoincrement(),
+        user_id: int('user_id').notNull().references(() => USER_DETAILS.id, { onDelete: 'cascade' }),
+        certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id, { onDelete: 'cascade' }),
+        status: mysqlEnum('status', ['in_progress', 'completed']).notNull(), // Enum for course status
+        enrolled_date: timestamp('enrolled_date').defaultNow(),// timestamp for when the course was enrolled
+        completion_date: timestamp('completion_date').defaultNow().onUpdateNow(), // Timestamp for updates
     });

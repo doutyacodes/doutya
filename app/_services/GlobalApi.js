@@ -614,6 +614,33 @@ const GetCertificationResult = (token, id) => {
   });
 };
 
+/* Certification */
+const GetCourseOverview = (id, token) => {
+  return axios.get(`/api/get-course/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+
+/* Certification */
+const GetCertificationCourse = (id, token) => {
+  return axios.get(`/api/get-course-data/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const UpdateCertificationStatus = (data, token) => {
+  return axios.put("/api/updateCertificationStatus", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -686,6 +713,9 @@ export default {
   GetCertificationTest,
   CertificationTestProgress,
   UpdateCertificationTest,
-  GetCertificationResult
+  GetCertificationResult,
+  GetCertificationCourse,
+  GetCourseOverview,
+  UpdateCertificationStatus
 
 };
