@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useState } from "react";
 import AddCareer from '../(innerPages)/dashboard/_components/AddCareer/AddCareer'
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
@@ -115,7 +116,7 @@ const CareerStripe = () => {
         );
       }
   return (
-    <div>
+    <div className="w-full">
          <Toaster />
 
 {/* Add Career Dialog */}
