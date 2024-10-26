@@ -1,4 +1,5 @@
 "use client"
+import Header from '@/app/_components/Header';
 // pages/plans.js
 
 import { motion } from 'framer-motion';
@@ -53,6 +54,8 @@ const PlanCard = ({ plan }) => (
 
 const PlansPage = () => {
   return (
+    <div className="w-full">
+        <Header />
     <div className="container mx-auto p-6">
       <motion.h1
         initial={{ opacity: 0 }}
@@ -107,6 +110,7 @@ const PlansPage = () => {
           </motion.div>
         </motion.div>
       </section>
+    </div>
     </div>
   );
 };
