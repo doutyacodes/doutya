@@ -49,6 +49,7 @@ export async function POST(req) {
     return NextResponse.json({
       token,
       birth_date: existingUser.birth_date,
+      planType: existingUser.plan_type,
       quizCompleted,
     }, { status: 200 });
 

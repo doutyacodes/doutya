@@ -18,6 +18,8 @@ import CareerPath from "../../../_components/CareerPathTab/CareerPath";
 import Tests from "../../../_components/TestTab/Tests";
 import Results2 from "../../../_components/Result2/page";
 import CommunityList from "@/app/_components/CommunityList";
+import FeatureRestrictionModal from "../../../_components/FeatureRestrictionModal/FeatureRestrictionModal";
+import PricingCard from "@/app/_components/PricingCard";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -30,12 +32,16 @@ function Page() {
   const [roadMapLoading, setRoadMapLoading] = useState(false);
   const [isTest2Completed, setIsTest2Completed] = useState(false);
   const [activeTab, setActiveTab] = useState("roadmap");
+  const [isRestricted, setIsRestricted] = useState(false);
   const [age, setAge] = useState("");
+  const [country, setCountry] = useState("");
+  const [showFeatureModal, setShowFeatureModal] = useState(false);
+  const [showPricingModal, setShowPricingModal] = useState(false);
   const router = useRouter();
   const t = useTranslations("CareerPage");
 
   const pathname = usePathname();
-
+  
   useEffect(() => {
     const getQuizData = async () => {
       try {
@@ -110,11 +116,15 @@ function Page() {
       const response = await GlobalApi.GetCarrerData(token);
       if (
         response.status === 201 &&
-        response.data &&
-        response.data.carrerData.length > 0
+        response.data
       ) {
-        setCareerData(response.data.carrerData);
+        if(response.data.carrerData.length > 0){
+          setCareerData(response.data.carrerData);
+        }
         setAge(response.data.age);
+        if (response.data.age <= "9" || response.data.planType === "base"){
+          setIsRestricted(true)
+        }
       } 
       // else {
       //   toast.error("No career data available at the moment.");
@@ -129,13 +139,37 @@ function Page() {
   useEffect(() => {
     getCareers();
   }, []);
-
+  
   const handleAddCareerClick = () => {
-    if (careerData.length >= 5) {
-      toast.error("You can only add up to 5 careers.");
-      return;
+    if (isRestricted) {
+      setShowFeatureModal(true);
+    } else {
+      if (careerData.length >= 5) {
+        toast.error("You can only add up to 5 careers.");
+        return;
+      }
+      setShowDialogue(true);
     }
-    setShowDialogue(true);
+  };
+
+  const handleSubmit = async () => {
+    setRoadMapLoading(true);
+    setShowDialogue(false);
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const response = await GlobalApi.SaveInterestedCareer(token, careerName, country);
+      if (response && response.status === 200) {
+        setCareerName("");
+        setCountry("");
+        getCareers();
+      } else if (response && response.status === 201)  {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to save career data. Please try again later.");
+    } finally {
+      setRoadMapLoading(false);
+    }
   };
 
   const handleCareerClick = (career) => {
@@ -159,7 +193,7 @@ function Page() {
       <Toaster />
 
       {/* Add Career Dialog */}
-      <AddCareer
+      {/* <AddCareer
         isOpen={showDialogue}
         onClose={() => setShowDialogue(false)}
         getCareers={getCareers}
@@ -167,7 +201,38 @@ function Page() {
         careerName={careerName}
         handleSubmit={handleAddCareerClick}
         roadMapLoading={roadMapLoading}
+      /> */}
+
+      
+      {/* Add Career Dialog - Only show for unrestricted users */}
+      {!isRestricted && (
+        <AddCareer
+          isOpen={showDialogue}
+          onClose={() => setShowDialogue(false)}
+          getCareers={getCareers}
+          setCareerName={setCareerName}
+          careerName={careerName}
+          setCountry={setCountry}
+          country={country}
+          handleSubmit={handleSubmit}
+          roadMapLoading={roadMapLoading}
+        />
+      )}
+
+      {/* Feature Restriction Modal */}
+      <FeatureRestrictionModal
+        isOpen={showFeatureModal}
+        onClose={() => setShowFeatureModal(false)}
+        onViewPlans={() => {
+          setShowFeatureModal(false);
+          setShowPricingModal(true);
+        }}
       />
+
+      {/* Pricing Modal */}
+      {showPricingModal && (
+        <PricingCard onClose={() => setShowPricingModal(false)} />
+      )}
 
       {/* Mobile Heading */}
       <p className="text-center font-bold sm:hidden text-white text-2xl sm:text-4xl md:pl-5 max-sm:bg-[#1f1f1f]">

@@ -21,6 +21,7 @@ export const USER_DETAILS= mysqlTable('user_details',{
     experience: int('experience').default(null), 
     education_qualification: varchar('education_qualification', { length: 255 }).default(null), 
     current_job: varchar('current_job', { length: 200 }).default(null),
+    plan_type: mysqlEnum('plan_type',['base','pro']).notNull().default('base'),
 });
 
 // Define the schema for the 'page' table

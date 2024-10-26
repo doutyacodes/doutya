@@ -40,6 +40,19 @@ export async function GET(req, { params }) {
 
     try {
 
+         // Check the user's plan type in the USER_DETAILS table
+            const planTypeResult = await db
+            .select({ planType: USER_DETAILS.plan_type })
+            .from(USER_DETAILS)
+            .where(eq(USER_DETAILS.id, userId));
+
+          const planType = planTypeResult[0]?.planType;
+
+          // If plan type is 'base', return an early response
+          if (planType === 'base') {
+            return NextResponse.json({ message: 'Upgrade to Pro to access this feature' }, { status: 403 });
+          }
+
             // Step 1: Check if feedback is already present in the USER_CAREER table
             const userCareer = await db
             .select({
@@ -65,7 +78,7 @@ export async function GET(req, { params }) {
                 .select({ birth_date: USER_DETAILS.birth_date, education:USER_DETAILS.education })
                 .from(USER_DETAILS)
                 .where(eq(USER_DETAILS.id, userId));
-            console.log(birthDateResult)
+
             const birth_date = birthDateResult[0]?.birth_date;
             const education=birthDateResult[0]?.education
             const age = calculateAge(birth_date);
