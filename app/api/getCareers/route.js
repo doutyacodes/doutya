@@ -18,37 +18,57 @@ export async function GET(req) {
 
   try {
     // Fetch data including created_at timestamp
+    // const data = await db
+    //   .select({
+    //     id: USER_CAREER.id,
+    //     career_group_id: CAREER_GROUP.id,
+    //     career_name: CAREER_GROUP.career_name, // Get career name from CAREER_GROUP table
+    //     birth_date: USER_DETAILS.birth_date, // Get birth_date from USER_DETAILS table
+    //     created_at: USER_CAREER.created_at, // Get created_at from USER_CAREER
+    //     planType: USER_DETAILS.plan_type,
+    //   })
+    //   .from(USER_CAREER)
+    //   .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id)) // Join on career_group_id
+    //   .innerJoin(USER_DETAILS, eq(USER_CAREER.user_id, USER_DETAILS.id)) // Join on user_id
+    //   .where(eq(USER_CAREER.user_id, userId));
+
     const data = await db
       .select({
-        id: USER_CAREER.id,
-        career_group_id: CAREER_GROUP.id,
-        career_name: CAREER_GROUP.career_name, // Get career name from CAREER_GROUP table
-        birth_date: USER_DETAILS.birth_date, // Get birth_date from USER_DETAILS table
-        created_at: USER_CAREER.created_at, // Get created_at from USER_CAREER
+        id: USER_CAREER.id, // User career ID (can be null if no career entry)
+        career_group_id: CAREER_GROUP.id, // Career group ID (can be null if no career entry)
+        career_name: CAREER_GROUP.career_name, // Career name from CAREER_GROUP table (can be null if no career entry)
+        birth_date: USER_DETAILS.birth_date, // Birth date from USER_DETAILS table
+        created_at: USER_CAREER.created_at, // Creation date from USER_CAREER (can be null if no career entry)
+        planType: USER_DETAILS.plan_type, // Plan type from USER_DETAILS
       })
-      .from(USER_CAREER)
-      .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id)) // Join on career_group_id
-      .innerJoin(USER_DETAILS, eq(USER_CAREER.user_id, USER_DETAILS.id)) // Join on user_id
-      .where(eq(USER_CAREER.user_id, userId));
+      .from(USER_DETAILS) // Start from USER_DETAILS
+      .leftJoin(USER_CAREER, eq(USER_CAREER.user_id, USER_DETAILS.id)) // Left join on USER_CAREER
+      .leftJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id)) // Left join on CAREER_GROUP
+      .where(eq(USER_DETAILS.id, userId)); // Filter by user ID
 
     // Extract birth_date and calculate the age
     const birthDate = data[0]?.birth_date;
     const age = birthDate ? formattedAge(birthDate) : null;
+    console.log("birthDate", birthDate);
+    const planType = data[0]?.planType;
 
     // Loop through the career data and calculate the weekData for each entry
-    const carrerData = data.map((career) => {
-      const createdAt = career.created_at;
-      const weekData = createdAt ? calculateWeekFromTimestamp(createdAt) : null;
-
-      // Add weekData to each career entry
-      return {
-        ...career,
-        weekData,
-      };
-    });
+    const carrerData = data.reduce((acc, career) => {
+      if (career.career_name !== null) {
+        const createdAt = career.created_at;
+        const weekData = createdAt ? calculateWeekFromTimestamp(createdAt) : null;
+    
+        // Push the career entry with weekData into the result array
+        acc.push({
+          ...career,
+          weekData,
+        });
+      }
+      return acc;
+    }, []);
 
     // Respond with the modified career data and age
-    return NextResponse.json({ carrerData, age }, { status: 201 });
+    return NextResponse.json({ carrerData, age, planType }, { status: 201 });
   } catch (error) {
     console.error("Error fetching career data:", error);
     return NextResponse.json(

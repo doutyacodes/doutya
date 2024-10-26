@@ -5,7 +5,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import GlobalApi from '@/app/_services/GlobalApi'
 
-function AddCareer({ isOpen, onClose, setCareerName, careerName,setCountry,country, handleSubmit, roadMapLoading}) {
+function AddCareer({ isOpen, onClose, setCareerName, careerName, setCountry, country, handleSubmit, roadMapLoading}) {
     // const [loading, setLoading] = useState(false)
 
     return (

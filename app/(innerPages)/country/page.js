@@ -7,11 +7,18 @@ import { useTranslations } from "next-intl";
 import toast, { Toaster } from "react-hot-toast";
 import { calculateAge } from "@/lib/ageCalculate";
 import GlobalApi from "@/app/_services/GlobalApi";
+import LoadingOverlay from "@/app/_components/LoadingOverlay";
+import { Lock } from 'lucide-react';
+import PricingCard from "@/app/_components/PricingCard";
 
 function SelectCountry() {
   const [educationCountry, setEducationCountry] = useState(null);
   const [currentCountry, setCurrentCountry] = useState(null);
   const [loading, setLoading] = useState(false);
+  // const [userData, setUserData] = useState(null); 
+  const [userAge, setUserAge] = useState(null);
+  const [userPlanType, setUserPlanType] = useState(null);
+  const [showPricing, setShowPricing] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const router = useRouter();
   const t = useTranslations("countryPage");
@@ -31,17 +38,60 @@ function SelectCountry() {
     authCheck();
   }, [router]);
 
+    // Fetch User Data
+    const getUserData = async () => {
+      setLoading(true);
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const resp = await GlobalApi.GetUserData(token);
+        // setUserData(resp.data);
+        if (resp.status === 201) {
+          const birth_date = resp.data.birth_date;
+          const age = calculateAge(birth_date);
+          setUserAge(age)
+          setUserPlanType(resp.data.plan_type)
+        }
+      } catch (error) {
+        toast.error("Error Fetching UserData:", error)
+      } finally {
+        setLoading(false);
+      }
+    };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  useEffect(()=>{
+    if(currentCountry){
+      if(userAge <= 9 || userPlanType === 'base'){
+        setEducationCountry(currentCountry)
+      }
+    }
+  }, [currentCountry])
+  
+  const handleEducationCountryClick = () => {
+    if (userAge <= 9 || userPlanType === 'base') {
+      setShowPricing(true);
+    }
+  };
+
   const countryOptions = countryList().getData();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!educationCountry || !currentCountry) {
       toast.error(t("pleaseSelectBoth"));
       return;
     }
-    const data = {
-      educationCountry: educationCountry.label,
+    // For users <= 9, only submit current country
+    const data = userAge <= 9 || userPlanType === 'base' ? {
       currentCountry: currentCountry.label,
+      educationCountry: currentCountry.label // Set same as current country for young users
+    } : {
+      currentCountry: currentCountry.label,
+      educationCountry: educationCountry?.label
     };
     try {
       const token =
@@ -71,6 +121,21 @@ function SelectCountry() {
     }
   };
 
+  // Loading or Authentication State
+  if (loading || !isAuthenticated) {
+    return (
+      <div className="h-screen flex items-center justify-center text-white">
+        <div>
+          <div className="font-semibold">
+            <LoadingOverlay loadText={'Loading...'} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  console.log("Currentcountry", currentCountry)
+
   return (
     <div className="flex items-center justify-center min-h-screen p-8">
       <Toaster />
@@ -80,10 +145,7 @@ function SelectCountry() {
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label
-              htmlFor="currentCountry"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="currentCountry" className="block text-sm font-medium text-gray-700">
               {t("selectCurrentCountry")}
             </label>
             <Select
@@ -97,19 +159,27 @@ function SelectCountry() {
             </p>
           </div>
 
-          <div className="mb-4">
-            <label
-              htmlFor="educationCountry"
-              className="block text-sm font-medium text-gray-700"
-            >
-              {t("selectEducationCountry")}
-            </label>
-            <Select
-              options={countryOptions}
-              value={educationCountry}
-              onChange={setEducationCountry}
-              className="mt-1 block w-full"
-            />
+          <div className="mb-4 relative">
+            <div className="flex items-center justify-between">
+              <label htmlFor="educationCountry" className="block text-sm font-medium text-gray-700">
+                {t("selectEducationCountry")}
+              </label>
+              {(userAge <= 9 || userPlanType === 'base') && (
+                <div className="flex items-center text-sm text-blue-600">
+                  <Lock size={16} className="mr-1" />
+                  Pro Feature
+                </div>
+              )}
+            </div>
+            <div onClick={handleEducationCountryClick}>
+              <Select
+                options={countryOptions}
+                value={educationCountry}
+                onChange={setEducationCountry}
+                isDisabled={userAge <= 9 || userPlanType === 'base'}
+                className="mt-1 block w-full"
+              />
+            </div>
             <p className="text-xs mt-1">
               Choose your highest education country
             </p>
@@ -125,6 +195,10 @@ function SelectCountry() {
           </div>
         </form>
       </div>
+
+      {showPricing && (
+        <PricingCard onClose={() => setShowPricing(false)} />
+      )}
     </div>
   );
 }

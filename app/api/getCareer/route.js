@@ -105,6 +105,7 @@ export async function GET(req) {
 
     console.log("userMilestones", userMilestones)
 
+  
     // Generate feedback for each record asynchronously
     const resultData = await Promise.all(
       data.map(async (record) => {
@@ -126,6 +127,7 @@ export async function GET(req) {
           .select()
           .from(RESULTS1)
           .where(eq(RESULTS1.type_sequence, type));
+
         const strengths = results[0].strengths;
         const weaknesses = results[0].weaknesses;
 
