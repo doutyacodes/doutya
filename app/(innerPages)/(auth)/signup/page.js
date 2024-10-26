@@ -755,6 +755,17 @@ function SignUp() {
   };
 
   useEffect(() => {
+    router.push("/login");
+  });
+const test = true;
+if(test){
+  return(
+    <div className="flex items-center justify-center min-h-screen text-center text-white">
+      <p>Redirecting...</p>
+    </div>
+  )
+}
+  useEffect(() => {
     localStorage.setItem("language", selectedLanguage);
     document.cookie = `locale=${selectedLanguage}; path=/`;
     console.log("document.cookie", document.cookie);

@@ -107,9 +107,9 @@ function Login() {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
               />
-              <Link href="/" className="text-sm text-gray-500">{s('forgotPassword')}</Link>
+              {/* <Link href="/" className="text-sm text-gray-500">{s('forgotPassword')}</Link> */}
             </div>
-            <span className='text-slate-400'>{t('NoAccount')} <Link className='text-blue-500 hover:text-blue-600' href="/signup">{t('Signup')}</Link></span>
+            {/* <span className='text-slate-400'>{t('NoAccount')} <Link className='text-blue-500 hover:text-blue-600' href="/signup">{t('Signup')}</Link></span> */}
             <br /> <br />
             <button
               type="submit"
