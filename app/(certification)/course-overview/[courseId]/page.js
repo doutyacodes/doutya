@@ -39,12 +39,13 @@ function Page({ params }) {
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetCourseOverview(courseID, token);
+        // console.log(resp.data)
         const data = resp.data.courseOverview[0];
         
         // Parse descriptions to arrays if they are in JSON string format
-        data.prerequisite_description = JSON.parse(data.prerequisite_description || "[]");
-        data.skill_description = JSON.parse(data.skill_description || "[]");
-        data.application_description = JSON.parse(data.application_description || "[]");
+        // data.prerequisite_description = JSON.parse(data.prerequisite_description || "[]");
+        // data.skill_description = JSON.parse(data.skill_description || "[]");
+        // data.application_description = JSON.parse(data.application_description || "[]");
 
         setCourseData(data);
         setCertificationName(resp.data.certificationName)
@@ -95,7 +96,8 @@ function Page({ params }) {
   
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+
+    <div className="min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
       
       { courseData && (
@@ -104,16 +106,16 @@ function Page({ params }) {
         <div className="mb-8">
           <button
             onClick={handleGoBack}
-            className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
+            className="flex items-center text-gray-300 hover:text-gray-100 mb-4"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back
           </button>
           
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{certificationName}</h1>
-            <p className="text-lg text-gray-600">Career Path: {careerName}</p>
-            <div className="flex items-center mt-4 text-gray-600">
+          <div className="bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+            <h1 className="text-3xl font-bold text-gray-100 mb-2">{certificationName}</h1>
+            <p className="text-lg text-gray-300">Career Path: {careerName}</p>
+            <div className="flex items-center mt-4 text-gray-300">
               <Calendar className="w-5 h-5 mr-2" />
               <span>Duration: 3 weeks</span>
             </div>
@@ -123,9 +125,9 @@ function Page({ params }) {
         {/* Course Overview Cards */}
         <div className="grid gap-6 mb-8">
           {/* Prerequisites Card */}
-          <Card>
+          <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-gray-100">
                 <Book className="w-5 h-5 mr-2" />
                 Prerequisites
               </CardTitle>
@@ -133,8 +135,8 @@ function Page({ params }) {
             <CardContent>
               <ul className="space-y-2">
                 {courseData?.prerequisite_description.map((prereq, index) => (
-                  <li key={index} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                  <li key={index} className="flex items-start text-gray-300">
+                    <CheckCircle className="w-5 h-5 mr-2 text-emerald-400 flex-shrink-0 mt-0.5" />
                     <span>{prereq}</span>
                   </li>
                 ))}
@@ -143,9 +145,9 @@ function Page({ params }) {
           </Card>
 
           {/* Skills Acquired Card */}
-          <Card>
+          <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-gray-100">
                 <GraduationCap className="w-5 h-5 mr-2" />
                 Skills You'll Acquire
               </CardTitle>
@@ -153,8 +155,8 @@ function Page({ params }) {
             <CardContent>
               <ul className="space-y-2">
                 {courseData.skill_description.map((skill, index) => (
-                  <li key={index} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                  <li key={index} className="flex items-start text-gray-300">
+                    <CheckCircle className="w-5 h-5 mr-2 text-emerald-400 flex-shrink-0 mt-0.5" />
                     <span>{skill}</span>
                   </li>
                 ))}
@@ -163,9 +165,9 @@ function Page({ params }) {
           </Card>
 
           {/* Real-world Applications Card */}
-          <Card>
+          <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-gray-100">
                 <Book className="w-5 h-5 mr-2" />
                 Real-world Applications
               </CardTitle>
@@ -173,8 +175,8 @@ function Page({ params }) {
             <CardContent>
               <ul className="space-y-2">
                 {courseData.application_description.map((application, index) => (
-                  <li key={index} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                  <li key={index} className="flex items-start text-gray-300">
+                    <CheckCircle className="w-5 h-5 mr-2 text-emerald-400 flex-shrink-0 mt-0.5" />
                     <span>{application}</span>
                   </li>
                 ))}
@@ -184,15 +186,15 @@ function Page({ params }) {
         </div>
 
         {/* Additional Information */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h3 className="text-lg font-semibold mb-4">Additional Information</h3>
-          <ul className="space-y-3 text-gray-600">
+        <div className="bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
+          <h3 className="text-lg font-semibold mb-4 text-gray-100">Additional Information</h3>
+          <ul className="space-y-3 text-gray-300">
             <li className="flex items-start">
-              <CheckCircle className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-5 h-5 mr-2 text-emerald-400 flex-shrink-0 mt-0.5" />
               <span>Participants will engage with real-world scenarios and practical assignments that encourage hands-on learning.</span>
             </li>
             <li className="flex items-start">
-              <CheckCircle className="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-5 h-5 mr-2 text-emerald-400 flex-shrink-0 mt-0.5" />
               <span>Certification will be awarded upon successful completion of the course, which will include a final assessment.</span>
             </li>
           </ul>
@@ -202,7 +204,7 @@ function Page({ params }) {
         <div className="flex justify-center gap-4">
           <button
             onClick={handleGoBack}
-            className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
+            className="px-6 py-3 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-800 font-medium"
           >
             Go Back
           </button>
@@ -211,8 +213,8 @@ function Page({ params }) {
             disabled={courseStatus === 'completed'}
             className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2
               ${courseStatus === 'completed' 
-                ? 'bg-gray-400 text-gray-100 cursor-not-allowed' 
-                : 'bg-blue-600 text-white hover:bg-blue-700'
+                ? 'bg-gray-600 text-gray-300 cursor-not-allowed' 
+                : 'bg-blue-600 text-gray-100 hover:bg-blue-700'
               }`}
           >
             {courseStatus === 'completed' ? (

@@ -78,24 +78,24 @@ function Page({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
       
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header Section */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">{courseData?.certificationName}</h1>
-          <p className="mt-2 text-lg text-gray-600">Career Path: {courseData?.careerName}</p>
-          <p className="text-sm text-gray-500">Recommended Age: {courseData?.userAge}+</p>
+          <h1 className="text-3xl font-bold text-gray-100">{courseData?.certificationName}</h1>
+          <p className="mt-2 text-lg text-gray-300">Career Path: {courseData?.careerName}</p>
+          <p className="text-sm text-gray-400">Recommended Age: {courseData?.userAge}+</p>
         </div>
 
         {/* Weeks Section */}
         <div className="space-y-6">
           {courseData?.weeks.map((week) => (
-            <Card key={week.week_number}>
+            <Card key={week.week_number} className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-blue-500" />
+                <CardTitle className="flex items-center gap-2 text-gray-100">
+                  <BookOpen className="h-5 w-5 text-blue-400" />
                   Week {week.week_number}
                 </CardTitle>
               </CardHeader>
@@ -103,11 +103,11 @@ function Page({ params }) {
                 <div className="grid gap-6 md:grid-cols-2">
                   {/* Topics */}
                   <div>
-                    <h3 className="font-semibold flex items-center gap-2 mb-3">
-                      <ClipboardList className="h-4 w-4 text-green-500" />
+                    <h3 className="font-semibold flex items-center gap-2 mb-3 text-gray-100">
+                      <ClipboardList className="h-4 w-4 text-green-400" />
                       Topics
                     </h3>
-                    <ul className="list-disc list-inside space-y-2 text-gray-600">
+                    <ul className="list-disc list-inside space-y-2 text-gray-300">
                       {week.topics.map((topic, index) => (
                         <li key={index}>{topic}</li>
                       ))}
@@ -116,11 +116,11 @@ function Page({ params }) {
 
                   {/* Assignments */}
                   <div>
-                    <h3 className="font-semibold flex items-center gap-2 mb-3">
-                      <Target className="h-4 w-4 text-purple-500" />
+                    <h3 className="font-semibold flex items-center gap-2 mb-3 text-gray-100">
+                      <Target className="h-4 w-4 text-purple-400" />
                       Assignments
                     </h3>
-                    <ul className="list-disc list-inside space-y-2 text-gray-600">
+                    <ul className="list-disc list-inside space-y-2 text-gray-300">
                       {week.assignments.map((assignment, index) => (
                         <li key={index}>{assignment}</li>
                       ))}
@@ -129,11 +129,11 @@ function Page({ params }) {
 
                   {/* Learning Outcomes */}
                   <div className="md:col-span-2">
-                    <h3 className="font-semibold flex items-center gap-2 mb-3">
-                      <CheckCircle className="h-4 w-4 text-orange-500" />
+                    <h3 className="font-semibold flex items-center gap-2 mb-3 text-gray-100">
+                      <CheckCircle className="h-4 w-4 text-orange-400" />
                       Learning Outcomes
                     </h3>
-                    <ul className="list-disc list-inside space-y-2 text-gray-600">
+                    <ul className="list-disc list-inside space-y-2 text-gray-300">
                       {week.learningOutcomes.map((outcome, index) => (
                         <li key={index}>{outcome}</li>
                       ))}
@@ -151,8 +151,8 @@ function Page({ params }) {
             variant="default" 
             className={`${
               courseData?.courseStatus === "completed" 
-                ? "bg-gray-500 cursor-not-allowed" 
-                : "bg-green-600 hover:bg-green-700"
+                ? "bg-gray-600 text-gray-300 cursor-not-allowed" 
+                : "bg-green-600 hover:bg-green-700 text-gray-100"
             }`}
             onClick={() => handleCompleteCourse()}
             disabled={courseData?.courseStatus === "completed" || isLoading}
@@ -167,7 +167,7 @@ function Page({ params }) {
           </Button>
           <Button 
             variant="default"
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:bg-blue-700 text-gray-100"
             onClick={handleCertificationTest}
           >
             Take Certification
