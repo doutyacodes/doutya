@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import Header from '@/app/_components/Header';
 
 const products = [
   {
@@ -78,6 +79,7 @@ const ProductSection = ({ product }) => {
 const ProductsPage = () => {
   return (
     <div className="overflow-hidden">
+        <Header />
       <h1 className="text-4xl text-center font-bold my-12 text-white">Explore Xortlist Programs</h1>
       {products.map((product) => (
         <ProductSection key={product.slug} product={product} />

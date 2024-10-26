@@ -1,4 +1,5 @@
 "use client"
+import Header from '@/app/_components/Header';
 // pages/products/[slug].js
 
 import { motion } from 'framer-motion';
@@ -67,6 +68,8 @@ const ProductDetail = () => {
   if (!product) return <p>Loading...</p>;
 
   return (
+    <div className="w-full">
+        <Header />
     <div className="container mx-auto p-6">
       {/* Hero Section */}
       <motion.section
@@ -136,6 +139,7 @@ const ProductDetail = () => {
           Get Started
         </button>
       </motion.section>
+    </div>
     </div>
   );
 };
