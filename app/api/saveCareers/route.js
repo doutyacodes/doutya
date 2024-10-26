@@ -20,19 +20,55 @@ export async function POST(req) {
   const { results } = data;
 
   try {
-    // Fetch user details to get the country
-    const userDetails = await db
+
+      // Check user's plan type from USER_DETAILS table
+      const userDetails = await db
+        .select()
+        .from(USER_DETAILS)
+        .where(eq(USER_DETAILS.id, userId))
+        .execute();
+
+        if (userDetails.length === 0) {
+          return NextResponse.json(
+            { message: "User not found" },
+            { status: 404 } // Not Found
+          );
+        }
+
+        const { plan_type } = userDetails[0];
+
+        // Check for existing user career in USER_CAREER table
+        const existingUserCareer = await db
+        .select()
+        .from(USER_CAREER)
+        .where(eq(USER_CAREER.user_id, userId))
+        .execute();
+  
+        console.log("Existing User Career:", existingUserCareer);
+        // Step 3: If plan type is 'base', check if the user already has a career saved
+        if (plan_type === 'base' && existingUserCareer.length >= 2 ) {
+            return NextResponse.json(
+              { message: "Base plan users can only add up to two career paths. Upgrade to Pro to add more." },
+              { status: 403 } // Bad Request
+            );
+        }
+  
+      // Call saveCareer and handle the response
+      const existingCareers = await db
       .select()
-      .from(USER_DETAILS)
-      .where(eq(USER_DETAILS.id, userId))
+      .from(USER_CAREER) // Assuming USER_CAREERS is the table where career data is stored
+      .where(eq(USER_CAREER.user_id, userId))
       .execute();
 
-    if (userDetails.length === 0) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 } // Not Found
-      );
-    }
+      const isFirstTime = existingCareers.length === 0;
+
+      if (existingCareers.length >= 5) {
+        return NextResponse.json(
+          { message: "Career limit reached. You can only save up to 5 careers." },
+          { status: 400 } // Bad Request
+        );
+      }
+
 
     const country = userDetails[0].country;
 
@@ -51,22 +87,6 @@ export async function POST(req) {
 
     const careerNames = results.map((item) => item.career_name);
     console.log("Career Names:", careerNames);
-
-    // Call saveCareer and handle the response
-    const existingCareers = await db
-      .select()
-      .from(USER_CAREER) // Assuming USER_CAREERS is the table where career data is stored
-      .where(eq(USER_CAREER.user_id, userId))
-      .execute();
-
-    const isFirstTime = existingCareers.length === 0;
-
-    if (existingCareers.length >= 5) {
-      return NextResponse.json(
-        { message: "Career limit reached. You can only save up to 5 careers." },
-        { status: 400 } // Bad Request
-      );
-    }
 
     // Save the careers
     const saveCareerResponse = await saveCareer(
