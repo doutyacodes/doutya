@@ -517,7 +517,7 @@ export default function Results2() {
                                     key={originalIndex} // Use originalIndex as the key
                                     className="pt-8 bg-[#2a2b27] rounded-b-md px-3 relative pb-3 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-150 space-y-3  "
                                   >
-                                    <h3
+                                    {/* <h3
                                       className="py-1 px-3 text-white font-semibold w-fit text-[10px] top-2 right-2 rounded-full absolute"
                                       style={{
                                         backgroundColor:
@@ -528,7 +528,7 @@ export default function Results2() {
                                       {career.type === "normal"
                                         ? "BASIC"
                                         : career.type}
-                                    </h3>
+                                    </h3> */}
                                     <div className="">
                                       <h4 className="text-white text-wrap font-bold">
                                         {career.career_name}
