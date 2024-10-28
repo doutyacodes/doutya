@@ -87,12 +87,12 @@ export async function GET(req, { params }) {
             .select({
                 subjectId: SUBJECTS.subject_id,
                 subjectName: SUBJECTS.subject_name,
-                completed: USER_SUBJECT_COMPLETION.completed, // Get completion status from USER_SUBJECT_COMPLETION
+                completed: USER_TESTS.completed, // Get completion status from USER_SUBJECT_COMPLETION
             })
             .from(CAREER_SUBJECTS)
             .innerJoin(SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id))
-            .leftJoin(TESTS, and(eq(TESTS.subject_id, SUBJECTS.subject_id), lte(TESTS.age_group, effectiveAge)))
-            .leftJoin(USER_SUBJECT_COMPLETION, and(eq(USER_SUBJECT_COMPLETION.user_id, userId), eq(USER_SUBJECT_COMPLETION.subject_id, SUBJECTS.subject_id))) 
+            .leftJoin(TESTS, and(eq(TESTS.subject_id, SUBJECTS.subject_id), eq(TESTS.age_group, effectiveAge)))
+            .leftJoin(USER_TESTS, and(eq(USER_TESTS.user_id, userId), eq(USER_TESTS.test_id, TESTS.test_id))) 
             .where(
                 and(
                     eq(CAREER_SUBJECTS.career_id, careerGrpId),
@@ -104,6 +104,8 @@ export async function GET(req, { params }) {
         if (!subjectsForCareer.length) {
             return NextResponse.json({ message: 'No subjects found for this career and user age.' }, { status: 400 });
         }
+
+        console.log("subjectsForCareer", subjectsForCareer)
 
         // Process subjects to include completion status
         const subjectsWithCompletionStatus = subjectsForCareer.map(subject => ({

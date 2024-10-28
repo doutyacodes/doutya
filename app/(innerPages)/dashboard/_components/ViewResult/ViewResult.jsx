@@ -13,7 +13,7 @@ function ViewResult({subjectId, setSelectedSubjectId}) {
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
                 const response = await GlobalApi.GetSkillTestResult( token, subjectId);
-                if (response.status === 200) { 
+                if (response.status === 200) {
                     setResultData(response.data.feedback); 
                 } else {
                     toast.error('Failed to fetch resultData data. Please try again later.');
