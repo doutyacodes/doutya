@@ -22,6 +22,7 @@ export const USER_DETAILS= mysqlTable('user_details',{
     education_qualification: varchar('education_qualification', { length: 255 }).default(null), 
     current_job: varchar('current_job', { length: 200 }).default(null),
     plan_type: mysqlEnum('plan_type',['base','pro']).notNull().default('base'),
+    joined_date: timestamp('joined_date').defaultNow()
 });
 
 // Define the schema for the 'page' table
@@ -413,7 +414,7 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         test_id: int('test_id').notNull().references(() => TESTS.test_id),
         answer_text: text('answer_text').notNull(),
         answer: mysqlEnum('answer', ['no', 'yes']).notNull(),
-        test_marks: decimal('task_marks', { precision: 10, scale: 2 }),
+        // test_marks: decimal('task_marks', { precision: 10, scale: 2 }),
     });
 
     // Define the `user_progress` table schema

@@ -365,6 +365,14 @@ const GetTestResultData = (token) => {
   });
 };
 
+const GetTestResults = (token) => {
+  return axios.get(`/api/getTestResults`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 const GetLeaderboardData = (id, token) => {
   return axios.get(`/api/getLeaderboardData/${id}`, {
     headers: {
@@ -677,6 +685,7 @@ export default {
   SaveTestProgress,
   UpdateTestData,
   GetTestResultData,
+  GetTestResults,
 
   GetContests,
   GetContestData,

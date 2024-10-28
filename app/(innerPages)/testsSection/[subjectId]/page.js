@@ -27,7 +27,7 @@ function Page({ params }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
-  const testId = params.taskId;
+  const subjectId = params.subjectId;
   // const { testId } = router.query;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
@@ -51,9 +51,9 @@ function Page({ params }) {
       try {
         const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
-          console.log("test Id froionmsection", testId);
+          console.log("subjectId Id froionmsection", subjectId);
           
-        const resp = await GlobalApi.GetTestsData(testId, token);
+        const resp = await GlobalApi.GetTestsData(subjectId, token);
         setQuestions(resp.data.questions);
         setTimer(resp.data.timer * 1000);
         setTimerValue(resp.data.timer); /* This wont change */
@@ -116,24 +116,15 @@ function Page({ params }) {
       questionId: questions[currentQuestionIndex].id,
       answerId: choice.id,
       marks: earnedMarks,
-      testId: testId,
+      testId: questions[currentQuestionIndex].testId,
     };
     quizProgressSubmit(answer);
     setProgressSubmitted(true);
     console.log("answer", answer);
   };
 
+  console.log("questions", questions);
   const handleNext = () => {
-
-    // const answer = {
-    //   questionId: questions[currentQuestionIndex].id,
-    //   answerId: selectedChoice.id,
-    //   taskId: testId,
-    //   challengeId: challengeId
-    // };
-    // quizProgressSubmit(answer);
-    // console.log("answer", answer);
-    
 
     if (currentQuestionIndex < questions.length - 1) {
       // Add a delay before advancing to the next question
@@ -177,7 +168,7 @@ function Page({ params }) {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("token") : null;
     try {
-      const resp = await GlobalApi.UpdateTestData(token, testId);
+      const resp = await GlobalApi.UpdateTestData(token, questions[currentQuestionIndex].testId);
       if (resp && resp.status === 201) {
         toast.success("Quiz Completed successfully!");
       } else {
@@ -205,36 +196,12 @@ function Page({ params }) {
     const answer = {
       questionId: questions[currentQuestionIndex].id,
       answerId: selectedChoice ? selectedChoice.id : 0,
-      testId: testId,
+      testId: questions[currentQuestionIndex].testId,
       marks: 0,
     };
     quizProgressSubmit(answer);
     handleNext();
   };
-
-  // useEffect(() => {
-  //   if (!timer) return; // Exit early if timer is not set
-  
-  //   let startTime = Date.now(); // Record the start time
-  //   let timerId;
-  
-  //   const tick = () => {
-  //     const elapsedTime = Date.now() - startTime; // Calculate elapsed time
-  //     const remainingTime = Math.max(timer - elapsedTime, 0); // Calculate remaining time
-  
-  //     setTimer(remainingTime); // Update the timer state with remaining time
-  
-  //     if (remainingTime > 0) {
-  //       timerId = requestAnimationFrame(tick); // Schedule the next tick
-  //     } else {
-  //       handleTimeOut(); // Call the timeout handler function when timer reaches 0
-  //     }
-  //   };
-  
-  //   timerId = requestAnimationFrame(tick); // Start the timer
-  
-  //   return () => cancelAnimationFrame(timerId); // Cleanup function to clear the timer on component unmount or timer change
-  // }, [timer, currentQuestionIndex]);
 
   useEffect(() => {
     if (!timer) return; // Exit early if the timer is not set

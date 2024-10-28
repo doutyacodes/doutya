@@ -151,14 +151,13 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age) => {
     }
   };
   
-
-// Main function to fetch and save subjects
-export const processCareerSubjects = async (
-  careerName,
-  careerId,
-  country,
-  age
-) => {
+  // Main function to fetch and save subjects
+  export const processCareerSubjects = async (
+    careerName,
+    careerId,
+    country,
+    age
+  ) => {
   try {
     const subjectsByAge = await fetchSubjectsFromOpenAI(
       careerName,
