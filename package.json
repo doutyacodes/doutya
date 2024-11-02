@@ -23,6 +23,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@tabler/icons-react": "^3.19.0",
     "axios": "^1.7.4",
+    "base32-encode": "^2.0.0",
     "basic-ftp": "^5.0.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
