@@ -22,7 +22,14 @@ export const USER_DETAILS= mysqlTable('user_details',{
     education_qualification: varchar('education_qualification', { length: 255 }).default(null), 
     current_job: varchar('current_job', { length: 200 }).default(null),
     plan_type: mysqlEnum('plan_type',['base','pro']).notNull().default('base'),
-    joined_date: timestamp('joined_date').defaultNow()
+    joined_date: timestamp('joined_date').defaultNow(),
+    // unique_key: varchar('unique_key', { length: 50 }).default(null)
+});
+
+export const USER_KEYS = mysqlTable('user_keys', {
+    id: int('id').autoincrement().notNull().primaryKey(),
+    user_id: int('user_id').notNull().references(USER_DETAILS, 'id', { onDelete: 'cascade'} ),
+    unique_key: varchar('unique_key', { length: 50 }).notNull(),
 });
 
 // Define the schema for the 'page' table

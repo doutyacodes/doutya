@@ -40,13 +40,13 @@ export async function GET(req, { params }) {
   try {
 
      // Check the status of the career roadmap from the USER_CAREER_STATUS table
-     const userCareerStatus = await db
-      .select({ roadmap_status: USER_CAREER_STATUS.roadmap_status })
-      .from(USER_CAREER_STATUS)
-      .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID)) // Check the correct user career status
-      .execute();
+    //  const userCareerStatus = await db
+    //   .select({ roadmap_status: USER_CAREER_STATUS.roadmap_status })
+    //   .from(USER_CAREER_STATUS)
+    //   .where(eq(USER_CAREER_STATUS.user_career_id, userCareerID)) // Check the correct user career status
+    //   .execute();
 
-      const roadmapStatus = userCareerStatus[0]?.roadmap_status;
+      // const roadmapStatus = userCareerStatus[0]?.roadmap_status;
 
       // if (roadmapStatus === 'in_progress') {
       //     // If the roadmap generation is in progress, return a message
