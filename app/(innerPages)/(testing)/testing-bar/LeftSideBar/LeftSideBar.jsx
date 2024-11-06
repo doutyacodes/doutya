@@ -135,7 +135,7 @@ const LeftSideBar = () => {
               </button>
             </div> */}
 
-<div className={`${isOpen ? "flex" : "block"} items-center justify-between relative gap-3`}>
+          <div className={`${isOpen ? "flex" : "block mb-10"} items-center justify-between relative gap-3`}>
               <Image
                 src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
                 alt="Logo"
@@ -200,7 +200,12 @@ const LeftSideBar = () => {
                 <li className="relative">
                   <div
                     className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
-                    onClick={toggleCareersDropdown}
+                    onClick={()=>{
+
+                      !isOpen && toggleSidebars();
+
+                      toggleCareersDropdown();
+                    }}
                   >
                     <PiCompassRoseFill className="text-xl" />
                     {isOpen && (
