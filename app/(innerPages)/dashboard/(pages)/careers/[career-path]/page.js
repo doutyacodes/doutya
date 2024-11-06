@@ -6,20 +6,16 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import AddCareer from "../../../_components/AddCareer/AddCareer";
-import Contests from "../../../_components/ContestTab/Contests";
-import Activity from "../../../_components/Activities/activity";
 import Challenge from "../../../_components/Challenges/page";
 import Feedback from "../../../_components/FeedbackTab/Feedback";
 import RoadMap from "../../../_components/RoadMapTab/RoadMap";
-import About from "../../../_components/About/page";
 import { useTranslations } from "next-intl";
-import dynamic from "next/dynamic";
-import CareerPath from "../../../_components/CareerPathTab/CareerPath";
 import Tests from "../../../_components/TestTab/Tests";
 import Results2 from "../../../_components/Result2/page";
 import CommunityList from "@/app/_components/CommunityList";
 import FeatureRestrictionModal from "../../../_components/FeatureRestrictionModal/FeatureRestrictionModal";
 import PricingCard from "@/app/_components/PricingCard";
+import CareerOverView from "../../../_components/CareerOverview/CareerOverview";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -75,10 +71,10 @@ function Page() {
   const tabs = [
     { key: "roadmap", label: t("roadmap") },
     { key: "test", label: t("test") },
-    { key: "careerPath", label: "Career Path" },
+    // { key: "careerPath", label: "Career Path" },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
-    { key: "careerOverview", label: "Career Overview" },
+    // { key: "careerOverview", label: "Career Overview" },
     { key: "community", label: "Community" },
   ];
 
@@ -180,6 +176,11 @@ function Page() {
     }
   };
 
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+
+
   if (isLoading || !isAuthenticated) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
@@ -192,18 +193,6 @@ function Page() {
     <div className="mx-auto bg-[#1f1f1f] text-white max-md:pb-7">
       <Toaster />
 
-      {/* Add Career Dialog */}
-      {/* <AddCareer
-        isOpen={showDialogue}
-        onClose={() => setShowDialogue(false)}
-        getCareers={getCareers}
-        setCareerName={setCareerName}
-        careerName={careerName}
-        handleSubmit={handleAddCareerClick}
-        roadMapLoading={roadMapLoading}
-      /> */}
-
-      
       {/* Add Career Dialog - Only show for unrestricted users */}
       {!isRestricted && (
         <AddCareer
@@ -240,7 +229,7 @@ function Page() {
       </p>
 
       {/* Career Selector for Desktop */}
-      <div className="flex flex-col pt-4 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
+      <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
         <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
           {t("careers")}
         </p>
@@ -270,25 +259,35 @@ function Page() {
           </div>
         </div>
       </div>
+      
       {showCareer ? (
         <>
           {/* Selected Career Content */}
           {selectedCareer && (
             <>
-            <div className="bg-[#000000] min-h-20 mb-5 justify-between items-center flex p-3">
-                <p className="p-2 bg-[#1f1f1f] text-white font-bold rounded-xl text-sm">Career Overview</p>
-          <p className="text-white uppercase font-bold text-center md:text-xl">
-          {selectedCareer?.career_name}
-          {/* {console.log(selectedCareer.weekData.weekNumber)} */}
-          </p>
-          <div className="space-y-3">
-            <p className="p-2 bg-[#1f1f1f] text-white font-bold rounded-xl text-sm text-center">YEAR-{selectedCareer.weekData.yearsSinceCreated+1}</p>
-            <p className="p-2 bg-[#1f1f1f] text-white font-bold rounded-xl text-sm text-center">WEEK -{selectedCareer.weekData.weekNumber}/52</p>
-          </div>
-        </div>
+            <div className="bg-gray-600 min-h-20 mb-5 justify-between items-center flex px-6 md:px-24 py-4">
+              <button
+                className={`px-6 py-4 bg-[#2b2b2b] text-white font-bold rounded-xl text-sm flex items-center hover:bg-[#3a3a3a] focus:outline-none focus:ring-2 focus:ring-[#5a5a5a] focus:ring-offset-2 transition-colors duration-200 ${
+                  activeTab === 'careerOverview' ? 'bg-[#3b3b3b]' : ''
+                }`}
+                onClick={() => handleTabClick('careerOverview')}
+              >
+                <span className="mr-2">Career Overview</span>
+              </button>
+              <p className="text-white uppercase font-bold text-center md:text-xl">
+                {selectedCareer?.career_name}
+              </p>
+              <div className="space-y-3">
+                <p className="p-2 bg-[#1f1f1f] text-white font-bold rounded-xl text-sm text-center">
+                  YEAR - {selectedCareer.weekData.yearsSinceJoined}
+                </p>
+                <p className="p-2 bg-[#1f1f1f] text-white font-bold rounded-xl text-sm text-center">
+                  WEEK - {selectedCareer.weekData.weekNumber}/52
+                </p>
+              </div>
+            </div>
+
             <div className="flex flex-col  px-4 md:px-20 gap-6 py-6 bg-[#2c2c2c]">
-                
-                
               <div className="bg-gray-900 flex flex-col items-center w-full md:w-auto p-4 rounded-lg">
                 <div className="flex flex-row  gap-4 text-xs md:text-base min-w-20 mt-4 w-full overflow-x-scroll justify-center items-center">
                   {tabs.map((tab) => (
@@ -314,11 +313,11 @@ function Page() {
                 <div className="text-white font-bold text-xl mb-4 uppercase">
                   {t(activeTab)}
                 </div>
+                {activeTab === "careerOverview" && (
+                  <CareerOverView selectedCareer={selectedCareer} setMainTab={setActiveTab}/>
+                )}
                 {activeTab === "roadmap" && (
                   <RoadMap selectedCareer={selectedCareer} />
-                )}
-                {activeTab === "careerPath" && (
-                  <CareerPath selectedCareer={selectedCareer} />
                 )}
                 {activeTab === "test" && (
                   <Tests selectedCareer={selectedCareer} />
@@ -328,9 +327,6 @@ function Page() {
                 )}
                 {activeTab === "challenges" && (
                   <Challenge selectedCareer={selectedCareer} />
-                )}
-                {activeTab === "careerOverview" && (
-                  <About selectedCareer={selectedCareer} />
                 )}
                 {activeTab === "community" && (
                   <CommunityList careerId={selectedCareer?.career_group_id} />

@@ -140,6 +140,7 @@ const GetResult2 = (token, industryParam, language) =>
       industry: industryParam,
     },
   });
+
 const getResult2Career = (token, career_name, language) =>
   axios.get("/api/getResult2Career", {
     headers: {
@@ -365,10 +366,13 @@ const GetTestResultData = (token) => {
   });
 };
 
-const GetTestResults = (token) => {
+const GetTestResults = (careerGrpId, currentWeek, token) => {
   return axios.get(`/api/getTestResults`, {
     headers: {
       Authorization: `Bearer ${token}`,
+    },params: {
+      currentWeek,
+      careerGrpId
     },
   });
 };
@@ -452,14 +456,37 @@ const UpdateMileStoneStatus = (data, token) => {
   });
 };
 
-const GetFeedBackData = (id, token, language) => {
-  return axios.get(`/api/getFeedBackData/${id}`, {
+// const GetFeedBackData = (id, token, language) => {
+//   return axios.get(`/api/getFeedBackData/${id}`, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       "Accept-Language": language,
+//     },
+//   });
+// };
+
+const GetFeedBackData = (id, month, year, week, token) => {
+  return axios.get(`/api/getFeedBackData`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Accept-Language": language,
+    },params: {
+      id,
+      month,
+      year,
+      week,
     },
   });
 };
+
+const GetInitialFeedBack = (id, token, language) => {
+  return axios.get(`/api/getInitialFeedBack/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Accept-Language": language,
+    }
+  });
+};
+
 const setCountries = (data, token) => {
   return axios.put("/api/setCountry", data, {
     headers: {
@@ -703,6 +730,7 @@ export default {
 
   UpdateMileStoneStatus,
   GetFeedBackData,
+  GetInitialFeedBack,
   setCountries,
   GetKidsResult,
   getCareerName,

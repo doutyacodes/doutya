@@ -16,6 +16,7 @@ import {
 import Link from "next/link"; // Import Link from Next.js for navigation
 import { usePathname, useRouter } from "next/navigation";
 import GlobalApi from "@/app/_services/GlobalApi";
+import { ChevronLeft } from "lucide-react";
 
 const LeftSideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -118,7 +119,7 @@ const LeftSideBar = () => {
         >
           <div className="my-4">
             {/* Logo aligned to the right */}
-            <div className={`${isOpen ? "flex" : "block"} items-center justify-between gap-3`}>
+            {/* <div className={`${isOpen ? "flex" : "block"} items-center justify-between gap-3`}>
               <Image
                 src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
                 alt="Logo"
@@ -126,15 +127,64 @@ const LeftSideBar = () => {
                 height={120}
                 className="object-contain"
               />
-              {/* Toggle button inside sidebar */}
               <button
                 className={`text-xl p-2 mb-6 max-md:hidden transition-transform ${isOpen ? "rotate-0" : "rotate-180"}`}
                 onClick={toggleSidebars}
               >
                 <FaBars />
               </button>
+            </div> */}
+
+<div className={`${isOpen ? "flex" : "block"} items-center justify-between relative gap-3`}>
+              <Image
+                src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
+                alt="Logo"
+                width={150}
+                height={120}
+                className="object-contain"
+              />
+              <button
+                onClick={toggleSidebars}
+                className={`
+                  max-md:hidden
+                  p-2
+                  rounded-full
+                  hover:bg-gray-100/10
+                  transition-all
+                  duration-200
+                  transform
+                  ${isOpen ? "" : "rotate-180"}
+                  group
+                  absolute
+                  ${isOpen ? "-right-3" : "-right-0 mt-5"}
+                  top-6
+                `}
+                aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
+              >
+                <div className="
+                  bg-gray-800 
+                  rounded-full 
+                  p-1.5
+                  shadow-lg
+                  border
+                  border-gray-700
+                  group-hover:border-gray-600
+                  transition-colors
+                ">
+                  <ChevronLeft 
+                    className={`
+                      w-4 
+                      h-4 
+                      text-gray-400
+                      group-hover:text-white
+                      transition-colors
+                    `}
+                  />
+                </div>
+              </button>
             </div>
           </div>
+          
           {/* Sidebar content */}
           <div className="flex flex-col gap-5 h-full">
             <div className="mt-4">

@@ -19,6 +19,7 @@
     "@mui/material": "^6.1.1",
     "@nextui-org/chip": "^2.0.32",
     "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-toast": "^1.2.1",
     "@reduxjs/toolkit": "^2.2.7",
     "@tabler/icons-react": "^3.19.0",

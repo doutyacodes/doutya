@@ -77,7 +77,7 @@ export async function POST(req) {
         // Update the existing record with the new sequence
         await db.update(USER_TESTS)
         .set({
-            score: Math.round(percentage),
+            // score: Math.round(percentage),
             stars_awarded: stars,
             completed: 'yes', // Update the type_sequence field
         })

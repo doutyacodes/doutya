@@ -19,13 +19,8 @@ function Tests({selectedCareer}) {
 
     const router = useRouter();
 
-
-    const testHistory = [
-      // Sample history data - replace with your actual history
-      { week: 21, averageScore: 85, totalTests: 5 },
-      { week: 20, averageScore: 78, totalTests: 5 },
-      { week: 19, averageScore: 92, totalTests: 5 },
-    ];
+    const currentYear = selectedCareer.weekData.yearsSinceJoined
+    const currentWeek = selectedCareer.weekData.weekNumber
 
     useEffect(()=>{
         const getSubjects = async () => {
@@ -57,18 +52,7 @@ function Tests({selectedCareer}) {
         getSubjects()
     }, [selectedCareer])
 
-    const getScoreColor = (score, total, passed) => {
-      const percentage = (score / total) * 100;
-      if (passed) {
-        return 'bg-emerald-400';
-      } else if (percentage > 75) {
-        return 'bg-yellow-400';
-      } else {
-        return 'bg-red-500';
-      }
-    };
-
-      // Handle the test button click
+    // Handle the test button click
     //   const handleTakeTestClick = (subject) => {
     //     router.push(`/skillTestsSection/${subject.subjectId}`);
     // };
@@ -91,36 +75,29 @@ function Tests({selectedCareer}) {
                         </CardHeader>
                     </Card>
                     {/* Overlay that shows on hover */}
-        <div className="absolute inset-0 bg-green-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {/* <button
-                onClick={() => handleTakeTestClick(subject)} // Handle test button
-                className="flex items-center bg-blue-500 text-white font-extrabold py-2 px-4 rounded-lg focus:outline-none hover:bg-blue-600"
-              >
-                <span className="mr-2">Take Test</span>
-                <EyeIcon className="mr-2 h-4 w-4" />
-              </button> */}
-            {
-              subject.completed === "yes" ? (
-                <button
-                  onClick={() => handleResultsNavigation(subject)} // Handle results navigation
-                  className="flex items-center bg-green-500 text-white font-extrabold py-2 px-4 rounded-lg focus:outline-none"
-                >
-                  <span className="mr-2">View Results</span>
-                  <EyeIcon className="mr-2 h-4 w-4" />
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleTakeTestClick(subject)} // Handle test button
-                  className="flex items-center bg-blue-500 text-white font-extrabold py-2 px-4 rounded-lg focus:outline-none hover:bg-blue-600"
-                >
-                  <span className="mr-2">Take Test</span>
-                  <EyeIcon className="mr-2 h-4 w-4" />
-                </button>
-              )
-            }
-        </div>
-      </div>
-              ))}
+                    <div className="absolute inset-0 bg-green-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        {
+                          subject.completed === "yes" ? (
+                            <button
+                              onClick={() => handleResultsNavigation(subject)} // Handle results navigation
+                              className="flex items-center bg-green-500 text-white font-extrabold py-2 px-4 rounded-lg focus:outline-none"
+                            >
+                              <span className="mr-2">View Results</span>
+                              <EyeIcon className="mr-2 h-4 w-4" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleTakeTestClick(subject)} // Handle test button
+                              className="flex items-center bg-blue-500 text-white font-extrabold py-2 px-4 rounded-lg focus:outline-none hover:bg-blue-600"
+                            >
+                              <span className="mr-2">Take Test</span>
+                              <EyeIcon className="mr-2 h-4 w-4" />
+                            </button>
+                          )
+                        }
+                    </div>
+                </div>
+            ))}
         </div>
         ) : (
             <p className="text-center text-gray-600">No subjects found.</p>
@@ -159,22 +136,6 @@ function Tests({selectedCareer}) {
       ) : (
         <>
         {/* Main Tabs */}
-          {/* <div className="flex mb-4 overflow-x-scroll gap-2">
-              {Object.keys(testTabs).map((tab) => (
-                <button
-                  key={tab}
-                  className={`flex-1 rounded px-4 py-2 lg:py-3 font-semibold lg:text-lg text-sm text-center focus:outline-none ${
-                    activeTab === tab
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                  }`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab.toUpperCase()}
-                </button>
-              ))}
-            </div> */}
-
             <div className="w-full bg-gray-900 p-6 rounded-lg">
               <div className="flex justify-between items-center mb-6">
                 <div className="grid grid-cols-2 gap-4 w-full">
@@ -182,8 +143,8 @@ function Tests({selectedCareer}) {
                     onClick={() => setActiveTab('weekly')}
                     className={`px-4 py-2 rounded transition-colors duration-300 ${
                       activeTab === 'weekly'
-                        ? 'bg-gray-800 text-gray-400'
-                        : 'bg-gray-700 text-gray-500 hover:bg-gray-800'
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
                     }`}
                   >
                     <span className="uppercase text-sm">WEEKLY TESTS</span>
@@ -193,7 +154,7 @@ function Tests({selectedCareer}) {
                     className={`px-4 py-2 rounded transition-colors duration-300 ${
                       activeTab === 'history'
                         ? 'bg-orange-500 text-white'
-                        : 'bg-orange-400 hover:bg-orange-500 text-white'
+                        : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
                     }`}
                   >
                     <span className="uppercase text-sm">TEST HISTORY</span>
@@ -202,14 +163,10 @@ function Tests({selectedCareer}) {
               </div>
 
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-white text-xl">WEEK - 22/52</h2>
-                <button className="flex items-center bg-black text-white px-4 py-2 rounded">
-                  <span className="mr-2">YEAR-3</span>
-                  <ChevronDown size={20} />
-                </button>
+                <h2 className="text-white text-xl">WEEK - {currentWeek}/52</h2>
               </div>
 
-              {activeTab === 'weekly' ? <WeeklyTestsView /> : <HistoryView />}
+              {activeTab === 'weekly' ? <WeeklyTestsView /> : <HistoryView selectedCareer = {selectedCareer} currentWeek={currentWeek}/>}
             </div>
       </>
       )
