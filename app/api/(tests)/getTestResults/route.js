@@ -1,8 +1,9 @@
 import { db } from '@/utils';
-import { SUBJECTS, TESTS, USER_TESTS, USER_DETAILS } from '@/utils/schema';
+import { SUBJECTS, TESTS, USER_TESTS, USER_DETAILS, CAREER_SUBJECTS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq, gte, sql } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
+import { calculateAge } from '@/lib/ageCalculate';
 
 export async function GET(request) {
     const authResult = await authenticate(request);
@@ -13,24 +14,39 @@ export async function GET(request) {
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
 
+    const { searchParams } = new URL(request.url);
+    const currentWeek = parseInt(searchParams.get('currentWeek'));
+    const careerGrpId = parseInt(searchParams.get('careerGrpId'));
+    
     try {
-        // Get the user’s joining date
-        const userJoined = await db.select({ joinedDate: USER_DETAILS.joined_date })
+
+        // Get user's birth date
+        const birthDateResult = await db
+            .select({ birth_date: USER_DETAILS.birth_date })
             .from(USER_DETAILS)
-            .where(eq(USER_DETAILS.id, userId))
-            .execute();
+            .where(eq(USER_DETAILS.id, userId));
 
-        if (userJoined.length === 0) {
-            return NextResponse.json({ message: 'User not found' }, { status: 404 });
-        }
+        const age = calculateAge(birthDateResult[0].birth_date);
 
-        const joinedDate = new Date(userJoined[0].joinedDate);
-        const today = new Date();
-        const totalWeeks = Math.ceil((today - joinedDate) / (7 * 24 * 60 * 60 * 1000)); // Weeks since joining
+        // Fetch initial subjects for career
+        const subjectsForCareer = await db
+                                    .select({
+                                        subjectId: SUBJECTS.subject_id,
+                                        subjectName: SUBJECTS.subject_name
+                                    })
+                                    .from(CAREER_SUBJECTS)
+                                    .innerJoin(SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id))
+                                    .where(
+                                        and(
+                                            eq(CAREER_SUBJECTS.career_id, careerGrpId),
+                                            eq(SUBJECTS.min_age, age)
+                                        )
+                                    )
+                                    .execute();
 
-        // Fetch the user's completed tests, aggregating the total stars and scores per subject
         const completedTests = await db
             .select({
+                subjectId: SUBJECTS.subject_id,
                 subjectName: SUBJECTS.subject_name,
                 totalStars: sql`SUM(${USER_TESTS.stars_awarded})`.as('totalStars'),
                 totalScore: sql`SUM(${USER_TESTS.score})`.as('totalScore')
@@ -39,23 +55,34 @@ export async function GET(request) {
             .innerJoin(TESTS, eq(USER_TESTS.test_id, TESTS.test_id))
             .innerJoin(SUBJECTS, eq(TESTS.subject_id, SUBJECTS.subject_id))
             .where(and(eq(USER_TESTS.user_id, userId), eq(USER_TESTS.completed, 'yes')))
-            .groupBy(SUBJECTS.subject_name)
+            .groupBy(SUBJECTS.subject_id, SUBJECTS.subject_name) // Include both columns in GROUP BY
             .execute();
 
-        if (completedTests.length === 0) {
-            return NextResponse.json({ message: 'No completed tests found for the user' }, { status: 404 });
-        }
 
-        // Format the results
-        const weeklyTests = completedTests.map(test => {
-            const passed = test.totalStars >= totalWeeks; // Adjust this logic as per your passing criteria
-            return {
-                subject: test.subjectName,
-                score: test.totalScore,
-                total: totalWeeks,
-                passed: passed
-            };
-        });
+        // Map completed test results by subject ID for quick access
+        const completedTestsMap = completedTests.reduce((map, test) => {
+            map[test.subjectId] = test;
+            return map;
+        }, {});
+
+        console.log('completedTestsMap', completedTestsMap)
+
+            // Format results for all subjects, using completed test data where available
+            const weeklyTests = subjectsForCareer.map(subject => {
+
+                const testData = completedTestsMap[subject.subjectId];
+                const totalStars = testData ? testData.totalStars : 0;
+                // const totalScore = testData ? testData.totalScore : 0;
+                const passed = totalStars >= currentWeek;
+
+                
+                return {
+                    subject: subject.subjectName,
+                    score: totalStars,
+                    total: currentWeek,
+                    passed: passed
+                };
+            });
 
         return NextResponse.json({ results: weeklyTests }, { status: 200 });
 

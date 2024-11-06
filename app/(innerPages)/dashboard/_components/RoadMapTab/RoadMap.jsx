@@ -192,7 +192,7 @@ function RoadMap({ selectedCareer }) {
           </div>
 
           {/* Educational Subtabs */}
-          {activeTab === 'Educational Milestones' && (
+          {/* {activeTab === 'Educational Milestones' && (
             <div className="flex gap-2 mb-4">
               {Object.keys(milestones['Educational Milestones']).map((subTab) => (
                 <button
@@ -208,7 +208,30 @@ function RoadMap({ selectedCareer }) {
                 </button>
               ))}
             </div>
+          )} */}
+
+          {activeTab === 'Educational Milestones' && (
+            <div className="flex flex-row gap-2 text-xs md:text-base min-w-20 mt-10 w-full overflow-x-scroll justify-center items-center">
+                {Object.keys(milestones['Educational Milestones']).map((subTab) => (
+                  <button
+                    key={subTab}
+                    // px-3 py-1.5 rounded-md font-medium text-sm focus:outline-none transition-colors duration-200
+                    // ? 'bg-orange-500/20 text-orange-400'
+                    //         : 'text-gray-300 hover:bg-gray-700/50'
+
+                    className={`w-full rounded-md px-4 py-2 lg:py-3 bg-gray-500 font-semibold lg:text-lg text-sm text-center focus:outline-none transition-colors duration-200 ${
+                      activeEducationalSubTab === subTab
+                        ? 'bg-orange-500/20 text-orange-400'
+                        : 'text-gray-300 hover:bg-gray-500/50'
+                    }`}
+                    onClick={() => setActiveEducationalSubTab(subTab)}
+                  >
+                    {subTab}
+                  </button>
+                ))}
+              </div>
           )}
+
 
           {/* Tab Content */}
           <div className="bg-gray-800 p-6 shadow-lg min-h-[300px]">

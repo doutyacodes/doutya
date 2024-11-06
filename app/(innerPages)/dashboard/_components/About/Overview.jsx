@@ -1,7 +1,7 @@
 import GlobalApi from '@/app/_services/GlobalApi';
 import React, { useEffect, useState } from 'react';
 
-export default function About({ selectedCareer }) {
+export default function Overview({ selectedCareer }) {
     const [loading, setLoading] = useState(false);   // Define loading state
     const [singleCareer, setSingleCareer] = useState(null); // Define singleCareer state
     const language = 'en'; // Add language or pass it via props
