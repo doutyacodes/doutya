@@ -131,7 +131,7 @@ export async function GET(request, { params }) {
 
         // If no questions are found, generate new course data
         if (questions.length === 0) {
-            await GenerateCourse(age, certificationName, careerName, certificationId);
+            await GenerateCourse(age, certificationName, careerName, certificationId, birth_date);
             // Fetch the questions again after generation
             ({ questions } = await fetchAndFormatQuestions(certificationId, age));
         }

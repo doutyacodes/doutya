@@ -109,10 +109,6 @@ function Tests({selectedCareer}) {
         router.push(`/testsSection/${subject.subjectId}`);
     };
 
-    // const handleResultsNavigation = () => {
-    // router.push(`/dashboard/resultsSection`);
-    // };
-
       const handleResultsNavigation = (subject) => {
         setSelectedSubjectId(subject.subjectId)
       };
@@ -136,38 +132,38 @@ function Tests({selectedCareer}) {
       ) : (
         <>
         {/* Main Tabs */}
-            <div className="w-full bg-gray-900 p-6 rounded-lg">
-              <div className="flex justify-between items-center mb-6">
-                <div className="grid grid-cols-2 gap-4 w-full">
-                  <button
-                    onClick={() => setActiveTab('weekly')}
-                    className={`px-4 py-2 rounded transition-colors duration-300 ${
-                      activeTab === 'weekly'
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                    }`}
-                  >
-                    <span className="uppercase text-sm">WEEKLY TESTS</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('history')}
-                    className={`px-4 py-2 rounded transition-colors duration-300 ${
-                      activeTab === 'history'
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                    }`}
-                  >
-                    <span className="uppercase text-sm">TEST HISTORY</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-white text-xl">WEEK - {currentWeek}/52</h2>
-              </div>
-
-              {activeTab === 'weekly' ? <WeeklyTestsView /> : <HistoryView selectedCareer = {selectedCareer} currentWeek={currentWeek}/>}
+        <div className="w-full bg-gray-900 p-6 rounded-lg">
+          <div className="flex justify-between items-center mb-6">
+            <div className="grid grid-cols-2 gap-4 w-full">
+              <button
+                onClick={() => setActiveTab('weekly')}
+                className={`px-4 py-2 rounded transition-colors duration-300 ${
+                  activeTab === 'weekly'
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                }`}
+              >
+                <span className="uppercase text-sm">WEEKLY TESTS</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('history')}
+                className={`px-4 py-2 rounded transition-colors duration-300 ${
+                  activeTab === 'history'
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                }`}
+              >
+                <span className="uppercase text-sm">TEST HISTORY</span>
+              </button>
             </div>
+          </div>
+
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-white text-xl">WEEK - {currentWeek}/52</h2>
+          </div>
+
+          {activeTab === 'weekly' ? <WeeklyTestsView /> : <HistoryView selectedCareer = {selectedCareer} currentWeek={currentWeek}/>}
+        </div>
       </>
       )
     }

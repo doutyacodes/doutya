@@ -101,7 +101,7 @@ const LeftSideBar = () => {
           <FaBars className="text-xl" />
         </button>
       )}
-      {!isTest2Completed && (pathname != "/login" && pathname != "/signup") && (
+      {/* {!isTest2Completed && (pathname != "/login" && pathname != "/signup") && (
         <button
           onClick={() => router.push("/dashboard/careers/career-guide")}
           className={`fixed top-4 right-4 bg-orange-500 text-white p-4 rounded-full z-50 flex items-center`}
@@ -109,7 +109,7 @@ const LeftSideBar = () => {
           <FaSuitcase className="text-lg" />
           <span className="text-lg pl-3 hidden lg:block">Career Guide</span>
         </button>
-      )}
+      )} */}
       <div className="min-h-screen poppins-regular">
         {/* Sidebar */}
         <div

@@ -5,6 +5,7 @@ import { and, eq, inArray } from 'drizzle-orm'; // Adjust based on your ORM vers
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import axios from 'axios';
+import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 
 const languageOptions = {
   en: 'in English',
@@ -82,6 +83,7 @@ export async function GET(req, { params }) {
             const birth_date = birthDateResult[0]?.birth_date;
             const education=birthDateResult[0]?.education
             const age = calculateAge(birth_date);
+            const currentAgeWeek = getCurrentWeekOfAge(birth_date)
 
             // Fetch career name from the CAREER_GROUP table
             const careerGroup = await db
@@ -93,7 +95,7 @@ export async function GET(req, { params }) {
             const { type1, type2, country } = userCareer[0];
           
             // const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career, such as time management, organizational skills, and other relevant skills. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the response ${languageOptions[language] || 'in English'}. Give it as a single JSON data without any wrapping other than {}`;
-            const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} who have completed ${education} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career in order to excel in this career what the person has to change. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
+            const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} (currently in week ${currentAgeWeek} of this age) who have completed ${education} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career in order to excel in this career what the person has to change. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
           
               const response = await axios.post(
                 "https://api.openai.com/v1/chat/completions",

@@ -71,10 +71,8 @@ function Page() {
   const tabs = [
     { key: "roadmap", label: t("roadmap") },
     { key: "test", label: t("test") },
-    // { key: "careerPath", label: "Career Path" },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
-    // { key: "careerOverview", label: "Career Overview" },
     { key: "community", label: "Community" },
   ];
 

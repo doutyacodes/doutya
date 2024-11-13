@@ -11,14 +11,15 @@ import {
     COURSE_OVERVIEW
 } from "@/utils/schema"; // Ensure this path is correct
 import { and, eq } from "drizzle-orm";
+import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 
 
-export async function GenerateCourse(age, course, career, courseId ) {
+export async function GenerateCourse(age, course, career, courseId, birthDate ) {
 
     try {
-        
+        const currentAgeWeek = getCurrentWeekOfAge(birthDate)
         const prompt = `
-            Generate a detailed course for the career "${career}" with the course titled "${course}". The course should be designed for a user aged ${age}. Include a full course structure for a 3-week certifiable course. Each week should include topics covered, assignments, and learning outcomes.
+            Generate a detailed course for the career "${career}" with the course titled "${course}". The course should be designed for a user aged ${age} (currently in week ${currentAgeWeek} of this age). Include a full course structure for a 3-week certifiable course. Each week should include topics covered, assignments, and learning outcomes.
 
             For each week, include:
             1. **Topics Covered:** Provide the specific topics that will be taught each week, as an array of strings.

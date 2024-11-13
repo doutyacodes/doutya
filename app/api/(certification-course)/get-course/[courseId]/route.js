@@ -100,7 +100,7 @@ export async function GET(req, { params }) {
     }
 
     // Generate new course data if it does not exist
-    const generatedCourse = await GenerateCourse(age, certificationName, careerName, courseId);
+    const generatedCourse = await GenerateCourse(age, certificationName, careerName, courseId, birth_date);
 
     // Fetch the newly created course data after generation
     const newCourseData = await db

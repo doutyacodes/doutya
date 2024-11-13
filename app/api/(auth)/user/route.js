@@ -47,7 +47,7 @@ export async function POST(req) {
       education_qualification: data?.educationQualification,
       experience: data?.experience,
       current_job: data?.currentJob,
-
+      account_status: 'separated',
     });
 
     if (!result) {

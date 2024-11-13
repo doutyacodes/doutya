@@ -1,5 +1,6 @@
 // fetchAndSaveSubjects.js
 
+import { getCurrentWeekOfAge } from "@/lib/getCurrentWeekOfAge";
 import { db } from "@/utils";
 import { CAREER_SUBJECTS, SUBJECTS } from "@/utils/schema";
 import axios from "axios";
@@ -9,9 +10,11 @@ export const maxDuration = 60; // This function can run for a maximum of 5 secon
 export const dynamic = "force-dynamic";
 
 // Function to fetch subjects from OpenAI
-const fetchSubjectsFromOpenAI = async (careerName, country, age) => {
+const fetchSubjectsFromOpenAI = async (careerName, country, age, birthDate) => {
   console.log("careerName, country", careerName, country, age);
-  const prompt = `For an individual aged ${age} pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
+
+  const currentAgeWeek = getCurrentWeekOfAge(birthDate)
+  const prompt = `For an individual aged ${age} (currently in week ${currentAgeWeek} of this age) pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
 
 Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where each age is a key, and the value is an array of important subjects. The format should be as follows:
 
@@ -156,13 +159,15 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age) => {
     careerName,
     careerId,
     country,
-    age
+    age,
+    birthDate,
   ) => {
   try {
     const subjectsByAge = await fetchSubjectsFromOpenAI(
       careerName,
       country,
-      age
+      age,
+      birthDate
     );
     const subjects = subjectsByAge["subject-data"]; // Extract the array of subjects
 

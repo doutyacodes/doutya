@@ -4,6 +4,7 @@ import { QUIZ_SEQUENCES, USER_DETAILS, USER_RESULTS } from "@/utils/schema";
 import { eq, and } from "drizzle-orm";
 import { db } from "@/utils";
 import axios from "axios";
+import { getCurrentWeekOfAge } from "@/lib/getCurrentWeekOfAge";
 
 const languageOptions = {
   en: "in English",
@@ -49,6 +50,7 @@ export async function GET(req) {
     .execute();
   // console.log("userDetails",userDetails);
   const country = userDetails[0].country; // Access the country
+  const currentAgeWeek = getCurrentWeekOfAge(userDetails[0].birth_date)
   let finalAge = 18;
   if (userDetails.length > 0) {
     const birthDate = new Date(userDetails[0].birth_date); // Access the birth date from the first result
@@ -145,7 +147,7 @@ export async function GET(req) {
       : "3 futuristic careers for an individual aged " +
         finalAge +
         " until they reach the age of 21."
-  }. Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
+  }(currently in week ${currentAgeWeek} of this age). Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
         career_name: A brief title of the career.
         type: trending, offbeat, traditional, futuristic, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
         

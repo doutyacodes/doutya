@@ -5,6 +5,7 @@ import { CAREER_GROUP, USER_DETAILS, ACTIVITIES, USER_ACTIVITIES } from '@/utils
 import { calculateAge } from '@/lib/ageCalculate';
 import { eq, and } from 'drizzle-orm';
 import axios from 'axios';
+import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
@@ -32,6 +33,7 @@ export async function GET(req, { params }) {
     const birth_date = user_data[0].birth_date
     const age = calculateAge(birth_date)
     const country = user_data[0].country
+    const currentAgeWeek = getCurrentWeekOfAge(birth_date)
 
     const career_name = await db
         .select({
@@ -90,7 +92,7 @@ export async function GET(req, { params }) {
         return NextResponse.json({ activities: activitiesWithStatus }, { status: 200 });
     }
     else {
-        const prompt = `Give activities progressive step by step like step 1, step 2... till step 25 which will contain 3 activities in each step  for a ${age} year old who wants to be a ${career} and lives in ${country}, to increase the interest and passion .Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Give it as a single JSON data without any wrapping other than [].`
+        const prompt = `Give activities progressive step by step like step 1, step 2... till step 25 which will contain 3 activities in each step  for a ${age} year old (currently in week ${currentAgeWeek} of this age) who wants to be a ${career} and lives in ${country}, to increase the interest and passion .Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Give it as a single JSON data without any wrapping other than [].`
 
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",

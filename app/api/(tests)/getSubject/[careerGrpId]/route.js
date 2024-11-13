@@ -79,7 +79,7 @@ export async function GET(req, { params }) {
             }
 
             const { country, careerName } = userCareerData[0];
-            await processCareerSubjects(careerName, careerGrpId, country, age); // Generate subjects
+            await processCareerSubjects(careerName, careerGrpId, country, age, birthDateResult[0].birth_date); // Generate subjects
         }
 
         // Fetch subjects for the career and filter by user age (or set age as 17 for older users)
