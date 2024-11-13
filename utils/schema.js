@@ -23,7 +23,7 @@ export const USER_DETAILS= mysqlTable('user_details',{
     current_job: varchar('current_job', { length: 200 }).default(null),
     plan_type: mysqlEnum('plan_type',['base','pro']).notNull().default('base'),
     joined_date: timestamp('joined_date').defaultNow(),
-    // unique_key: varchar('unique_key', { length: 50 }).default(null)
+    account_status: mysqlEnum('account_status', ['linked', 'separated'])
 });
 
 export const USER_KEYS = mysqlTable('user_keys', {
@@ -459,13 +459,54 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         updated_at: timestamp('updated_at').defaultNow(),
       });
       
-      export const SCHOOL = mysqlTable('school', {
-        id: int('id').notNull().primaryKey().autoincrement(),
-        title: varchar('title', 255).notNull(),
-        image: varchar('image', 255),
-        bgImg: varchar('bgImg', 255),
-        type:  mysqlEnum('type',['paid','free','disabled']).notNull(),
-      });
+    //   export const SCHOOL = mysqlTable('school', {
+    //     id: int('id').notNull().primaryKey().autoincrement(),
+    //     title: varchar('title', 255).notNull(),
+    //     image: varchar('image', 255),
+    //     bgImg: varchar('bgImg', 255),
+    //     type:  mysqlEnum('type',['paid','free','disabled']).notNull(),
+    //   });
+
+
+    export const SCHOOL = mysqlTable('school', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        name: varchar('name', { length: 100 }).notNull(),
+        address: varchar('address', { length: 255 }),
+        contact_info: varchar('contact_info', { length: 50 }),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+    
+    export const MODERATOR = mysqlTable('moderator', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        name: varchar('name', { length: 100 }).notNull(),
+        username: varchar('username', { length: 100 }).unique().notNull(),
+        school_id: int('school_id').references(() => SCHOOL.id, { onDelete: 'cascade' }),
+        role: mysqlEnum('role', ['Teacher', 'ClassAdmin']).notNull(),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+    
+    export const CLASS = mysqlTable('class', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        name: varchar('name', { length: 50 }).notNull(),
+        school_id: int('school_id').references(() => SCHOOL.id, { onDelete: 'cascade' }),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+    
+    export const DIVISION = mysqlTable('division', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        name: varchar('name', { length: 10 }).notNull(),
+        class_id: int('class_id').references(() => CLASS.id, { onDelete: 'cascade' }),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+    
+    export const CLASS_MODERATOR = mysqlTable('class_moderator', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        class_id: int('class_id').notNull().references(() => CLASS.id, { onDelete: 'cascade' }),
+        moderator_id: int('moderator_id').notNull().references(() => MODERATOR.id, { onDelete: 'cascade' }),
+        division_id: int('division_id').references(() => DIVISION.id, { onDelete: 'cascade' }),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+    
 
       export const CHALLENGES = mysqlTable('challenges', {
         id: int('id').notNull().primaryKey().autoincrement(), 
@@ -477,12 +518,13 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         challenge: varchar('challenge', 255).notNull(),       
         verification: varchar('verification', 255).notNull(), 
       });
-      export const Moderator = mysqlTable('Moderator', {
-        id: int('id').notNull().primaryKey().autoincrement(),   
-        school_id: int('school_id').notNull().references(() => SCHOOL.id),
-        title: varchar('title', 255).notNull(),                 
-        name: varchar('name', 255).notNull(),                   
-      });
+
+    //   export const Moderator = mysqlTable('Moderator', {
+    //     id: int('id').notNull().primaryKey().autoincrement(),   
+    //     school_id: int('school_id').notNull().references(() => SCHOOL.id),
+    //     title: varchar('title', 255).notNull(),                 
+    //     name: varchar('name', 255).notNull(),                   
+    //   });
 
       export const CHALLENGE_PROGRESS = mysqlTable('challenge_progress', {
         id: int('id').notNull().primaryKey().autoincrement(),

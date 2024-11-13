@@ -9,6 +9,7 @@ import {
     MILESTONE_SUBCATEGORIES
 } from "@/utils/schema"; // Ensure this path is correct
 import { and, eq } from "drizzle-orm";
+import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 
 const languageOptions = {
     en: 'in English',
@@ -23,9 +24,10 @@ const languageOptions = {
     tam:'in Tamil'
   };
 
-export async function fetchAndSaveRoadmap(userCareerID, age, education, careerGroupID, career, type1, type2,language) {
+export async function fetchAndSaveRoadmap(userCareerID, birth_date, age, education, careerGroupID, career, type1, type2,language) {
     console.log("userCareerID:",userCareerID, "age:",age, "education:",education, "career:",career, "type1:",type1, "type2:",type2);
     try {
+        const currentAgeWeek = getCurrentWeekOfAge(birth_date)
         // const prompt = `Provide detailed information for the career named "${career}" based on the following criteria:
         // - Personality Type: ${type1}
         // - RIASEC Interest Types: ${type2}
@@ -123,7 +125,7 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, careerGr
         - present_trends: Current trends and opportunities in the field.
         - future_prospects: Predictions and potential growth in this career.
         - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full-text format.
-        - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old until the age of ${age + 1}-year-old aspiring to be a ${career}. The education level is '${education}'. 
+        - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old (currently in week ${currentAgeWeek} of this age) until the age of ${age + 1}-year-old aspiring to be a ${career}. The education level is '${education}'. 
         
         The roadmap should be broken down into **intervals of every 6 months** (i.e., ${age}, ${age + 0.5}, ${age + 1}), and milestones must be provided for **each 6-month interval**. Ensure that each interval includes:
 

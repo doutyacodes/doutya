@@ -2,12 +2,14 @@ import axios from 'axios';
 import { db } from "@/utils";
 import { TESTS, TEST_QUESTIONS, TEST_ANSWERS } from "@/utils/schema"; // Ensure this path is correct
 import { eq } from "drizzle-orm";
+import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 
-export async function GenerateTestQuiz(subjectId, subjectName, age) {
+export async function GenerateTestQuiz(subjectId, subjectName, age, birthDate) {
     try {
+        const currentAgeWeek = getCurrentWeekOfAge(birthDate)
         // Step 1: Generate questions using OpenAI API
         const prompt = `
-            Create 10 multiple-choice questions in ${subjectName} for a ${age} year old.
+            Create 10 multiple-choice questions in ${subjectName} for a ${age} year old (currently in week ${currentAgeWeek} of this age).
             Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}. The questions should be unique and difficulty level should be hard.  
             Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
 

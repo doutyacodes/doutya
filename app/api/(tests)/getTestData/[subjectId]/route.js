@@ -112,7 +112,7 @@ export async function GET(request, { params }) {
             if (questionWithAnswers.length === 0) {
                 console.log("log generate");
 
-                await GenerateTestQuiz(subjectId, subjectName, age); // Call function to generate test quiz
+                await GenerateTestQuiz(subjectId, subjectName, age, birth_date); // Call function to generate test quiz
                 questionWithAnswers = await fetchQuestionsAndAnswers(); // Retry fetching questions after generating
             }
         } else {
