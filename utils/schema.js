@@ -8,7 +8,7 @@ export const USER_DETAILS= mysqlTable('user_details',{
     birth_date:date('birth_date').default(null),
     password:varchar('password',{length:150}).default(null),
     username:varchar('username',{length:150}).default(null),
-    education:varchar('education',{length:200}).default(`Bachelor's Degree`),
+    education:varchar('education',{length:200}).default(null),
     student:mysqlEnum('student',['yes','no']).notNull(),
     college:text('college').default(null),
     university:text('university').default(null),
@@ -23,7 +23,15 @@ export const USER_DETAILS= mysqlTable('user_details',{
     current_job: varchar('current_job', { length: 200 }).default(null),
     plan_type: mysqlEnum('plan_type',['base','pro']).notNull().default('base'),
     joined_date: timestamp('joined_date').defaultNow(),
-    account_status: mysqlEnum('account_status', ['linked', 'separated'])
+    account_status: mysqlEnum('account_status', ['linked', 'separated']),
+    academicYearStart: varchar('academicYearStart', { length: 7 }).notNull(), // Format: YYYY-MM
+    academicYearEnd: varchar('academicYearEnd', { length: 7 }).notNull(),     // Format: YYYY-MM
+    grade: varchar('grade', { length: 100 }).default(null),
+    institution_id: int('institution_id').references(() => INSTITUTION.id, { onDelete: 'set null' }).default(null),
+    class_id: int('class_id').references(() => CLASS.id, { onDelete: 'set null' }).default(null),
+    division_id: int('division_id').references(() => DIVISION.id, { onDelete: 'set null' }).default(null),
+    user_role: mysqlEnum('user_role', ['Individual', 'Institutional']).notNull().default('Individual'),
+    is_verified: boolean('is_verified').default(false),
 });
 
 export const USER_KEYS = mysqlTable('user_keys', {
@@ -475,38 +483,7 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         contact_info: varchar('contact_info', { length: 50 }),
         created_at: timestamp('created_at').defaultNow(),
     });
-    
-    export const MODERATOR = mysqlTable('moderator', {
-        id: int('id').notNull().autoincrement().primaryKey(),
-        name: varchar('name', { length: 100 }).notNull(),
-        username: varchar('username', { length: 100 }).unique().notNull(),
-        school_id: int('school_id').references(() => SCHOOL.id, { onDelete: 'cascade' }),
-        role: mysqlEnum('role', ['Teacher', 'ClassAdmin']).notNull(),
-        created_at: timestamp('created_at').defaultNow(),
-    });
-    
-    export const CLASS = mysqlTable('class', {
-        id: int('id').notNull().autoincrement().primaryKey(),
-        name: varchar('name', { length: 50 }).notNull(),
-        school_id: int('school_id').references(() => SCHOOL.id, { onDelete: 'cascade' }),
-        created_at: timestamp('created_at').defaultNow(),
-    });
-    
-    export const DIVISION = mysqlTable('division', {
-        id: int('id').notNull().autoincrement().primaryKey(),
-        name: varchar('name', { length: 10 }).notNull(),
-        class_id: int('class_id').references(() => CLASS.id, { onDelete: 'cascade' }),
-        created_at: timestamp('created_at').defaultNow(),
-    });
-    
-    export const CLASS_MODERATOR = mysqlTable('class_moderator', {
-        id: int('id').notNull().autoincrement().primaryKey(),
-        class_id: int('class_id').notNull().references(() => CLASS.id, { onDelete: 'cascade' }),
-        moderator_id: int('moderator_id').notNull().references(() => MODERATOR.id, { onDelete: 'cascade' }),
-        division_id: int('division_id').references(() => DIVISION.id, { onDelete: 'cascade' }),
-        created_at: timestamp('created_at').defaultNow(),
-    });
-    
+
 
       export const CHALLENGES = mysqlTable('challenges', {
         id: int('id').notNull().primaryKey().autoincrement(), 
@@ -776,4 +753,49 @@ export const QUIZ_PROGRESS = mysqlTable('quiz_progress', {
         status: mysqlEnum('status', ['in_progress', 'completed']).notNull(), // Enum for course status
         enrolled_date: timestamp('enrolled_date').defaultNow(),// timestamp for when the course was enrolled
         completion_date: timestamp('completion_date').defaultNow().onUpdateNow(), // Timestamp for updates
+    });
+
+    export const INSTITUTION = mysqlTable('institution', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        name: varchar('name', { length: 100 }).notNull(),
+        address: varchar('address', { length: 255 }),
+        contact_info: varchar('contact_info', { length: 50 }),
+        email: varchar('email', { length: 255 }).unique().notNull(),
+        password: varchar('password', { length: 255 }).notNull(), // Hashed password
+        type: mysqlEnum('type', ['School', 'College']).notNull(),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+    
+    export const MODERATOR = mysqlTable('moderator', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        name: varchar('name', { length: 100 }).notNull(),
+        // username: varchar('username', { length: 100 }).unique().notNull(),
+        email: varchar('email', { length: 255 }).unique().notNull(),
+        password: varchar('password', { length: 255 }).notNull(), // Hashed password
+        institution_id: int('institution_id').references(() => INSTITUTION.id, { onDelete: 'cascade' }),
+        role: mysqlEnum('role', ['Admin', 'ClassAdmin']).notNull(),
+        is_verified: boolean('is_verified').default(false),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+    
+    export const CLASS = mysqlTable('class', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        name: varchar('name', { length: 50 }).notNull(),
+        institution_id: int('institution_id').references(() => INSTITUTION.id, { onDelete: 'cascade' }),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+    
+    export const DIVISION = mysqlTable('division', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        name: varchar('name', { length: 10 }).notNull(),
+        class_id: int('class_id').references(() => CLASS.id, { onDelete: 'cascade' }),
+        created_at: timestamp('created_at').defaultNow(),
+    });
+    
+    export const CLASS_MODERATOR = mysqlTable('class_moderator', {
+        id: int('id').notNull().autoincrement().primaryKey(),
+        class_id: int('class_id').notNull().references(() => CLASS.id, { onDelete: 'cascade' }),
+        moderator_id: int('moderator_id').notNull().references(() => MODERATOR.id, { onDelete: 'cascade' }),
+        division_id: int('division_id').references(() => DIVISION.id, { onDelete: 'cascade' }),
+        created_at: timestamp('created_at').defaultNow(),
     });

@@ -7,7 +7,6 @@ import { eq, or } from "drizzle-orm/expressions";
 export async function POST(req) {
   try {
     const data = await req.json();
-
     // Check if username or mobile number already exists
     const existingUser = await db
       .select()
@@ -48,6 +47,10 @@ export async function POST(req) {
       experience: data?.experience,
       current_job: data?.currentJob,
       account_status: 'separated',
+      institution_id: data?.instituteId,
+      class_id: data?.classId,
+      division_id: data?.divisionId,
+      user_role: 'Institutional',
     });
 
     if (!result) {
@@ -71,17 +74,26 @@ export async function POST(req) {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id, birth_date: user.birth_date },
+      { userId: user.id, birth_date: user.birth_date, isVerified: user.is_verified },
       process.env.JWT_SECRET_KEY
     );
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         data: { user, token },
         message: "User registered and authenticated successfully",
       },
       { status: 201 }
     );
+
+    response.cookies.set("auth_token", token, {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+  return response;
   } catch (error) {
     console.error("Error in POST:", error);
     return NextResponse.json(

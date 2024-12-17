@@ -676,6 +676,30 @@ const UpdateCertificationStatus = (data, token) => {
   });
 };
 
+
+const GetAllInstitutes = () => {
+  return axios.get(`/api/getAllInstitutes`, {
+  });
+};
+
+const GetClassesByInstitute = (InstituteId) => {
+  return axios.get(`/api/getClassesByInstitute/${InstituteId}`, {
+  });
+};
+
+const GetDivisionsByClass = (classId) => {
+  return axios.get(`/api/getDivisionsByClass/${classId}`, {
+  });
+};
+
+const GetInstitueCommunityPosts = (token) => {
+  return axios.get(`/api/getAllInstitutePosts`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  });
+};
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -753,6 +777,11 @@ export default {
   GetCertificationResult,
   GetCertificationCourse,
   GetCourseOverview,
-  UpdateCertificationStatus
+  UpdateCertificationStatus,
+
+  GetAllInstitutes,
+  GetClassesByInstitute,
+  GetDivisionsByClass,
+  GetInstitueCommunityPosts
 
 };

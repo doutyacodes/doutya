@@ -9,6 +9,7 @@ import {
   FaClipboardList,
   FaSuitcase,
   FaChevronDown,
+  FaBuilding,
 } from "react-icons/fa";
 import {
   PiCompassRoseFill
@@ -26,6 +27,8 @@ const LeftSideBar = () => {
   const [isTest2Completed, setIsTest2Completed] = useState(false);
   const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
   const [isCareersDropdownOpen, setIsCareersDropdownOpen] = useState(false);
+  const [isInstituteDropdownOpen, setIsInstituteDropdownOpen] = useState(false);
+
 
   const toggleSidebars = () => {
     setIsOpen(!isOpen);
@@ -41,6 +44,10 @@ const LeftSideBar = () => {
 
   const toggleCareersDropdown = () => {
     setIsCareersDropdownOpen(!isCareersDropdownOpen);
+  };
+  
+  const toggleInstituteDropdown = () => {
+    setIsInstituteDropdownOpen(!isCareersDropdownOpen);
   };
 
   useEffect(() => {
@@ -225,6 +232,46 @@ const LeftSideBar = () => {
                       <li>
                         <Link href="/dashboard/careers/career-suggestions" className="text-white hover:underline">
                           Career Suggestions
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+
+                {/* School/College Link */}
+                <li className="relative">
+                  <div
+                    className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
+                    onClick={()=>{
+
+                      !isOpen && toggleSidebars();
+
+                      toggleInstituteDropdown();
+                    }}
+                  >
+                    <FaBuilding className="text-xl" />
+                    {isOpen && (
+                      <>
+                        <span className="text-xl pl-3">School Activities</span>
+                        <FaChevronDown className="ml-auto" />
+                      </>
+                    )}
+                  </div>
+                  {isInstituteDropdownOpen && isOpen && (
+                    <ul className="ml-8 space-y-3 mt-3">
+                      <li>
+                        <Link href="/institution/challenges" className="text-white hover:underline">
+                          Challenges
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/institution/tests" className="text-white hover:underline">
+                          Tests
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/institution/community" className="text-white hover:underline">
+                          Community
                         </Link>
                       </li>
                     </ul>

@@ -721,6 +721,10 @@ function SignUp() {
   const [dobError, setDobError] = useState("");
   const [ageCategory, setAgeCategory] = useState(""); // New state for age category
 
+  const [institutions, setInstitutions] = useState([]);
+  const [childClassOptions, setChildClassOptions] = useState([]);
+  const [childDivisionOptions, setChildDivisionOptions] = useState([]);
+
   const router = useRouter();
   const t = useTranslations("SignupPage");
   useEffect(() => {
@@ -741,6 +745,7 @@ function SignUp() {
     formState: { errors },
     reset,
     setError,
+    setValue,
   } = useForm();
 
   const educationLevelMapping = {
@@ -754,17 +759,10 @@ function SignUp() {
     1: "Career Change",
   };
 
-  useEffect(() => {
-    router.push("/login");
-  });
-const test = true;
-if(test){
-  return(
-    <div className="flex items-center justify-center min-h-screen text-center text-white">
-      <p>Redirecting...</p>
-    </div>
-  )
-}
+  // useEffect(() => {
+  //   router.push("/login");
+  // });
+
   useEffect(() => {
     localStorage.setItem("language", selectedLanguage);
     document.cookie = `locale=${selectedLanguage}; path=/`;
@@ -776,6 +774,61 @@ if(test){
     const newLanguage = e.target.value;
     console.log("newLanguage", newLanguage);
     setSelectedLanguage(newLanguage);
+  };
+
+  // Fetch institutes on component mount
+  useEffect(() => {
+    const fetchInstitutes = async () => {
+      try {
+        const response = await GlobalApi.GetAllInstitutes();
+        if (response.status === 200) {
+          console.log("before");
+          setInstitutions(response.data.institutions);
+          console.log("after");
+        }
+      } catch (error) {
+        toast.error("Failed to fetch institutes");
+      }
+    };
+
+    fetchInstitutes();
+  }, []);
+
+  // Function to fetch classes for a specific child
+  const fetchClassesForChild = async (instituteId) => {
+    try {
+      const response = await GlobalApi.GetClassesByInstitute(instituteId);
+      if (response.status === 200) {
+        console.log("before");
+        setChildClassOptions(response.data.classes);
+        console.log("after 1");
+        // Reset dependent fields
+        setValue(`classId`, '');
+        setValue(`divisionId`, '');
+
+        // Reset division options for this child
+        setChildDivisionOptions([]);
+        console.log("after 3");
+
+      }
+    } catch (error) {
+      toast.error("Failed to fetch classes");
+    }
+  };
+
+  // Function to fetch divisions for a specific child
+  const fetchDivisionsForChild = async (classId) => {
+    try {
+      const response = await GlobalApi.GetDivisionsByClass(classId);
+      if (response.status === 200) {
+        setChildDivisionOptions(response.data.divisions);
+        
+        // Reset division field
+        setValue(`divisionId`, '');
+      }
+    } catch (error) {
+      toast.error("Failed to fetch divisions");
+    }
   };
 
   console.log("setLanguageSelected", selectedLanguage);
@@ -1291,6 +1344,106 @@ if(test){
               )}
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Institute</label>
+              <select
+                {...register("instituteId", { 
+                  required: "Institute is required",
+                  onChange: (e) => {
+                    const instituteId = e.target.value;
+                    // Trigger fetching classes for this specific child
+                    fetchClassesForChild(instituteId);
+                  } 
+                })}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              >
+                <option value="">Select Institute</option>
+                {institutions.map((institute) => (
+                  <option key={institute.id} value={institute.id}>
+                    {institute.name}
+                  </option>
+                ))}
+              </select>
+              {errors.childUsers?.institute && (
+                <p className="mt-1 text-sm text-red-600">{errors.childUsers.institute.message}</p>
+              )}
+            </div>
+      
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Class</label>
+                <select
+                  {...register("classId", { 
+                    required: "Class is required",
+                    onChange: (e) => {
+                      const classId = e.target.value;
+                      // Trigger fetching divisions for this specific child
+                      fetchDivisionsForChild(classId);
+                    }
+                  })}
+                  disabled={!childClassOptions || childClassOptions.length === 0}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:opacity-50"
+                >
+                  <option value="">Select Class</option>
+                  {childClassOptions?.map((classItem) => (
+                    <option key={classItem.id} value={classItem.id}>
+                      {classItem.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.childUsers?.class && (
+                  <p className="mt-1 text-sm text-red-600">{errors.childUsers.class.message}</p>
+                )}
+              </div>
+      
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Division</label>
+                <select
+                  {...register("divisionId", { required: "Division is required" })}
+                  disabled={!childDivisionOptions || childDivisionOptions.length === 0}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:opacity-50"
+                >
+                  <option value="">Select Division</option>
+                  {childDivisionOptions.map((division) => (
+                    <option key={division.id} value={division.id}>
+                      {division.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.childUsers?.division && (
+                  <p className="mt-1 text-sm text-red-600">{errors.childUsers.division.message}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Academic Year Start</label>
+                  <input
+                    type="month"
+                    {...register("academicYearStart", {
+                      required: "Academic year start is required"
+                    })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                  {errors.childUsers?.academicYearStart && (
+                    <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearStart.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Academic Year End</label>
+                  <input
+                    type="month"
+                    {...register("academicYearEnd", {
+                      required: "Academic year end is required"
+                    })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                  {errors.childUsers?.academicYearEnd && (
+                    <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearEnd.message}</p>
+                  )}
+                </div>
+            </div>
 
           {ageCategory !== "kids" && educationLevel!=0 && (
             <div className="mb-4">
