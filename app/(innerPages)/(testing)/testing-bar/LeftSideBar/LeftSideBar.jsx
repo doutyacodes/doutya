@@ -1,42 +1,30 @@
 "use client";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaBars,
-  FaHome,
+  FaClipboardList,
   FaUser,
   FaCog,
-  FaClipboardList,
   FaSuitcase,
   FaChevronDown,
   FaBuilding,
 } from "react-icons/fa";
-import {
-  PiCompassRoseFill
-} from "react-icons/pi";
-import Link from "next/link"; // Import Link from Next.js for navigation
+import { PiCompassRoseFill } from "react-icons/pi";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import GlobalApi from "@/app/_services/GlobalApi";
-import { ChevronLeft } from "lucide-react";
 
 const LeftSideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null); // Track active dropdown
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [dashboardUrl, setDashboardUrl] = useState("/dashboard_kids/");
-  const [isTest2Completed, setIsTest2Completed] = useState(false);
   const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
   const [isCareersDropdownOpen, setIsCareersDropdownOpen] = useState(false);
   const [isInstituteDropdownOpen, setIsInstituteDropdownOpen] = useState(false);
+  const [isTest2Completed, setIsTest2Completed] = useState(false);
 
-
-  const toggleSidebars = () => {
-    setIsOpen(!isOpen);
-  };
-  
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const toggleSidebars = () => setIsOpen(!isOpen);
 
   const toggleLogoutPopup = () => {
     setIsLogoutPopupOpen(!isLogoutPopupOpen);
@@ -68,32 +56,70 @@ const LeftSideBar = () => {
     };
     getQuizData();
   }, [setIsTest2Completed]);
+  
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const storedUrl = localStorage.getItem("dashboardUrl");
-    if (token) {
-      setIsLoggedIn(true);
-    }
-    if (storedUrl) {
-      setDashboardUrl(storedUrl);
-    }
+    if (token) setIsLoggedIn(true);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("dashboardUrl");
     setIsLoggedIn(false);
     window.location.href = "/login";
   };
 
-  const router = useRouter();
   const handleLinkClick = () => {
     if (isOpen) {
       toggleSidebars();
     }
   };
-  const pathname = usePathname();
+
+  const menus = [
+    {
+      name: "Tests",
+      icon: <FaClipboardList className="text-xl" />,
+      link: "/dashboard",
+      submenus: [],
+    },
+    {
+      name: "Careers",
+      icon: <PiCompassRoseFill className="text-xl" />,
+      link: "#",
+      submenus: [
+        { name: "Career Guide", link: "/dashboard/careers/career-guide" },
+        { name: "Career Suggestions", link: "/dashboard/careers/career-suggestions" },
+      ],
+    },
+    {
+      name: "Companies",
+      icon: <FaSuitcase className="text-xl" />,
+      link: "#",
+      submenus: [
+        { name: "Companies", link: "/company" },
+        { name: "My Companies", link: "/my-companies" },
+      ],
+    },
+    {
+      name: "My Profile",
+      icon: <FaUser className="text-xl" />,
+      link: "/dashboard/user-profile",
+      submenus: [],
+    },
+    {
+      name: "Sign Out",
+      icon: <FaCog className="text-xl" />,
+      link: "#",
+      submenus: [],
+      onClick: toggleLogoutPopup,
+    },
+  ];
+
+  const toggleDropdown = (menuName) => {
+    setActiveDropdown(activeDropdown === menuName ? null : menuName); // Toggle dropdown
+  };
 
   return (
     <>
@@ -108,120 +134,63 @@ const LeftSideBar = () => {
           <FaBars className="text-xl" />
         </button>
       )}
-      {/* {!isTest2Completed && (pathname != "/login" && pathname != "/signup") && (
-        <button
-          onClick={() => router.push("/dashboard/careers/career-guide")}
-          className={`fixed top-4 right-4 bg-orange-500 text-white p-4 rounded-full z-50 flex items-center`}
-        >
-          <FaSuitcase className="text-lg" />
-          <span className="text-lg pl-3 hidden lg:block">Career Guide</span>
-        </button>
-      )} */}
+
       <div className="min-h-screen poppins-regular">
         {/* Sidebar */}
         <div
-          className={`transition-all duration-300 ease-in-out bg-[#2a2b27] ${(pathname == "/login" || pathname == "/signup") && "hidden"} text-white h-full m-2 rounded-md p-4 ${
+          className={`transition-all duration-300 ease-in-out bg-[#2a2b27] text-white h-full m-2 rounded-md p-4 ${
             isOpen ? "w-72 max-md:fixed top-0 z-[99999999999]" : "md:w-20 max-md:hidden"
           }`}
         >
           <div className="my-4">
-            {/* Logo aligned to the right */}
-            {/* <div className={`${isOpen ? "flex" : "block"} items-center justify-between gap-3`}>
-              <Image
-                src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
-                alt="Logo"
-                width={150}
-                height={120}
-                className="object-contain"
-              />
-              <button
-                className={`text-xl p-2 mb-6 max-md:hidden transition-transform ${isOpen ? "rotate-0" : "rotate-180"}`}
-                onClick={toggleSidebars}
-              >
-                <FaBars />
-              </button>
-            </div> */}
-
-          <div className={`${isOpen ? "flex" : "block mb-10"} items-center justify-between relative gap-3`}>
-              <Image
-                src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
-                alt="Logo"
-                width={150}
-                height={120}
-                className="object-contain"
-              />
+            <div className={`${isOpen ? "flex" : "block mb-10"} items-center justify-between relative gap-3`}>
+              <div className="text-xl font-bold">Logo</div>
               <button
                 onClick={toggleSidebars}
-                className={`
-                  max-md:hidden
-                  p-2
-                  rounded-full
-                  hover:bg-gray-100/10
-                  transition-all
-                  duration-200
-                  transform
-                  ${isOpen ? "" : "rotate-180"}
-                  group
-                  absolute
-                  ${isOpen ? "-right-3" : "-right-0 mt-5"}
-                  top-6
-                `}
+                className={`max-md:hidden p-2 rounded-full hover:bg-gray-100/10 transition-all duration-200 transform ${isOpen ? "" : "rotate-180"} group absolute ${isOpen ? "-right-3" : "-right-0 mt-5"} top-6`}
                 aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
               >
-                <div className="
-                  bg-gray-800 
-                  rounded-full 
-                  p-1.5
-                  shadow-lg
-                  border
-                  border-gray-700
-                  group-hover:border-gray-600
-                  transition-colors
-                ">
-                  <ChevronLeft 
-                    className={`
-                      w-4 
-                      h-4 
-                      text-gray-400
-                      group-hover:text-white
-                      transition-colors
-                    `}
-                  />
+                <div className="bg-gray-800 rounded-full p-1.5 shadow-lg border border-gray-700 group-hover:border-gray-600 transition-colors">
+                  <ChevronLeft className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
                 </div>
               </button>
             </div>
           </div>
-          
+
           {/* Sidebar content */}
           <div className="flex flex-col gap-5 h-full">
             <div className="mt-4">
               <ul className="space-y-4">
-                <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
-                  <Link href="/dashboard" onClick={handleLinkClick} className="flex items-center">
-                    <FaClipboardList className="text-xl" />
-                    {isOpen && <span className="text-xl pl-3">Tests</span>}
-                  </Link>
-                </li>
-
-                {/* Careers Dropdown */}
-                <li className="relative">
-                  <div
-                    className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
-                    onClick={()=>{
-
-                      !isOpen && toggleSidebars();
-
-                      toggleCareersDropdown();
-                    }}
-                  >
-                    <PiCompassRoseFill className="text-xl" />
-                    {isOpen && (
-                      <>
-                        <span className="text-xl pl-3">Careers</span>
-                        <FaChevronDown className="ml-auto" />
-                      </>
+                {menus.map((menu, index) => (
+                  <li key={index} className="relative">
+                    <div
+                      className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
+                      onClick={() => {
+                        if (menu.submenus.length > 0) {
+                          toggleDropdown(menu.name); // Toggle dropdown for specific menu
+                        }
+                        if (menu.onClick) menu.onClick();
+                      }}
+                    >
+                      {menu.icon}
+                      {isOpen && <span className="text-xl pl-3">{menu.name}</span>}
+                      {menu.submenus.length > 0 && isOpen && <FaChevronDown className="ml-auto" />}
+                    </div>
+                    {menu.submenus.length > 0 && isOpen && activeDropdown === menu.name && (
+                      <ul className="ml-8 space-y-3 mt-3">
+                        {menu.submenus.map((submenu, subIndex) => (
+                          <li key={subIndex}>
+                            <Link href={submenu.link} className="text-white hover:underline">
+                              {submenu.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
                     )}
-                  </div>
+                  {/* </div> */}
+                  </li>
+                ))}
+                <li>
                   {isCareersDropdownOpen && isOpen && (
                     <ul className="ml-8 space-y-3 mt-3">
                       <li>
@@ -293,6 +262,8 @@ const LeftSideBar = () => {
                     {isOpen && <span className="text-xl pl-3">Sign Out</span>}
                   </button>
                 </li>
+                  {/* </li>
+                ))} */}
               </ul>
             </div>
           </div>

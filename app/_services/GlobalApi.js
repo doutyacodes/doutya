@@ -370,9 +370,10 @@ const GetTestResults = (careerGrpId, currentWeek, token) => {
   return axios.get(`/api/getTestResults`, {
     headers: {
       Authorization: `Bearer ${token}`,
-    },params: {
+    },
+    params: {
       currentWeek,
-      careerGrpId
+      careerGrpId,
     },
   });
 };
@@ -469,7 +470,8 @@ const GetFeedBackData = (id, month, year, week, token) => {
   return axios.get(`/api/getFeedBackData`, {
     headers: {
       Authorization: `Bearer ${token}`,
-    },params: {
+    },
+    params: {
       id,
       month,
       year,
@@ -483,7 +485,7 @@ const GetInitialFeedBack = (id, token, language) => {
     headers: {
       Authorization: `Bearer ${token}`,
       "Accept-Language": language,
-    }
+    },
   });
 };
 
@@ -606,7 +608,6 @@ const AddPostComment = (token, data) => {
   });
 };
 
-
 /* Certification */
 const GetCertificationTest = (id, token) => {
   return axios.get(`/api/getCertificationTest/${id}`, {
@@ -658,7 +659,6 @@ const GetCourseOverview = (id, token) => {
   });
 };
 
-
 /* Certification */
 const GetCertificationCourse = (id, token) => {
   return axios.get(`/api/get-course-data/${id}`, {
@@ -699,6 +699,80 @@ const GetInstitueCommunityPosts = (token) => {
     }
   });
 };
+
+// Companies
+
+const FetchCompany = () => {
+  const token = localStorage.getItem("token"); // Adjust based on your auth token storage
+
+  return axios.post("/api/fetchCompany", {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const FetchOneCompany = (data) => {
+  const token = localStorage.getItem("token"); // Adjust based on your auth token storage
+
+  return axios.post("/api/fetchCompany/fetchOneCompany", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const FetchOneDepartment = (data) => {
+  const token = localStorage.getItem("token"); // Adjust based on your auth token storage
+
+  return axios.post("/api/fetchOneDepartment", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const AddUserDepartment = (data) => {
+  const token = localStorage.getItem("token"); // Adjust based on your auth token storage
+
+  return axios.post("/api/fetchCompany/AddUserDepartment", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const FetchDepartmentCompanies = (data) => {
+  const token = localStorage.getItem("token"); // Adjust based on your auth token storage
+
+  return axios.get("/api/fetchCompany/fetchDepartmentCompanies", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const FetchChallengesOne = async (data) => {
+  const token = localStorage.getItem("token"); // Adjust based on your auth token storage
+
+  return axios.post(`/api/fetchOneDepartment/fetchChallenges/challenges`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+    },
+  });
+};
+
+
+const submitQuizAnswer = async (data) => {
+  const token = localStorage.getItem("token"); // Adjust based on your auth token storage
+
+  return axios.post(`/api/fetchOneDepartment/fetchChallenges/submitQuizAnswer`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+    },
+  });
+};
+
 
 export default {
   CreateNewUser,
@@ -782,6 +856,15 @@ export default {
   GetAllInstitutes,
   GetClassesByInstitute,
   GetDivisionsByClass,
-  GetInstitueCommunityPosts
+  GetInstitueCommunityPosts,
 
+  // Companies
+
+  FetchCompany,
+  FetchOneCompany,
+  AddUserDepartment,
+  FetchDepartmentCompanies,
+  FetchOneDepartment,
+  FetchChallengesOne,
+  submitQuizAnswer
 };
