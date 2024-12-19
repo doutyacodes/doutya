@@ -248,20 +248,20 @@ const LeftSideBar = () => {
                 </li>
 
                 {/* Profile Link */}
-                <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
+                {/* <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
                   <Link href="/dashboard/user-profile" onClick={handleLinkClick} className="flex items-center">
                     <FaUser className="text-xl" />
                     {isOpen && <span className="text-xl pl-3">My Profile</span>}
                   </Link>
-                </li>
+                </li> */}
 
                 {/* Sign Out Link */}
-                <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
+                {/* <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
                   <button onClick={toggleLogoutPopup} className="flex items-center">
                     <FaCog className="text-xl" />
                     {isOpen && <span className="text-xl pl-3">Sign Out</span>}
                   </button>
-                </li>
+                </li> */}
                   {/* </li>
                 ))} */}
               </ul>
