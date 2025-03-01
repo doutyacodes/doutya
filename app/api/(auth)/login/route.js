@@ -29,11 +29,21 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Invalid username or password.' }, { status: 401 });
     }
 
-    // Generate JWT token
+    // // Generate JWT token
+    // const token = jwt.sign(
+    //   { userId: existingUser.id },
+    //   process.env.JWT_SECRET_KEY,
+    //   //{ expiresIn: '1h' } // Adjust expiration as needed
+    // );
+
+    // With this updated version:
     const token = jwt.sign(
-      { userId: existingUser.id },
-      process.env.JWT_SECRET_KEY,
-      //{ expiresIn: '1h' } // Adjust expiration as needed
+      { 
+        userId: existingUser.id, 
+        birth_date: existingUser.birth_date, 
+        isVerified: existingUser.is_verified 
+      },
+      process.env.JWT_SECRET_KEY
     );
 
     // Check if the user has completed any quiz from QUIZ_SEQUENCES
@@ -45,13 +55,21 @@ export async function POST(req) {
 
     const quizCompleted = quizSequence ? true : false;
 
-    // Return the token and quiz completion status
-    return NextResponse.json({
+    const response = NextResponse.json({
       token,
       birth_date: existingUser.birth_date,
       planType: existingUser.plan_type,
       quizCompleted,
     }, { status: 200 });
+
+    // Set the auth_token cookie
+    response.cookies.set("auth_token", token, {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+  return response;   
 
   } catch (error) {
     console.error("Error in login route:", error);
