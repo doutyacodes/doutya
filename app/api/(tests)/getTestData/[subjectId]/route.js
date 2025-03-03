@@ -13,6 +13,9 @@ function getWeekOfMonth(date) {
     return Math.ceil((firstDay.getDay()) / 7);
 }
 
+export const maxDuration = 300; // This function can run for a maximum of 5 seconds
+export const dynamic = "force-dynamic";
+
 export async function GET(request, { params }) {
     // Authenticate user
     const authResult = await authenticate(request);
