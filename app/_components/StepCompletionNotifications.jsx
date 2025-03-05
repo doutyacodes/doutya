@@ -302,155 +302,59 @@ export const InterestTestComplete = () => {
 };
 
 // Step 3 Completion: Industry Selection
-export const IndustrySelectionComplete = () => {
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    // Check if this notification was dismissed before
-    const isDismissed = localStorage.getItem('industrySelectionNotificationDismissed');
-    if (isDismissed === 'true') {
-      setVisible(false);
-    }
-  }, []);
-
-  const handleDismiss = () => {
-    localStorage.setItem('industrySelectionNotificationDismissed', 'true');
-    setVisible(false);
-  };
-
-  const handleClose = () => {
-    setVisible(false);
-  };
-
-  if (!visible) return null;
-
-  return (
-    <>
-    {/* <div className="bg-gradient-to-r from-purple-800 to-purple-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
-      <div className="flex items-start justify-between">
-        <div className="flex">
-          <div className="flex-shrink-0 bg-purple-100 rounded-full p-2">
-            <svg className="h-6 w-6 text-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div className="ml-4">
-            <h3 className="text-lg font-medium text-white">Industry Selected!</h3>
-            <div className="mt-2 text-sm text-purple-100">
-              <p>Great choice! Now explore career suggestions that match your profile within your selected industry.</p>
-            </div>
-            <div className="mt-3">
-              <a
-               href="/career-suggestions"
-               className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                Choose Your Career Below 
-              </a>
-            </div>
-          </div>
-        </div>
-        <button onClick={handleDismiss} className="text-purple-100 hover:text-white">
-          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-          </svg>
-        </button>
-      </div>
-    </div> */}
-    {/* the Modal */}
-    {
-      visible && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
-          <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
-            {/* Content */}
-            <div className="p-10">
-              <div className="min-h-64">
-                <div className="flex flex-col items-center space-y-4">
-                  <h2 className="text-2xl font-bold text-white mb-2">Industry Selected!</h2>
-                  <p className="text-gray-300">
-                    Great choice! Now explore career suggestions that match your profile within your selected industry
-                  </p>
-                  <div className="bg-gray-800 p-4 rounded-lg text-center">
-                    <div className="text-4xl mb-2">💼</div>
-                    <h3 className="text-lg font-semibold text-white">Explore and select career options that match your profile</h3>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Navigation buttons */}
-            <div className="bg-gray-800 px-6 py-4 flex justify-end">
-              <div>
-                <button 
-                  onClick={handleDismiss}
-                  className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors mr-3"
-                >
-                  Don&apos;t Show Again
-                </button>
-              
-                  <button 
-                    onClick={handleClose}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    Choose Your Career 
-                  </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    }
-  </>
-  );
-};
-
-// Step 4 Completion: Career Selection
-// export const CareerSelectionComplete = () => {
+// export const IndustrySelectionComplete = () => {
 //   const [visible, setVisible] = useState(true);
 
 //   useEffect(() => {
 //     // Check if this notification was dismissed before
-//     const isDismissed = localStorage.getItem('careerSelectionNotificationDismissed');
+//     const isDismissed = localStorage.getItem('industrySelectionNotificationDismissed');
 //     if (isDismissed === 'true') {
 //       setVisible(false);
 //     }
 //   }, []);
 
 //   const handleDismiss = () => {
-//     localStorage.setItem('careerSelectionNotificationDismissed', 'true');
+//     localStorage.setItem('industrySelectionNotificationDismissed', 'true');
 //     setVisible(false);
 //   };
 
-//   // if (!visible) return null;
+//   const handleClose = () => {
+//     setVisible(false);
+//   };
+
+//   if (!visible) return null;
 
 //   return (
 //     <>
-//     <div className="bg-gradient-to-r from-green-800 to-green-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
+//     {/* <div className="bg-gradient-to-r from-purple-800 to-purple-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
 //       <div className="flex items-start justify-between">
 //         <div className="flex">
-//           <div className="flex-shrink-0 bg-green-100 rounded-full p-2">
-//             <svg className="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//           <div className="flex-shrink-0 bg-purple-100 rounded-full p-2">
+//             <svg className="h-6 w-6 text-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 //               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
 //             </svg>
 //           </div>
 //           <div className="ml-4">
-//             <h3 className="text-lg font-medium text-white">Careers Selected!</h3>
-//             <div className="mt-2 text-sm text-green-100">
-//               <p>You've selected your potential careers! Now you can explore detailed roadmaps for each career path.</p>
+//             <h3 className="text-lg font-medium text-white">Industry Selected!</h3>
+//             <div className="mt-2 text-sm text-purple-100">
+//               <p>Great choice! Now explore career suggestions that match your profile within your selected industry.</p>
 //             </div>
 //             <div className="mt-3">
-//               <a href="/dashboard/careers/career-guide" className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-//                 View Career Roadmaps
+//               <a
+//                href="/career-suggestions"
+//                className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+//                 Choose Your Career Below 
 //               </a>
 //             </div>
 //           </div>
 //         </div>
-//         <button onClick={handleDismiss} className="text-green-100 hover:text-white">
+//         <button onClick={handleDismiss} className="text-purple-100 hover:text-white">
 //           <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
 //             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
 //           </svg>
 //         </button>
 //       </div>
-//     </div>
-
+//     </div> */}
 //     {/* the Modal */}
 //     {
 //       visible && (
@@ -460,13 +364,13 @@ export const IndustrySelectionComplete = () => {
 //             <div className="p-10">
 //               <div className="min-h-64">
 //                 <div className="flex flex-col items-center space-y-4">
-//                   <h2 className="text-2xl font-bold text-white mb-2">Careers Selected!</h2>
+//                   <h2 className="text-2xl font-bold text-white mb-2">Industry Selected!</h2>
 //                   <p className="text-gray-300">
-//                     You've selected your potential careers! Now you can explore detailed roadmaps for each career path.
+//                     Great choice! Now explore career suggestions that match your profile within your selected industry
 //                   </p>
 //                   <div className="bg-gray-800 p-4 rounded-lg text-center">
-//                     <div className="text-4xl mb-2">🗺️</div>
-//                     <h3 className="text-lg font-semibold text-white">Detailed guides to help you navigate your chosen career paths</h3>
+//                     <div className="text-4xl mb-2">💼</div>
+//                     <h3 className="text-lg font-semibold text-white">Explore and select career options that match your profile</h3>
 //                   </div>
 //                 </div>
 //               </div>
@@ -479,15 +383,15 @@ export const IndustrySelectionComplete = () => {
 //                   onClick={handleDismiss}
 //                   className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors mr-3"
 //                 >
-//                   Don't Show Again
+//                   Don&apos;t Show Again
 //                 </button>
               
-//                   <a 
-//                     href="/dashboard/careers/career-guide"
+//                   <button 
+//                     onClick={handleClose}
 //                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
 //                   >
-//                   View Career Roadmaps
-//                   </a>
+//                     Choose Your Career 
+//                   </button>
 //               </div>
 //             </div>
 //           </div>
@@ -497,6 +401,393 @@ export const IndustrySelectionComplete = () => {
 //   </>
 //   );
 // };
+
+
+// export const IndustrySelectionComplete = () => {
+//   const [visible, setVisible] = useState(true);
+//   const [currentStep, setCurrentStep] = useState(0);
+
+//   const steps = [
+//     {
+//       title: 'Congratulations on Your Industry Selection!',
+//       content: (
+//         <div className="text-center">
+//           <div className="text-4xl mb-4">🎉</div>
+//           <h2 className="text-2xl font-bold text-white mb-4">Excellent Industry Choice!</h2>
+//           <p className="text-gray-300 mb-6">
+//             You've taken a significant step in your career journey by selecting an industry that aligns with your interests and goals.
+//           </p>
+//           <div className="bg-gray-800 p-6 rounded-lg">
+//             <h3 className="text-lg font-semibold text-white mb-4">What's Next?</h3>
+//             <p className="text-gray-300">
+//               It's time to explore and select specific career options within your chosen industry.
+//             </p>
+//           </div>
+//         </div>
+//       )
+//     },
+//     {
+//       title: 'Career Selection Guide',
+//       content: (
+//         <div>
+//           <h2 className="text-2xl font-bold text-white mb-6">How to Choose Your Careers</h2>
+          
+//           <div className="space-y-6 text-gray-300">
+//             <div className="bg-gray-800 p-4 rounded-lg">
+//               <h3 className="text-lg font-semibold text-white mb-3">Career Slot Overview</h3>
+//               <p className="mb-4">
+//                 You have 5 career slots available to customize your professional path:
+//               </p>
+//               <ul className="list-disc list-inside space-y-2">
+//                 <li>2 slots are immediately available for all users</li>
+//                 <li>3 additional slots are locked for free users</li>
+//                 <li>Pro users can unlock all 5 slots</li>
+//               </ul>
+//             </div>
+
+//             <div className="bg-gray-800 p-4 rounded-lg">
+//               <h3 className="text-lg font-semibold text-white mb-3">How to Add Careers</h3>
+//               <p className="mb-4">You can add careers to your slots in two ways:</p>
+//               <ol className="list-decimal list-inside space-y-2">
+//                 <li>
+//                   <strong>From Career Suggestions:</strong> 
+//                   <p className="text-sm">Browse suggested careers and click "Move to Career" to add to your slots.</p>
+//                 </li>
+//                 <li>
+//                   <strong>Pro Users - Custom Career Addition:</strong>
+//                   <p className="text-sm">Click the plus button to add a custom career of your choice.</p>
+//                 </li>
+//               </ol>
+//             </div>
+
+//             <div className="bg-gray-800 p-4 rounded-lg text-sm">
+//               <h3 className="text-lg font-semibold text-white mb-3">Pro Tip</h3>
+//               <p>
+//                 💡 Take your time exploring careers. Your selections can be refined as you learn more about 
+//                 your industry and potential career paths.
+//               </p>
+//             </div>
+//           </div>
+//         </div>
+//       )
+//     }
+//   ];
+
+//   useEffect(() => {
+//     const isDismissed = localStorage.getItem('industrySelectionNotificationDismissed');
+//     if (isDismissed === 'true') {
+//       setVisible(false);
+//     }
+//   }, []);
+
+//   const handleNext = () => {
+//     if (currentStep < steps.length - 1) {
+//       setCurrentStep(currentStep + 1);
+//     }
+//   };
+
+//   const handlePrevious = () => {
+//     if (currentStep > 0) {
+//       setCurrentStep(currentStep - 1);
+//     }
+//   };
+
+//   const handleDismiss = () => {
+//     localStorage.setItem('industrySelectionNotificationDismissed', 'true');
+//     setVisible(false);
+//   };
+
+//   if (!visible) return null;
+
+//   return (
+//     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+//       <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
+//         {/* Progress bar */}
+//         <div className="flex justify-between bg-gray-800 px-6 py-3">
+//           {steps.map((_, index) => (
+//             <div 
+//               key={index} 
+//               className={`h-1 flex-1 rounded-full mx-1 ${
+//                 index <= currentStep ? 'bg-blue-500' : 'bg-gray-600'
+//               }`}
+//             />
+//           ))}
+//         </div>
+
+//         {/* Content */}
+//         <div className="p-8">
+//           {steps[currentStep].content}
+//         </div>
+        
+//         {/* Navigation buttons */}
+//         <div className="bg-gray-800 px-6 py-4 flex justify-between">
+//           <div className='flex items-center'>
+//             {currentStep > 0 && (
+//               <button 
+//                 onClick={handlePrevious}
+//                 className="px-4 py-2 mr-4 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+//               >
+//                 Previous
+//               </button>
+//             )}
+//           </div>
+//           <div>
+//             {currentStep === steps.length - 1 && (
+//               <button 
+//                 onClick={handleDismiss}
+//                 className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors mr-3"
+//               >
+//                 Don't Show Again
+//               </button>
+//             )}
+            
+//             {currentStep < steps.length - 1 ? (
+//               <button 
+//                 onClick={handleNext}
+//                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+//               >
+//                 Next
+//               </button>
+//             ) : (
+//               <button 
+//                 onClick={handleDismiss}
+//                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+//               >
+//                 Get Started
+//               </button>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default IndustrySelectionComplete;
+
+export const IndustrySelectionComplete = () => {
+  const [visible, setVisible] = useState(true);
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const steps = [
+    {
+      title: 'Congratulations on Your Industry Selection!',
+      content: (
+        <div className="text-center">
+          <div className="text-4xl mb-4">🎉</div>
+          <h2 className="text-2xl font-bold text-white mb-4">Excellent Industry Choice!</h2>
+          <p className="text-gray-300 mb-6">
+            You've taken a significant step in your career journey by selecting an industry that aligns with your interests and goals.
+          </p>
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <h3 className="text-lg font-semibold text-white mb-4">What's Next?</h3>
+            <p className="text-gray-300">
+              It's time to explore and select specific career options within your chosen industry.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: 'Welcome to Your Career Planning Hub',
+      content: (
+        <div className="text-center">
+          <div className="text-4xl mb-4">🎯</div>
+          <h2 className="text-2xl font-bold text-white mb-4">Career Slot System Explained</h2>
+          <div className="bg-gray-800 p-6 rounded-lg text-gray-300 space-y-4">
+            <p>
+              We've designed a unique Career Slot system to help you strategically plan your professional journey.
+            </p>
+            <div className="text-left space-y-3">
+              <div className="flex items-center">
+                <span className="mr-3 text-blue-500">•</span>
+                <span>You have <strong>5 Career Slots</strong> to map out your professional path</span>
+              </div>
+              <div className="flex items-center">
+                <span className="mr-3 text-blue-500">•</span>
+                <span>These slots allow you to explore and organize potential career options</span>
+              </div>
+              <div className="flex items-center">
+                <span className="mr-3 text-blue-500">•</span>
+                <span>Think of them as your personal career planning canvas</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: 'Understanding Your Career Slots',
+      content: (
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-6">Slot Access Levels</h2>
+          
+          <div className="space-y-6 text-gray-300">
+            <div className="bg-gray-800 p-5 rounded-lg">
+              <h3 className="text-lg font-semibold text-white mb-4">Slot Availability</h3>
+              <ul className="space-y-3">
+                <li>
+                  <strong>Free Users:</strong>
+                  <p className="text-sm mt-1">
+                    • 2 slots immediately available
+                    • 3 additional slots locked
+                  </p>
+                </li>
+                <li>
+                  <strong>Pro Users:</strong>
+                  <p className="text-sm mt-1">
+                    • All 5 slots fully unlocked
+                    • Ability to add custom careers
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: 'Your Career Development Journey',
+      content: (
+        <div className="text-center">
+          <div className="text-4xl mb-4">🚀</div>
+          <h2 className="text-2xl font-bold text-white mb-6">Maximize Your Career Potential</h2>
+          
+          {/* <div className="bg-gray-800 p-6 rounded-lg text-gray-300 space-y-4">
+            <p className="text-base">
+              These career slots are more than just placeholders - they're your strategic career roadmap.
+            </p>
+            
+            <div className="text-left space-y-3">
+              <div className="flex items-center">
+                <span className="mr-3 text-blue-500">✓</span>
+                <span>Visualize multiple career paths</span>
+              </div>
+              <div className="flex items-center">
+                <span className="mr-3 text-blue-500">✓</span>
+                <span>Track your professional exploration</span>
+              </div>
+              <div className="flex items-center">
+                <span className="mr-3 text-blue-500">✓</span>
+                <span>Adapt and refine your career strategy</span>
+              </div>
+            </div>
+            
+            <p className="text-sm italic mt-4">
+              Remember, your career journey is dynamic - these slots help you stay organized and focused!
+            </p>
+          </div> */}
+
+            <div className="bg-gray-800 p-5 rounded-lg">
+              <h3 className="text-lg font-semibold text-white mb-4">How to Fill Your Slots</h3>
+              <ol className="space-y-3 list-decimal list-inside">
+                <li>
+                  <strong>From Career Suggestions:</strong>
+                  <p className="text-sm mt-1">Browse suggested careers and click "Move to Career"</p>
+                </li>
+                <li>
+                  <strong>Pro Users - Custom Addition:</strong>
+                  <p className="text-sm mt-1">Use the plus button to add a custom career as well</p>
+                </li>
+              </ol>
+            </div>
+        </div>
+      )
+    }
+  ];
+
+  useEffect(() => {
+    const isDismissed = localStorage.getItem('industrySelectionNotificationDismissed');
+    if (isDismissed === 'true') {
+      setVisible(false);
+    }
+  }, []);
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleDismiss = () => {
+    localStorage.setItem('industrySelectionNotificationDismissed', 'true');
+    setVisible(false);
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+      <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
+        {/* Progress bar */}
+        <div className="flex justify-between bg-gray-800 px-6 py-3">
+          {steps.map((_, index) => (
+            <div 
+              key={index} 
+              className={`h-1 flex-1 rounded-full mx-1 ${
+                index <= currentStep ? 'bg-blue-500' : 'bg-gray-600'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="p-8">
+          {steps[currentStep].content}
+        </div>
+        
+        {/* Navigation buttons */}
+        <div className="bg-gray-800 px-6 py-4 flex justify-between">
+          <div className='flex items-center'>
+            {currentStep > 0 && (
+              <button 
+                onClick={handlePrevious}
+                className="px-4 py-2 mr-4 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+              >
+                Previous
+              </button>
+            )}
+          </div>
+          <div>
+            {currentStep === steps.length - 1 && (
+              <button 
+                onClick={handleDismiss}
+                className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors mr-3"
+              >
+                Don't Show Again
+              </button>
+            )}
+            
+            {currentStep < steps.length - 1 ? (
+              <button 
+                onClick={handleNext}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Next
+              </button>
+            ) : (
+              <button 
+                onClick={handleDismiss}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Get Started
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default IndustrySelectionComplete;
+
 
 export const CareerSelectionComplete = () => {
   const [visible, setVisible] = useState(true);

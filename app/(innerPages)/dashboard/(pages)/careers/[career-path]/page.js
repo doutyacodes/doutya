@@ -1,7 +1,7 @@
 "use client";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import GlobalApi from "@/app/_services/GlobalApi";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, LockIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -36,6 +36,12 @@ function Page() {
   const [showPricingModal, setShowPricingModal] = useState(false);
   const router = useRouter();
   const t = useTranslations("CareerPage");
+
+  // Total number of boxes will be 5 (career stripe)
+  const totalBoxes = 5;
+
+  const [step, setStep] = useState(1); /* taken this formthe result 2  component we need theis state to show
+   the career adding stripe or not based on the step  */
 
   const pathname = usePathname();
   
@@ -180,6 +186,57 @@ function Page() {
   };
 
 
+    // Render career or disabled box based on restriction
+    const renderCareerBox = (career, index) => {
+      if (isRestricted && index >= 2) {
+        // Disabled boxes for restricted users
+        return (
+          <div
+            key={`restricted-${index}`}
+            className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-600 flex justify-center items-center opacity-50 cursor-not-allowed"
+          >
+            <div className="flex flex-col items-center justify-center text-center">
+              <LockIcon className="text-white h-6 w-6 sm:h-8 sm:w-8 mb-2" />
+              <p className="text-xs sm:text-sm font-bold text-white">
+                Pro Users Only
+              </p>
+            </div>
+          </div>
+        );
+      }
+      
+      // Regular career boxes for selected careers
+      if (career) {
+        return (
+          <div
+            key={career.id}
+            onClick={() => handleCareerClick(career)}
+            className={`w-28 h-28 flex justify-center items-center sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg transition-transform transform hover:scale-105 cursor-pointer duration-150 ${
+              selectedCareer?.id === career.id
+                ? "bg-gray-700 border-2 border-blue-500"
+                : "bg-gray-800"
+            }`}
+          >
+            <p className="text-center text-xs sm:text-sm font-bold text-white">
+              {career.career_name}
+            </p>
+          </div>
+        );
+      }
+      
+      // Plus button for adding new careers
+      return (
+        <div
+          key={`plus-${index}`}
+          className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-700 flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150"
+          onClick={handleAddCareerClick}
+        >
+          <PlusIcon className="text-white h-6 w-6 sm:h-8 sm:w-8" />
+        </div>
+      );
+    };
+
+
   if (isLoading || !isAuthenticated) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
@@ -191,74 +248,92 @@ function Page() {
   return (
     <div className="mx-auto bg-[#1f1f1f] text-white max-md:pb-7">
       <Toaster />
-
-      {/* Add Career Dialog - Only show for unrestricted users */}
-      {!isRestricted && (
-        <AddCareer
-          isOpen={showDialogue}
-          onClose={() => setShowDialogue(false)}
-          getCareers={getCareers}
-          setCareerName={setCareerName}
-          careerName={careerName}
-          setCountry={setCountry}
-          country={country}
-          handleSubmit={handleSubmit}
-          roadMapLoading={roadMapLoading}
-        />
-      )}
-
-      {/* Feature Restriction Modal */}
-      <FeatureRestrictionModal
-        isOpen={showFeatureModal}
-        onClose={() => setShowFeatureModal(false)}
-        onViewPlans={() => {
-          setShowFeatureModal(false);
-          setShowPricingModal(true);
-        }}
-      />
-
-      {/* Pricing Modal */}
-      {showPricingModal && (
-        <PricingCard onClose={() => setShowPricingModal(false)} />
-      )}
-
-      {/* Mobile Heading */}
-      <p className="text-center font-bold sm:hidden text-white text-2xl sm:text-4xl md:pl-5 max-sm:bg-[#1f1f1f]">
-        {t("careers")}
-      </p>
-
-      {/* Career Selector for Desktop */}
-      <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
-        <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
-          {t("careers")}
-        </p>
-
-        <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
-          {careerData.map((career, index) => (
-            <div
-              key={index}
-              onClick={() => handleCareerClick(career)}
-              className={`w-28 h-28 flex justify-center items-center sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg transition-transform transform hover:scale-105 cursor-pointer duration-150 ${
-                selectedCareer?.id === career.id
-                  ? "bg-gray-700 border-2 border-blue-500"
-                  : "bg-gray-800"
-              }`}
-            >
-              <p className="text-center text-xs sm:text-sm font-bold text-white">
-                {career.career_name}
-              </p>
-            </div>
-          ))}
-
-          <div
-            className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-700 flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150"
-            onClick={handleAddCareerClick}
-          >
-            <PlusIcon className="text-white h-6 w-6 sm:h-8 sm:w-8" />
-          </div>
-        </div>
-      </div>
+        {
+          step === 2 && (
+            <>
+                {/* Add Career Dialog - Only show for unrestricted users */}
+                {!isRestricted && (
+                  <AddCareer
+                    isOpen={showDialogue}
+                    onClose={() => setShowDialogue(false)}
+                    getCareers={getCareers}
+                    setCareerName={setCareerName}
+                    careerName={careerName}
+                    setCountry={setCountry}
+                    country={country}
+                    handleSubmit={handleSubmit}
+                    roadMapLoading={roadMapLoading}
+                  />
+                )}
       
+                {/* Feature Restriction Modal */}
+                <FeatureRestrictionModal
+                  isOpen={showFeatureModal}
+                  onClose={() => setShowFeatureModal(false)}
+                  onViewPlans={() => {
+                    setShowFeatureModal(false);
+                    setShowPricingModal(true);
+                  }}
+                />
+      
+                {/* Pricing Modal */}
+                {showPricingModal && (
+                  <PricingCard onClose={() => setShowPricingModal(false)} />
+                )}
+      
+                {/* Mobile Heading */}
+                <p className="text-center font-bold sm:hidden text-white text-2xl sm:text-4xl md:pl-5 max-sm:bg-[#1f1f1f]">
+                  {t("careers")}
+                </p>
+      
+                {/* Career Selector for Desktop */}
+                {/* <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
+                  <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
+                    {t("careers")}
+                  </p>
+      
+                  <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
+                    {careerData.map((career, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleCareerClick(career)}
+                        className={`w-28 h-28 flex justify-center items-center sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg transition-transform transform hover:scale-105 cursor-pointer duration-150 ${
+                          selectedCareer?.id === career.id
+                            ? "bg-gray-700 border-2 border-blue-500"
+                            : "bg-gray-800"
+                        }`}
+                      >
+                        <p className="text-center text-xs sm:text-sm font-bold text-white">
+                          {career.career_name}
+                        </p>
+                      </div>
+                    ))}
+      
+                    <div
+                      className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-700 flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150"
+                      onClick={handleAddCareerClick}
+                    >
+                      <PlusIcon className="text-white h-6 w-6 sm:h-8 sm:w-8" />
+                    </div>
+                  </div>
+                </div> */}
+
+              <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
+                <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
+                  {t("careers")}
+                </p>
+                
+                <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
+                  {/* Render 5 total boxes */}
+                  {[...careerData, ...Array(totalBoxes - careerData.length)].slice(0, totalBoxes).map((career, index) => 
+                    renderCareerBox(career, index)
+                  )}
+                </div>
+              </div>
+            </>
+          )
+        }
+
       {showCareer ? (
         <>
           {/* CareerGuideExplanation  component*/}
@@ -340,7 +415,7 @@ function Page() {
       ) : (
         <>
         {
-          isTest2Completed && (<Results2 />)
+          isTest2Completed && (<Results2 step={step} setStep={setStep} />)
         }
         </>
       )}

@@ -50,11 +50,37 @@ const CareerOnboarding = ({ forceShow = false, onClose}) => {
 
   const steps = [
     {
-      title: "Welcome to Your Career Journey",
+      title: "Welcome to Xortlist",
+      content: (
+        <div className="flex flex-col items-center space-y-6 text-center">
+          <img 
+            src={"/assets/images/logo-full.png"}
+            alt="Xortlist Logo" 
+            className="w-48 h-auto mb-4 object-contain"
+          />
+          <h1 className="text-3xl font-bold text-white mb-4">Your AI-Powered Complete Career Companion</h1>
+          <div className="space-y-4">
+            <p className="text-gray-300 text-lg">
+              Welcome to Xortlist - Your Career Guidance Destination
+            </p>
+            <p className="text-gray-300">
+              More than a career platform, we are your dedicated partner. We help you identify the perfect 
+              careers and provide AI-powered guidance that adapts and supports your professional journey 
+              every step of the way.
+            </p>
+            <p className="text-gray-300 font-semibold">
+              Transforming Career Guidance into a Continuous, Personalized Experience
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Discover Your Perfect Career Path",
       content: (
         <div className="flex flex-col items-center space-y-4">
           <div className="text-5xl mb-4">🚀</div>
-          <h2 className="text-2xl font-bold text-white mb-2">Discover Your Perfect Career Path</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Your Career Journey Begins</h2>
           <p className="text-gray-300">
             We&apos;ll guide you through a series of steps to understand your personality, 
             interests, and preferences to recommend the best career options for you.
@@ -188,7 +214,7 @@ const CareerOnboarding = ({ forceShow = false, onClose}) => {
         
         {/* Content */}
         <div className="p-10">
-          <h2 className="text-xl font-bold text-white mb-4">{steps[currentStep].title}</h2>
+          <h2 className="text-xl font-bold text-white mb-4 text-center">{steps[currentStep].title}</h2>
           <div className="min-h-64">
             {steps[currentStep].content}
           </div>

@@ -6,7 +6,7 @@ import CareerStripe from '@/app/_components/CareerStripe'
 export default function page() {
   return (
     <div>
-        <CareerStripe/>
+        {/* <CareerStripe/> */}
         <Results/>
         <br />
     </div>

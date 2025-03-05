@@ -31,7 +31,7 @@ const Home = () => {
   ];
   return (
     <div>
-      <CareerStripe />
+      {/* <CareerStripe /> */}
       <div className="p-4 ">
         <div className="w-full flex gap-5 md:gap-20  max-sm:flex-col justify-center items-center container mx-auto min-h-[75vh] pt-4">
           {homeData?.length > 0 &&

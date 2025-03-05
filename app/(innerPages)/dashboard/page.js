@@ -90,7 +90,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <CareerStripe />
+      {/* <CareerStripe /> */}
       {!isTest2Completed && (
           <>
             <Banner

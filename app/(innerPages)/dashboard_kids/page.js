@@ -56,7 +56,7 @@ export default function Dashboard() {
   return (
     <div style={styles.dashboardContainer}>
       
-      <CareerStripe/>
+      {/* <CareerStripe/> */}
 
 
       {!isTest2Completed && (

@@ -13,7 +13,7 @@ import AlertDialogue from "./AlertDialogue";
 import { FaChevronRight } from "react-icons/fa";
 import { CareerSelectionComplete, IndustrySelectionComplete, InterestTestComplete } from "@/app/_components/StepCompletionNotifications";
 
-export default function Results2() {
+export default function Results2({step, setStep}) {
   const [resultData, setResultData] = useState(null);
   const [selectedCareers, setSelectedCareers] = useState([]);
   const [prevSelectCount, setPrevSelectCount] = useState(null);
@@ -24,7 +24,7 @@ export default function Results2() {
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
   const [user_feedback, setUserFeedback] = useState("");
-  const [step, setStep] = useState(1);
+  // const [step, setStep] = useState(1);
   const [industries, setIndustries] = useState([]);
   const [saveResultloading, setSaveResultLoading] = useState(false);
 
