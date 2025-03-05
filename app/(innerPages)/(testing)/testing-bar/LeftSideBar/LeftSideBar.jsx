@@ -189,7 +189,8 @@ const LeftSideBar = () => {
               <div className="text-xl font-bold">Logo</div>
               <button
                 onClick={toggleSidebars}
-                className={`max-md:hidden p-2 rounded-full hover:bg-gray-100/10 transition-all duration-200 transform ${isOpen ? "" : "rotate-180"} group absolute ${isOpen ? "-right-3" : "-right-0 mt-5"} top-6`}
+                // max-md:hidden
+                className={` p-2 rounded-full hover:bg-gray-100/10 transition-all duration-200 transform ${isOpen ? "" : "rotate-180"} group absolute ${isOpen ? "-right-3" : "-right-0 mt-5"} top-6`}
                 aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
               >
                 <div className="bg-gray-800 rounded-full p-1.5 shadow-lg border border-gray-700 group-hover:border-gray-600 transition-colors">
