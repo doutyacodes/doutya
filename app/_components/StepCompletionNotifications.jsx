@@ -22,7 +22,7 @@ export const StartPersonalityTest = () => {
     
     return (
       <>
-        <div className="bg-gradient-to-r from-green-800 to-green-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
+        {/* <div className="bg-gradient-to-r from-green-800 to-green-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
           <div className="flex items-start justify-between">
             <div className="flex">
               <div className="flex-shrink-0 bg-green-100 rounded-full p-2">
@@ -53,7 +53,7 @@ export const StartPersonalityTest = () => {
               </svg>
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* the Modal */}
         {
@@ -125,7 +125,7 @@ export const PersonalityTestComplete = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-blue-800 to-blue-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
+      {/* <div className="bg-gradient-to-r from-blue-800 to-blue-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
         <div className="flex items-start justify-between">
           <div className="flex">
             <div className="flex-shrink-0 bg-blue-100 rounded-full p-2">
@@ -151,7 +151,7 @@ export const PersonalityTestComplete = () => {
             </svg>
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* the Modal */}
       {
@@ -223,7 +223,7 @@ export const InterestTestComplete = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-orange-700 to-orange-500 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
+      {/* <div className="bg-gradient-to-r from-orange-700 to-orange-500 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
         <div className="flex items-start justify-between">
           <div className="flex">
             <div className="flex-shrink-0 bg-orange-100 rounded-full p-2">
@@ -252,7 +252,7 @@ export const InterestTestComplete = () => {
             </svg>
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* the Modal */}
       {
@@ -322,11 +322,11 @@ export const IndustrySelectionComplete = () => {
     setVisible(false);
   };
 
-  // if (!visible) return null;
+  if (!visible) return null;
 
   return (
     <>
-    <div className="bg-gradient-to-r from-purple-800 to-purple-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
+    {/* <div className="bg-gradient-to-r from-purple-800 to-purple-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
       <div className="flex items-start justify-between">
         <div className="flex">
           <div className="flex-shrink-0 bg-purple-100 rounded-full p-2">
@@ -354,7 +354,7 @@ export const IndustrySelectionComplete = () => {
           </svg>
         </button>
       </div>
-    </div>
+    </div> */}
     {/* the Modal */}
     {
       visible && (
