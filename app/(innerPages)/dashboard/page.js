@@ -91,23 +91,23 @@ export default function Dashboard() {
   return (
     <div>
       <CareerStripe />
-     {!isTest2Completed && (
-        <>
-          <Banner
-            onToggleResults={toggleResults}
-            showResults={showResults}
-            onToggleQuiz2Results={toggleQuiz2Results}
-            showQuiz2Results={showQuiz2Results}
-            isTest2Completed={isTest2Completed}
-            setIsTest2Completed={setIsTest2Completed}
-          />
-          <br />
-          <br />
-          {showResults && <Results />}
-          {showQuiz2Results && redirect("/dashboard/careers/career-suggestions")}
-        </>
-      )
-    } 
+      {!isTest2Completed && (
+          <>
+            <Banner
+              onToggleResults={toggleResults}
+              showResults={showResults}
+              onToggleQuiz2Results={toggleQuiz2Results}
+              showQuiz2Results={showQuiz2Results}
+              isTest2Completed={isTest2Completed}
+              setIsTest2Completed={setIsTest2Completed}
+            />
+            <br />
+            <br />
+            {showResults && <Results />}
+            {showQuiz2Results && redirect("/dashboard/careers/career-suggestions")}
+          </>
+        )
+      } 
       {/* <MobileNavigation /> */}
     </div>
   )

@@ -11,6 +11,7 @@ import { useTranslations } from "next-intl";
 import AddIndustry from "./AddIndustry";
 import AlertDialogue from "./AlertDialogue";
 import { FaChevronRight } from "react-icons/fa";
+import { CareerSelectionComplete, IndustrySelectionComplete, InterestTestComplete } from "@/app/_components/StepCompletionNotifications";
 
 export default function Results2() {
   const [resultData, setResultData] = useState(null);
@@ -29,6 +30,8 @@ export default function Results2() {
 
   const [showDialogue, setShowDialogue] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showCareerSelectionComplete, setShowCareerSelectionComplete] = useState(false);
+  
 
   const t = useTranslations("Result2");
 
@@ -212,17 +215,19 @@ export default function Results2() {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const response = await GlobalApi.SaveCarrerData(token, payload);
-      if (response.status === 201) {
+      if (response.status === 200) {
         toast.success("Career Data Saved Successfully");
         if (response.data.isFirstTime) {
           // Navigate to the careers page
           router.push("/dashboard/careers/career-guide"); // Change "/careers" to your actual career page path
         }
+        setShowCareerSelectionComplete(true) 
       }
     } catch (err) {
       console.error("Failed to save career data:", err);
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(`${err.response.data.message}`);
+        setShowCareerSelectionComplete(true) 
       } else {
         toast.error("Failed to save career data. Please try again later.");
       }
@@ -342,19 +347,30 @@ export default function Results2() {
     <div className="max-sm:pb-5">
       <Toaster position="top-center" reverseOrder={false} />
       {step === 1 && industries.length > 0 && (
-        <div className="bg-[#2c2c2c] h-20 my-4 justify-center items-center flex">
-          <p className="text-white uppercase font-bold text-center">
-            {t("selectIndustry")}
-          </p>
-        </div>
+        <>
+          <InterestTestComplete />
+            <div className="bg-[#2c2c2c] h-20 my-4 justify-center items-center flex">
+              <p className="text-white uppercase font-bold text-center">
+                {t("selectIndustry")}
+              </p>
+            </div>
+        </>
       )}
 
+      {
+        step === 2 && (
+          showCareerSelectionComplete ? <CareerSelectionComplete /> : <IndustrySelectionComplete />
+        )
+      }
+
       {step === 2 && !singleCareer && (
-        <div className="bg-[#2c2c2c] h-20 mb-5 justify-center items-center flex">
-          <p className="text-white uppercase font-bold text-center md:text-xl">
-            {t("careerSuggestion")}
-          </p>
-        </div>
+        <>
+          <div className="bg-[#2c2c2c] h-20 mb-5 justify-center items-center flex">
+            <p className="text-white uppercase font-bold text-center md:text-xl">
+              {t("careerSuggestion")}
+            </p>
+          </div>
+        </>
       )}
 
       {singleCareer?.career_name && (

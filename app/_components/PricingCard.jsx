@@ -32,7 +32,7 @@ const PricingCard = ({ onClose }) => {
                 </li>
                 <li className="flex items-center gap-2 text-gray-100">
                   <Check size={20} className="text-emerald-400" />
-                  <span>Add up to 2 careers</span>
+                  <span>Add up to 2 careers from the career suggestion</span>
                 </li>
                 <li className="flex items-center gap-2 text-gray-400">
                   <X size={20} />

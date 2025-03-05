@@ -9,6 +9,8 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
+import CareerOnboarding from "@/app/_components/CareerOnboarding.jsx";
+import { PersonalityTestComplete, StartPersonalityTest } from "@/app/_components/StepCompletionNotifications.jsx";
 
 function Banner({
   onToggleResults,
@@ -74,6 +76,8 @@ function Banner({
 
   return (
     <div className="max-md:pb-14">
+      {isTest1Completed ? <PersonalityTestComplete /> : <StartPersonalityTest />}
+      {!getQuizStatus(1).isCompleted && <CareerOnboarding />}
       <div className="w-full py-8 md:text-3xl text-xl font-bold text-white text-center bg-gradient-to-r from-[#2f87aa] to-green-300">
         {t("careerAssesment")}
       </div>

@@ -8,12 +8,16 @@ import {
   FaSuitcase,
   FaChevronDown,
   FaBuilding,
+  FaInfoCircle,
 } from "react-icons/fa";
 import { PiCompassRoseFill } from "react-icons/pi";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import GlobalApi from "@/app/_services/GlobalApi";
+import CareerGuideExplanation from "@/app/_components/CareerGuideExplanation";
+import CareerOnboarding from "@/app/_components/CareerOnboarding";
+import { Button } from "@/components/ui/button";
 
 const LeftSideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +26,14 @@ const LeftSideBar = () => {
   const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
   const [isCareersDropdownOpen, setIsCareersDropdownOpen] = useState(false);
   const [isInstituteDropdownOpen, setIsInstituteDropdownOpen] = useState(false);
+  const [guideDropdownOpen, setGuideDropdownOpen] = useState(false);
+
+
   const [isTest2Completed, setIsTest2Completed] = useState(false);
+
+   // New state for managing instructions modal
+   const [isInstructionsModalOpen, setIsInstructionsModalOpen] = useState(false);
+   const [instructionsType, setInstructionsType] = useState(null);
 
   const toggleSidebars = () => setIsOpen(!isOpen);
 
@@ -37,6 +48,11 @@ const LeftSideBar = () => {
   const toggleInstituteDropdown = () => {
     setIsInstituteDropdownOpen(!isCareersDropdownOpen);
   };
+
+  const toggleInstructionDropdown = () => {
+    setGuideDropdownOpen(!isCareersDropdownOpen);
+  };
+
 
   useEffect(() => {
     const getQuizData = async () => {
@@ -77,6 +93,12 @@ const LeftSideBar = () => {
     }
   };
 
+  // New method to open instructions
+  const openInstructions = (type) => {
+    setInstructionsType(type);
+    setIsInstructionsModalOpen(true);
+  };
+
   const menus = [
     {
       name: "Tests",
@@ -109,12 +131,32 @@ const LeftSideBar = () => {
       submenus: [],
     },
     {
+      name: "School Activities",
+      icon: <FaBuilding className="text-xl" />,
+      link: "#",
+      submenus: [
+        { name: "Challenges", link: "/institution/challenges" },
+        { name: "Tests", link: "/institution/tests" },
+        { name: "Community", link: "/institution/community" },
+      ],
+    },
+    {
       name: "Sign Out",
       icon: <FaCog className="text-xl" />,
       link: "#",
       submenus: [],
       onClick: toggleLogoutPopup,
     },
+    // {
+    //   name: "Instructions",
+    //   icon: <FaInfoCircle className="text-xl" />, // Use an info or help icon
+    //   link: "#",
+    //   submenus: [],
+    //   onClick: () => {
+    //     // When clicked, open instructions
+    //     openInstructions('initial');
+    //   },
+    // }
   ];
 
   const toggleDropdown = (menuName) => {
@@ -208,7 +250,7 @@ const LeftSideBar = () => {
                 </li>
 
                 {/* School/College Link */}
-                <li className="relative">
+                {/* <li className="relative">
                   <div
                     className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
                     onClick={()=>{
@@ -245,7 +287,43 @@ const LeftSideBar = () => {
                       </li>
                     </ul>
                   )}
+                </li> */}
+
+                {/* Guide Link */}
+                <li className="relative">
+                  <div
+                    className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
+                    onClick={()=>{
+
+                      !isOpen && toggleSidebars();
+
+                      toggleInstructionDropdown();
+                    }}
+                  >
+                    <FaInfoCircle className="text-xl" />
+                    {isOpen && (
+                      <>
+                        <span className="text-xl pl-3">Instructions</span>
+                        <FaChevronDown className="ml-auto" />
+                      </>
+                    )}
+                  </div>
+                    {guideDropdownOpen && isOpen && (
+                      <ul className="ml-8 space-y-3 mt-3">
+                        <li>
+                          <div onClick={()=>openInstructions('intro')} className="text-white cursor-pointer hover:underline">
+                            Introduction
+                          </div>
+                        </li>
+                        <li>
+                          <div onClick={()=>openInstructions('career-guide')} className="text-white cursor-pointer hover:underline ">
+                            Carrer Guide
+                          </div>
+                        </li>
+                      </ul>
+                    )}
                 </li>
+
 
                 {/* Profile Link */}
                 {/* <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
@@ -291,6 +369,24 @@ const LeftSideBar = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Instructions Modal Trigger */}
+      {isInstructionsModalOpen && (
+        <>
+          {instructionsType === 'intro' && (
+            <CareerOnboarding
+              forceShow={true} 
+              onClose={() => setIsInstructionsModalOpen(false)} 
+            />
+          )}
+          {instructionsType === 'career-guide' && (
+            <CareerGuideExplanation
+              forceShow={true} 
+              onClose={() => setIsInstructionsModalOpen(false)} 
+            />
+          )}
+        </>
       )}
     </>
   );

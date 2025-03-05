@@ -16,6 +16,7 @@ import CommunityList from "@/app/_components/CommunityList";
 import FeatureRestrictionModal from "../../../_components/FeatureRestrictionModal/FeatureRestrictionModal";
 import PricingCard from "@/app/_components/PricingCard";
 import CareerOverView from "../../../_components/CareerOverview/CareerOverview";
+import CareerGuideExplanation from "@/app/_components/CareerGuideExplanation";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -260,6 +261,8 @@ function Page() {
       
       {showCareer ? (
         <>
+          {/* CareerGuideExplanation  component*/}
+          <CareerGuideExplanation />
           {/* Selected Career Content */}
           {selectedCareer && (
             <>
