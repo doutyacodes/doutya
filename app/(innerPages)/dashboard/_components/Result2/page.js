@@ -12,6 +12,7 @@ import AddIndustry from "./AddIndustry";
 import AlertDialogue from "./AlertDialogue";
 import { FaChevronRight } from "react-icons/fa";
 import { CareerSelectionComplete, IndustrySelectionComplete, InterestTestComplete } from "@/app/_components/StepCompletionNotifications";
+import ContentGenerationLoading from "@/app/_components/ContentGenerationLoading";
 
 export default function Results2({step, setStep}) {
   const [resultData, setResultData] = useState(null);
@@ -23,6 +24,8 @@ export default function Results2({step, setStep}) {
   const [careerIndex, setCareerIndex] = useState(null);
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [fetchingIndustry, setFetchingIndustry] = useState(false);
+  const [fetchingCareer, setFetchingCareer] = useState(false);
   const [user_feedback, setUserFeedback] = useState("");
   // const [step, setStep] = useState(1);
   const [industries, setIndustries] = useState([]);
@@ -101,8 +104,8 @@ export default function Results2({step, setStep}) {
 
   const fetchResults = async (selectedIndustry) => {
     // console.log("selectedIndustry", selectedIndustry);
-
-    setLoading(true);
+    setFetchingCareer(true)
+    // setLoading(true);
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -128,7 +131,8 @@ export default function Results2({step, setStep}) {
     } catch (err) {
       console.error("Failed to fetch results:", err);
     } finally {
-      setLoading(false);
+      // setLoading(false);
+      setFetchingCareer(false)
     }
   };
 
@@ -312,7 +316,8 @@ export default function Results2({step, setStep}) {
     "digital and online": "#add8e6",
   };
   const fetchIndustry = async () => {
-    setLoading(true);
+    // setLoading(true);
+    setFetchingIndustry(true)
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -323,7 +328,8 @@ export default function Results2({step, setStep}) {
     } catch (err) {
       console.error("Failed to fetch industries:", err);
     } finally {
-      setLoading(false);
+      // setLoading(false);
+      setFetchingIndustry(false)
     }
   };
 
@@ -346,6 +352,37 @@ export default function Results2({step, setStep}) {
   return (
     <div className="max-sm:pb-5">
       <Toaster position="top-center" reverseOrder={false} />
+
+        {
+          fetchingIndustry && (
+            <>
+               {/* Loading Modal */}
+               <ContentGenerationLoading
+              isOpen={fetchingIndustry}
+              onClose={() => setFetchingIndustry(false)}
+              page="industrySelection" // Change this based on your current page
+              showDelay={1000} // Only show if loading takes more than 1 second
+              // Optional: auto close after 30 seconds
+              // autoCloseDelay={30000}
+            />
+            </> 
+          )}
+          {fetchingCareer && (
+            <>
+                {/* Loading Modal */}
+                  <ContentGenerationLoading
+                  isOpen={fetchingCareer}
+                  onClose={() => setFetchingCareer(false)}
+                  page="careerSuggestions" // Change this based on your current page
+                  showDelay={1000} // Only show if loading takes more than 1 second
+                  // Optional: auto close after 30 seconds
+                  // autoCloseDelay={30000}
+                />  
+              </>
+          )
+        }
+
+
       {step === 1 && industries.length > 0 && (
         <>
           <InterestTestComplete />

@@ -68,6 +68,7 @@ function Page() {
     const PathChange = () => {
       if (pathname == "/dashboard/careers/career-guide") {
         setShowCareer(true);
+        setStep(2) /* setting to step 2 beacuse only step 2 will show th ecareer stripe, We ahve to implement do a better way for this , */
       } else {
         setShowCareer(false);
       }
