@@ -1,5 +1,5 @@
 import { db } from '@/utils'; // Ensure this path is correct
-import { QUIZ_SEQUENCES } from '@/utils/schema'; // Ensure this path is correct
+import { QUIZ_SEQUENCES, USER_DETAILS } from '@/utils/schema'; // Ensure this path is correct
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware'; // Ensure this path is correct
 import { eq } from 'drizzle-orm';
@@ -23,8 +23,27 @@ export async function GET(req) {
             .where(eq(QUIZ_SEQUENCES.user_id, userId)) // Ensure userId is an integer
             .execute();
 
-        // Respond with the fetched data
-        return NextResponse.json(data, { status: 200 }); // Use 200 for successful data retrieval
+        // Check if the user's country is added
+        const userDetails = await db
+            .select({ country: USER_DETAILS.country })
+            .from(USER_DETAILS)
+            .where(eq(USER_DETAILS.id, userId))
+            .execute();
+
+        const countryInfo = userDetails[0]?.country;
+
+        const countryAdded = !!(countryInfo && countryInfo.trim() !== '');
+
+        return NextResponse.json(
+            {
+                data,
+                countryAdded, // true or false
+            },
+            { status: 200 }
+        );
+
+        // // Respond with the fetched data
+        // return NextResponse.json(data, { status: 200 }); // Use 200 for successful data retrieval
 
     } catch (error) {
         console.error('Error fetching quiz sequences:', error);

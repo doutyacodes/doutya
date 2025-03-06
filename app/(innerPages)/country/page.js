@@ -100,18 +100,19 @@ function SelectCountry() {
 
       if (response.status === 201) {
         toast.success("Country details saved successfully!");
-        const birth_date = response.data.birthDate;
-        const age = calculateAge(birth_date);
-        if (age <= 9) {
-          localStorage.setItem("dashboardUrl", "/dashboard_kids");
-          router.push("/dashboard_kids");
-        } else if (age <= 13) {
-          localStorage.setItem("dashboardUrl", "/dashboard_junior");
-          router.push("/dashboard_junior");
-        } else {
-          localStorage.setItem("dashboardUrl", "/dashboard");
-          router.push("/dashboard");
-        }
+        // const birth_date = response.data.birthDate;
+        // const age = calculateAge(birth_date);
+        // if (age <= 9) {
+        //   localStorage.setItem("dashboardUrl", "/dashboard_kids");
+        //   router.push("/dashboard_kids");
+        // } else if (age <= 13) {
+        //   localStorage.setItem("dashboardUrl", "/dashboard_junior");
+        //   router.push("/dashboard_junior");
+        // } else {
+        //   localStorage.setItem("dashboardUrl", "/dashboard");
+        //   router.push("/dashboard");
+        // }
+        router.replace("/dashboard/careers/career-suggestions");
       } else {
         toast.error("Failed to save country details.");
       }

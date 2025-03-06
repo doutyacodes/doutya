@@ -53,7 +53,7 @@ function Page() {
         const resp = await GlobalApi.GetDashboarCheck(token);
 
         // Check if Test 2 is completed
-        const test2 = resp.data.find((q) => q.quiz_id === 2);
+        const test2 = resp.data.data.find((q) => q.quiz_id === 2);
         if (test2 && test2.isCompleted) {
           setIsTest2Completed(true);
         }

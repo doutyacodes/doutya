@@ -14,7 +14,7 @@ function BannerJunior({  onToggleResults, showResults ,onToggleQuiz2Results,show
       try {
         const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetDashboarCheck(token);
-        setDashboardData(resp.data); 
+        setDashboardData(resp.data.data); 
 
         const userResp = await GlobalApi.GetUserAge(token);
         const birthDate = new Date(userResp.data.birth_date);

@@ -16,8 +16,8 @@ function Bannerkids({ onToggleResults, showResults, onToggleQuiz2Results, showQu
       try {
         const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetDashboarCheck(token);
-        console.log('Response: of  GetQuizData', resp.data);
-        setDashboardData(resp.data);
+        console.log('Response: of  GetQuizData', resp.data.data);
+        setDashboardData(resp.data.data);
 
         const userResp = await GlobalApi.GetUserAge(token);
         const birthDate = new Date(userResp.data.birth_date);

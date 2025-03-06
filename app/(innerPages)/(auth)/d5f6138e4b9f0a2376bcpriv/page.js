@@ -180,7 +180,7 @@ function SignUp() {
         const age = calculateAge(data.dob);
 
         toast.success(t("successMessage"));
-        router.push("/country");
+        // router.push("/country");
       } else {
         const errorMessage = response.data?.message || t("defaultErrorMessage");
         toast.error(`Error: ${errorMessage}`);

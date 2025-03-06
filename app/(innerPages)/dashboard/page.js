@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(true)
   const [secondsRemaining, setSecondsRemaining] = useState(5);
   const [loading, setLoading] = useState(false);
+  const [isCountryAdded, setIsCountryAdded] = useState(null);
 
   useEffect(() => {
     const authCheck = () => {
@@ -39,7 +40,11 @@ export default function Dashboard() {
       }, 1000);
 
       const timer = setTimeout(() => {
-        router.replace("/dashboard/careers/career-suggestions");
+        if (isCountryAdded) {
+          router.replace("/dashboard/careers/career-suggestions");
+        } else {
+          router.replace("/country");
+        }
       }, 5000);
 
       return () => {
@@ -100,6 +105,7 @@ export default function Dashboard() {
               showQuiz2Results={showQuiz2Results}
               isTest2Completed={isTest2Completed}
               setIsTest2Completed={setIsTest2Completed}
+              setIsCountryAdded={setIsCountryAdded}
             />
             <br />
             <br />
