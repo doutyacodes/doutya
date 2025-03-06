@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import ContentGenerationLoading from '@/app/_components/ContentGenerationLoading';
 
 export default function Challenge({ selectedCareer }) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -242,6 +243,17 @@ export default function Challenge({ selectedCareer }) {
     return (
         <div className="bg-[#1f1f1f] mb-6 p-4 text-black">
             <Toaster />
+
+        {/* Loading Modal */}
+        <ContentGenerationLoading
+            isOpen={fetching}
+            onClose={() => setFetching(false)}
+            page="challenges" // Change this based on your current page
+            showDelay={1000} // Only show if loading takes more than 1 second
+            // Optional: auto close after 30 seconds
+            // autoCloseDelay={30000}
+        />
+
             <div className="flex gap-1 pl-2 pr-2 overflow-x-scroll">
                 <button
                     className={`bg-purple-400 text-white font-bold py-2 px-4 md:w-1/3 max-md:rounded ${activeTab === 'weekly' ? 'bg-purple-700' : ''}`}

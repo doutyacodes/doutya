@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 import ViewResult from '../ViewResult/ViewResult'
 import { ChevronDown } from 'lucide-react';
 import HistoryView from '../TestHistory/HistoryView'
+import ContentGenerationLoading from '@/app/_components/ContentGenerationLoading'
 
 function Tests({selectedCareer}) {
 
@@ -100,8 +101,8 @@ function Tests({selectedCareer}) {
             ))}
         </div>
         ) : (
-            <p className="text-center text-gray-600">No subjects found.</p>
-    )
+        <p className="text-center text-gray-600">No subjects found.</p>
+      )
   );
 
     const handleTakeTestClick = (subject) => {
@@ -162,7 +163,22 @@ function Tests({selectedCareer}) {
             <h2 className="text-white text-xl">WEEK - {currentWeek}/52</h2>
           </div>
 
-          {activeTab === 'weekly' ? <WeeklyTestsView /> : <HistoryView selectedCareer = {selectedCareer} currentWeek={currentWeek}/>}
+          {activeTab === 'weekly' ? (
+            <>
+              {/* Loading Modal */}
+              <ContentGenerationLoading
+                isOpen={isLoading}
+                onClose={() => setIsLoading(false)}
+                page="test" // Change this based on your current page
+                showDelay={1000} // Only show if loading takes more than 1 second
+                // Optional: auto close after 30 seconds
+                // autoCloseDelay={30000}
+              />
+
+              <WeeklyTestsView /> 
+            </>
+          )
+          : <HistoryView selectedCareer = {selectedCareer} currentWeek={currentWeek}/>}
         </div>
       </>
       )

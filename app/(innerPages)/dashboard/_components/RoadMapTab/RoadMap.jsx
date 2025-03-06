@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 import SelectCommunity from '../SelectCommunityModal/SelectCommunity';
 import { useRouter } from 'next/navigation';
+import ContentGenerationLoading from '@/app/_components/ContentGenerationLoading';
 
 function RoadMap({ selectedCareer }) {
   const [activeTab, setActiveTab] = useState('Educational Milestones');
@@ -148,6 +149,16 @@ function RoadMap({ selectedCareer }) {
 
   return (
     <div className="p-4 bg-gray-900 text-gray-200">
+
+      {/* Loading Modal */}
+      <ContentGenerationLoading
+         isOpen={isLoading}
+         onClose={() => setIsLoading(false)}
+         page="roadmap" // Change this based on your current page
+         showDelay={1000} // Only show if loading takes more than 1 second
+         // Optional: auto close after 30 seconds
+         // autoCloseDelay={30000}
+       />
 
       {/* Modal for community selection */}
       {showCommunityModal && (
