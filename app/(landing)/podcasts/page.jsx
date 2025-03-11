@@ -5,8 +5,8 @@ export default function PodcastPage() {
     const podcasts = [
       {
         id: 1,
-        title: 'The Launch Of Xortlist',
-        description: 'Xortlist is an innovative AI-powered career guidance platform designed to help individuals discover their ideal career paths.',
+        title: 'The Launch Of Xortcut',
+        description: 'Xortcut is an innovative AI-powered career guidance platform designed to help individuals discover their ideal career paths.',
         imageUrl: 'https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg',
         audioUrl: '/assets/podcasts/podcast1.mp3',
       },

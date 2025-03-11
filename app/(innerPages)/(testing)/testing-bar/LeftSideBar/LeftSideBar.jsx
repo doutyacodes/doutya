@@ -18,6 +18,7 @@ import GlobalApi from "@/app/_services/GlobalApi";
 import CareerGuideExplanation from "@/app/_components/CareerGuideExplanation";
 import CareerOnboarding from "@/app/_components/CareerOnboarding";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const LeftSideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -115,15 +116,15 @@ const LeftSideBar = () => {
         { name: "Career Suggestions", link: "/dashboard/careers/career-suggestions" },
       ],
     },
-    {
-      name: "Companies",
-      icon: <FaSuitcase className="text-xl" />,
-      link: "#",
-      submenus: [
-        { name: "Companies", link: "/company" },
-        { name: "My Companies", link: "/my-companies" },
-      ],
-    },
+    // {
+    //   name: "Companies",
+    //   icon: <FaSuitcase className="text-xl" />,
+    //   link: "#",
+    //   submenus: [
+    //     { name: "Companies", link: "/company" },
+    //     { name: "My Companies", link: "/my-companies" },
+    //   ],
+    // },
     {
       name: "My Profile",
       icon: <FaUser className="text-xl" />,
@@ -186,7 +187,13 @@ const LeftSideBar = () => {
         >
           <div className="my-4">
             <div className={`${isOpen ? "flex" : "block mb-10"} items-center justify-between relative gap-3`}>
-              <div className="text-xl font-bold">Logo</div>
+              <div className="text-xl font-bold">
+                <Image
+                  src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
+                  width={150}
+                  height={150}
+                />
+              </div>
               <button
                 onClick={toggleSidebars}
                 // max-md:hidden

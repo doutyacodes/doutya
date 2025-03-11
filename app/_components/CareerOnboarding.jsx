@@ -15,7 +15,7 @@ const CareerOnboarding = ({ forceShow = false, onClose}) => {
 
       // Determine whether to show the explanation
       if (savedDontShowAgain && !forceShow) {
-          setShowExplanation(false);
+        setShowOnboarding(false);
       }
   }, [forceShow]);
 
@@ -50,18 +50,18 @@ const CareerOnboarding = ({ forceShow = false, onClose}) => {
 
   const steps = [
     {
-      title: "Welcome to Xortlist",
+      title: "Welcome to Xortcut",
       content: (
         <div className="flex flex-col items-center space-y-6 text-center">
           <img 
             src={"/assets/images/logo-full.png"}
-            alt="Xortlist Logo" 
+            alt="Xortcut Logo" 
             className="w-48 h-auto mb-4 object-contain"
           />
           <h1 className="text-3xl font-bold text-white mb-4">Your AI-Powered Complete Career Companion</h1>
           <div className="space-y-4">
             <p className="text-gray-300 text-lg">
-              Welcome to Xortlist - Your Career Guidance Destination
+              Welcome to Xortcut - Your Career Guidance Destination
             </p>
             <p className="text-gray-300">
               More than a career platform, we are your dedicated partner. We help you identify the perfect 

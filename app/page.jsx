@@ -96,7 +96,7 @@ const Page = () => {
         "https://images.pexels.com/photos/3778966/pexels-photo-3778966.jpeg",
      
       description:
-        "Xortlist leverages cutting-edge AI algorithms to analyze your unique personality, strengths, and interests. Through engaging quizzes and insightful data, our system identifies career paths that align with who you truly are.",
+        "Xortcut leverages cutting-edge AI algorithms to analyze your unique personality, strengths, and interests. Through engaging quizzes and insightful data, our system identifies career paths that align with who you truly are.",
     },
     {
       id: 2,
@@ -104,7 +104,7 @@ const Page = () => {
       image:
         "https://images.pexels.com/photos/3756681/pexels-photo-3756681.jpeg",
       description:
-        "With a comprehensive career database powered by AI, Xortlist offers a diverse array of options—from traditional roles to trending, offbeat, and futuristic careers. Simply enter any career you’re curious about, and our AI generates a detailed, customized roadmap to guide you through the necessary steps to success.",
+        "With a comprehensive career database powered by AI, Xortcut offers a diverse array of options—from traditional roles to trending, offbeat, and futuristic careers. Simply enter any career you’re curious about, and our AI generates a detailed, customized roadmap to guide you through the necessary steps to success.",
     },
     {
       id: 3,
@@ -112,7 +112,7 @@ const Page = () => {
       image:
         "https://images.pexels.com/photos/4065137/pexels-photo-4065137.jpeg",
       description:
-        "After selecting a career path, Xortlist utilizes advanced AI to create a personalized roadmap, outlining essential steps such as education, skill acquisition, and internships. Users can track their progress, set milestones, get tested continously and receive real-time feedback, ensuring they stay motivated and on track throughout their journey.",
+        "After selecting a career path, Xortcut utilizes advanced AI to create a personalized roadmap, outlining essential steps such as education, skill acquisition, and internships. Users can track their progress, set milestones, get tested continously and receive real-time feedback, ensuring they stay motivated and on track throughout their journey.",
     },
   ];
   const activeItem = revenueList.find((item) => item.id === activeLink);
@@ -141,7 +141,7 @@ const Page = () => {
   const resources = [
     {
       type: "news",
-      title: "Xortlist named a leader in Forrester Wave 2024",
+      title: "Xortcut named a leader in Forrester Wave 2024",
       image: "https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg",
       description: "Revenue Orchestration Platforms For B2B",
     },
@@ -158,7 +158,7 @@ const Page = () => {
       image: null,
     },
     {
-      type: "xortlist labs",
+      type: "Xortcut labs",
       title:
         "Selling is more complex than ever, and 24M sales calls told us why",
       description: "",
@@ -199,7 +199,7 @@ const Page = () => {
           </h1>
          <p className="lg:text-white lg:text-5xl text-xl font-bold lg:leading-relaxed leading-normal lg:w-2/5 max-lg:text-center uppercase"> Are You Ready to Discover It?</p>
           <p className=" max-lg:text-center md:text-white text-black font-medium lg:w-3/6">
-          Discover, navigate, and conquer your career options with Xortlist’s smart AI-driven insights.
+          Discover, navigate, and conquer your career options with Xortcut's smart AI-driven insights.
           </p>
           <div className="flex max-lg:justify-center w-full">
             <Link

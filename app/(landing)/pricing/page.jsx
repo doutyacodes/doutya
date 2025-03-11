@@ -63,7 +63,7 @@ const PlansPage = () => {
         transition={{ duration: 1 }}
         className="text-5xl font-bold text-center mb-12 text-white"
       >
-        Choose Your Xortlist Plan
+        Choose Your Xortcut Plan
       </motion.h1>
       <div className="grid gap-10 md:grid-cols-2">
         {plans.map((plan) => (

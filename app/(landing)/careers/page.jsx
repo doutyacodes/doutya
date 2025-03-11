@@ -68,7 +68,7 @@ const page = () => {
             BECOME A XORTIAN
           </h1>
           <h6 className="text-white font-medium text-sm max-md:text-center">
-            Be part of Xortlist’s worldwide expansion!
+            Be part of Xortcut's worldwide expansion!
           </h6>
           <Image
             src={"/assets/images/trophy1.webp"}

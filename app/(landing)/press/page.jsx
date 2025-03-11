@@ -28,53 +28,53 @@ const Press = () => {
       {
         date: "September 4, 2024",
         title:
-          "Independent Research Firm Names Xortlist a Leader in Revenue Orchestration Platforms",
+          "Independent Research Firm Names Xortcut a Leader in Revenue Orchestration Platforms",
         category: "Company news",
       },
       {
         date: "August 6, 2024",
         title:
-          "Xortlist Named to the Forbes Cloud 100 for the Fifth Consecutive Year",
+          "Xortcut Named to the Forbes Cloud 100 for the Fifth Consecutive Year",
         category: "Company news",
       },
       {
         date: "July 25, 2024",
         title:
-          "IDC MarketScape Names Xortlist a Leader in Worldwide Revenue Intelligence Platforms 2024 Vendor Assessment",
+          "IDC MarketScape Names Xortcut a Leader in Worldwide Revenue Intelligence Platforms 2024 Vendor Assessment",
         category: "Company news",
       },
       {
         date: "June 26, 2024",
         title:
-          "Xortlist Named 'Best AI-Based Solution for Sales' in 2024 AI Breakthrough Awards",
+          "Xortcut Named 'Best AI-Based Solution for Sales' in 2024 AI Breakthrough Awards",
         category: "Company news",
       },
       {
         date: "June 25, 2024",
         title:
-          "Xortlist Unveils New AI Capabilities to Help Revenue Teams Drive Excellence in Execution",
+          "Xortcut Unveils New AI Capabilities to Help Revenue Teams Drive Excellence in Execution",
         category: "Company news",
       },
       {
         date: "May 15, 2024",
         title:
-          "Xortlist Recognizes Top Companies Harnessing AI for Revenue Success",
+          "Xortcut Recognizes Top Companies Harnessing AI for Revenue Success",
         category: "Company news",
       },
       {
         date: "May 15, 2024",
-        title: "Xortlist Appoints Emily He as Chief Marketing Officer",
+        title: "Xortcut Appoints Emily He as Chief Marketing Officer",
         category: "Company news",
       },
       {
         date: "March 26, 2024",
         title:
-          "Xortlist Introduces Industry’s First AI 'Ask Anything' Solution for Individual Contacts to Help Revenue Teams Gain More Complete Insights and Boost Efficiency",
+          "Xortcut Introduces Industry’s First AI 'Ask Anything' Solution for Individual Contacts to Help Revenue Teams Gain More Complete Insights and Boost Efficiency",
         category: "Company news",
       },
       {
         date: "March 5, 2024",
-        title: "Xortlist Named to Forbes' List of America’s Best Startup Employers",
+        title: "Xortcut Named to Forbes' List of America’s Best Startup Employers",
         category: "Company news",
       },
     ],
@@ -82,29 +82,29 @@ const Press = () => {
       {
         date: "September 10, 2024",
         title:
-          "Xortlist Launches Enhanced Conversation Intelligence Feature for Real-Time Sales Coaching",
+          "Xortcut Launches Enhanced Conversation Intelligence Feature for Real-Time Sales Coaching",
         category: "Product news",
       },
       {
         date: "August 22, 2024",
         title:
-          "Xortlist Expands AI-Powered Forecasting Tools to Improve Revenue Predictions",
+          "Xortcut Expands AI-Powered Forecasting Tools to Improve Revenue Predictions",
         category: "Product news",
       },
       {
         date: "July 12, 2024",
-        title: "Xortlist Adds Multilingual Support for Global Sales Teams",
+        title: "Xortcut Adds Multilingual Support for Global Sales Teams",
         category: "Product news",
       },
       {
         date: "June 30, 2024",
         title:
-          "Xortlist Integrates with Major CRM Systems to Provide Seamless Data Syncing",
+          "Xortcut Integrates with Major CRM Systems to Provide Seamless Data Syncing",
         category: "Product news",
       },
       {
         date: "May 20, 2024",
-        title: "Xortlist Introduces New Mobile App for On-the-Go Sales Insights",
+        title: "Xortcut Introduces New Mobile App for On-the-Go Sales Insights",
         category: "Product news",
       },
     ],
@@ -143,7 +143,7 @@ const Press = () => {
             NEWSROOM
           </div>
           <p className="text-[#3e0075] text-center md:mt-10 text-sm font-medium">
-            The latest news on Xortlist
+            The latest news on Xortcut
           </p>
           <div className="md:mt-10 flex justify-center items-center gap-5 flex-wrap">
             <div className="p-4 bg-[#f2f2f2] min-w-72 rounded-md flex items-center justify-between">
@@ -192,7 +192,7 @@ const Press = () => {
                 Latest Story
               </h6>
               <p className="text-white text-3xl font-medium">
-                Independent Research Firm Names Xortlist a Leader in Revenue
+                Independent Research Firm Names Xortcut a Leader in Revenue
                 Orchestration Platforms{" "}
               </p>
             </div>

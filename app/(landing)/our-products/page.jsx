@@ -9,7 +9,7 @@ import Header from '@/app/_components/Header';
 
 const products = [
   {
-    name: "Xortlist Kids",
+    name: "Xortcut Kids",
     subtitle: "Exploration for Ages 6-9",
     description:
       "An engaging introduction to self-discovery, helping children uncover their unique strengths and interests through playful activities and games. Perfect for younger kids ready to explore!",
@@ -17,18 +17,18 @@ const products = [
     slug: "kids",
   },
   {
-    name: "Xortlist Junior",
+    name: "Xortcut Junior",
     subtitle: "Guided Growth for Ages 10-13",
     description:
-      "Building on early exploration, Xortlist Junior offers structured assessments that help pre-teens identify and develop emerging skills and passions in a fun and interactive way.",
+      "Building on early exploration, Xortcut Junior offers structured assessments that help pre-teens identify and develop emerging skills and passions in a fun and interactive way.",
     image: "https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg",
     slug: "junior",
   },
   {
-    name: "Xortlist Senior",
+    name: "Xortcut Senior",
     subtitle: "Future Focused for Ages 14-17",
     description:
-      "A comprehensive guidance program for teens ready to explore career paths. Xortlist Senior provides advanced assessments, milestone tracking, and mentorship opportunities.",
+      "A comprehensive guidance program for teens ready to explore career paths. Xortcut Senior provides advanced assessments, milestone tracking, and mentorship opportunities.",
     image: "https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg",
     slug: "senior",
   },
@@ -80,7 +80,7 @@ const ProductsPage = () => {
   return (
     <div className="overflow-hidden">
         <Header />
-      <h1 className="text-4xl text-center font-bold my-12 text-white">Explore Xortlist Programs</h1>
+      <h1 className="text-4xl text-center font-bold my-12 text-white">Explore Xortcut Programs</h1>
       {products.map((product) => (
         <ProductSection key={product.slug} product={product} />
       ))}

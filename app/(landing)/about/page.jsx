@@ -60,14 +60,14 @@ const page = () => {
 
                   <>
                     <p className="text-white font-medium text-sm text-justify tracking-wide">
-                      At Xortlist, we are dedicated to revolutionizing career
+                      At Xortcut, we are dedicated to revolutionizing career
                       guidance for the next generation. Our innovative platform
                       leverages advanced AI technology to analyze individual
                       strengths and interests, providing personalized career
                       suggestions that align with each user’s unique
                       personality. With a diverse database of career
                       options—ranging from traditional to trending and offbeat
-                      paths—Xortlist empowers young people to explore a variety
+                      paths—Xortcut empowers young people to explore a variety
                       of opportunities. Our actionable roadmaps guide users
                       every step of the way, offering milestone tracking and
                       real-time feedback to inspire confidence and clarity in
@@ -84,10 +84,10 @@ const page = () => {
           <div className="flex max-md:flex-col w-full pt-5">
             <div className="w-full space-y-5 flex flex-col justify-center">
               <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
-                WE ARE XORTLIST
+                WE ARE XORTCUT
               </h1>
               <h6 className="text-white font-medium text-sm max-md:text-center">
-                At Xortlist, our mission is to empower individuals to discover
+                At Xortcut, our mission is to empower individuals to discover
                 their unique strengths and passions through personalized career
                 guidance. We leverage advanced AI technology to provide tailored
                 career suggestions and actionable roadmaps, ensuring that every
@@ -104,10 +104,10 @@ const page = () => {
           <div className="flex flex-row-reverse max-md:flex-col w-full pt-5">
             <div className="w-full space-y-5 flex flex-col justify-center">
               <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
-                ABOUT XORTLIST
+                ABOUT XORTCUT
               </h1>
               <h6 className="text-white font-medium text-sm max-md:text-center">
-              At Xortlist, we are dedicated to revolutionizing career guidance for the next generation. Our innovative platform leverages advanced AI technology to analyze individual strengths and interests, providing personalized career suggestions that align with each user’s unique personality. With a diverse database of career options—ranging from traditional to trending and offbeat paths—Xortlist empowers young people to explore a variety of opportunities. Our actionable roadmaps guide users every step of the way, offering milestone tracking and real-time feedback to inspire confidence and clarity in their career journeys. Join us as we help you discover and achieve a fulfilling career that resonates with your passions!
+              At Xortcut, we are dedicated to revolutionizing career guidance for the next generation. Our innovative platform leverages advanced AI technology to analyze individual strengths and interests, providing personalized career suggestions that align with each user’s unique personality. With a diverse database of career options—ranging from traditional to trending and offbeat paths—Xortcut empowers young people to explore a variety of opportunities. Our actionable roadmaps guide users every step of the way, offering milestone tracking and real-time feedback to inspire confidence and clarity in their career journeys. Join us as we help you discover and achieve a fulfilling career that resonates with your passions!
               </h6>
             </div>
             <Image src={"/assets/images/trophy1.webp"} width={800} height={800} />

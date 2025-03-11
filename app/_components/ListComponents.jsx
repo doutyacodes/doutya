@@ -52,7 +52,7 @@ const ListComponents = () => {
                 >
                   <FaUserGraduate color="#6a1b9a" size={16} />
                   <p className="text-gray-700 text-xs font-semibold">
-                    Xortlist
+                    Xortcut
                   </p>
                 </Link>
               </li>
@@ -63,7 +63,7 @@ const ListComponents = () => {
                 >
                   <FaUserGraduate color="#43a047" size={16} />
                   <p className="text-gray-700 text-xs font-semibold">
-                    Xortlist - Junior
+                    Xortcut - Junior
                   </p>
                 </Link>
               </li>
@@ -74,7 +74,7 @@ const ListComponents = () => {
                 >
                   <FaChild color="#f4511e" size={16} />
                   <p className="text-gray-700 text-xs font-semibold">
-                    Xortlist - Kids
+                    Xortcut - Kids
                   </p>
                 </Link>
               </li>
@@ -85,7 +85,7 @@ const ListComponents = () => {
                 >
                   <FaSchool color="#1e88e5" size={16} />
                   <p className="text-gray-700 text-xs font-semibold">
-                    Xortlist - Schools
+                    Xortcut - Schools
                   </p>
                 </Link>
               </li>
@@ -96,7 +96,7 @@ const ListComponents = () => {
                 >
                   <FaBuilding color="#e53935" size={16} />
                   <p className="text-gray-700 text-xs font-semibold">
-                    Xortlist - College
+                    Xortcut - College
                   </p>
                 </Link>
               </li>
