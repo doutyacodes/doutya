@@ -79,7 +79,7 @@ const Principle = () => {
           <div className="flex max-md:flex-col w-full pt-5">
             <div className="w-full space-y-10 flex flex-col justify-center">
               <h1 className="text-white text-6xl max-md:text-4xl font-bold max-md:text-center">
-                WE ARE XORTLIST
+                WE ARE XORTCUT
               </h1>
               <h6 className="text-white font-medium text-sm max-md:text-center">
                 We’re on a mission to help companies transform their revenue
@@ -101,7 +101,7 @@ const Principle = () => {
         <div className="container py-5 mx-auto px-3">
           <div className="w-full space-y-10 flex flex-col justify-center">
             <h1 className="text-[#3e0075] text-4xl font-bold max-md:text-center">
-              WHAT DOES IT MEAN TO LEAD AT XORTLIST?
+              WHAT DOES IT MEAN TO LEAD AT XORTCUT?
             </h1>
             <h6 className="text-[#3e0075] font-medium text-sm max-md:text-center">
               We’re on a mission to help companies transform their revenue

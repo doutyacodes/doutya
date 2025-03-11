@@ -7,28 +7,28 @@
 
 // const productDetails = {
 //   kids: {
-//     title: "Xortlist Kids",
+//     title: "Xortcut Kids",
 //     subtitle: "Exploration for Ages 6-9",
 //     heroImage: "https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg",
 //     intro:
-//       "Xortlist Kids offers a playful environment for younger children to explore their interests and strengths. Through games, activities, and interactive quizzes, children uncover their unique qualities in a fun, engaging way.",
+//       "Xortcut Kids offers a playful environment for younger children to explore their interests and strengths. Through games, activities, and interactive quizzes, children uncover their unique qualities in a fun, engaging way.",
 //     features: [
 //       { title: "Playful Exploration", description: "Engaging activities designed to help children discover their interests through play." },
 //       { title: "Personalized Learning", description: "Age-appropriate quizzes and activities tailored for young minds." },
 //       { title: "Safe and Secure", description: "Strict privacy and data protection, keeping children’s information secure." },
 //     ],
 //     testimonials: [
-//       { name: "Jane Doe", feedback: "Xortlist Kids helped my child discover new interests in a safe, fun environment!" },
+//       { name: "Jane Doe", feedback: "Xortcut Kids helped my child discover new interests in a safe, fun environment!" },
 //       { name: "John Smith", feedback: "A fantastic tool for young kids to learn about themselves in an interactive way." },
 //     ],
-//     cta: "Start the journey with Xortlist Kids today!",
+//     cta: "Start the journey with Xortcut Kids today!",
 //   },
 //   junior: {
-//     title: "Xortlist Junior",
+//     title: "Xortcut Junior",
 //     subtitle: "Guided Growth for Ages 10-13",
 //     heroImage: "https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg",
 //     intro:
-//       "Xortlist Junior provides structured assessments and fun challenges, helping pre-teens align their interests with academic and extracurricular paths. Discover your passions and unlock potential with Xortlist Junior.",
+//       "Xortcut Junior provides structured assessments and fun challenges, helping pre-teens align their interests with academic and extracurricular paths. Discover your passions and unlock potential with Xortcut Junior.",
 //     features: [
 //       { title: "Skill Building", description: "Encourages development of emerging skills through interactive challenges." },
 //       { title: "Goal Setting", description: "Teaches pre-teens to set basic goals and start exploring potential careers." },
@@ -36,26 +36,26 @@
 //     ],
 //     testimonials: [
 //       { name: "Alice Johnson", feedback: "The guided challenges are perfect for my pre-teen to discover their strengths." },
-//       { name: "Michael Brown", feedback: "Xortlist Junior gave my child the confidence to explore new interests." },
+//       { name: "Michael Brown", feedback: "Xortcut Junior gave my child the confidence to explore new interests." },
 //     ],
-//     cta: "Encourage growth with Xortlist Junior!",
+//     cta: "Encourage growth with Xortcut Junior!",
 //   },
 //   senior: {
-//     title: "Xortlist Senior",
+//     title: "Xortcut Senior",
 //     subtitle: "Future Focused for Ages 14-17",
 //     heroImage: "https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg",
 //     intro:
-//       "Xortlist Senior equips teens with the tools they need to make informed decisions about their future. Through advanced assessments and real-world simulations, teens can explore career paths and set achievable goals.",
+//       "Xortcut Senior equips teens with the tools they need to make informed decisions about their future. Through advanced assessments and real-world simulations, teens can explore career paths and set achievable goals.",
 //     features: [
 //       { title: "Career Exploration", description: "Hands-on simulations and assessments for discovering career paths." },
 //       { title: "Mentorship Opportunities", description: "Connects students with professionals for real-world insights." },
 //       { title: "Milestone Tracking", description: "Helps teens track progress toward their goals and future career." },
 //     ],
 //     testimonials: [
-//       { name: "David White", feedback: "Xortlist Senior helped my teenager decide on their future path with confidence." },
+//       { name: "David White", feedback: "Xortcut Senior helped my teenager decide on their future path with confidence." },
 //       { name: "Laura Green", feedback: "Amazing guidance and mentorship opportunities for young adults." },
 //     ],
-//     cta: "Start planning your future with Xortlist Senior!",
+//     cta: "Start planning your future with Xortcut Senior!",
 //   },
 // };
 

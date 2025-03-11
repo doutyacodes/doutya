@@ -923,6 +923,18 @@ function SignUp() {
 
         toast.success(t("successMessage"));
         // router.push("/country");
+        if (age <= 9) {
+          localStorage.setItem('dashboardUrl', '/dashboard_kids');
+          router.push('/dashboard_kids');
+        } 
+        else if (age <= 13) {
+          localStorage.setItem('dashboardUrl', '/dashboard_junior');
+          resp.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard_junior');
+        } 
+        else {
+          localStorage.setItem('dashboardUrl', '/dashboard');
+          resp.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard');
+        }
       } else {
         const errorMessage = response.data?.message || t("defaultErrorMessage");
         toast.error(`Error: ${errorMessage}`);
@@ -953,276 +965,864 @@ function SignUp() {
 
   const collegeStudent = watch("student");
 
+  // if (step === "language") {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
+  //       <Toaster />
+  //       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+  //         <h1 className="text-xl font-bold mb-4 text-center">
+  //           Choose Your Language
+  //         </h1>
+  //         <p className="text-center mb-4">
+  //           You won't be able to modify it later, so choose wisely.
+  //         </p>
+  //         <div className="mb-4">
+  //           <select
+  //             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //             value={selectedLanguage}
+  //             onChange={(e) => handleLanguageChange(e)}
+  //           >
+  //             <option value="en">English</option>
+  //             <option value="hi">Hindi</option>
+  //             <option value="mar">Marathi</option>
+  //             <option value="ur">Urdu</option>
+  //             <option value="sp">Spanish</option>
+  //             <option value="ben">Bengali</option>
+  //             <option value="assa">Assamese</option>
+  //             <option value="ge">German</option>
+  //             <option value="tam">Tamil</option>
+  //             <option value="mal">Malayalam</option>
+  //           </select>
+  //         </div>
+  //         <button
+  //           onClick={handleNext}
+  //           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+  //         >
+  //           Next
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  // if (step === "dob") {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
+  //       <Toaster />
+  //       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+  //         <h1 className="text-xl font-bold mb-4 text-center">
+  //           Enter Your Date of Birth
+  //         </h1>
+  //         <p className="text-center mb-4">
+  //           You won't be able to modify it later, so enter carefully.
+  //         </p>
+  //         <div className="mb-4 w-full">
+  //           <input
+  //             type="date"
+  //             value={selectedDOB}
+  //             placeholder="Enter your Date of Birth"
+  //             onChange={handleDOBChange}
+  //             max={new Date().toISOString().split("T")[0]}
+  //             className="mt-1 block w-full min-w-72 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //             required
+  //           />
+  //           {dobError && (
+  //             <p className="mt-2 text-sm text-red-600">{dobError}</p>
+  //           )}
+  //         </div>
+  //         <button
+  //           onClick={handleNext}
+  //           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+  //           disabled={!selectedDOB || dobError}
+  //         >
+  //           Next
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  // if (step === "education_level") {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
+  //       <Toaster />
+  //       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+  //         <h1 className="text-xl font-bold mb-4 text-center">
+  //           Choose Your Education Level
+  //         </h1>
+  //         <p className="text-center mb-4">
+  //           You won't be able to modify it later, so choose wisely.
+  //         </p>
+  //         <div className="mb-4">
+  //           <label
+  //             htmlFor="educationLevelSlider"
+  //             className="block text-sm font-medium text-gray-700"
+  //           >
+  //             Education Level
+  //           </label>
+  //           <input
+  //             type="range"
+  //             id="educationLevelSlider"
+  //             min="0"
+  //             max="2"
+  //             step="1"
+  //             value={educationLevel}
+  //             onChange={(e) => {
+  //               if (e.target.value == 1) {
+  //                 setIsCollegeStudent(true);
+  //               } else {
+  //                 setIsCollegeStudent(false);
+  //               }
+  //               setEducationLevel(e.target.value);
+  //             }}
+  //             className="w-full mt-2"
+  //           />
+  //           <div className="flex justify-between mt-2 gap-1">
+  //             <span
+  //               className={
+  //                 educationLevel == 0
+  //                   ? "font-bold text-wrap w-1/3 text-left"
+  //                   : " text-wrap w-1/3 text-left"
+  //               }
+  //             >
+  //               School
+  //             </span>
+  //             <span
+  //               className={
+  //                 educationLevel == 1
+  //                   ? "font-bold text-wrap w-1/3 text-center"
+  //                   : " text-wrap w-1/3 text-center"
+  //               }
+  //             >
+  //               College
+  //             </span>
+  //             <span
+  //               className={
+  //                 educationLevel == 2
+  //                   ? "font-bold text-wrap w-1/3 text-end"
+  //                   : " text-wrap w-1/3 text-end"
+  //               }
+  //             >
+  //               Completed Education
+  //             </span>
+  //           </div>
+  //         </div>
+  //         <button
+  //           onClick={handleNext}
+  //           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+  //         >
+  //           Next
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  // if (step === "reason") {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
+  //       <Toaster />
+  //       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+  //         <h1 className="text-xl font-bold mb-4 text-center">
+  //           Why are you here?
+  //         </h1>
+  //         <div className="mb-4">
+  //           <input
+  //             type="range"
+  //             min="0"
+  //             max="1"
+  //             step="1"
+  //             value={reason}
+  //             onChange={(e) => setReason(parseInt(e.target.value))}
+  //             className="w-full mt-2"
+  //           />
+  //           <div className="flex justify-between mt-2 gap-1">
+  //             <span
+  //               className={
+  //                 reason == 0
+  //                   ? "font-bold text-wrap w-1/2 text-left"
+  //                   : " text-wrap w-1/2 text-left"
+  //               }
+  //             >
+  //               New Job
+  //             </span>
+  //             <span
+  //               className={
+  //                 reason == 1
+  //                   ? "font-bold text-wrap w-1/2 text-end"
+  //                   : " text-wrap w-1/2 text-end"
+  //               }
+  //             >
+  //               Career Change
+  //             </span>
+  //           </div>
+  //         </div>
+  //         <button
+  //           onClick={handleNext}
+  //           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+  //         >
+  //           Next
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  // if (step === "additional_info") {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
+  //       <Toaster />
+  //       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+  //         <h1 className="text-xl font-bold mb-4 text-center">
+  //           Additional Information
+  //         </h1>
+  //         <form>
+  //           <div className="mb-4">
+  //             <label className="block text-sm font-medium text-gray-700">Education Qualification</label>
+  //             <input
+  //               {...register("educationQualification", { required: true })}
+  //               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //             />
+  //           </div>
+  //           <div className="mb-4">
+  //             <label className="block text-sm font-medium text-gray-700">University</label>
+  //             <input
+  //               {...register("university", { required: true })}
+  //               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //             />
+  //           </div>
+  //           {reason === 1 && (
+  //             <>
+  //               <div className="mb-4">
+  //                 <label className="block text-sm font-medium text-gray-700">Experience (Years)</label>
+  //                 <input
+  //                   type="number"
+  //                   {...register("experience", { required: true, min: 0 })}
+  //                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //                 />
+  //               </div>
+  //               <div className="mb-4">
+  //                 <label className="block text-sm font-medium text-gray-700">Current Job</label>
+  //                 <input
+  //                   {...register("currentJob", { required: true })}
+  //                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //                 />
+  //               </div>
+  //             </>
+  //           )}
+  //           <button
+  //             type="submit"
+  //             onClick={handleNext}
+  //             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+  //           >
+  //             Submit
+  //           </button>
+  //         </form>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  // return (
+  //   <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
+  //     <Toaster />
+  //     <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+  //       <h1 className="text-2xl font-bold mb-6 text-center">{t("title")}</h1>
+  //       <form onSubmit={handleSubmit(onSubmit)}>
+  //         <div className="flex gap-4 mb-4">
+  //           <div className="flex-1">
+  //             <select
+  //               id="gender"
+  //               name="gender"
+  //               className="mt-6 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //               {...register("gender", { required: t("genderRequired") })}
+  //             >
+  //               <option value="">{t("gender")}</option>
+  //               <option value="Mr">{t("genderOptions.mr")}</option>
+  //               <option value="Miss">{t("genderOptions.miss")}</option>
+  //               <option value="Mrs">{t("genderOptions.mrs")}</option>
+  //             </select>
+  //             {errors.gender && (
+  //               <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>
+  //             )}
+  //           </div>
+  //           <div className="flex-1">
+  //             <label
+  //               htmlFor="name"
+  //               className="block text-sm font-medium text-gray-700"
+  //             >
+  //               {t("name")}
+  //             </label>
+  //             <input
+  //               type="text"
+  //               {...register("name")}
+  //               className="mt-1 block w-full px-3 py-[6.5px] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //               required
+  //             />
+  //           </div>
+  //         </div>
+  //         <div className="mb-4">
+  //           <label
+  //             htmlFor="username"
+  //             className="block text-sm font-medium text-gray-700"
+  //           >
+  //             {t("username")}
+  //           </label>
+  //           <input
+  //             type="text"
+  //             {...register("username")}
+  //             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //             required
+  //           />
+  //         </div>
+  //         {errors.username && (
+  //           <p className="text-red-500 text-sm mt-1">
+  //             {errors.username.message}
+  //           </p>
+  //         )}
+  //         <div className="mb-4">
+  //           <label
+  //             htmlFor="password"
+  //             className="block text-sm font-medium text-gray-700"
+  //           >
+  //             {t("password")}
+  //           </label>
+  //           <input
+  //             type="password"
+  //             {...register("password", {
+  //               required: t("passwordRequired"),
+  //               minLength: {
+  //                 value: 6,
+  //                 message: t("passwordMinLength"),
+  //               },
+  //               pattern: {
+  //                 value: /(?=.*[!@#$%^&*])/,
+  //                 message: t("passwordPattern"),
+  //               },
+  //             })}
+  //             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //             required
+  //           />
+  //           {errors.password && (
+  //             <p className="text-red-500 text-sm mt-1">
+  //               {errors.password.message}
+  //             </p>
+  //           )}
+  //         </div>
+  //         <div className="mb-4">
+  //           <label
+  //             htmlFor="confirmPassword"
+  //             className="block text-sm font-medium text-gray-700"
+  //           >
+  //             {t("confirmPassword")}
+  //           </label>
+  //           <input
+  //             type="password"
+  //             {...register("confirmPassword")}
+  //             className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+  //               errors.confirmPassword ? "border-red-500" : ""
+  //             }`}
+  //             required
+  //           />
+  //           {errors.confirmPassword && (
+  //             <p className="mt-2 text-sm text-red-600">
+  //               {errors.confirmPassword.message}
+  //             </p>
+  //           )}
+  //           <div className="md:text-sm text-xs">{t("passWord")}</div>
+  //         </div>
+  //         <div className="mb-4">
+  //             <label
+  //               htmlFor="mobile"
+  //               className="block text-sm font-medium text-gray-700"
+  //             >
+  //               {t("mobile")}
+  //             </label>
+  //             <input
+  //               type="tel" // Changed from 'number' to 'tel'
+  //               {...register("mobile", {
+  //                 minLength: {
+  //                   value: 10,
+  //                   message: t("mobileMinLength"),
+  //                 },
+  //               })}
+  //               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //               required
+  //             />
+  //             {errors.mobile && (
+  //               <p className="text-red-500 text-sm mt-1">
+  //                 {errors.mobile.message}
+  //               </p>
+  //             )}
+  //           </div>
+
+  //           <div>
+  //             <label className="block text-sm font-medium text-gray-700">Institute</label>
+  //             <select
+  //               {...register("instituteId", { 
+  //                 required: "Institute is required",
+  //                 onChange: (e) => {
+  //                   const instituteId = e.target.value;
+  //                   // Trigger fetching classes for this specific child
+  //                   fetchClassesForChild(instituteId);
+  //                 } 
+  //               })}
+  //               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //             >
+  //               <option value="">Select Institute</option>
+  //               {institutions.map((institute) => (
+  //                 <option key={institute.id} value={institute.id}>
+  //                   {institute.name}
+  //                 </option>
+  //               ))}
+  //             </select>
+  //             {errors.childUsers?.institute && (
+  //               <p className="mt-1 text-sm text-red-600">{errors.childUsers.institute.message}</p>
+  //             )}
+  //           </div>
+      
+  //           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+  //             <div>
+  //               <label className="block text-sm font-medium text-gray-700">Class</label>
+  //               <select
+  //                 {...register("classId", { 
+  //                   required: "Class is required",
+  //                   onChange: (e) => {
+  //                     const classId = e.target.value;
+  //                     // Trigger fetching divisions for this specific child
+  //                     fetchDivisionsForChild(classId);
+  //                   }
+  //                 })}
+  //                 disabled={!childClassOptions || childClassOptions.length === 0}
+  //                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:opacity-50"
+  //               >
+  //                 <option value="">Select Class</option>
+  //                 {childClassOptions?.map((classItem) => (
+  //                   <option key={classItem.id} value={classItem.id}>
+  //                     {classItem.name}
+  //                   </option>
+  //                 ))}
+  //               </select>
+  //               {errors.childUsers?.class && (
+  //                 <p className="mt-1 text-sm text-red-600">{errors.childUsers.class.message}</p>
+  //               )}
+  //             </div>
+      
+  //             <div>
+  //               <label className="block text-sm font-medium text-gray-700">Division</label>
+  //               <select
+  //                 {...register("divisionId", { required: "Division is required" })}
+  //                 disabled={!childDivisionOptions || childDivisionOptions.length === 0}
+  //                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:opacity-50"
+  //               >
+  //                 <option value="">Select Division</option>
+  //                 {childDivisionOptions.map((division) => (
+  //                   <option key={division.id} value={division.id}>
+  //                     {division.name}
+  //                   </option>
+  //                 ))}
+  //               </select>
+  //               {errors.childUsers?.division && (
+  //                 <p className="mt-1 text-sm text-red-600">{errors.childUsers.division.message}</p>
+  //               )}
+  //             </div>
+  //           </div>
+
+  //           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+  //               <div>
+  //                 <label className="block text-sm font-medium text-gray-700">Academic Year Start</label>
+  //                 <input
+  //                   type="month"
+  //                   {...register("academicYearStart", {
+  //                     required: "Academic year start is required"
+  //                   })}
+  //                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //                 />
+  //                 {errors.childUsers?.academicYearStart && (
+  //                   <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearStart.message}</p>
+  //                 )}
+  //               </div>
+  //               <div>
+  //                 <label className="block text-sm font-medium text-gray-700">Academic Year End</label>
+  //                 <input
+  //                   type="month"
+  //                   {...register("academicYearEnd", {
+  //                     required: "Academic year end is required"
+  //                   })}
+  //                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //                 />
+  //                 {errors.childUsers?.academicYearEnd && (
+  //                   <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearEnd.message}</p>
+  //                 )}
+  //               </div>
+  //           </div>
+
+  //         {ageCategory !== "kids" && educationLevel!=0 && (
+  //           <div className="mb-4">
+  //             <label
+  //               htmlFor="highestEducation"
+  //               className="block text-sm font-medium text-gray-700"
+  //             >
+  //               {isCollegeStudent ? "Current Education" : "Highest Education"}
+  //             </label>
+  //             <select
+  //               id="highestEducation"
+  //               {...register("education", {
+  //                 required:
+  //                   ageCategory !== "kids" ? t("educationRequired") : false,
+  //               })}
+  //               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //               required={ageCategory !== "kids"}
+  //             >
+  //               <option value="">
+  //                 Select{" "}
+  //                 {isCollegeStudent ? "Current Education" : "Highest Education"}
+  //               </option>
+
+  //               {ageCategory === "junior" && (
+  //                 <>
+  //                   <option value="10th Std">{t("10th Std")}</option>
+  //                   <option value="12th Std">{t("12th Std")}</option>
+  //                 </>
+  //               )}
+
+  //               <option value="Bachelor's Degree">
+  //                 {t("bachelorsDegree")}
+  //               </option>
+  //               <option value="Associates Degree">
+  //                 {t("associateDegree")}
+  //               </option>
+  //               <option value="Masters Degree">{t("mastersDegree")}</option>
+  //             </select>
+  //             {isCollegeStudent && (
+  //               <>
+  //                 <div className="my-4">
+  //                   <label
+  //                     htmlFor="college"
+  //                     className="block text-sm font-medium text-gray-700"
+  //                   >
+  //                     {t("college")}
+  //                   </label>
+  //                   <input
+  //                     type="text"
+  //                     {...register("college")}
+  //                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //                   />
+  //                 </div>
+  //                 <div className="mb-4">
+  //                   <label
+  //                     htmlFor="university"
+  //                     className="block text-sm font-medium text-gray-700"
+  //                   >
+  //                     {t("university")}
+  //                   </label>
+  //                   <input
+  //                     type="text"
+  //                     {...register("university")}
+  //                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+  //                   />
+  //                 </div>
+  //               </>
+  //             )}
+  //             {errors.education && (
+  //               <p className="text-red-500 text-sm mt-1">
+  //                 {errors.education.message}
+  //               </p>
+  //             )}
+  //           </div>
+  //         )}
+
+  //         <div className="mb-4">
+  //           <button
+  //             type="submit"
+  //             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+  //           >
+  //             {t("submit")}
+  //           </button>
+  //         </div>
+  //       </form>
+  //       <div className="flex justify-between">
+  //         <div className="flex justify-between gap-2">
+  //           <span className="text-slate-400">{t("alreadyRegistered")}</span>
+  //           <Link href="/login" className="text-blue-500 hover:text-blue-600">
+  //             {t("login")}
+  //           </Link>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
+
+  // Language Step
   if (step === "language") {
     return (
-      <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
-        <Toaster />
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-          <h1 className="text-xl font-bold mb-4 text-center">
-            Choose Your Language
-          </h1>
-          <p className="text-center mb-4">
-            You won't be able to modify it later, so choose wisely.
-          </p>
-          <div className="mb-4">
-            <select
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              value={selectedLanguage}
-              onChange={(e) => handleLanguageChange(e)}
-            >
-              <option value="en">English</option>
-              <option value="hi">Hindi</option>
-              <option value="mar">Marathi</option>
-              <option value="ur">Urdu</option>
-              <option value="sp">Spanish</option>
-              <option value="ben">Bengali</option>
-              <option value="assa">Assamese</option>
-              <option value="ge">German</option>
-              <option value="tam">Tamil</option>
-              <option value="mal">Malayalam</option>
-            </select>
-          </div>
-          <button
-            onClick={handleNext}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
+      <Toaster />
+      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
+        <h1 className="text-xl font-bold mb-4 text-center text-white">
+          Choose Your Language
+        </h1>
+        <p className="text-center mb-4 text-gray-300">
+          You won't be able to modify it later, so choose wisely.
+        </p>
+        <div className="mb-4">
+          <select
+            className="block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            value={selectedLanguage}
+            onChange={(e) => handleLanguageChange(e)}
           >
-            Next
-          </button>
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="mar">Marathi</option>
+            <option value="ur">Urdu</option>
+            <option value="sp">Spanish</option>
+            <option value="ben">Bengali</option>
+            <option value="assa">Assamese</option>
+            <option value="ge">German</option>
+            <option value="tam">Tamil</option>
+            <option value="mal">Malayalam</option>
+          </select>
         </div>
+        <button
+          onClick={handleNext}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
+        >
+          Next
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
+ // DOB Step
   if (step === "dob") {
     return (
-      <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
-        <Toaster />
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-          <h1 className="text-xl font-bold mb-4 text-center">
-            Enter Your Date of Birth
-          </h1>
-          <p className="text-center mb-4">
-            You won't be able to modify it later, so enter carefully.
-          </p>
-          <div className="mb-4 w-full">
-            <input
-              type="date"
-              value={selectedDOB}
-              placeholder="Enter your Date of Birth"
-              onChange={handleDOBChange}
-              max={new Date().toISOString().split("T")[0]}
-              className="mt-1 block w-full min-w-72 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
-            {dobError && (
-              <p className="mt-2 text-sm text-red-600">{dobError}</p>
-            )}
-          </div>
-          <button
-            onClick={handleNext}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-            disabled={!selectedDOB || dobError}
-          >
-            Next
-          </button>
+    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
+      <Toaster />
+      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
+        <h1 className="text-xl font-bold mb-4 text-center text-white">
+          Enter Your Date of Birth
+        </h1>
+        <p className="text-center mb-4 text-gray-300">
+          You won't be able to modify it later, so enter carefully.
+        </p>
+        <div className="mb-4 w-full">
+          <input
+            type="date"
+            value={selectedDOB}
+            placeholder="Enter your Date of Birth"
+            onChange={handleDOBChange}
+            max={new Date().toISOString().split("T")[0]}
+            className="mt-1 block w-full min-w-72 px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            required
+          />
+          {dobError && (
+            <p className="mt-2 text-sm text-red-600">{dobError}</p>
+          )}
         </div>
+        <button
+          onClick={handleNext}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed"
+          disabled={!selectedDOB || dobError}
+        >
+          Next
+        </button>
       </div>
-    );
-  }
+    </div>
+  )}
 
+ // Education Level Step
   if (step === "education_level") {
     return (
-      <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
-        <Toaster />
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-          <h1 className="text-xl font-bold mb-4 text-center">
-            Choose Your Education Level
-          </h1>
-          <p className="text-center mb-4">
-            You won't be able to modify it later, so choose wisely.
-          </p>
-          <div className="mb-4">
-            <label
-              htmlFor="educationLevelSlider"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Education Level
-            </label>
-            <input
-              type="range"
-              id="educationLevelSlider"
-              min="0"
-              max="2"
-              step="1"
-              value={educationLevel}
-              onChange={(e) => {
-                if (e.target.value == 1) {
-                  setIsCollegeStudent(true);
-                } else {
-                  setIsCollegeStudent(false);
-                }
-                setEducationLevel(e.target.value);
-              }}
-              className="w-full mt-2"
-            />
-            <div className="flex justify-between mt-2 gap-1">
-              <span
-                className={
-                  educationLevel == 0
-                    ? "font-bold text-wrap w-1/3 text-left"
-                    : " text-wrap w-1/3 text-left"
-                }
-              >
-                School
-              </span>
-              <span
-                className={
-                  educationLevel == 1
-                    ? "font-bold text-wrap w-1/3 text-center"
-                    : " text-wrap w-1/3 text-center"
-                }
-              >
-                College
-              </span>
-              <span
-                className={
-                  educationLevel == 2
-                    ? "font-bold text-wrap w-1/3 text-end"
-                    : " text-wrap w-1/3 text-end"
-                }
-              >
-                Completed Education
-              </span>
-            </div>
-          </div>
-          <button
-            onClick={handleNext}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
+      <Toaster />
+      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
+        <h1 className="text-xl font-bold mb-4 text-center text-white">
+          Choose Your Education Level
+        </h1>
+        <p className="text-center mb-4 text-gray-300">
+          You won't be able to modify it later, so choose wisely.
+        </p>
+        <div className="mb-4">
+          <label
+            htmlFor="educationLevelSlider"
+            className="block text-sm font-medium text-gray-300"
           >
-            Next
-          </button>
+            Education Level
+          </label>
+          <input
+            type="range"
+            id="educationLevelSlider"
+            min="0"
+            max="2"
+            step="1"
+            value={educationLevel}
+            onChange={(e) => {
+              if (e.target.value == 1) {
+                setIsCollegeStudent(true);
+              } else {
+                setIsCollegeStudent(false);
+              }
+              setEducationLevel(e.target.value);
+            }}
+            className="w-full mt-2 accent-blue-600"
+          />
+          <div className="flex justify-between mt-2 gap-1">
+            <span
+              className={
+                educationLevel == 0
+                  ? "font-bold text-wrap w-1/3 text-left text-white"
+                  : "text-wrap w-1/3 text-left text-gray-400"
+              }
+            >
+              School
+            </span>
+            <span
+              className={
+                educationLevel == 1
+                  ? "font-bold text-wrap w-1/3 text-center text-white"
+                  : "text-wrap w-1/3 text-center text-gray-400"
+              }
+            >
+              College
+            </span>
+            <span
+              className={
+                educationLevel == 2
+                  ? "font-bold text-wrap w-1/3 text-end text-white"
+                  : "text-wrap w-1/3 text-end text-gray-400"
+              }
+            >
+              Completed Education
+            </span>
+          </div>
         </div>
+        <button
+          onClick={handleNext}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
+        >
+          Next
+        </button>
       </div>
-    );
-  }
+    </div>
+  )}
 
   if (step === "reason") {
     return (
-      <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
-        <Toaster />
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-          <h1 className="text-xl font-bold mb-4 text-center">
-            Why are you here?
-          </h1>
-          <div className="mb-4">
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="1"
-              value={reason}
-              onChange={(e) => setReason(parseInt(e.target.value))}
-              className="w-full mt-2"
-            />
-            <div className="flex justify-between mt-2 gap-1">
-              <span
-                className={
-                  reason == 0
-                    ? "font-bold text-wrap w-1/2 text-left"
-                    : " text-wrap w-1/2 text-left"
-                }
-              >
-                New Job
-              </span>
-              <span
-                className={
-                  reason == 1
-                    ? "font-bold text-wrap w-1/2 text-end"
-                    : " text-wrap w-1/2 text-end"
-                }
-              >
-                Career Change
-              </span>
-            </div>
+    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
+      <Toaster />
+      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
+        <h1 className="text-xl font-bold mb-4 text-center text-white">
+          Why are you here?
+        </h1>
+        <div className="mb-4">
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="1"
+            value={reason}
+            onChange={(e) => setReason(parseInt(e.target.value))}
+            className="w-full mt-2 accent-blue-600"
+          />
+          <div className="flex justify-between mt-2 gap-1">
+            <span
+              className={
+                reason == 0
+                  ? "font-bold text-wrap w-1/2 text-left text-white"
+                  : "text-wrap w-1/2 text-left text-gray-400"
+              }
+            >
+              New Job
+            </span>
+            <span
+              className={
+                reason == 1
+                  ? "font-bold text-wrap w-1/2 text-end text-white"
+                  : "text-wrap w-1/2 text-end text-gray-400"
+              }
+            >
+              Career Change
+            </span>
           </div>
-          <button
-            onClick={handleNext}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
-          >
-            Next
-          </button>
         </div>
+        <button
+          onClick={handleNext}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
+        >
+          Next
+        </button>
       </div>
-    );
-  }
+    </div>
+  )}
 
   if (step === "additional_info") {
     return (
-      <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
-        <Toaster />
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-          <h1 className="text-xl font-bold mb-4 text-center">
-            Additional Information
-          </h1>
-          <form>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Education Qualification</label>
-              <input
-                {...register("educationQualification", { required: true })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">University</label>
-              <input
-                {...register("university", { required: true })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            {reason === 1 && (
-              <>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Experience (Years)</label>
-                  <input
-                    type="number"
-                    {...register("experience", { required: true, min: 0 })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Current Job</label>
-                  <input
-                    {...register("currentJob", { required: true })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                </div>
-              </>
-            )}
-            <button
-              type="submit"
-              onClick={handleNext}
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
-            >
-              Submit
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3">
+    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
       <Toaster />
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h1 className="text-2xl font-bold mb-6 text-center">{t("title")}</h1>
+      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
+        <h1 className="text-xl font-bold mb-4 text-center text-white">
+          Additional Information
+        </h1>
+        <form>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-300">Education Qualification</label>
+            <input
+              {...register("educationQualification", { required: true })}
+              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-300">University</label>
+            <input
+              {...register("university", { required: true })}
+              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          {reason === 1 && (
+            <>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300">Experience (Years)</label>
+                <input
+                  type="number"
+                  {...register("experience", { required: true, min: 0 })}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300">Current Job</label>
+                <input
+                  {...register("currentJob", { required: true })}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+            </>
+          )}
+          <button
+            type="submit"
+            onClick={handleNext}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  )}
+
+   return (
+    // Main Signup Form
+    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
+      <Toaster />
+      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
+        <h1 className="text-2xl font-bold mb-6 text-center text-white">{t("title")}</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex gap-4 mb-4">
             <div className="flex-1">
               <select
                 id="gender"
                 name="gender"
-                className="mt-6 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-6 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 {...register("gender", { required: t("genderRequired") })}
               >
                 <option value="">{t("gender")}</option>
@@ -1237,14 +1837,14 @@ function SignUp() {
             <div className="flex-1">
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-300"
               >
                 {t("name")}
               </label>
               <input
                 type="text"
                 {...register("name")}
-                className="mt-1 block w-full px-3 py-[6.5px] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-[6.5px] border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 required
               />
             </div>
@@ -1252,14 +1852,14 @@ function SignUp() {
           <div className="mb-4">
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               {t("username")}
             </label>
             <input
               type="text"
               {...register("username")}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               required
             />
           </div>
@@ -1271,7 +1871,7 @@ function SignUp() {
           <div className="mb-4">
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               {t("password")}
             </label>
@@ -1288,7 +1888,7 @@ function SignUp() {
                   message: t("passwordPattern"),
                 },
               })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               required
             />
             {errors.password && (
@@ -1300,14 +1900,14 @@ function SignUp() {
           <div className="mb-4">
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               {t("confirmPassword")}
             </label>
             <input
               type="password"
               {...register("confirmPassword")}
-              className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+              className={`mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                 errors.confirmPassword ? "border-red-500" : ""
               }`}
               required
@@ -1317,139 +1917,137 @@ function SignUp() {
                 {errors.confirmPassword.message}
               </p>
             )}
-            <div className="md:text-sm text-xs">{t("passWord")}</div>
+            <div className="md:text-sm text-xs text-gray-400">{t("passWord")}</div>
           </div>
           <div className="mb-4">
-              <label
-                htmlFor="mobile"
-                className="block text-sm font-medium text-gray-700"
-              >
-                {t("mobile")}
-              </label>
-              <input
-                type="tel" // Changed from 'number' to 'tel'
-                {...register("mobile", {
-                  minLength: {
-                    value: 10,
-                    message: t("mobileMinLength"),
-                  },
+            <label
+              htmlFor="mobile"
+              className="block text-sm font-medium text-gray-300"
+            >
+              {t("mobile")}
+            </label>
+            <input
+              type="tel" 
+              {...register("mobile", {
+                minLength: {
+                  value: 10,
+                  message: t("mobileMinLength"),
+                },
+              })}
+              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              required
+            />
+            {errors.mobile && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.mobile.message}
+              </p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-300">Institute</label>
+            <select
+              {...register("instituteId", { 
+                required: "Institute is required",
+                onChange: (e) => {
+                  const instituteId = e.target.value;
+                  fetchClassesForChild(instituteId);
+                } 
+              })}
+              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            >
+              <option value="">Select Institute</option>
+              {institutions.map((institute) => (
+                <option key={institute.id} value={institute.id}>
+                  {institute.name}
+                </option>
+              ))}
+            </select>
+            {errors.childUsers?.institute && (
+              <p className="mt-1 text-sm text-red-600">{errors.childUsers.institute.message}</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-300">Class</label>
+              <select
+                {...register("classId", { 
+                  required: "Class is required",
+                  onChange: (e) => {
+                    const classId = e.target.value;
+                    fetchDivisionsForChild(classId);
+                  }
                 })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                required
-              />
-              {errors.mobile && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.mobile.message}
-                </p>
+                disabled={!childClassOptions || childClassOptions.length === 0}
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:opacity-50"
+              >
+                <option value="">Select Class</option>
+                {childClassOptions?.map((classItem) => (
+                  <option key={classItem.id} value={classItem.id}>
+                    {classItem.name}
+                  </option>
+                ))}
+              </select>
+              {errors.childUsers?.class && (
+                <p className="mt-1 text-sm text-red-600">{errors.childUsers.class.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Institute</label>
+              <label className="block text-sm font-medium text-gray-300">Division</label>
               <select
-                {...register("instituteId", { 
-                  required: "Institute is required",
-                  onChange: (e) => {
-                    const instituteId = e.target.value;
-                    // Trigger fetching classes for this specific child
-                    fetchClassesForChild(instituteId);
-                  } 
-                })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                {...register("divisionId", { required: "Division is required" })}
+                disabled={!childDivisionOptions || childDivisionOptions.length === 0}
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:opacity-50"
               >
-                <option value="">Select Institute</option>
-                {institutions.map((institute) => (
-                  <option key={institute.id} value={institute.id}>
-                    {institute.name}
+                <option value="">Select Division</option>
+                {childDivisionOptions.map((division) => (
+                  <option key={division.id} value={division.id}>
+                    {division.name}
                   </option>
                 ))}
               </select>
-              {errors.childUsers?.institute && (
-                <p className="mt-1 text-sm text-red-600">{errors.childUsers.institute.message}</p>
+              {errors.childUsers?.division && (
+                <p className="mt-1 text-sm text-red-600">{errors.childUsers.division.message}</p>
               )}
             </div>
-      
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Class</label>
-                <select
-                  {...register("classId", { 
-                    required: "Class is required",
-                    onChange: (e) => {
-                      const classId = e.target.value;
-                      // Trigger fetching divisions for this specific child
-                      fetchDivisionsForChild(classId);
-                    }
-                  })}
-                  disabled={!childClassOptions || childClassOptions.length === 0}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:opacity-50"
-                >
-                  <option value="">Select Class</option>
-                  {childClassOptions?.map((classItem) => (
-                    <option key={classItem.id} value={classItem.id}>
-                      {classItem.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.childUsers?.class && (
-                  <p className="mt-1 text-sm text-red-600">{errors.childUsers.class.message}</p>
-                )}
-              </div>
-      
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Division</label>
-                <select
-                  {...register("divisionId", { required: "Division is required" })}
-                  disabled={!childDivisionOptions || childDivisionOptions.length === 0}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:opacity-50"
-                >
-                  <option value="">Select Division</option>
-                  {childDivisionOptions.map((division) => (
-                    <option key={division.id} value={division.id}>
-                      {division.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.childUsers?.division && (
-                  <p className="mt-1 text-sm text-red-600">{errors.childUsers.division.message}</p>
-                )}
-              </div>
-            </div>
+          </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Academic Year Start</label>
-                  <input
-                    type="month"
-                    {...register("academicYearStart", {
-                      required: "Academic year start is required"
-                    })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                  {errors.childUsers?.academicYearStart && (
-                    <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearStart.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Academic Year End</label>
-                  <input
-                    type="month"
-                    {...register("academicYearEnd", {
-                      required: "Academic year end is required"
-                    })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                  {errors.childUsers?.academicYearEnd && (
-                    <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearEnd.message}</p>
-                  )}
-                </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300">Academic Year Start</label>
+              <input
+                type="month"
+                {...register("academicYearStart", {
+                  required: "Academic year start is required"
+                })}
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+              {errors.childUsers?.academicYearStart && (
+                <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearStart.message}</p>
+              )}
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300">Academic Year End</label>
+              <input
+                type="month"
+                {...register("academicYearEnd", {
+                  required: "Academic year end is required"
+                })}
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+              {errors.childUsers?.academicYearEnd && (
+                <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearEnd.message}</p>
+              )}
+            </div>
+          </div>
 
           {ageCategory !== "kids" && educationLevel!=0 && (
             <div className="mb-4">
               <label
                 htmlFor="highestEducation"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-300"
               >
                 {isCollegeStudent ? "Current Education" : "Highest Education"}
               </label>
@@ -1459,7 +2057,7 @@ function SignUp() {
                   required:
                     ageCategory !== "kids" ? t("educationRequired") : false,
                 })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 required={ageCategory !== "kids"}
               >
                 <option value="">
@@ -1487,27 +2085,27 @@ function SignUp() {
                   <div className="my-4">
                     <label
                       htmlFor="college"
-                      className="block text-sm font-medium text-gray-700"
+                      className="block text-sm font-medium text-gray-300"
                     >
                       {t("college")}
                     </label>
                     <input
                       type="text"
                       {...register("college")}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
                   <div className="mb-4">
                     <label
                       htmlFor="university"
-                      className="block text-sm font-medium text-gray-700"
+                      className="block text-sm font-medium text-gray-300"
                     >
                       {t("university")}
                     </label>
                     <input
                       type="text"
                       {...register("university")}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
                 </>
@@ -1523,7 +2121,7 @@ function SignUp() {
           <div className="mb-4">
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition-colors"
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
             >
               {t("submit")}
             </button>
@@ -1531,8 +2129,8 @@ function SignUp() {
         </form>
         <div className="flex justify-between">
           <div className="flex justify-between gap-2">
-            <span className="text-slate-400">{t("alreadyRegistered")}</span>
-            <Link href="/login" className="text-blue-500 hover:text-blue-600">
+            <span className="text-gray-400">{t("alreadyRegistered")}</span>
+            <Link href="/login" className="text-blue-500 hover:text-blue-400">
               {t("login")}
             </Link>
           </div>

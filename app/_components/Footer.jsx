@@ -37,7 +37,7 @@ const Footer = () => {
     <div className="w-full bg-[#261e33] md:p-6 p-3 text-white flex md:items-center">
       <div className="container md:mx-auto flex items-center space-y-5 justify-between md:justify-center md:gap-48 w-full">
         
-        <Image src="/assets/images/logo-full.png" width={150} height={150} alt="Xortlist Logo" className='max-md:w-24 ' />
+        <Image src="/assets/images/logo-full.png" width={150} height={150} alt="Xortcut Logo" className='max-md:w-24 ' />
        
 
         {/* <ul className="flex flex-wrap justify-center gap-4">
@@ -56,7 +56,7 @@ const Footer = () => {
           </p>
 
           <p className="text-center text-xs w-full">
-            Copyright {new Date().getFullYear()} Xortlist Inc. All rights reserved.
+            Copyright {new Date().getFullYear()} Xortcut Inc. All rights reserved.
           </p>
         </div>
       </div>

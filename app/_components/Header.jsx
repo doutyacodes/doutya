@@ -45,19 +45,19 @@ const Header = ({ dark = false }) => {
   const companyData = [
     // {
     //   title: "Careers",
-    //   description: "It’s a great time to join Xortlist",
+    //   description: "It’s a great time to join Xortcut",
     //   href: "/careers",
     //   icon: <FaBriefcase className="w-4 h-4 text-[#3e0075]" />,
     // },
     {
       title: "About",
-      description: "Learn what binds us together at Xortlist",
+      description: "Learn what binds us together at Xortcut",
       href: "/about",
       icon: <FaInfoCircle className="w-4 h-4 text-[#3e0075]" />,
     },
     // {
     //   title: "Press",
-    //   description: "The latest news on Xortlist",
+    //   description: "The latest news on Xortcut",
     //   href: "/press",
     //   icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
     // },
@@ -69,7 +69,7 @@ const Header = ({ dark = false }) => {
     // },
     {
       title: "Leadership Principles",
-      description: "What it means to lead at Xortlist",
+      description: "What it means to lead at Xortcut",
       href: "/leadership-principles",
       icon: <FaUserTie className="w-4 h-4 text-[#3e0075]" />,
     },
@@ -83,19 +83,19 @@ const Header = ({ dark = false }) => {
   const resourceData = [
     // {
     //   title: "Careers",
-    //   description: "It’s a great time to join Xortlist",
+    //   description: "It’s a great time to join Xortcut",
     //   href: "/careers",
     //   icon: <FaBriefcase className="w-4 h-4 text-[#3e0075]" />,
     // },
     {
       title: "Blog",
-      description: "Learn what binds us together at Xortlist",
+      description: "Learn what binds us together at Xortcut",
       href: "/blog",
       icon: <FaBlog className="w-4 h-4 text-[#3e0075]" />,
     },
     // {
     //   title: "Press",
-    //   description: "The latest news on Xortlist",
+    //   description: "The latest news on Xortcut",
     //   href: "/press",
     //   icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
     // },
@@ -107,7 +107,7 @@ const Header = ({ dark = false }) => {
     // },
     {
       title: "Podcasts",
-      description: "What it means to lead at Xortlist",
+      description: "What it means to lead at Xortcut",
       href: "/podcasts",
       icon: <FaPodcast className="w-4 h-4 text-[#3e0075]" />,
     },
@@ -292,7 +292,7 @@ const Header = ({ dark = false }) => {
                 />
               </div>
               <p className="text-[#3e0075] text-sm cursor-pointer font-semibold focus:underline px-3 mb-2">
-                Why Xortlist?
+                Why Xortcut?
               </p>
               <ul className="space-y-5">
                 <ListComponents />
