@@ -188,11 +188,11 @@ const LeftSideBar = () => {
           <div className="my-4">
             <div className={`${isOpen ? "flex" : "block mb-10"} items-center justify-between relative gap-3`}>
               <div className="text-xl font-bold">
-                <Image
-                  src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
-                  width={150}
-                  height={150}
-                />
+                  <Image
+                    src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
+                    width={150}
+                    height={150}
+                  />
               </div>
               <button
                 onClick={toggleSidebars}
@@ -217,9 +217,11 @@ const LeftSideBar = () => {
                       className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
                       onClick={() => {
                         if (menu.submenus.length > 0) {
-                          toggleDropdown(menu.name); // Toggle dropdown for specific menu
+                          toggleDropdown(menu.name); // Toggle dropdown for menus with submenus
+                        } else if (menu.link) {
+                          router.push(menu.link); // Directly navigate if no submenus
                         }
-                        if (menu.onClick) menu.onClick();
+                        if (menu.onClick) menu.onClick(); // Execute any extra function if provided
                       }}
                     >
                       {menu.icon}
