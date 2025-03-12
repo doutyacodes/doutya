@@ -247,7 +247,7 @@ function RoadMap({ selectedCareer }) {
                         ) : (
                           <>
                           <button
-                              onClick={() => router.push(`/certification/${item.certificationId}/${encodeURIComponent(item.certificationName)}`)}
+                              onClick={() => router.push(`/certification-quiz/${item.certificationId}}`)}
                               className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-orange-500"
                             >
                               Get Certified
