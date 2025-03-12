@@ -1,15 +1,16 @@
 import { db } from '@/utils';
-import { CERTIFICATION_QUIZ, CERTIFICATION_QUIZ_OPTIONS, CERTIFICATION_USER_PROGRESS, CERTIFICATIONS, USER_CERTIFICATION_COMPLETION, USER_DETAILS, CAREER_GROUP } from '@/utils/schema';
+import { CERTIFICATION_QUIZ, CERTIFICATION_QUIZ_OPTIONS, CERTIFICATION_USER_PROGRESS, CERTIFICATIONS, USER_CERTIFICATION_COMPLETION, USER_DETAILS, CAREER_GROUP, TOPICS_COVERED } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq, sql } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { GenerateCourse } from '@/app/api/utils/GenerateCourse';
+import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
-async function fetchAndFormatQuestions(certificationId, age) {
+async function fetchAndFormatQuestions(certificationId, age, className) {
     const existingQuestions = await db
         .select({
             questionId: CERTIFICATION_QUIZ.id,
@@ -23,7 +24,8 @@ async function fetchAndFormatQuestions(certificationId, age) {
         .where(
             and(
                 eq(CERTIFICATION_QUIZ.certification_id, certificationId),
-                eq(CERTIFICATION_QUIZ.age, age)
+                eq(CERTIFICATION_QUIZ.age, age),
+                eq(CERTIFICATION_QUIZ.class_name, className)
             )
         );
 
@@ -73,12 +75,24 @@ export async function GET(request, { params }) {
 
     try {
         const birthDateResult = await db
-            .select({ birth_date: USER_DETAILS.birth_date })
+            .select({ 
+                birth_date: USER_DETAILS.birth_date,
+                educationLevel: USER_DETAILS.education_level,
+                academicYearStart : USER_DETAILS.academicYearStart,
+                academicYearEnd : USER_DETAILS.academicYearEnd,
+                className: USER_DETAILS.class_name
+             })
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId));
 
         const birth_date = birthDateResult[0]?.birth_date;
         const age = calculateAge(birth_date);
+
+        const className = birthDateResult[0]?.className
+        const educationLevel = birthDateResult[0]?.educationLevel
+        const academicYearStart = birthDateResult[0]?.academicYearStart
+        const academicYearEnd = birthDateResult[0]?.academicYearEnd
+        const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
 
         const certification = await db
             .select({
@@ -127,17 +141,41 @@ export async function GET(request, { params }) {
         }
 
         // Check existing questions and fetch quiz progress
-        let { questions } = await fetchAndFormatQuestions(certificationId, age);
+        let { questions } = await fetchAndFormatQuestions(certificationId, age, className);
 
         // If no questions are found, generate new course data
         if (questions.length === 0) {
-            await GenerateCourse(age, certificationName, careerName, certificationId, birth_date);
+            await GenerateCourse(age, certificationName, careerName, certificationId, birth_date, educationLevel, className, percentageCompleted);
+            // await GenerateCourse(age, certificationName, careerName, certificationId, birth_date);
             // Fetch the questions again after generation
-            ({ questions } = await fetchAndFormatQuestions(certificationId, age));
+            ({ questions } = await fetchAndFormatQuestions(certificationId, age, className));
         }
 
-        // Prepare the response with quiz progress and questions
-        return NextResponse.json({ quizProgress:totalAnswered, questions }, { status: 200 });
+        // Only fetch topics after ensuring questions exist
+        // Fetch topics covered in this certification
+        const topicsCovered = await db
+            .select({
+                topicName: TOPICS_COVERED.topic_name
+            })
+            .from(TOPICS_COVERED)
+            .where(eq(TOPICS_COVERED.certification_id, certificationId));
+
+        // Format topics into an array
+        const topics = topicsCovered.map(topic => topic.topicName);
+
+        // Create certification overview object
+        const certificationOverview = {
+            certificationName,
+            careerName,
+            topics
+        };
+
+        // Prepare the response with certification overview, quiz progress and questions
+        return NextResponse.json({ 
+            certificationOverview, 
+            quizProgress: totalAnswered, 
+            questions 
+        }, { status: 200 });
 
     } catch (error) {
         console.error("Error fetching questions and answers:", error);

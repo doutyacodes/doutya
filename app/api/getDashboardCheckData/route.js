@@ -18,32 +18,52 @@ export async function GET(req) {
     try {
         // Fetch data for the given userId
         const data = await db
-            .select()
-            .from(QUIZ_SEQUENCES)
-            .where(eq(QUIZ_SEQUENCES.user_id, userId)) // Ensure userId is an integer
-            .execute();
+        .select()
+        .from(QUIZ_SEQUENCES)
+        .where(eq(QUIZ_SEQUENCES.user_id, userId)) // Ensure userId is an integer
+        .execute();
 
-        // Check if the user's country is added
+        // Check if the user's country and institution details are added
         const userDetails = await db
-            .select({ country: USER_DETAILS.country })
-            .from(USER_DETAILS)
-            .where(eq(USER_DETAILS.id, userId))
-            .execute();
+        .select({
+            country: USER_DETAILS.country,
+            institutionId: USER_DETAILS.institution_id,
+            instituteName: USER_DETAILS.institute_name,
+            classId: USER_DETAILS.class_id,
+            className: USER_DETAILS.class_name,
+            academicYearStart: USER_DETAILS.academicYearStart,
+            academicYearEnd: USER_DETAILS.academicYearEnd
+        })
+        .from(USER_DETAILS)
+        .where(eq(USER_DETAILS.id, userId))
+        .execute();
 
-        const countryInfo = userDetails[0]?.country;
+        const userInfo = userDetails[0];
+        const countryInfo = userInfo?.country;
 
+        // Check if country is added
         const countryAdded = !!(countryInfo && countryInfo.trim() !== '');
 
-        return NextResponse.json(
-            {
-                data,
-                countryAdded, // true or false
-            },
-            { status: 200 }
+        // Check if institution details are added
+        // This will be true if either:
+        // 1. The user has selected an institution (institution_id is set)
+        // 2. The user has manually entered an institution name (institute_name is set)
+        // Also verify that either class_id or class_name is set, and academic year fields are filled
+        const institutionDetailsAdded = !!(
+        (userInfo?.institutionId || (userInfo?.instituteName && userInfo?.instituteName.trim() !== '')) &&
+        (userInfo?.classId || (userInfo?.className && userInfo?.className.trim() !== '')) &&
+        userInfo?.academicYearStart && 
+        userInfo?.academicYearEnd
         );
 
-        // // Respond with the fetched data
-        // return NextResponse.json(data, { status: 200 }); // Use 200 for successful data retrieval
+        return NextResponse.json(
+        {
+            data,
+            countryAdded, // true or false
+            institutionDetailsAdded, // true or false
+        },
+        { status: 200 }
+        );
 
     } catch (error) {
         console.error('Error fetching quiz sequences:', error);

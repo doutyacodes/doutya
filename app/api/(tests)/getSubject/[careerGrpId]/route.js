@@ -5,10 +5,11 @@ import { and, eq, gte, inArray, lte } from 'drizzle-orm'; // Adjust based on you
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { processCareerSubjects } from '@/app/api/utils/fetchAndSaveSubjects';
+import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 export const dynamic = "force-dynamic";
-
+/* this api is not currently in use if used have to include the classname as well  to filer withcalss anames  */
 export async function GET(req, { params }) {
     try {
         // Authenticate user
@@ -23,7 +24,14 @@ export async function GET(req, { params }) {
 
         // Get user's birth date
         const birthDateResult = await db
-            .select({ birth_date: USER_DETAILS.birth_date })
+            .select({ 
+                birth_date: USER_DETAILS.birth_date,
+                education:USER_DETAILS.education,
+                educationLevel: USER_DETAILS.education_level,
+                academicYearStart : USER_DETAILS.academicYearStart,
+                academicYearEnd : USER_DETAILS.academicYearEnd,
+                className: USER_DETAILS.class_name
+             })
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId));
         
@@ -34,6 +42,12 @@ export async function GET(req, { params }) {
         const age = calculateAge(birthDateResult[0].birth_date);
         const effectiveAge = age;
         console.log(`User age: ${age}, Effective age: ${effectiveAge}`);
+
+        const className = birthDateResult[0]?.className
+        const educationLevel = birthDateResult[0]?.educationLevel
+        const academicYearStart = birthDateResult[0]?.academicYearStart
+        const academicYearEnd = birthDateResult[0]?.academicYearEnd
+        const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
 
         // Check if any subjects exist for the career group
         // const careerSubjectsExist = await db
@@ -48,7 +62,8 @@ export async function GET(req, { params }) {
             .where(
                 and(
                     eq(CAREER_SUBJECTS.career_id, careerGrpId), // Filter by career_id
-                    eq(SUBJECTS.min_age, age)                  // Filter by min_age
+                    eq(SUBJECTS.min_age, age),
+                    eq(SUBJECTS.class_name, className)                  // Filter by min_age
                 )
             );
 
@@ -79,7 +94,8 @@ export async function GET(req, { params }) {
             }
 
             const { country, careerName } = userCareerData[0];
-            await processCareerSubjects(careerName, careerGrpId, country, age, birthDateResult[0].birth_date); // Generate subjects
+            // await processCareerSubjects(careerName, careerGrpId, country, age, birthDateResult[0].birth_date); // Generate subjects
+            await processCareerSubjects(careerName, careerGrpId, country, age, birthDateResult[0].birth_date, className, educationLevel, percentageCompleted,); // Generate subjects
         }
 
         // Fetch subjects for the career and filter by user age (or set age as 17 for older users)
@@ -96,7 +112,8 @@ export async function GET(req, { params }) {
             .where(
                 and(
                     eq(CAREER_SUBJECTS.career_id, careerGrpId),
-                    eq(SUBJECTS.min_age, effectiveAge)
+                    eq(SUBJECTS.min_age, effectiveAge),
+                    eq(SUBJECTS.class_name, className),
                     // gte(SUBJECTS.max_age, effectiveAge)
                 )
             );

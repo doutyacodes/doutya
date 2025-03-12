@@ -31,7 +31,7 @@ export async function validateCareer(career) {
         const validationResponse = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4o-mini", // or 'gpt-4' if you have access
+                model: "gpt-4o-mini",
                 messages: [{ role: "user", content: validationPrompt }],
                 max_tokens: 500, // Adjust the token limit as needed
             },
@@ -42,6 +42,10 @@ export async function validateCareer(career) {
                 },
             }
         );
+
+        console.log(`Input tokens: ${validationResponse.data.usage.prompt_tokens}`);
+        console.log(`Output tokens: ${validationResponse.data.usage.completion_tokens}`);
+        console.log(`Total tokens: ${validationResponse.data.usage.total_tokens}`);
 
         validationResponseText = validationResponse.data.choices[0].message.content.trim();
         validationResponseText = validationResponseText.replace(/```json|```/g, "").trim();

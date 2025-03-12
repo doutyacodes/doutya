@@ -120,7 +120,7 @@ function Page() {
   // Form Submission Handler
   const onSubmit = async (data) => {
     setIsSubmit(true);
-
+    
     // Validate Passwords
     if (data.password !== data.confirmPassword) {
       setError("confirmPassword", {

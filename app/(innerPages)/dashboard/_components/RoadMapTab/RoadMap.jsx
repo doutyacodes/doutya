@@ -242,7 +242,7 @@ function RoadMap({ selectedCareer }) {
                             onClick={() => router.push(`/certification-results/${item.certificationId}`)}
                             className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-green-500"
                           >
-                            View Results
+                            View Certification
                           </button>
                         ) : (
                           <>
@@ -254,9 +254,7 @@ function RoadMap({ selectedCareer }) {
                             </button>
                           </>
                         )}
-                        
-                        
-                        {
+                        {/* {
                           item.courseStatus === 'in_progress' ? (
                           <button
                             onClick={() => router.push(`/certification-course/${item.certificationId}`)}
@@ -279,7 +277,7 @@ function RoadMap({ selectedCareer }) {
                             Course Completed
                           </button>
                         ) : null
-                      }
+                      } */}
                       </>
 
                     ) : (

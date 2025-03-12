@@ -5,6 +5,7 @@ import { and, eq, gte, inArray, lte } from 'drizzle-orm'; // Adjust based on you
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { processCareerSubjects } from '@/app/api/utils/fetchAndSaveSubjects';
+import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 export async function GET(req, { params }) {
      // Authenticate user
@@ -27,6 +28,25 @@ export async function GET(req, { params }) {
             .where(eq(CAREER_SUBJECTS.career_id, careerGrpId));
         console.log("Exist subjst", careerSubjectsExist);
         
+        const birth_date=await db
+            .select({ 
+                birth_date:USER_DETAILS.birth_date,
+                educationLevel: USER_DETAILS.education_level,
+                academicYearStart : USER_DETAILS.academicYearStart,
+                academicYearEnd : USER_DETAILS.academicYearEnd,
+                className: USER_DETAILS.class_name
+            })
+            .from(USER_DETAILS)
+            .where(eq(USER_DETAILS.id, userId))
+        const age = calculateAge(birth_date[0].birth_date)
+        console.log(age)
+
+        const className = birth_date[0]?.className
+        const educationLevel = birth_date[0]?.educationLevel
+        const academicYearStart = birth_date[0]?.academicYearStart
+        const academicYearEnd = birth_date[0]?.academicYearEnd
+        const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
+
         // If no subjects are found for the career group, generate them
         if (!careerSubjectsExist.length) {
             console.log('No subjects found, generating subjects...');
@@ -54,16 +74,11 @@ export async function GET(req, { params }) {
             const { country, careerName } = userCareerData[0];
             console.log("country, careerName", country, careerName)
 
-            await processCareerSubjects(careerName, careerGrpId, country); /* Generating Subjects */
+            // await processCareerSubjects(careerName, careerGrpId, country); /* Generating Subjects */
+            await processCareerSubjects(careerName, careerGrpId, country, age, birth_date[0].birth_date ,className, educationLevel, percentageCompleted,); /* Generating Subjects */
+
             console.log('after generate');
         }
-
-        const birth_date=await db
-            .select({birth_date:USER_DETAILS.birth_date})
-            .from(USER_DETAILS)
-            .where(eq(USER_DETAILS.id, userId))
-        const age = calculateAge(birth_date[0].birth_date)
-        console.log(age)
 
          // Step 2: Fetch the subjects for the career and filter by user age
          const subjectsForCareer = await db

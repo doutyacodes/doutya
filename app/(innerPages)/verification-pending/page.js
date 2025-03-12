@@ -12,8 +12,17 @@ const VerificationPending = () => {
   };
 
   const handleRetryLogin = () => {
+    // Clear localStorage
+    localStorage.clear();
+  
+    // Remove specific cookie (auth_token)
+    document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+  
+    // Redirect to login
     router.push('/login');
   };
+  
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">

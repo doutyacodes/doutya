@@ -91,7 +91,7 @@ export async function GET(req) {
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
-      model: "gpt-4o-mini", // or 'gpt-4' if you have access
+      model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
       max_tokens: 4000, // Adjust the token limit as needed
     },
@@ -102,6 +102,12 @@ export async function GET(req) {
       },
     }
   );
+
+  console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
+  console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+  console.log(`Total tokens user id: ${response.data.usage.total_tokens}`);
+
+
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
 

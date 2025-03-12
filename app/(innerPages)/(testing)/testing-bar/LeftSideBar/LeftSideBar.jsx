@@ -83,7 +83,12 @@ const LeftSideBar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    // Clear localStorage
+    localStorage.clear();
+
+    // Remove specific cookie (auth_token)
+    document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+    
     setIsLoggedIn(false);
     window.location.href = "/login";
   };
@@ -103,13 +108,13 @@ const LeftSideBar = () => {
   const menus = [
     {
       name: "Tests",
-      icon: <FaClipboardList className="text-xl" />,
+      icon: <FaClipboardList className="text-base" />,
       link: "/dashboard",
       submenus: [],
     },
     {
       name: "Careers",
-      icon: <PiCompassRoseFill className="text-xl" />,
+      icon: <PiCompassRoseFill className="text-base" />,
       link: "#",
       submenus: [
         { name: "Career Guide", link: "/dashboard/careers/career-guide" },
@@ -127,13 +132,13 @@ const LeftSideBar = () => {
     // },
     {
       name: "My Profile",
-      icon: <FaUser className="text-xl" />,
+      icon: <FaUser className="text-base" />,
       link: "/dashboard/user-profile",
       submenus: [],
     },
     {
       name: "School Activities",
-      icon: <FaBuilding className="text-xl" />,
+      icon: <FaBuilding className="text-base" />,
       link: "#",
       submenus: [
         { name: "Challenges", link: "/institution/challenges" },
@@ -143,7 +148,7 @@ const LeftSideBar = () => {
     },
     {
       name: "Sign Out",
-      icon: <FaCog className="text-xl" />,
+      icon: <FaCog className="text-base" />,
       link: "#",
       submenus: [],
       onClick: toggleLogoutPopup,
@@ -225,8 +230,8 @@ const LeftSideBar = () => {
                       }}
                     >
                       {menu.icon}
-                      {isOpen && <span className="text-xl pl-3">{menu.name}</span>}
-                      {menu.submenus.length > 0 && isOpen && <FaChevronDown className="ml-auto" />}
+                      {isOpen && <span className="text-sm pl-3">{menu.name}</span>}
+                      {menu.submenus.length > 0 && isOpen && <FaChevronDown className="ml-auto text-sm" />}
                     </div>
                     {menu.submenus.length > 0 && isOpen && activeDropdown === menu.name && (
                       <ul className="ml-8 space-y-3 mt-3">
@@ -310,10 +315,10 @@ const LeftSideBar = () => {
                       toggleInstructionDropdown();
                     }}
                   >
-                    <FaInfoCircle className="text-xl" />
+                    <FaInfoCircle className="text-base" />
                     {isOpen && (
                       <>
-                        <span className="text-xl pl-3">Instructions</span>
+                        <span className="text-sm pl-3">Instructions</span>
                         <FaChevronDown className="ml-auto" />
                       </>
                     )}

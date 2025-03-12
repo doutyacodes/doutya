@@ -17,7 +17,8 @@ export default function Dashboard() {
   const [secondsRemaining, setSecondsRemaining] = useState(5);
   const [loading, setLoading] = useState(false);
   const [isCountryAdded, setIsCountryAdded] = useState(null);
-
+  const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] = useState(null);
+  
   useEffect(() => {
     const authCheck = () => {
       if (typeof window !== 'undefined') {
@@ -40,10 +41,13 @@ export default function Dashboard() {
       }, 1000);
 
       const timer = setTimeout(() => {
-        if (isCountryAdded) {
-          router.replace("/dashboard/careers/career-suggestions");
-        } else {
+        if (!isInstitutionDetailsAdded) {
+          router.replace("/education-details");
+        } else if (!isCountryAdded) {
+          console.log("else if");
           router.replace("/country");
+        } else {
+          router.replace("/dashboard/careers/career-suggestions");
         }
       }, 5000);
 
@@ -52,7 +56,7 @@ export default function Dashboard() {
         clearTimeout(timer);
       };
     }
-  }, [isTest2Completed, router]);
+  }, [isTest2Completed, isInstitutionDetailsAdded, isCountryAdded, router]);
 
   const toggleResults = () => {
     setShowResults(prevState => !prevState);
@@ -106,6 +110,7 @@ export default function Dashboard() {
               isTest2Completed={isTest2Completed}
               setIsTest2Completed={setIsTest2Completed}
               setIsCountryAdded={setIsCountryAdded}
+              setIsInstitutionDetailsAdded={setIsInstitutionDetailsAdded}
             />
             <br />
             <br />

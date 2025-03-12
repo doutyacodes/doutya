@@ -4,10 +4,10 @@ import { jwtVerify } from 'jose';  // Import jose
 export async function middleware(req) {
   // Public routes that don't require authentication
   const publicRoutes = [
-    '/',
-    '/login', 
-    '/signup', 
-    '/api/login', 
+    // '/',
+    '/login',
+    '/signup',
+    '/api/login',
     '/api/signup'
   ];
 
@@ -26,11 +26,8 @@ export async function middleware(req) {
   const token = req.cookies.get('auth_token')?.value;
   // const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-  console.log("token", token);
-
   // If no token exists, redirect to login
   if (!token) {
-    console.log('not tok');
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
@@ -39,14 +36,14 @@ export async function middleware(req) {
     // Verify the token using jose
     const secret = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
     const { payload } = await jwtVerify(token, secret);  // Verify JWT with jose
-    console.log('decoded', payload);
 
-    if (
-      payload.isVerified === false &&
-      !path.startsWith('/verification-pending')  // Prevent redirect loop
-    ) {
-      return NextResponse.redirect(new URL('/verification-pending', req.url));
-    }
+    /* For now we are taking away the vefication penging thing away */
+    // if (
+    //   payload.isVerified === false &&
+    //   !path.startsWith('/verification-pending')  // Prevent redirect loop
+    // ) {
+    //   return NextResponse.redirect(new URL('/verification-pending', req.url));
+    // }
 
     // If everything is okay, continue the request
     return NextResponse.next();

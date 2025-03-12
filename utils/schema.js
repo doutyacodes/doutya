@@ -16,38 +16,41 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-export const USER_DETAILS= mysqlTable('user_details',{
-    id:int('id').autoincrement().notNull().primaryKey(),
-    name:varchar('name',{length:150}).notNull(),
-    gender:varchar('gender',{length:150}).default(null),
-    mobile:varchar('mobile',{length:100}).default(null),
-    birth_date:date('birth_date').default(null),
-    password:varchar('password',{length:150}).default(null),
-    username:varchar('username',{length:150}).default(null),
-    education:varchar('education',{length:200}).default(null),
-    student:mysqlEnum('student',['yes','no']).notNull(),
-    college:text('college').default(null),
-    university:text('university').default(null),
-    yearOfPassing:varchar('yearOfPassing',{length:150}).default(null),
-    monthOfPassing:varchar('monthOfPassing',{length:150}).default(null),
-    country:varchar('country',{length:30}).default(null),
-    language:varchar('language',{length:50}).default('English'),
-    education_country:varchar('education_country',{length:100}).default(null),
-    education_level:varchar('education_level',{length:255}).default('Other'),
-    experience: int('experience').default(null), 
-    education_qualification: varchar('education_qualification', { length: 255 }).default(null), 
-    current_job: varchar('current_job', { length: 200 }).default(null),
-    plan_type: mysqlEnum('plan_type',['base','pro']).notNull().default('base'),
-    joined_date: timestamp('joined_date').defaultNow(),
-    account_status: mysqlEnum('account_status', ['linked', 'separated']),
-    academicYearStart: varchar('academicYearStart', { length: 7 }).notNull(), // Format: YYYY-MM
-    academicYearEnd: varchar('academicYearEnd', { length: 7 }).notNull(),     // Format: YYYY-MM
-    grade: varchar('grade', { length: 100 }).default(null),
-    institution_id: int('institution_id').references(() => INSTITUTION.id, { onDelete: 'set null' }).default(null),
-    class_id: int('class_id').references(() => CLASS.id, { onDelete: 'set null' }).default(null),
-    division_id: int('division_id').references(() => DIVISION.id, { onDelete: 'set null' }).default(null),
-    user_role: mysqlEnum('user_role', ['Individual', 'Institutional']).notNull().default('Individual'),
-    is_verified: boolean('is_verified').default(false),
+export const USER_DETAILS = mysqlTable('user_details', {
+  id: int('id').autoincrement().notNull().primaryKey(),
+  name: varchar('name', { length: 150 }).notNull(),
+  gender: varchar('gender', { length: 150 }).default(null),
+  mobile: varchar('mobile', { length: 100 }).default(null),
+  birth_date: date('birth_date').default(null),
+  password: varchar('password', { length: 150 }).default(null),
+  username: varchar('username', { length: 150 }).default(null),
+  education: varchar('education', { length: 200 }).default(null),
+  student: mysqlEnum('student', ['yes', 'no']).notNull(),
+  college: text('college').default(null),
+  university: text('university').default(null),
+  yearOfPassing: varchar('yearOfPassing', { length: 150 }).default(null),
+  monthOfPassing: varchar('monthOfPassing', { length: 150 }).default(null),
+  country: varchar('country', { length: 30 }).default(null),
+  language: varchar('language', { length: 50 }).default('English'),
+  education_country: varchar('education_country', { length: 100 }).default(null),
+  education_level: varchar('education_level', { length: 255 }).default('Other'),
+  experience: int('experience').default(null),
+  education_qualification: varchar('education_qualification', { length: 255 }).default(null),
+  current_job: varchar('current_job', { length: 200 }).default(null),
+  plan_type: mysqlEnum('plan_type', ['base', 'pro']).notNull().default('base'),
+  joined_date: timestamp('joined_date').defaultNow(),
+  account_status: mysqlEnum('account_status', ['linked', 'separated']),
+  academicYearStart: varchar('academicYearStart', { length: 7 }).notNull(), // Format: YYYY-MM
+  academicYearEnd: varchar('academicYearEnd', { length: 7 }).notNull(),     // Format: YYYY-MM
+  grade: varchar('grade', { length: 100 }).default(null),
+  institution_id: int('institution_id').references(() => INSTITUTION.id, { onDelete: 'set null' }).default(null),
+  class_id: int('class_id').references(() => CLASS.id, { onDelete: 'set null' }).default(null),
+  division_id: int('division_id').references(() => DIVISION.id, { onDelete: 'set null' }).default(null),
+  institute_name: varchar("institute_name", { length: 255 }), /* for users whose school is not linked  */
+  class_name: varchar("class_name", { length: 100 }), 
+  user_role: mysqlEnum('user_role', ['Individual', 'Institutional']).notNull().default('Individual'),
+  is_verified: boolean('is_verified').
+  default(false),
 });
 
 export const USER_KEYS = mysqlTable("user_keys", {
@@ -451,6 +454,7 @@ export const SUBJECTS = mysqlTable("subjects", {
   subject_name: varchar("subject_name", { length: 255 }).notNull().unique(),
   min_age: int("min_age").notNull(),
   max_age: int("max_age").notNull(),
+  class_name: varchar("class_name", { length: 255 }).notNull(),
 });
 
 export const CAREER_SUBJECTS = mysqlTable(
@@ -480,6 +484,7 @@ export const TESTS = mysqlTable("tests", {
   year: int("year").notNull(),
   month: int("month").notNull(),
   week_number: int("week_number").notNull(),
+  class_name: varchar("class_name", { length: 255 }).notNull(), /* added new fiewld for tests consistency */
   created_at: timestamp("created_at").defaultNow(),
 });
 
@@ -564,13 +569,13 @@ export const ACTIVITIES = mysqlTable("activities", {
   created_at: timestamp("created_at").defaultNow(),
 });
 
-  export const SCHOOL = mysqlTable('school', {
-      id: int('id').notNull().autoincrement().primaryKey(),
-      name: varchar('name', { length: 100 }).notNull(),
-      address: varchar('address', { length: 255 }),
-      contact_info: varchar('contact_info', { length: 50 }),
-      created_at: timestamp('created_at').defaultNow(),
-  });
+export const SCHOOL = mysqlTable('school', {
+  id: int('id').notNull().autoincrement().primaryKey(),
+  name: varchar('name', { length: 100 }).notNull(),
+  address: varchar('address', { length: 255 }),
+  contact_info: varchar('contact_info', { length: 50 }),
+  created_at: timestamp('created_at').defaultNow(),
+});
 
 export const USER_ACTIVITIES = mysqlTable("user_activities", {
   id: int("id").notNull().primaryKey().autoincrement(),
@@ -643,6 +648,7 @@ export const CHALLENGES = mysqlTable("challenges", {
   country: varchar("country", 255).notNull(),
   career_id: int("career_id").notNull(),
   week: int("week").notNull(),
+  class_name: varchar("class_name", { length: 255 }).notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
   challenge: varchar("challenge", 255).notNull(),
   verification: varchar("verification", 255).notNull(),
@@ -835,59 +841,59 @@ export const COMMUNITY_POST = mysqlTable("community_post", {
   created_at: timestamp("created_at").defaultNow(),
 });
 
-    // export const USER_COURSE_PROGRESS = mysqlTable('user_course_progress', {
-    //     id: int('id').primaryKey().autoincrement(),
-    //     user_id: int('user_id').notNull().references(() => USER_DETAILS.id, { onDelete: 'cascade' }),
-    //     certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id, { onDelete: 'cascade' }),
-    //     status: mysqlEnum('status', ['in_progress', 'completed']).notNull(), // Enum for course status
-    //     enrolled_date: timestamp('enrolled_date').defaultNow(),// timestamp for when the course was enrolled
-    //     completion_date: timestamp('completion_date').defaultNow().onUpdateNow(), // Timestamp for updates
-    // });
+// export const USER_COURSE_PROGRESS = mysqlTable('user_course_progress', {
+//     id: int('id').primaryKey().autoincrement(),
+//     user_id: int('user_id').notNull().references(() => USER_DETAILS.id, { onDelete: 'cascade' }),
+//     certification_id: int('certification_id').notNull().references(() => CERTIFICATIONS.id, { onDelete: 'cascade' }),
+//     status: mysqlEnum('status', ['in_progress', 'completed']).notNull(), // Enum for course status
+//     enrolled_date: timestamp('enrolled_date').defaultNow(),// timestamp for when the course was enrolled
+//     completion_date: timestamp('completion_date').defaultNow().onUpdateNow(), // Timestamp for updates
+// });
 
-    export const INSTITUTION = mysqlTable('institution', {
-        id: int('id').notNull().autoincrement().primaryKey(),
-        name: varchar('name', { length: 100 }).notNull(),
-        address: varchar('address', { length: 255 }),
-        contact_info: varchar('contact_info', { length: 50 }),
-        email: varchar('email', { length: 255 }).unique().notNull(),
-        password: varchar('password', { length: 255 }).notNull(), // Hashed password
-        type: mysqlEnum('type', ['School', 'College']).notNull(),
-        created_at: timestamp('created_at').defaultNow(),
-    });
-    
-    export const MODERATOR = mysqlTable('moderator', {
-        id: int('id').notNull().autoincrement().primaryKey(),
-        name: varchar('name', { length: 100 }).notNull(),
-        // username: varchar('username', { length: 100 }).unique().notNull(),
-        email: varchar('email', { length: 255 }).unique().notNull(),
-        password: varchar('password', { length: 255 }).notNull(), // Hashed password
-        institution_id: int('institution_id').references(() => INSTITUTION.id, { onDelete: 'cascade' }),
-        role: mysqlEnum('role', ['Admin', 'ClassAdmin']).notNull(),
-        is_verified: boolean('is_verified').default(false),
-        created_at: timestamp('created_at').defaultNow(),
-    });
-    
-    export const CLASS = mysqlTable('class', {
-        id: int('id').notNull().autoincrement().primaryKey(),
-        name: varchar('name', { length: 50 }).notNull(),
-        institution_id: int('institution_id').references(() => INSTITUTION.id, { onDelete: 'cascade' }),
-        created_at: timestamp('created_at').defaultNow(),
-    });
-    
-    export const DIVISION = mysqlTable('division', {
-        id: int('id').notNull().autoincrement().primaryKey(),
-        name: varchar('name', { length: 10 }).notNull(),
-        class_id: int('class_id').references(() => CLASS.id, { onDelete: 'cascade' }),
-        created_at: timestamp('created_at').defaultNow(),
-    });
-    
-    export const CLASS_MODERATOR = mysqlTable('class_moderator', {
-        id: int('id').notNull().autoincrement().primaryKey(),
-        class_id: int('class_id').notNull().references(() => CLASS.id, { onDelete: 'cascade' }),
-        moderator_id: int('moderator_id').notNull().references(() => MODERATOR.id, { onDelete: 'cascade' }),
-        division_id: int('division_id').references(() => DIVISION.id, { onDelete: 'cascade' }),
-        created_at: timestamp('created_at').defaultNow(),
-    });
+export const INSTITUTION = mysqlTable('institution', {
+  id: int('id').notNull().autoincrement().primaryKey(),
+  name: varchar('name', { length: 100 }).notNull(),
+  address: varchar('address', { length: 255 }),
+  contact_info: varchar('contact_info', { length: 50 }),
+  email: varchar('email', { length: 255 }).unique().notNull(),
+  password: varchar('password', { length: 255 }).notNull(), // Hashed password
+  type: mysqlEnum('type', ['School', 'College']).notNull(),
+  created_at: timestamp('created_at').defaultNow(),
+});
+
+export const MODERATOR = mysqlTable('moderator', {
+  id: int('id').notNull().autoincrement().primaryKey(),
+  name: varchar('name', { length: 100 }).notNull(),
+  // username: varchar('username', { length: 100 }).unique().notNull(),
+  email: varchar('email', { length: 255 }).unique().notNull(),
+  password: varchar('password', { length: 255 }).notNull(), // Hashed password
+  institution_id: int('institution_id').references(() => INSTITUTION.id, { onDelete: 'cascade' }),
+  role: mysqlEnum('role', ['Admin', 'ClassAdmin']).notNull(),
+  is_verified: boolean('is_verified').default(false),
+  created_at: timestamp('created_at').defaultNow(),
+});
+
+export const CLASS = mysqlTable('class', {
+  id: int('id').notNull().autoincrement().primaryKey(),
+  name: varchar('name', { length: 50 }).notNull(),
+  institution_id: int('institution_id').references(() => INSTITUTION.id, { onDelete: 'cascade' }),
+  created_at: timestamp('created_at').defaultNow(),
+});
+
+export const DIVISION = mysqlTable('division', {
+  id: int('id').notNull().autoincrement().primaryKey(),
+  name: varchar('name', { length: 10 }).notNull(),
+  class_id: int('class_id').references(() => CLASS.id, { onDelete: 'cascade' }),
+  created_at: timestamp('created_at').defaultNow(),
+});
+
+export const CLASS_MODERATOR = mysqlTable('class_moderator', {
+  id: int('id').notNull().autoincrement().primaryKey(),
+  class_id: int('class_id').notNull().references(() => CLASS.id, { onDelete: 'cascade' }),
+  moderator_id: int('moderator_id').notNull().references(() => MODERATOR.id, { onDelete: 'cascade' }),
+  division_id: int('division_id').references(() => DIVISION.id, { onDelete: 'cascade' }),
+  created_at: timestamp('created_at').defaultNow(),
+});
 export const COMMUNITY_POST_LIKES = mysqlTable(
   "community_post_likes",
   {
@@ -938,6 +944,7 @@ export const CERTIFICATIONS = mysqlTable("certifications", {
   id: int("id").primaryKey().autoincrement(), // AUTO_INCREMENT primary key
   certification_name: varchar("certification_name", { length: 255 }).notNull(), // Certification name
   age: decimal("age", 3, 1).notNull(), // Age with one decimal place
+  // class_name: varchar("class_name", { length: 255 }).notNull(), hav eto add later if needed
   career_group_id: int("career_group_id")
     .notNull()
     .references(() => CAREER_GROUP.id, { onDelete: "cascade" }), // Foreign key referencing career_group table
@@ -953,6 +960,7 @@ export const CERTIFICATION_QUIZ = mysqlTable("certification_quiz", {
     .notNull()
     .references(() => CERTIFICATIONS.id),
   age: decimal("age", 3, 1).notNull(),
+  class_name: varchar("class_name", { length: 255 }).notNull(),
   created_at: timestamp("created_at").defaultNow(),
 });
 

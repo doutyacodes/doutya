@@ -47,10 +47,10 @@ export async function POST(req) {
       experience: data?.experience,
       current_job: data?.currentJob,
       account_status: 'separated',
-      institution_id: data?.instituteId,
-      class_id: data?.classId,
-      division_id: data?.divisionId,
-      user_role: 'Institutional',
+      // institution_id: data?.instituteId,
+      // class_id: data?.classId,
+      // division_id: data?.divisionId, /* moved to speratee section
+      //  */
     });
 
     if (!result) {

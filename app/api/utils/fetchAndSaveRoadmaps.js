@@ -61,6 +61,10 @@ export async function fetchAndSaveRoadmap(userCareerID, age, education, career, 
             }
         );
 
+        console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
+        console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+        console.log(`Total tokens Roadmaps: ${response.data.usage.total_tokens}`);
+
         let responseText = response.data.choices[0].message.content.trim();
         responseText = responseText.replace(/```json|```/g, "").trim();
         console.log("responseText", responseText);

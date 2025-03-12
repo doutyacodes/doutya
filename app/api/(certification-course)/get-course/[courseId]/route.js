@@ -11,6 +11,7 @@ import { authenticate } from "@/lib/jwtMiddleware"; // Ensure this path is corre
 import { and, eq } from "drizzle-orm";
 import { calculateAge } from "@/lib/ageCalculate";
 import { GenerateCourse } from "@/app/api/utils/GenerateCourse";
+import { calculateAcademicPercentage } from "@/lib/calculateAcademicPercentage";
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -34,12 +35,22 @@ export async function GET(req, { params }) {
       .select({
         birth_date: USER_DETAILS.birth_date,
         education: USER_DETAILS.education,
+        educationLevel: USER_DETAILS.education_level,
+        academicYearStart : USER_DETAILS.academicYearStart,
+        academicYearEnd : USER_DETAILS.academicYearEnd,
+        className: USER_DETAILS.class_name
       })
       .from(USER_DETAILS)
       .where(eq(USER_DETAILS.id, userId));
 
     const birth_date = user_data[0].birth_date;
     const age = calculateAge(birth_date);
+
+    const className = user_data[0]?.className
+    const educationLevel = user_data[0]?.educationLevel
+    const academicYearStart = user_data[0]?.academicYearStart
+    const academicYearEnd = user_data[0]?.academicYearEnd
+    const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
 
     const certificationData = await db
       .select({
@@ -100,7 +111,8 @@ export async function GET(req, { params }) {
     }
 
     // Generate new course data if it does not exist
-    const generatedCourse = await GenerateCourse(age, certificationName, careerName, courseId, birth_date);
+    // const generatedCourse = await GenerateCourse(age, certificationName, careerName, courseId, birth_date);
+    const generatedCourse = await GenerateCourse(age, certificationName, careerName, courseId, birth_date, educationLevel, className, percentageCompleted);
 
     // Fetch the newly created course data after generation
     const newCourseData = await db

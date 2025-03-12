@@ -6,6 +6,7 @@ import { CAREER_GROUP, USER_DETAILS, CHALLENGES, CHALLENGE_PROGRESS } from '@/ut
 import { calculateAge } from '@/lib/ageCalculate';
 import { eq, and, isNull } from 'drizzle-orm';
 import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
+import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 const languageOptions = {
     en: 'in English',
@@ -40,7 +41,11 @@ export async function GET(req, { params }) {
     const user_data = await db
         .select({
             birth_date: USER_DETAILS.birth_date,
-            country: USER_DETAILS.country
+            country: USER_DETAILS.country,
+            educationLevel: USER_DETAILS.education_level,
+            academicYearStart : USER_DETAILS.academicYearStart,
+            academicYearEnd : USER_DETAILS.academicYearEnd,
+            className: USER_DETAILS.class_name
         })
         .from(USER_DETAILS)
         .where(eq(USER_DETAILS.id, userId));
@@ -49,6 +54,13 @@ export async function GET(req, { params }) {
     const age = calculateAge(birth_date);
     const currentAgeWeek = getCurrentWeekOfAge(birth_date)
     const country = user_data[0].country;
+    
+    const className = user_data[0]?.className
+    const educationLevel = user_data[0]?.educationLevel
+    const academicYearStart = user_data[0]?.academicYearStart
+    const academicYearEnd = user_data[0]?.academicYearEnd
+
+    const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
 
     const career_name = await db
         .select({
@@ -72,14 +84,22 @@ export async function GET(req, { params }) {
             and(
                 eq(CHALLENGES.age, age),
                 eq(CHALLENGES.career_id, careerGrpId),
-                isNull(CHALLENGE_PROGRESS.id)  
+                eq(CHALLENGES.class_name, className),
+                isNull(CHALLENGE_PROGRESS.id),
             )
         );
 
     if (existingChallenges.length > 0) {
         return NextResponse.json({ challenges: existingChallenges }, { status: 200 });
     } else {
-        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old (currently in week ${currentAgeWeek} of this age), aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only.Provide single data per week.Give it as a single JSON data without any wrapping other than [].`;
+        // const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old (currently in week ${currentAgeWeek} of this age), aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only.Provide single data per week.Give it as a single JSON data without any wrapping other than [].`;
+
+        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old (currently in week ${currentAgeWeek} of this age),
+        ${
+            (educationLevel === 'school' || educationLevel === 'college') 
+            ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
+            : ''
+        } aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only.Provide single data per week.Give it as a single JSON data without any wrapping other than [].`;
 
         try {
             const response = await axios.post(
@@ -97,6 +117,10 @@ export async function GET(req, { params }) {
                 }
             );
 
+            console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
+            console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+            console.log(`Total tokens Challenges: ${response.data.usage.total_tokens}`);
+
             let responseText = response.data.choices[0].message.content.trim();
             responseText = responseText.replace(/```json|```/g, "").trim();
 
@@ -109,6 +133,7 @@ export async function GET(req, { params }) {
                     country: country,
                     career_id: careerGrpId,
                     week: challenge.week,
+                    class_name: className,
                     challenge: challenge.challenge,
                     verification: challenge.verification,
                     created_at: new Date(),
@@ -127,7 +152,8 @@ export async function GET(req, { params }) {
                 .where(
                     and(
                         eq(CHALLENGES.age, age),
-                        eq(CHALLENGES.career_id, careerGrpId)
+                        eq(CHALLENGES.career_id, careerGrpId),
+                        eq(CHALLENGES.class_name, className),
                     )
                 );
 

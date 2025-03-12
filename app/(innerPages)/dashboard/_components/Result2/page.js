@@ -458,7 +458,7 @@ export default function Results2({step, setStep}) {
         </div>
       )}
 
-      <div className="flex flex-col text-white gap-5 w-full">
+      <div className="flex flex-col md:px-20 gap-6 text-white w-full">
         {step === 1 && industries.length > 0 && (
           <div className="p-6 rounded-lg text-white mt-6 w-full max-sm:pb-24">
             <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-4xl mx-auto">
@@ -563,7 +563,7 @@ export default function Results2({step, setStep}) {
                               {careerDescriptions[category]}
                             </p>
                             <div className="w-full h-[1px] bg-white mb-4" />
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                               {careersInCategory.map(
                                 ({ career, originalIndex }) => (
                                   <div

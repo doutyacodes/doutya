@@ -5,6 +5,7 @@ import { eq, and } from "drizzle-orm";
 import { db } from "@/utils";
 import axios from "axios";
 import { getCurrentWeekOfAge } from "@/lib/getCurrentWeekOfAge";
+import { calculateAcademicPercentage } from "@/lib/calculateAcademicPercentage";
 
 const languageOptions = {
   en: "in English",
@@ -43,7 +44,10 @@ export async function GET(req) {
       educationLevel: USER_DETAILS.education_level,
       experience: USER_DETAILS.experience,
       educationQualification: USER_DETAILS.education_qualification,
-      currentJob: USER_DETAILS.current_job
+      currentJob: USER_DETAILS.current_job,
+      academicYearStart : USER_DETAILS.academicYearStart,
+      academicYearEnd : USER_DETAILS.academicYearEnd,
+      className: USER_DETAILS.class_name
     })
     .from(USER_DETAILS)
     .where(eq(USER_DETAILS.id, userId))
@@ -51,8 +55,16 @@ export async function GET(req) {
   // console.log("userDetails",userDetails);
   const country = userDetails[0].country; // Access the country
   const currentAgeWeek = getCurrentWeekOfAge(userDetails[0].birth_date)
+  const className = userDetails[0]?.className
+  const educationLevel = userDetails[0]?.educationLevel
+  const academicYearStart = userDetails[0]?.academicYearStart
+  const academicYearEnd = userDetails[0]?.academicYearEnd
+
+  const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
+  
   let finalAge = 18;
   if (userDetails.length > 0) {
+    console.log("in the condition" )
     const birthDate = new Date(userDetails[0].birth_date); // Access the birth date from the first result
     const today = new Date(); // Get today's date
 
@@ -67,7 +79,7 @@ export async function GET(req) {
 
     finalAge = hasBirthdayPassed ? ageInNumber : ageInNumber - 1;
 
-    console.log("userDetails", finalAge); // Log the calculated age
+    console.log("userDetails finalAge", finalAge); // Log the calculated age
   } else {
     console.log("No user found with the given ID");
   }
@@ -147,7 +159,13 @@ export async function GET(req) {
       : "3 futuristic careers for an individual aged " +
         finalAge +
         " until they reach the age of 21."
-  }(currently in week ${currentAgeWeek} of this age). Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
+  }(currently in week ${currentAgeWeek} of this age)
+  ${
+    (educationLevel === 'school' || educationLevel === 'college') 
+    ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
+    : ''
+  }.
+   Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
         career_name: A brief title of the career.
         type: trending, offbeat, traditional, futuristic, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
         
@@ -163,7 +181,7 @@ export async function GET(req) {
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
-      model: "gpt-4o-mini", // or 'gpt-4' if you have access
+      model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
       max_tokens: 5000, // Adjust the token limit as needed
     },
@@ -174,6 +192,11 @@ export async function GET(req) {
       },
     }
   );
+
+  console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
+  console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+  console.log(`Total tokens careers result : ${response.data.usage.total_tokens}`);
+
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
 

@@ -163,7 +163,8 @@ function SelectCountry() {
           <div className="mb-4 relative">
             <div className="flex items-center justify-between">
               <label htmlFor="educationCountry" className="block text-sm font-medium text-gray-700">
-                {t("selectEducationCountry")}
+                {/* {t("selectEducationCountry")} */}
+                Select the country where you want to explore career opportunities.
               </label>
               {(userAge <= 9 || userPlanType === 'base') && (
                 <div className="flex items-center text-sm text-blue-600">
@@ -182,7 +183,7 @@ function SelectCountry() {
               />
             </div>
             <p className="text-xs mt-1">
-              Choose your highest education country
+              Choose a country to explore career options
             </p>
           </div>
 

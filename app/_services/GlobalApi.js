@@ -773,6 +773,17 @@ const submitQuizAnswer = async (data) => {
   });
 };
 
+const UpdateUserEducationDetails = async (data) => {
+  const token = localStorage.getItem("token"); // Adjust based on your auth token storage
+
+  return axios.post(`/api/education-details`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+    },
+  });
+};
+
+
 
 export default {
   CreateNewUser,
@@ -866,5 +877,8 @@ export default {
   FetchDepartmentCompanies,
   FetchOneDepartment,
   FetchChallengesOne,
-  submitQuizAnswer
+  submitQuizAnswer,
+
+  UpdateUserEducationDetails
+
 };

@@ -81,53 +81,6 @@ function CertificationIntro({ params }) {
             </Button>
           </CardFooter>
         </Card>
-
-        {/* Additional Info Cards */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Benefits</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-green-500 rounded-full" />
-                  <span>Industry-recognized certification</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-green-500 rounded-full" />
-                  <span>Showcase your expertise</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-green-500 rounded-full" />
-                  <span>Access to exclusive resources</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Prerequisites</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-blue-500 rounded-full" />
-                  <span>Basic understanding of web development</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-blue-500 rounded-full" />
-                  <span>Familiarity with HTML, CSS, and JavaScript</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-blue-500 rounded-full" />
-                  <span>Previous coding experience recommended</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div> */}
       </div>
     </div>
   );

@@ -364,7 +364,7 @@ function Page() {
               </div>
             </div>
 
-            <div className="flex flex-col  px-4 md:px-20 gap-6 py-6 bg-[#2c2c2c]">
+            <div className="flex flex-col px-4 md:px-20 gap-6 py-6 bg-[#2c2c2c]">
               <div className="bg-gray-900 flex flex-col items-center w-full md:w-auto p-4 rounded-lg">
                 <div className="flex flex-row  gap-4 text-xs md:text-base min-w-20 mt-4 w-full overflow-x-scroll justify-center items-center">
                   {tabs.map((tab) => (
@@ -373,9 +373,9 @@ function Page() {
                         key={tab.key}
                         className={`${
                           activeTab === tab.key
-                            ? "text-orange-600"
-                            : "text-gray-800 hover:bg-gray-700"
-                        } text-white font-semibold py-2 px-3 md:min-w-32`}
+                            ? "text-orange-400 bg-gray-700"
+                            : "text-gray-100 hover:bg-gray-700"
+                        }  font-semibold py-2 px-3 md:min-w-32`}
                         onClick={() => setActiveTab(tab.key)}
                       >
                         {tab.label.toUpperCase()}

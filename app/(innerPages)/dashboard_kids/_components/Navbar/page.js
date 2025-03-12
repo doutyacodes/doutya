@@ -27,10 +27,16 @@ function Navbarkids() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("dashboardUrl");
+
+    // Clear localStorage
+    localStorage.clear();
+
+    // Remove specific cookie (auth_token)
+    document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+
     setIsLoggedIn(false);
     window.location.href = "/login";
+    
   };
 
   return (

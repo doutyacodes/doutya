@@ -10,19 +10,36 @@ export const maxDuration = 60; // This function can run for a maximum of 5 secon
 export const dynamic = "force-dynamic";
 
 // Function to fetch subjects from OpenAI
-const fetchSubjectsFromOpenAI = async (careerName, country, age, birthDate) => {
+const fetchSubjectsFromOpenAI = async (careerName, country, age, birthDate, className, educationLevel, percentageCompleted) => {
+
+// const fetchSubjectsFromOpenAI = async (careerName, country, age, birthDate) => {
   console.log("careerName, country", careerName, country, age);
 
   const currentAgeWeek = getCurrentWeekOfAge(birthDate)
-  const prompt = `For an individual aged ${age} (currently in week ${currentAgeWeek} of this age) pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
+//   const prompt = `For an individual aged ${age} (currently in week ${currentAgeWeek} of this age) pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
 
-Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where each age is a key, and the value is an array of important subjects. The format should be as follows:
+// Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where each age is a key, and the value is an array of important subjects. The format should be as follows:
 
-{
+// {
+//   "subject-data": ["Subject1", "Subject2", "Subject3", ...]
+// }
+
+// Ensure each array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
+
+  const prompt = `For an individual aged ${age} (currently in week ${currentAgeWeek} of this age)
+  ${
+    (educationLevel === 'school' || educationLevel === 'college') 
+    ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
+    : ''
+  } pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
+
+  Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where each age is a key, and the value is an array of important subjects. The format should be as follows:
+
+  {
   "subject-data": ["Subject1", "Subject2", "Subject3", ...]
-}
+  }
 
-Ensure each array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
+  Ensure each array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
 
   try {
     const response = await axios.post(
@@ -40,6 +57,10 @@ Ensure each array includes only the most relevant subjects for the respective ag
       }
     );
 
+    console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
+    console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+    console.log(`Total tokens SUbjects: ${response.data.usage.total_tokens}`);
+
     // Extract response text
     let responseText = response.data.choices[0].message.content.trim();
     responseText = responseText.replace(/```json|```/g, "").trim();
@@ -55,7 +76,7 @@ Ensure each array includes only the most relevant subjects for the respective ag
   }
 };
 
-const saveSubjectsToDatabase = async (careerId, subjectsByAge, age) => {
+const saveSubjectsToDatabase = async (careerId, subjectsByAge, age, className) => {
     try {
       const subjectIds = new Map();
   
@@ -77,7 +98,8 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age) => {
             and(
               inArray(SUBJECTS.subject_name, subjectList), // Ensure subjectList is an array
               eq(SUBJECTS.min_age, minAge),
-              eq(SUBJECTS.max_age, maxAge)
+              eq(SUBJECTS.max_age, maxAge),
+              eq(SUBJECTS.class_name, className),
             )
           );
   
@@ -105,6 +127,7 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age) => {
                 subject_name: subject,
                 min_age: minAge,
                 max_age: maxAge,
+                class_name: className
               }))
             )
             .execute();
@@ -123,7 +146,8 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age) => {
             and(
               inArray(SUBJECTS.subject_name, allSubjectNames), // Ensure allSubjectNames is an array
               eq(SUBJECTS.min_age, minAge),
-              eq(SUBJECTS.max_age, maxAge)
+              eq(SUBJECTS.max_age, maxAge),
+              eq(SUBJECTS.class_name, className),
             )
           )
           .execute();
@@ -161,19 +185,25 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age) => {
     country,
     age,
     birthDate,
+    className,
+    educationLevel,
+    percentageCompleted,
   ) => {
   try {
     const subjectsByAge = await fetchSubjectsFromOpenAI(
       careerName,
       country,
       age,
-      birthDate
+      birthDate,
+      className,
+      educationLevel,
+      percentageCompleted,
     );
     const subjects = subjectsByAge["subject-data"]; // Extract the array of subjects
 
     console.log("got subjects");
 
-    await saveSubjectsToDatabase(careerId, subjects, age); // Pass subjects array
+    await saveSubjectsToDatabase(careerId, subjects, age, className); // Pass subjects array
   } catch (error) {
     console.error("Error processing career subjects:", error);
   }

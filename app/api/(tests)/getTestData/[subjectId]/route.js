@@ -6,6 +6,7 @@ import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { GenerateTestQuiz } from '@/app/api/utils/GenerateTestQuiz';
 import { getCurrentWeekOfMonth } from '@/lib/getCurrentWeekOfMonth';
+import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 // Helper to calculate week of the month for a given date
 function getWeekOfMonth(date) {
@@ -33,10 +34,14 @@ export async function GET(request, { params }) {
 
     try {
         // Fetch user's birth date and calculate age
-        const { birth_date, joined_date } = await db
+        const { birth_date, joined_date, educationLevel, academicYearStart, academicYearEnd, className } = await db
             .select({
                 birth_date: USER_DETAILS.birth_date,
                 joined_date: USER_DETAILS.joined_date,
+                educationLevel: USER_DETAILS.education_level,
+                academicYearStart : USER_DETAILS.academicYearStart,
+                academicYearEnd : USER_DETAILS.academicYearEnd,
+                className: USER_DETAILS.class_name
             })
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId))
@@ -49,12 +54,11 @@ export async function GET(request, { params }) {
         const currentYear = new Date().getFullYear();
         const currentMonth = new Date().getMonth() + 1;
 
+        const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
+
         console.log("userJoin week", userJoinWeek);
         
         console.log("log 1");
-        
-        
-
 
         // Fetch subject name based on subjectId
         const subjectData = await db
@@ -97,6 +101,7 @@ export async function GET(request, { params }) {
                         eq(TESTS.month, currentMonth),
                         eq(TESTS.week_number, weekNumber),
                         eq(TESTS.age_group, age),
+                        eq(TESTS.class_name, className),
                     )
                 )
                 .execute();
@@ -115,7 +120,8 @@ export async function GET(request, { params }) {
             if (questionWithAnswers.length === 0) {
                 console.log("log generate");
 
-                await GenerateTestQuiz(subjectId, subjectName, age, birth_date); // Call function to generate test quiz
+                await GenerateTestQuiz(subjectId, subjectName, age, birth_date,  educationLevel, className, percentageCompleted); // Call function to generate test quiz
+                // await GenerateTestQuiz(subjectId, subjectName, age, birth_date); // Call function to generate test quiz
                 questionWithAnswers = await fetchQuestionsAndAnswers(); // Retry fetching questions after generating
             }
         } else {
