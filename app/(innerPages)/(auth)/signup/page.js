@@ -184,20 +184,39 @@ function SignUp() {
     }
   };
 
+  // const handleNext = () => {
+  //   if (step === "language") {
+  //     setStep("dob");
+  //   } else if (step === "dob") {
+  //     setStep("education_level");
+  //   } else if (step === "education_level") {
+  //     if (educationLevel == 2) {
+  //       setStep("reason");
+  //     } else {
+  //       setStep("signup");
+  //     }
+  //   } else if (step === "reason") {
+  //     setStep("additional_info");
+  //   } else if (step === "additional_info") {
+  //     setStep("signup");
+  //   }
+  // };
+
+  
   const handleNext = () => {
     if (step === "language") {
       setStep("dob");
     } else if (step === "dob") {
-      setStep("education_level");
-    } else if (step === "education_level") {
-      if (educationLevel == 2) {
-        setStep("reason");
-      } else {
-        setStep("signup");
-      }
-    } else if (step === "reason") {
-      setStep("additional_info");
-    } else if (step === "additional_info") {
+    //   setStep("education_level");
+    // } else if (step === "education_level") {
+    //   if (educationLevel == 2) {
+    //     setStep("reason");
+    //   } else {
+    //     setStep("signup");
+    //   }
+    // } else if (step === "reason") {
+    //   setStep("additional_info");
+    // } else if (step === "additional_info") {
       setStep("signup");
     }
   };

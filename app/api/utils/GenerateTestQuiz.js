@@ -3,6 +3,7 @@ import { db } from "@/utils";
 import { TESTS, TEST_QUESTIONS, TEST_ANSWERS } from "@/utils/schema"; 
 import { eq } from "drizzle-orm";
 import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
+import { generateSubjectsTestsPrompt } from '../services/promptService';
 
 // export async function GenerateTestQuiz(subjectId, subjectName, age, birthDate) {
 //     try {
@@ -89,33 +90,40 @@ import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 //     }
 // }
 
-export async function GenerateTestQuiz(subjectId, subjectName, age, birthDate, educationLevel, className, percentageCompleted ) {
+export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birthDate, educationLevel, className, percentageCompleted, type1, type2, ) {
     try {
 
         const currentAgeWeek = getCurrentWeekOfAge(birthDate)
 
         // Step 1: Generate questions using OpenAI API
-        const prompt = `
-            Create 10 multiple-choice questions in ${subjectName} for a ${age} year old (currently in week ${currentAgeWeek} of this age)${
-                (educationLevel === 'school' || educationLevel === 'college') 
-                ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
-                : ''
-            }.
-            Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}. The questions should be unique and difficulty level should be hard.  
-            Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
+        // const prompt = `
+        //     Create 10 multiple-choice questions in ${subjectName} for a ${age} year old (currently in week ${currentAgeWeek} of this age)${
+        //         (educationLevel === 'school' || educationLevel === 'college') 
+        //         ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
+        //         : ''
+        //     }.
+        //     Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}. The questions should be unique and difficulty level should be hard.  
+        //     Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
 
-            {
-            "question": "Question text here",
-            "options": [
-                { "text": "Option 1", "is_answer": "no" },
-                { "text": "Option 2", "is_answer": "yes" },
-                { "text": "Option 3", "is_answer": "no" },
-                { "text": "Option 4", "is_answer": "no" }
-            ]
-            }
+        //     {
+        //     "question": "Question text here",
+        //     "options": [
+        //         { "text": "Option 1", "is_answer": "no" },
+        //         { "text": "Option 2", "is_answer": "yes" },
+        //         { "text": "Option 3", "is_answer": "no" },
+        //         { "text": "Option 4", "is_answer": "no" }
+        //     ]
+        //     }
 
-            Only return the array of 10 questions, nothing else.
-            `;
+        //     Only return the array of 10 questions, nothing else.
+        //     `;
+
+          const prompt = await generateSubjectsTestsPrompt(
+            userId, age, subjectName, type1, type2, currentAgeWeek
+          );
+
+        console.log("prompt", prompt);
+          
 
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",

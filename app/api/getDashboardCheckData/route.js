@@ -1,5 +1,5 @@
 import { db } from '@/utils'; // Ensure this path is correct
-import { QUIZ_SEQUENCES, USER_DETAILS } from '@/utils/schema'; // Ensure this path is correct
+import { QUIZ_SEQUENCES, USER_DETAILS, USER_EDUCATION_STAGE } from '@/utils/schema'; // Ensure this path is correct
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware'; // Ensure this path is correct
 import { eq } from 'drizzle-orm';
@@ -56,11 +56,22 @@ export async function GET(req) {
         userInfo?.academicYearEnd
         );
 
+        // Check if user has an entry in USER_EDUCATION_STAGE
+        const educationStage = await db
+        .select()
+        .from(USER_EDUCATION_STAGE)
+        .where(eq(USER_EDUCATION_STAGE.user_id, userId))
+        .execute();
+
+        const educationStageExists = educationStage.length > 0; // true if entry exists, false otherwise
+
         return NextResponse.json(
         {
             data,
             countryAdded, // true or false
             institutionDetailsAdded, // true or false
+            educationStageExists, // true if entry exists, false otherwise
+
         },
         { status: 200 }
         );

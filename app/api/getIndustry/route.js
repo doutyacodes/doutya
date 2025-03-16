@@ -4,6 +4,7 @@ import { QUIZ_SEQUENCES, USER_DETAILS } from '@/utils/schema';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/utils';
 import axios from 'axios';
+import { generateIndustryPrompt } from '../services/promptService';
 
 const languageOptions = {
   en: 'in English',
@@ -69,14 +70,23 @@ export async function GET(req) {
   //     Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' or 'RIASEC' in the data.Give it as a single JSON data without any wrapping other than []`
 
 
-  const prompt = `Provide a list of the 3 normal, 3 trending, and 3 off-beat sectors ${country ? "in " + country : ""
-    } for an individual with RIASEC interest types of ${type2}${type3 ? " and Gallup Strengths types of " + type3 : ""
-    }. For each industry, include the following information:
-            industry_name: A brief title of the industry?.
+  // const prompt = `Provide a list of the 3 normal, 3 trending, and 3 off-beat sectors ${country ? "in " + country : ""
+  //   } for an individual with RIASEC interest types of ${type2}${type3 ? " and Gallup Strengths types of " + type3 : ""
+  //   }. For each industry, include the following information:
+  //           industry_name: A brief title of the industry?.
             
-            Ensure that the response is valid JSON, using the specified field names, but do not include the terms 'RIASEC' in the data.
-            Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only. Give it as a single JSON data without any wrapping other than []`;
+  //           Ensure that the response is valid JSON, using the specified field names, but do not include the terms 'RIASEC' in the data.
+  //           Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only. Give it as a single JSON data without any wrapping other than []`;
 
+  const prompt = await generateIndustryPrompt(
+    userId, 
+    type2, 
+    country, 
+    language, 
+    languageOptions
+  );
+
+  console.log("prompt", prompt)
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
