@@ -78,6 +78,8 @@ export async function GET(req, { params }) {
                 .select({
                     careerGroupId: USER_CAREER.career_group_id,
                     country: USER_CAREER.country,
+                    type1: USER_CAREER.type1,
+                    type2: USER_CAREER.type2,
                     careerName: CAREER_GROUP.career_name // Add career name from CAREER_GROUP
                 })
                 .from(USER_CAREER)
@@ -93,9 +95,9 @@ export async function GET(req, { params }) {
                 return NextResponse.json({ message: 'No career information found for this user.' }, { status: 404 });
             }
 
-            const { country, careerName } = userCareerData[0];
+            const { country, careerName, type1, type2 } = userCareerData[0];
             // await processCareerSubjects(careerName, careerGrpId, country, age, birthDateResult[0].birth_date); // Generate subjects
-            await processCareerSubjects(careerName, careerGrpId, country, age, birthDateResult[0].birth_date, className, educationLevel, percentageCompleted,); // Generate subjects
+            await processCareerSubjects(userId, careerName, careerGrpId, country, age, birthDateResult[0].birth_date, className, educationLevel, percentageCompleted, type1, type2); // Generate subjects
         }
 
         // Fetch subjects for the career and filter by user age (or set age as 17 for older users)

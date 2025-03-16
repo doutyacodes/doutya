@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { SUBJECTS, TESTS, TEST_ANSWERS, TEST_QUESTIONS, USER_DETAILS } from '@/utils/schema';
+import { CAREER_SUBJECTS, SUBJECTS, TESTS, TEST_ANSWERS, TEST_QUESTIONS, USER_CAREER, USER_DETAILS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { eq, and, gte, lte } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -69,6 +69,30 @@ export async function GET(request, { params }) {
         
         const subjectName = subjectData[0].subjectName;
 
+
+        const careerGroup = await db
+        .select({ careerGroupId: CAREER_SUBJECTS.career_id })
+        .from(CAREER_SUBJECTS)
+        .where(eq(CAREER_SUBJECTS.subject_id, subjectId));
+
+        let type1;
+        let type2;
+
+        if (careerGroup.length > 0) {
+            const careerGroupId = careerGroup[0].careerGroupId;
+          
+            const userCareer = await db
+              .select({
+                type1: USER_CAREER.type1,
+                type2: USER_CAREER.type2,
+              })
+              .from(USER_CAREER)
+              .where(and(eq(USER_CAREER.user_id, userId), eq(USER_CAREER.career_group_id, careerGroupId)));
+              if (userCareer.length > 0) {
+                    ({ type1, type2 } = userCareer[0]); 
+                }
+          }
+
         // Helper function to fetch questions and answers
         async function fetchQuestionsAndAnswers() {
             console.log("log fetch");
@@ -110,6 +134,7 @@ export async function GET(request, { params }) {
                 // return data
                 
         }
+        
         console.log("log before fetch");
         // Fetch questions and answers
         let questionWithAnswers = await fetchQuestionsAndAnswers();
@@ -120,7 +145,7 @@ export async function GET(request, { params }) {
             if (questionWithAnswers.length === 0) {
                 console.log("log generate");
 
-                await GenerateTestQuiz(subjectId, subjectName, age, birth_date,  educationLevel, className, percentageCompleted); // Call function to generate test quiz
+                await GenerateTestQuiz(userId, subjectId, subjectName, age, birth_date,  educationLevel, className, percentageCompleted, type1, type2,); // Call function to generate test quiz
                 // await GenerateTestQuiz(subjectId, subjectName, age, birth_date); // Call function to generate test quiz
                 questionWithAnswers = await fetchQuestionsAndAnswers(); // Retry fetching questions after generating
             }

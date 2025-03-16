@@ -10,6 +10,7 @@ import {
 import { eq, and } from "drizzle-orm";
 import { db } from "@/utils";
 import axios from "axios";
+import { generateCareerDetailsPrompt } from "../services/promptService";
 
 export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 export const dynamic = "force-dynamic";
@@ -140,27 +141,11 @@ export async function GET(req) {
   // Adjust the prompt based on whether a specific career name was passed
   let prompt;
   if (careerName && type1) {
-    prompt = `Provide a JSON array with a single element, containing detailed information for the career named "${careerName}" for an individual with personality type ${type1} and RIASEC interest types of ${type2}. The fields should be:
-      {
-        "career_name": "A brief title of the career.",
-        "reason_for_recommendation": "Why this career is suitable for someone with these interests.",
-        "match": "Percentage of how the user is compatible with this career.Only the number is needed",
-        "expenses": "Price range to complete this career, in local currency of ${education_country ? education_country:country} , mention the country and explain shortly in a sentence or two.",
-        "salary": "low level , mid level and high level salary scale in the country ${country ? country:education_country} in a short paragraph.",
-        "present_trends": "Current trends and opportunities in the field.",
-        "future_prospects": "Predictions and potential growth in this career from the year ${currentYear} to ${
-      currentYear + 5
-    }.",
-        "beyond_prospects": "Predictions and potential growth in this career from the year ${
-          currentYear + 6
-        } and beyond.",
-        "currentYear":${currentYear},
-        "tillYear":${currentYear + 5},
-        "user_description": "Personality traits, strengths, and preferences that make this career a good fit.",
-        "leading_country": "Name the country with most opportunities for the career ${careerName} with short description including the opportunity(in a sentence or two).",
-        "similar_jobs": "Provide similar careers name in a sentence for the career "${careerName}" for an individual with personality type ${type1} and RIASEC interest types of ${type2}."
-      }.
-      Ensure that the response is a valid JSON array with exactly one object, no explanations, and no additional text, using the specified field names, but do not include the terms '${type1}' and '${type2}' in the data.`;
+    
+    prompt = await generateCareerDetailsPrompt(
+     userId, careerName, type1, type2, country, education_country, currentYear
+    );
+
   } else {
     return NextResponse.json(
       { error: "No career name or type sequence provided." },

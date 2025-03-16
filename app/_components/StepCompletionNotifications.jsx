@@ -982,6 +982,254 @@ export const CareerSelectionComplete = () => {
   );
 };
 
+export const CareerDataCollectionGuide = () => {
+  const [visible, setVisible] = useState(true);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+
+  // Guide steps explaining what data will be collected
+  const steps = [
+    {
+      title: "Education & Experience Details",
+      description: "The first step in personalizing your career journey after your tests.",
+      content: (
+        <div className="flex flex-col items-center space-y-4">
+          <div className="bg-blue-100 rounded-full p-4">
+            <svg className="h-12 w-12 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <p className="text-gray-300 text-center">
+            We'll ask about your current education status to tailor recommendations to your specific stage.
+          </p>
+          <div className="bg-gray-800 p-4 rounded-lg shadow-sm w-full">
+            <ul className="space-y-2">
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 10l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-300">Your current education level (high school, college, etc.)</span>
+              </li>
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 10l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-300">Your subjects or areas of specialization</span>
+              </li>
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 10l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-300">Any work or job experience you may have</span>
+              </li>
+            </ul>
+          </div>
+          <p className="text-sm text-gray-400 italic">
+            This information helps us create a personalized career roadmap aligned with your current life stage.
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Institution Connection",
+      description: "Link your educational institution for enhanced guidance.",
+      content: (
+        <div className="flex flex-col items-center space-y-4">
+          <div className="bg-purple-100 rounded-full p-4">
+            <svg className="h-12 w-12 text-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <p className="text-gray-300 text-center">
+            Connect your school or college to access institution-specific resources and guidance.
+          </p>
+          <div className="bg-gray-800 p-4 rounded-lg shadow-sm w-full">
+            <ul className="space-y-2">
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-2 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 10l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-300">Your school or college name</span>
+              </li>
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-2 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 10l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-300">Current academic year and term</span>
+              </li>
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-2 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 10l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-300">Option to link to enrolled institutions</span>
+              </li>
+            </ul>
+          </div>
+          <p className="text-sm text-gray-400 italic">
+            Don't worry if your institution isn't enrolled - you can still manually enter your details!
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Location Preferences",
+      description: "Help us understand where you are and where you want to be.",
+      content: (
+        <div className="flex flex-col items-center space-y-4">
+          <div className="bg-green-100 rounded-full p-4">
+            <svg className="h-12 w-12 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-gray-300 text-center">
+            Share your current location and where you'd like to pursue your career.
+          </p>
+          <div className="bg-gray-800 p-4 rounded-lg shadow-sm w-full">
+            <ul className="space-y-2">
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 10l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-300">Your current country of residence</span>
+              </li>
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 10l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-300">Target country for career opportunities</span>
+              </li>
+            </ul>
+          </div>
+          <p className="text-sm text-gray-400 italic">
+            This helps us personalize opportunities with location-specific insights.
+          </p>
+        </div>
+      )
+    }
+  ];
+
+  useEffect(() => {
+    // Check if this guide was dismissed before
+    const isDismissed = localStorage.getItem('careerDataGuidesDismissed');
+    if (isDismissed === 'true') {
+      setVisible(false);
+    }
+  }, []);
+
+  const handleDismiss = () => {
+    if (dontShowAgain) {
+      localStorage.setItem('careerDataGuidesDismissed', 'true');
+    }
+    setVisible(false);
+  };
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      handleDismiss();
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const toggleDontShowAgain = () => {
+    setDontShowAgain(!dontShowAgain);
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+      <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
+        {/* Content */}
+        <div className="p-10">
+          <div className="min-h-64">
+            <div className="flex flex-col items-center space-y-4">
+              <h2 className="text-2xl font-bold text-white mb-2">
+                {steps[currentStep].title}
+              </h2>
+              <p className="text-gray-300 text-center mb-4">
+                {steps[currentStep].description}
+              </p>
+              
+              {steps[currentStep].content}
+            </div>
+          </div>
+        </div>
+        
+        {/* Progress indicator */}
+        <div className="px-8 pb-4">
+          <div className="flex justify-center space-x-2">
+            {steps.map((_, index) => (
+              <div 
+                key={index} 
+                className={`h-2 rounded-full ${
+                  index === currentStep ? 'bg-blue-600 w-8' : 'bg-gray-600 w-4'
+                } transition-all duration-300`}
+              />
+            ))}
+          </div>
+        </div>
+        
+        {/* Navigation buttons */}
+        <div className="bg-gray-800 px-6 py-4 flex justify-between">
+          <div className='flex items-center'>
+            {currentStep > 0 && (
+              <button
+                onClick={handlePrevious}
+                className="px-4 py-2 mr-4 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+              >
+                Previous
+              </button>
+            )}
+            
+            {currentStep === steps.length - 1 && (
+              <div className="flex items-center mr-4">
+                <input
+                  type="checkbox"
+                  id="dontShowAgain"
+                  checked={dontShowAgain}
+                  onChange={toggleDontShowAgain}
+                  className="mr-2"
+                />
+                <label
+                  htmlFor="dontShowAgain"
+                  className="text-gray-300 text-sm"
+                >
+                  Don&apos;t show again
+                </label>
+              </div>
+            )}
+          </div>
+          
+          <div>
+            {currentStep < steps.length - 1 ? (
+              <button
+                onClick={handleNext}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Next
+                </button>
+            ) : (
+              <button
+                onClick={handleDismiss}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Get Started
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Final Step Completion: Journey Complete
 export const JourneyComplete = () => {
   const [visible, setVisible] = useState(true);

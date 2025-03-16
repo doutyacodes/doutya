@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
   date,
@@ -49,8 +50,7 @@ export const USER_DETAILS = mysqlTable('user_details', {
   institute_name: varchar("institute_name", { length: 255 }), /* for users whose school is not linked  */
   class_name: varchar("class_name", { length: 100 }), 
   user_role: mysqlEnum('user_role', ['Individual', 'Institutional']).notNull().default('Individual'),
-  is_verified: boolean('is_verified').
-  default(false),
+  is_verified: boolean('is_verified').default(false),
 });
 
 export const USER_KEYS = mysqlTable("user_keys", {
@@ -77,6 +77,69 @@ export const PAGE = mysqlTable("page", {
   super_admin: mysqlEnum("super_admin", ["no", "yes"]).notNull(),
   email: varchar("email", { length: 150 }).notNull(),
   slug: varchar("slug", { length: 300 }).notNull(),
+});
+
+export const USER_EDUCATION_STAGE = mysqlTable("user_education_stage", {
+  id: int("id").primaryKey().autoincrement(),
+  user_id: int("user_id").unique().notNull().references(() => USERS.id, { onDelete: "cascade" }),
+  stage: mysqlEnum("stage", ["school", "college", "completed_education"]).notNull(),
+});
+
+export const SCHOOL_EDUCATION = mysqlTable("school_education", {
+  id: int("id").primaryKey().autoincrement(),
+  user_id: int("user_id").unique().notNull().references(() => USERS.id, { onDelete: "cascade" }),
+  is_higher_secondary: boolean("is_higher_secondary").notNull(),
+  main_subject: varchar("main_subject", 255),
+  description: text("description"),
+});
+
+export const COLLEGE_EDUCATION = mysqlTable("college_education", {
+  id: int("id").primaryKey().autoincrement(),
+  user_id: int("user_id").notNull().references(() => USERS.id, { onDelete: "cascade" }),
+  degree: varchar("degree", 255).notNull(),
+  field: varchar("field", 255).notNull(),
+  year_of_study: int("year_of_study").default(null), // Removed .check()
+  is_completed: boolean("is_completed").notNull().default(false),
+  description: text("description"),
+}, (table) => {
+  return {
+    yearOfStudyCheck: sql`CHECK (year_of_study BETWEEN 1 AND 10)`, // SQL constraint added
+  };
+});
+
+export const COMPLETED_EDUCATION = mysqlTable("completed_education", {
+  id: int("id").primaryKey().autoincrement(),
+  user_id: int("user_id").notNull().references(() => USERS.id, { onDelete: "cascade" }),
+  degree: varchar("degree", 255).notNull(),
+  field: varchar("field", 255).notNull(),
+  description: text("description"),
+});
+
+export const WORK_EXPERIENCE = mysqlTable("work_experience", {
+  id: int("id").primaryKey().autoincrement(),
+  user_id: int("user_id").notNull().references(() => USERS.id, { onDelete: "cascade" }),
+  job_title: varchar("job_title", 255).notNull(),
+  years_of_experience: int("years_of_experience").notNull(), // Removed .check()
+}, (table) => {
+  return {
+    yearsOfExperienceCheck: sql`CHECK (years_of_experience >= 0)`, // Table-level CHECK constraint
+  };
+});
+
+
+export const USER_SKILLS = mysqlTable("user_skills", {
+  id: int("id").primaryKey().autoincrement(),
+  user_id: int("user_id").notNull().references(() => USERS.id, { onDelete: "cascade" }),
+  skill_name: varchar("skill_name", 255).notNull(),
+});
+
+export const CAREER_PREFERENCES = mysqlTable("career_preferences", {
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("user_id").unique().references(() => users.id, { onDelete: "cascade" }),
+  schoolPref: mysqlEnum("school_pref", ["subject_based", "personality_based", "mixed"]).default(null),
+  collegePref: mysqlEnum("college_pref", ["education_based", "personality_based", "mixed"]).default(null),
+  completedPref: mysqlEnum("completed_pref", ["education_based", "job_based", "personality_based", "mixed_all"]).default(null),
+  noJobPref: mysqlEnum("no_job_pref", ["education_based", "personality_based", "mixed"]).default(null),
 });
 
 export const QUESTIONS = mysqlTable("questions", {

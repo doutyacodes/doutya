@@ -9,8 +9,19 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
+import { PersonalityTestComplete, StartPersonalityTest } from "@/app/_components/StepCompletionNotifications.jsx";
+import CareerOnboarding from "@/app/_components/CareerOnboarding.jsx";
 
-function BannerJunior({ onToggleResults, showResults, onToggleQuiz2Results, showQuiz2Results, setIsTest2Completed }) {
+function BannerJunior({
+  onToggleResults,
+  showResults,
+  onToggleQuiz2Results,
+  showQuiz2Results,
+  setIsTest2Completed,
+  setIsCountryAdded,
+  setIsInstitutionDetailsAdded,
+  setEducationStageExists 
+}) {
   const [loading, setLoading] = useState(false);
   const [dashboardData, setDashboardData] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -26,6 +37,9 @@ function BannerJunior({ onToggleResults, showResults, onToggleQuiz2Results, show
         const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetDashboarCheck(token);
         setDashboardData(resp.data.data);
+        setIsCountryAdded(resp.data.countryAdded);  // Set country added state
+        setIsInstitutionDetailsAdded(resp.data.institutionDetailsAdded);  // Set country added state
+        setEducationStageExists(resp.data.educationStageExists);  // Set country added state
 
         // Check if Test 2 is completed
         const test2 = resp.data.data.find(q => q.quiz_id === 2);
@@ -64,6 +78,8 @@ function BannerJunior({ onToggleResults, showResults, onToggleQuiz2Results, show
 
   return (
     <div className="w-screen max-md:pb-14">
+      {isTest1Completed ? <PersonalityTestComplete /> : <StartPersonalityTest />}
+      {!getQuizStatus(1).isCompleted && <CareerOnboarding />}
       <div className="w-full py-8 md:text-3xl text-xl font-bold text-white text-center bg-gradient-to-r from-[#2f87aa] to-green-300">{t('careerAssesment')}</div>
       <div className="p-4">
         <div className="mt-8 md:flex hidden justify-evenly gap-10 w-full">

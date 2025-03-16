@@ -177,7 +177,7 @@ export async function GET(req, { params }) {
       // });
       
       // Respond with savedData
-      const savedMilestones = await fetchAndSaveRoadmap(userCareerID, birth_date, age, education, careerGroupID, career, type1, type2,language, className, educationLevel, percentageCompleted);
+      const savedMilestones = await fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, education, careerGroupID, career, type1, type2,language, className, educationLevel, percentageCompleted);
       return NextResponse.json(savedMilestones, { status: 200 });
     }
   

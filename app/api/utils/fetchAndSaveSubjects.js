@@ -5,12 +5,13 @@ import { db } from "@/utils";
 import { CAREER_SUBJECTS, SUBJECTS } from "@/utils/schema";
 import axios from "axios";
 import { and, eq, inArray } from "drizzle-orm";
+import { generateSubjectsPrompt } from "../services/promptService";
 
 export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 export const dynamic = "force-dynamic";
 
 // Function to fetch subjects from OpenAI
-const fetchSubjectsFromOpenAI = async (careerName, country, age, birthDate, className, educationLevel, percentageCompleted) => {
+const fetchSubjectsFromOpenAI = async (userId, careerName, country, age, birthDate, className, educationLevel, percentageCompleted, type1, type2) => {
 
 // const fetchSubjectsFromOpenAI = async (careerName, country, age, birthDate) => {
   console.log("careerName, country", careerName, country, age);
@@ -26,21 +27,28 @@ const fetchSubjectsFromOpenAI = async (careerName, country, age, birthDate, clas
 
 // Ensure each array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
 
-  const prompt = `For an individual aged ${age} (currently in week ${currentAgeWeek} of this age)
-  ${
-    (educationLevel === 'school' || educationLevel === 'college') 
-    ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
-    : ''
-  } pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
+  // const prompt = `For an individual aged ${age} (currently in week ${currentAgeWeek} of this age)
+  // ${
+  //   (educationLevel === 'school' || educationLevel === 'college') 
+  //   ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
+  //   : ''
+  // } pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
 
-  Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where each age is a key, and the value is an array of important subjects. The format should be as follows:
+  // Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where each age is a key, and the value is an array of important subjects. The format should be as follows:
 
-  {
-  "subject-data": ["Subject1", "Subject2", "Subject3", ...]
-  }
+  // {
+  // "subject-data": ["Subject1", "Subject2", "Subject3", ...]
+  // }
 
-  Ensure each array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
+  // Ensure each array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
 
+  const prompt = await generateSubjectsPrompt(
+    userId, age, careerName, type1, type2, country, currentAgeWeek
+  );
+
+  console.log("prompt", prompt);
+  
+  
   try {
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
@@ -180,6 +188,7 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age, className) =
   
   // Main function to fetch and save subjects
   export const processCareerSubjects = async (
+    userId,
     careerName,
     careerId,
     country,
@@ -188,9 +197,11 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age, className) =
     className,
     educationLevel,
     percentageCompleted,
+    type1, type2
   ) => {
   try {
     const subjectsByAge = await fetchSubjectsFromOpenAI(
+      userId,
       careerName,
       country,
       age,
@@ -198,6 +209,7 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age, className) =
       className,
       educationLevel,
       percentageCompleted,
+      type1, type2
     );
     const subjects = subjectsByAge["subject-data"]; // Extract the array of subjects
 

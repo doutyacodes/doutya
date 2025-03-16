@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [isCountryAdded, setIsCountryAdded] = useState(null);
   const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] = useState(null);
+  const [educationStageExists, setEducationStageExists] = useState(null);
   
   useEffect(() => {
     const authCheck = () => {
@@ -41,22 +42,24 @@ export default function Dashboard() {
       }, 1000);
 
       const timer = setTimeout(() => {
-        if (!isInstitutionDetailsAdded) {
-          router.replace("/education-details");
+        if (!educationStageExists) {
+            router.replace("/user/education-profile");
+        } else if (!isInstitutionDetailsAdded) {
+            router.replace("/education-details");
         } else if (!isCountryAdded) {
-          console.log("else if");
-          router.replace("/country");
+            console.log("else if");
+            router.replace("/country");
         } else {
-          router.replace("/dashboard/careers/career-suggestions");
+            router.replace("/dashboard/careers/career-suggestions");
         }
-      }, 5000);
+    }, 5000);
 
       return () => {
         clearInterval(interval);
         clearTimeout(timer);
       };
     }
-  }, [isTest2Completed, isInstitutionDetailsAdded, isCountryAdded, router]);
+  }, [isTest2Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, router]);
 
   const toggleResults = () => {
     setShowResults(prevState => !prevState);
@@ -111,6 +114,7 @@ export default function Dashboard() {
               setIsTest2Completed={setIsTest2Completed}
               setIsCountryAdded={setIsCountryAdded}
               setIsInstitutionDetailsAdded={setIsInstitutionDetailsAdded}
+              setEducationStageExists={setEducationStageExists}
             />
             <br />
             <br />

@@ -300,6 +300,8 @@ export default function Results2({step, setStep}) {
       "Experiential careers focus on creating unique experiences, often involving travel, entertainment, or hands-on work.",
     "digital and online":
       "In the digital age, many careers now revolve around technology and online platforms, offering flexible and remote opportunities.",
+    entrepreneurial:
+    "Entrepreneurial careers involve starting and managing businesses, requiring innovation, risk-taking, and strategic thinking. These roles offer independence and the potential for high rewards but also demand resilience and adaptability.",
   };
 
   const careerColors = {
@@ -536,6 +538,7 @@ export default function Results2({step, setStep}) {
                       "offbeat",
                       "traditional",
                       "futuristic",
+                      "entrepreneurial",
                       "normal",
                       "hybrid",
                       "creative",

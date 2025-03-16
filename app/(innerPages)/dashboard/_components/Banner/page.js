@@ -20,7 +20,8 @@ function Banner({
   isTest2Completed,
   setIsTest2Completed,
   setIsCountryAdded,
-  setIsInstitutionDetailsAdded
+  setIsInstitutionDetailsAdded,
+  setEducationStageExists
 }) {
   const [loading, setLoading] = useState(false);
   const [dashboardData, setDashboardData] = useState([]);
@@ -40,6 +41,8 @@ function Banner({
         setDashboardData(resp.data.data);
         setIsCountryAdded(resp.data.countryAdded);  // Set country added state
         setIsInstitutionDetailsAdded(resp.data.institutionDetailsAdded);  // Set country added state
+        setEducationStageExists(resp.data.educationStageExists);  // Set country added state
+
         // Check if Test 2 is completed
         const test2 = resp.data.data.find((q) => q.quiz_id === 2);
         if (test2 && test2.isCompleted) {
