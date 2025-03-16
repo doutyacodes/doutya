@@ -133,7 +133,7 @@ const onSubmit = async (data) => {
             skillName: skill.skillName
           })) : null,
         careerPreferences: {
-          schoolPref: data.educationStage === "school" ? data.schoolPreference : null,
+          schoolPref: data.educationStage === "school" ? (data.isHigherSecondary ? data.schoolPreference : "personality_based") : null,
           collegePref: data.educationStage === "college" ? data.collegePreference : null,
           completedPref: data.educationStage === "completed_education" && data.isCurrentlyWorking ? data.completedPreference : null,
           noJobPref: data.educationStage === "completed_education" && !data.isCurrentlyWorking ? data.noJobPreference : null
