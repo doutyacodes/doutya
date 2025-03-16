@@ -43,61 +43,7 @@ export default function EducationProfileForm() {
   const [skills, setSkills] = useState([{ skillName: "" }]);
 
   const router = useRouter();
-
-//   // Handle form submission
-//   const onSubmit = async (data) => {
-//     try {
-//       // Map form data to your API structure
-//       const payload = {
-//         educationStage: data.educationStage,
-//         schoolEducation: educationStage === "school" ? {
-//           isHigherSecondary: data.isHigherSecondary,
-//           mainSubject: data.mainSubject || null,
-//           description: data.schoolDescription || null
-//         } : null,
-//         collegeEducation: educationStage === "college" ? 
-//           data.degrees.map((deg, index) => ({
-//             degree: deg.degree,
-//             field: deg.field,
-//             yearOfStudy: deg.yearOfStudy,
-//             isCompleted: deg.isCompleted,
-//             description: index === 0 ? data.collegeDescription : null // Only save description once
-//           })) : null,
-//         completedEducation: educationStage === "completed_education" ? 
-//           data.completedDegrees.map((deg, index) => ({
-//             degree: deg.degree,
-//             field: deg.field,
-//             description: index === 0 ? data.completedDescription : null // Only save description once
-//           })) : null,
-//         workExperience: educationStage === "completed_education" && data.isCurrentlyWorking ? 
-//           data.jobs.map(job => ({
-//             jobTitle: job.jobTitle,
-//             yearsOfExperience: job.yearsOfExperience
-//           })) : null,
-//         skills: educationStage === "completed_education" && data.isCurrentlyWorking ? 
-//           data.skills.map(skill => ({
-//             skillName: skill.skillName
-//           })) : null,
-//         careerPreferences: {
-//           schoolPref: educationStage === "school" ? data.schoolPreference : null,
-//           collegePref: educationStage === "college" ? data.collegePreference : null,
-//           completedPref: educationStage === "completed_education" && data.isCurrentlyWorking ? data.completedPreference : null,
-//           noJobPref: educationStage === "completed_education" && !data.isCurrentlyWorking ? data.noJobPreference : null
-//         }
-//       };
-
-//       console.log("Submitting data:", payload);
-//       // Uncomment to use actual API
-//       // const response = await axios.post("/api/education-profile", payload);
-//       // console.log("Response:", response.data);
-      
-//       alert("Profile updated successfully!");
-//     } catch (error) {
-//       console.error("Error submitting form:", error);
-//       alert("Error updating profile. Please try again.");
-//     }
-//   };
-
+  
 // Handle form submission
 const onSubmit = async (data) => {
     try {
@@ -133,7 +79,7 @@ const onSubmit = async (data) => {
             skillName: skill.skillName
           })) : null,
         careerPreferences: {
-          schoolPref: data.educationStage === "school" ? data.schoolPreference : null,
+          schoolPref: data.educationStage === "school" ? (data.isHigherSecondary ? data.schoolPreference : "personality_based") : null,
           collegePref: data.educationStage === "college" ? data.collegePreference : null,
           completedPref: data.educationStage === "completed_education" && data.isCurrentlyWorking ? data.completedPreference : null,
           noJobPref: data.educationStage === "completed_education" && !data.isCurrentlyWorking ? data.noJobPreference : null
