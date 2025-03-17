@@ -1,7 +1,7 @@
 import { db } from '@/utils';
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
-import { eq, and, sum, count, lte } from 'drizzle-orm';
+import { eq, and, sum, count, lte, desc } from 'drizzle-orm';
 import { CERTIFICATION_QUIZ, CERTIFICATION_USER_PROGRESS, STAR_PERCENT, TEST_PROGRESS, USER_CERTIFICATION_COMPLETION, USER_TESTS,  } from '@/utils/schema'; // Import relevant tables
 
 
@@ -29,6 +29,7 @@ export async function POST(req) {
         // Step 3: Count how many answers are 'yes'
         const yesCount = userProgress.filter(progress => progress.is_answer === 'yes').length;
 
+
         // 2. Get the number of questions for the given testId from CERTIFICATION_QUIZ
         const questionCountResults = await db
                                     .select({
@@ -39,6 +40,7 @@ export async function POST(req) {
 
         const questionCount = questionCountResults[0]?.questionCount || 0;
 
+
         if (questionCount === 0) {
             return NextResponse.json({ message: 'No questions available for this Certification.' }, { status: 400 });
         }
@@ -48,26 +50,24 @@ export async function POST(req) {
 
         // 4. Calculate the percentage
         const result = await db
-                    .select({
-                        stars: STAR_PERCENT.stars
-                    })
-                    .from(STAR_PERCENT)
-                    .where(
-                        and(
-                            lte(STAR_PERCENT.min_percentage, percentage)
-                        )
-                    )
-                    .orderBy(STAR_PERCENT.min_percentage, 'desc') // Sort descending to get the highest applicable stars
-                    .limit(1); // Only get the top result
+        .select({
+            stars: STAR_PERCENT.stars,
+            min_percentage: STAR_PERCENT.min_percentage
+        })
+        .from(STAR_PERCENT)
+        .where(
+            lte(STAR_PERCENT.min_percentage, percentage)
+        )
+        .orderBy(desc(STAR_PERCENT.min_percentage))
+        .limit(1);
 
         let stars;
         if (result.length > 0) {
-            stars = result[0].stars;
-            console.log(`Stars for percentage ${percentage}: ${stars}`);
-            
+        stars = result[0].stars;
+        console.log(`Stars for percentage ${percentage}: ${stars}`);
         } else {
-            console.log('No matching stars found.');
-            stars = 0
+        console.log('No matching stars found.');
+        stars = 0; // If percentage is below minimum threshold (40%)
         }
 
         await db.update(USER_CERTIFICATION_COMPLETION)

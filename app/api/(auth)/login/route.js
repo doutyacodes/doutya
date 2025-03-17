@@ -24,7 +24,7 @@ export async function POST(req) {
 
     // Decrypt stored password and check if it matches
     const decryptedPassword = decryptText(existingUser.password);
-
+// console.log("arunkumar" ,decryptedPassword)
     if (decryptedPassword !== password) {
       return NextResponse.json({ message: 'Invalid username or password.' }, { status: 401 });
     }

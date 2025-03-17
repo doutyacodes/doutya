@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { CERTIFICATION_QUIZ, CERTIFICATION_QUIZ_OPTIONS, CERTIFICATION_USER_PROGRESS, CERTIFICATIONS, USER_CERTIFICATION_COMPLETION, USER_DETAILS, CAREER_GROUP, TOPICS_COVERED } from '@/utils/schema';
+import { CERTIFICATION_QUIZ, CERTIFICATION_QUIZ_OPTIONS, CERTIFICATION_USER_PROGRESS, CERTIFICATIONS, USER_CERTIFICATION_COMPLETION, USER_DETAILS, CAREER_GROUP, TOPICS_COVERED, USER_CAREER } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq, sql } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -96,6 +96,7 @@ export async function GET(request, { params }) {
 
         const certification = await db
             .select({
+                careerGrpId: CERTIFICATIONS.career_group_id,
                 certificationName: CERTIFICATIONS.certification_name,
                 careerName: CAREER_GROUP.career_name
             })
@@ -105,6 +106,19 @@ export async function GET(request, { params }) {
 
         const certificationName = certification[0]?.certificationName;
         const careerName = certification[0]?.careerName;
+        const careerGrpId = certification[0]?.careerGrpId
+
+        //Get the type 1 and type 2 for the from the sequence table gy USER_CAREER table
+        const userCareer = await db
+        .select({
+            type1: USER_CAREER.type1,
+            type2: USER_CAREER.type2,
+            country: USER_CAREER.country,
+        })
+        .from(USER_CAREER)
+        .where(and(eq(USER_CAREER.user_id, userId), eq(USER_CAREER.career_group_id, careerGrpId)));
+
+        const { type1, type2 } = userCareer[0];
 
         let totalAnswered = 0;
 
@@ -145,7 +159,7 @@ export async function GET(request, { params }) {
 
         // If no questions are found, generate new course data
         if (questions.length === 0) {
-            await GenerateCourse(age, certificationName, careerName, certificationId, birth_date, educationLevel, className, percentageCompleted);
+            await GenerateCourse(userId, age, certificationName, careerName, certificationId, birth_date, educationLevel, className, percentageCompleted, type1, type2);
             // await GenerateCourse(age, certificationName, careerName, certificationId, birth_date);
             // Fetch the questions again after generation
             ({ questions } = await fetchAndFormatQuestions(certificationId, age, className));

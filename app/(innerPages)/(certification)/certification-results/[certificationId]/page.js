@@ -324,7 +324,7 @@ const CertificateDisplay = ({ params }) => {
   const renderStars = (count) => {
     return (
       <div className="flex gap-2">
-        {[1, 2, 3].map((starNumber) => (
+        {[1, 2, 3,].map((starNumber) => (
           <Star
             key={starNumber}
             className={`w-6 h-6 ${

@@ -12,6 +12,7 @@ import {
 } from "@/utils/schema"; // Ensure this path is correct
 import { and, eq } from "drizzle-orm";
 import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
+import { generateCourseTestPrompt } from '../services/promptService';
 
 
 // export async function GenerateCourse(age, course, career, courseId, birthDate ) {
@@ -210,100 +211,102 @@ import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 // }
 
 
-export async function GenerateCourse(age, course, career, courseId, birthDate, educationLevel, className, percentageCompleted ) {
+export async function GenerateCourse(userId, age, course, career, courseId, birthDate, educationLevel, className, percentageCompleted, type1, type2) {
 
     try {
         const currentAgeWeek = getCurrentWeekOfAge(birthDate)
 
-        const prompt = `
-            Generate a detailed course for the career "${career}" with the course titled "${course}". The course should be designed for a user aged ${age} (currently in week ${currentAgeWeek} of this age)${
-                (educationLevel === 'school' || educationLevel === 'college') 
-                ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
-                : ''
-            }. Include a full course structure for a 3-week certifiable course. Each week should include topics covered, assignments, and learning outcomes.
+        // const prompt = `
+        //     Generate a detailed course for the career "${career}" with the course titled "${course}". The course should be designed for a user aged ${age} (currently in week ${currentAgeWeek} of this age)${
+        //         (educationLevel === 'school' || educationLevel === 'college') 
+        //         ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
+        //         : ''
+        //     }. Include a full course structure for a 3-week certifiable course. Each week should include topics covered, assignments, and learning outcomes.
 
-            For each week, include:
-            1. **Topics Covered:** Provide the specific topics that will be taught each week, as an array of strings.
-            2. **Assignments:** Include the practical assignments or tasks students need to complete by the end of the week, as an array of strings.
-            3. **Learning Outcomes:** Describe the key skills and knowledge the user will gain after completing the week, as an array of strings.
+        //     For each week, include:
+        //     1. **Topics Covered:** Provide the specific topics that will be taught each week, as an array of strings.
+        //     2. **Assignments:** Include the practical assignments or tasks students need to complete by the end of the week, as an array of strings.
+        //     3. **Learning Outcomes:** Describe the key skills and knowledge the user will gain after completing the week, as an array of strings.
 
-            - **Prerequisites:** Provide prerequisites or recommended background knowledge as an array of strings.
-            - **Skills Acquired:** Provide skills students will develop as an array of strings.
-            - **Real-World Applications:** Provide real-world applications as an array of strings, showing how the acquired skills apply in a professional context.
+        //     - **Prerequisites:** Provide prerequisites or recommended background knowledge as an array of strings.
+        //     - **Skills Acquired:** Provide skills students will develop as an array of strings.
+        //     - **Real-World Applications:** Provide real-world applications as an array of strings, showing how the acquired skills apply in a professional context.
 
-            ### Course Structure:
-            Use the following structure for the course, ensuring consistency in output:
+        //     ### Course Structure:
+        //     Use the following structure for the course, ensuring consistency in output:
 
-            "course_structure": {
-                "Week 1": {
-                    "Topics Covered": [
-                        "Topic 1",
-                        "Topic 2",
-                        "Topic 3"
-                    ],
-                    "Assignments": [
-                        "Assignment 1",
-                        "Assignment 2"
-                    ],
-                    "Learning Outcomes": [
-                        "Outcome 1",
-                        "Outcome 2"
-                    ]
-                },
-                "Week 2": {
-                    "Topics Covered": [
-                        "Topic 4",
-                        "Topic 5",
-                        "Topic 6"
-                    ],
-                    "Assignments": [
-                        "Assignment 3",
-                        "Assignment 4"
-                    ],
-                    "Learning Outcomes": [
-                        "Outcome 3",
-                        "Outcome 4"
-                    ]
-                },
-                "Week 3": {
-                    "Topics Covered": [
-                        "Topic 7",
-                        "Topic 8",
-                        "Topic 9"
-                    ],
-                    "Assignments": [
-                        "Assignment 5",
-                        "Assignment 6"
-                    ],
-                    "Learning Outcomes": [
-                        "Outcome 5",
-                        "Outcome 6"
-                    ]
-                }
-            }
+        //     "course_structure": {
+        //         "Week 1": {
+        //             "Topics Covered": [
+        //                 "Topic 1",
+        //                 "Topic 2",
+        //                 "Topic 3"
+        //             ],
+        //             "Assignments": [
+        //                 "Assignment 1",
+        //                 "Assignment 2"
+        //             ],
+        //             "Learning Outcomes": [
+        //                 "Outcome 1",
+        //                 "Outcome 2"
+        //             ]
+        //         },
+        //         "Week 2": {
+        //             "Topics Covered": [
+        //                 "Topic 4",
+        //                 "Topic 5",
+        //                 "Topic 6"
+        //             ],
+        //             "Assignments": [
+        //                 "Assignment 3",
+        //                 "Assignment 4"
+        //             ],
+        //             "Learning Outcomes": [
+        //                 "Outcome 3",
+        //                 "Outcome 4"
+        //             ]
+        //         },
+        //         "Week 3": {
+        //             "Topics Covered": [
+        //                 "Topic 7",
+        //                 "Topic 8",
+        //                 "Topic 9"
+        //             ],
+        //             "Assignments": [
+        //                 "Assignment 5",
+        //                 "Assignment 6"
+        //             ],
+        //             "Learning Outcomes": [
+        //                 "Outcome 5",
+        //                 "Outcome 6"
+        //             ]
+        //         }
+        //     }
 
-            ### final_quiz:
-            key name should be(final_quiz)
-            For the quiz, provide 20 questions covering key concepts and skills from the course.
-            For each question, provide exactly 4 answer options. Only one option should be marked as the correct answer using "is_answer": "yes" and the others should be marked with "is_answer": "no."
-            Return all questions in a single JSON array, with each question following this format:
+        //     ### final_quiz:
+        //     key name should be(final_quiz)
+        //     For the quiz, provide 20 questions covering key concepts and skills from the course.
+        //     For each question, provide exactly 4 answer options. Only one option should be marked as the correct answer using "is_answer": "yes" and the others should be marked with "is_answer": "no."
+        //     Return all questions in a single JSON array, with each question following this format:
 
-            {
-                "question": "Your question text",
-                "options": [
-                    { "text": "Option 1", "is_answer": "no" },
-                    { "text": "Option 2", "is_answer": "yes" },
-                    { "text": "Option 3", "is_answer": "no" },
-                    { "text": "Option 4", "is_answer": "no" }
-                ]
-            }
+        //     {
+        //         "question": "Your question text",
+        //         "options": [
+        //             { "text": "Option 1", "is_answer": "no" },
+        //             { "text": "Option 2", "is_answer": "yes" },
+        //             { "text": "Option 3", "is_answer": "no" },
+        //             { "text": "Option 4", "is_answer": "no" }
+        //         ]
+        //     }
 
-            Make sure there are exactly 20 questions, no more and no less, and that none of the questions or answer options are repeated.
+        //     Make sure there are exactly 20 questions, no more and no less, and that none of the questions or answer options are repeated.
 
-            Ensure that the response is valid JSON, using the specified field names.
-        `;
+        //     Ensure that the response is valid JSON, using the specified field names.
+        // `;
+ 
+        const prompt = await generateCourseTestPrompt(userId, career, course, type1, type2, age, currentAgeWeek)
 
-
+        console.log("prompt", prompt)
         
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
