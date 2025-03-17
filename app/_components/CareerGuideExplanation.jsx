@@ -60,7 +60,7 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
     {
       title: "Welcome to Your Career Guide",
       content: (
-        <div className="flex flex-col items-center space-y-4 h-[500px] md:h-[350px] overflow-y-auto">
+        <div className="flex flex-col items-center space-y-4 text-center h-[500px] md:h-[350px] overflow-y-auto">
           <div className="text-5xl mb-4">🌟</div>
           <h2 className="text-2xl font-bold text-white mb-2">Your Personalized Career Companion</h2>
           <p className="text-gray-300 text-center">
@@ -78,7 +78,7 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
     {
       title: "Roadmap: Your Career Navigation Tool",
       content: (
-        <div className="space-y-4 h-[500px] md:h-[350px] overflow-y-auto">
+        <div className="flex flex-col items-center space-y-4 text-center h-[500px] md:h-[350px] overflow-y-auto">
           <p className="text-gray-300">
             The Roadmap is a comprehensive tracking system divided into three key areas 
             to ensure balanced personal and professional development:
@@ -122,7 +122,7 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
     {
       title: "Tests: Continuous Learning & Assessment",
       content: (
-        <div className="space-y-4 h-[500px] md:h-[350px] overflow-y-auto">
+        <div className="flex flex-col items-center space-y-4 text-center h-[500px] md:h-[350px] overflow-y-auto">
           <p className="text-gray-300">
             Our comprehensive testing system helps you track and enhance your skills:
           </p>
@@ -154,7 +154,7 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
     {
       title: "Feedback: Your Growth Compass",
       content: (
-        <div className="space-y-4 h-[500px] md:h-[350px] overflow-y-auto">
+        <div className="flex flex-col items-center space-y-4 text-center h-[500px] md:h-[350px] overflow-y-auto">
           <p className="text-gray-300">
             Gain insights into your professional development through comprehensive feedback:
           </p>
@@ -185,7 +185,7 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
     {
       title: "Challenges: Skill Enhancement Platform",
       content: (
-        <div className="space-y-4 h-[500px] md:h-[350px] overflow-y-auto">
+        <div className="flex flex-col items-center space-y-4 text-center h-[500px] md:h-[350px] overflow-y-auto">
           <p className="text-gray-300">
             Transform learning into an engaging and rewarding experience:
           </p>
@@ -210,7 +210,7 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
     {
       title: "Community: Connect & Grow Together",
       content: (
-        <div className="space-y-4 h-[500px] md:h-[350px] overflow-y-auto">
+        <div className="flex flex-col items-center space-y-4 text-center h-[500px] md:h-[350px] overflow-y-auto">
           <p className="text-gray-300">
             Your professional network starts here:
           </p>
@@ -240,7 +240,7 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
     {
       title: "Career Overview: Your Professional Roadmap",
       content: (
-        <div className="space-y-4 h-[500px] md:h-[350px] overflow-y-auto">
+        <div className="flex flex-col items-center space-y-4 text-center h-[500px] md:h-[350px] overflow-y-auto">
           <p className="text-gray-300">
             A comprehensive exploration of your chosen career trajectory:
           </p>
@@ -301,9 +301,9 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
         </div>
         
         {/* Content */}
-        <div className="p-6 md:p-10 max-h-[70vh] overflow-y-auto">
-          <h2 className="text-xl font-bold text-white mb-4">{steps[currentStep].title}</h2>
-          <div className="min-h-64">
+        <div className="p-4 md:p-6 lg:p-10">
+          <h2 className="text-lg md:text-xl font-bold text-white mb-3 text-center">{steps[currentStep].title}</h2>
+          <div className="h-96 md:h-72 overflow-y-auto">
             {steps[currentStep].content}
           </div>
         </div>

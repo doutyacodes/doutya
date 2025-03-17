@@ -151,34 +151,41 @@ const onSubmit = async (data) => {
     setValue("completedDegrees", updatedDegrees, { shouldValidate: true, shouldDirty: true });
     setCompletedDegrees(updatedDegrees); // Sync local state
   };
-
   const addJob = () => {
     const currentJobs = getValues("jobs"); // Retrieve current jobs
     const updatedJobs = [...currentJobs, { jobTitle: "", yearsOfExperience: 0 }];
     setValue("jobs", updatedJobs, { shouldValidate: true, shouldDirty: true });
+    // Ensure isCurrentlyWorking remains true
+    setValue("isCurrentlyWorking", true, { shouldValidate: true });
     setJobs(updatedJobs); // Sync local state
   };
-
+  
   const removeJob = (index) => {
     const currentJobs = getValues("jobs"); // Retrieve current jobs
     const updatedJobs = currentJobs.filter((_, i) => i !== index);
     setValue("jobs", updatedJobs, { shouldValidate: true, shouldDirty: true });
+    // Ensure isCurrentlyWorking remains true
+    setValue("isCurrentlyWorking", true, { shouldValidate: true });
     setJobs(updatedJobs); // Sync local state
   };
-
+  
   const addSkill = () => {
     const currentSkills = getValues("skills"); // Retrieve current skills
     const updatedSkills = [...currentSkills, { skillName: "" }];
     setValue("skills", updatedSkills, { shouldValidate: true, shouldDirty: true });
+    // Ensure isCurrentlyWorking remains true
+    setValue("isCurrentlyWorking", true, { shouldValidate: true });
     setSkills(updatedSkills); // Sync local state
-    };
-
-    const removeSkill = (index) => {
-        const currentSkills = getValues("skills"); // Retrieve current skills
-        const updatedSkills = currentSkills.filter((_, i) => i !== index);
-        setValue("skills", updatedSkills, { shouldValidate: true, shouldDirty: true });
-        setSkills(updatedSkills); // Sync local state
-    };
+  };
+  
+  const removeSkill = (index) => {
+    const currentSkills = getValues("skills"); // Retrieve current skills
+    const updatedSkills = currentSkills.filter((_, i) => i !== index);
+    setValue("skills", updatedSkills, { shouldValidate: true, shouldDirty: true });
+    // Ensure isCurrentlyWorking remains true
+    setValue("isCurrentlyWorking", true, { shouldValidate: true });
+    setSkills(updatedSkills); // Sync local state
+  };
   
 
   return (
