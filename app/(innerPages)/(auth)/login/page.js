@@ -26,16 +26,32 @@ function Login() {
     setSelectedLanguage(savedLanguage);
   }, []);
 
+  // useEffect(() => {
+  //   const authCheck = () => {
+  //     if (typeof window !== "undefined") {
+  //       const token = localStorage.getItem("token");
+  //       if (token) {
+  //         router.push("/dashboard");
+  //       } 
+  //     }
+  //   };
+  //   authCheck();
+  // }, [router]);
+
   useEffect(() => {
-    const authCheck = () => {
-      if (typeof window !== "undefined") {
-        const token = localStorage.getItem("token");
-        if (token) {
-          router.push("/dashboard");
-        } 
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+
+      // Get auth_token from cookies
+      const cookies = document.cookie.split("; ").find(row => row.startsWith("auth_token="));
+      const authToken = cookies ? cookies.split("=")[1] : null;
+
+      if (token && authToken) {
+        router.replace("/dashboard"); // Redirect only if both exist
+      } else {
+        localStorage.clear(); // Clear localStorage if either token is missing
       }
-    };
-    authCheck();
+    }
   }, [router]);
 
   const onSubmit = async (data) => {
