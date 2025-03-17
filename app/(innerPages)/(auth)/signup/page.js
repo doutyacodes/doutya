@@ -32,7 +32,7 @@ function SignUp() {
   };
 
   const [selectedDOB, setSelectedDOB] = useState(null);
-  const [step, setStep] = useState("dob");
+  const [step, setStep] = useState("eligibility_info");
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
   const [countryOptions] = useState(countryList().getData());
   const [selectedCountry, setSelectedCountry] = useState("India");
@@ -202,21 +202,12 @@ function SignUp() {
   //   }
   // };
 
-  
   const handleNext = () => {
-    if (step === "language") {
+    if (step === "eligibility_info") {
+      setStep("dob");
+    } else if (step === "language") {
       setStep("dob");
     } else if (step === "dob") {
-    //   setStep("education_level");
-    // } else if (step === "education_level") {
-    //   if (educationLevel == 2) {
-    //     setStep("reason");
-    //   } else {
-    //     setStep("signup");
-    //   }
-    // } else if (step === "reason") {
-    //   setStep("additional_info");
-    // } else if (step === "additional_info") {
       setStep("signup");
     }
   };
@@ -344,9 +335,53 @@ function SignUp() {
   );
 }
 
- // DOB Step
-  if (step === "dob") {
+  // Eligibility Info Step
+  if (step === "eligibility_info") {
     return (
+      <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
+        <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
+          <h1 className="text-2xl font-bold mb-6 text-center text-white">
+            {t("eligibilityTitle") || "Welcome to Xortcut"}
+          </h1>
+          
+          <div className="mb-8 text-center">
+            <div className="flex justify-center mb-6">
+              <img 
+                src={"/assets/images/logo-full.png"}
+                alt="Xortcut Logo" 
+                className="w-32 md:w-48 h-auto mb-2 object-contain"
+              />
+            </div>
+            
+            <p className="text-gray-300 mb-4">
+              {t("eligibilityInfo") || "Xortcut is designed for college students and working professionals."}
+            </p>
+            
+            <p className="text-gray-400 text-sm mb-8">
+              {t("eligibilityDetails") || "By continuing, you confirm that you are a college student or a working professional."}
+            </p>
+          </div>
+          
+          <div className="flex flex-col gap-4">
+            <button
+              onClick={handleNext}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
+            >
+              {t("continue") || "Continue"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+ // DOB Step
+ if (step === "dob") {
+  // Calculate age if selectedDOB exists
+  const age = selectedDOB ? calculateAge(selectedDOB) : null;
+  const showCollegeConfirmation = age !== null && age <= 16;
+  
+  return (
     <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
       <Toaster />
       <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
@@ -370,16 +405,46 @@ function SignUp() {
             <p className="mt-2 text-sm text-red-600">{dobError}</p>
           )}
         </div>
+        
+        {/* College confirmation for users 16 or younger */}
+        {showCollegeConfirmation && (
+          <div className="mt-4 mb-6 p-4 border border-yellow-500 bg-yellow-900 bg-opacity-20 rounded-md">
+            <p className="text-yellow-300 font-medium mb-2">Confirmation Required</p>
+            <p className="text-gray-300 text-sm mb-3">
+              Xortcut is primarily for college students and professionals. Are you a college student or working professional?
+            </p>
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={() => setIsCollegeStudent(true)}
+                className={`flex-1 py-2 px-3 rounded-md text-sm transition-colors ${
+                  isCollegeStudent 
+                    ? "bg-green-600 text-white" 
+                    : "bg-gray-800 text-gray-300 border border-gray-700"
+                }`}
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => window.location.href = "/"}
+                className="flex-1 py-2 px-3 rounded-md text-sm bg-gray-800 text-gray-300 border border-gray-700 hover:bg-gray-700 transition-colors"
+              >
+                Exit Sign Up
+              </button>
+            </div>
+          </div>
+        )}
+        
         <button
           onClick={handleNext}
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed"
-          disabled={!selectedDOB || dobError}
+          disabled={!selectedDOB || dobError || (showCollegeConfirmation && !isCollegeStudent)}
         >
           Next
         </button>
       </div>
     </div>
-  )}
+  )
+}
 
  // Education Level Step
   if (step === "education_level") {

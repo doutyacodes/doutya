@@ -52,7 +52,11 @@
     "dobRequired": "Date of Birth is required",
     "passWord":"Password must be 6+ characters with letters, numbers, and special characters.",
     "passwordMismatch":"password does not match",
-    "genderRequired": "Gender is required"
+    "genderRequired": "Gender is required",
+    "eligibilityTitle": "Welcome to Xortcut",
+    "eligibilityInfo": "Xortcut is designed for college students and working professionals.",
+    "eligibilityDetails": "By continuing, you confirm that you are a college student or a working professional.",
+    "continue": "Continue"
   },
   "Banner": {
     "title": "Personality",
