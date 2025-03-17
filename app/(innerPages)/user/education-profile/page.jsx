@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { CareerDataCollectionGuide } from "@/app/_components/StepCompletionNotifications";
 import { useRouter } from "next/navigation";
+import GlobalApi from "@/app/_services/GlobalApi";
+import LoadingOverlay from "@/app/_components/LoadingOverlay";
 
 export default function EducationProfileForm() {
   // Main form state
@@ -30,6 +32,8 @@ export default function EducationProfileForm() {
       noJobPreference: ""
     }
   });
+  const [isLoading, setisLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
 
   // Watch values for conditional rendering
   const educationStage = watch("educationStage");
@@ -43,6 +47,50 @@ export default function EducationProfileForm() {
   const [skills, setSkills] = useState([{ skillName: "" }]);
 
   const router = useRouter();
+
+
+  // Check authentication and completion status on component mount
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      if (token) {
+        setIsAuthenticated(true);
+        return token;
+      }
+      router.replace("/login"); // Redirect to login if no token
+      return null;
+    };
+    
+    const getProfileStatus = async () => {
+      setisLoading(true);
+      try {
+        const token = checkAuth();
+        if (!token) return;
+        
+        const resp = await GlobalApi.GetDashboarCheck(token);
+
+        // Check if education profile is already completed and redirect accordingly
+        if (resp.data.educationStageExists) {
+          // Education profile already exists, redirect based on next incomplete step
+          if (!resp.data.institutionDetailsAdded) {
+            router.replace("/education-details");
+          } else if (!resp.data.countryAdded) {
+            router.replace("/country");
+          } else {
+            router.replace("/dashboard/careers/career-suggestions");
+          }
+        }
+        // If education stage doesn't exist, we stay on this page
+      } catch (error) {
+        console.error("Error fetching profile status:", error);
+        toast.error("Error loading profile status. Please try again.");
+      } finally {
+        setisLoading(false);
+      }
+    };
+    
+    getProfileStatus();
+  }, [router]);
   
 // Handle form submission
 const onSubmit = async (data) => {
@@ -95,16 +143,6 @@ const onSubmit = async (data) => {
 
         // Make API call
         const response = await axios.post("/api/user/education-profile", payload, { headers });
-
-        // // Check if request was successful
-        // if (response.status === 200 || response.status === 201) {
-        //     console.log("Response:", response.data);
-        //     toast.success("Education profile updated successfully!");
-        //     // Redirect to dashboard
-        //     router.replace("/education-details");
-        // } else {
-        //     throw new Error("Unexpected response status");
-        // }
 
       if (response.status === 200 && response.data.success) {
           console.log("Response:", response.data);
@@ -186,6 +224,15 @@ const onSubmit = async (data) => {
     setValue("isCurrentlyWorking", true, { shouldValidate: true });
     setSkills(updatedSkills); // Sync local state
   };
+
+  // Show loading overlay while checking status
+  if (isLoading || !isAuthenticated) {
+    return (
+      <div className="h-screen flex items-center justify-center text-white">
+        <LoadingOverlay loadText={"Loading..."} />
+      </div>
+    );
+  }
   
 
   return (

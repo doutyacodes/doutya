@@ -342,23 +342,28 @@ function Page() {
           {/* Selected Career Content */}
           {selectedCareer && (
             <>
-            <div className="bg-gray-600 min-h-20 mb-5 justify-between items-center flex px-6 md:px-24 py-4">
+            <div className="bg-gray-600 mb-5 flex flex-col sm:flex-row sm:justify-between items-center px-4 py-3 sm:px-6 md:px-24 sm:py-4 gap-3 sm:gap-0">
+              {/* Career Overview Button - Full width on mobile, normal on desktop */}
               <button
-                className={`px-6 py-4 bg-[#2b2b2b] text-white font-bold rounded-xl text-sm flex items-center hover:bg-[#3a3a3a] focus:outline-none focus:ring-2 focus:ring-[#5a5a5a] focus:ring-offset-2 transition-colors duration-200 ${
+                className={`w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-4 bg-[#2b2b2b] text-white font-bold rounded-xl text-sm flex items-center justify-center hover:bg-[#3a3a3a] focus:outline-none focus:ring-2 focus:ring-[#5a5a5a] focus:ring-offset-2 transition-colors duration-200 ${
                   activeTab === 'careerOverview' ? 'bg-[#3b3b3b]' : ''
                 }`}
                 onClick={() => handleTabClick('careerOverview')}
               >
                 <span className="mr-2">Career Overview</span>
               </button>
-              <p className="text-white uppercase font-bold text-center md:text-xl">
+              
+              {/* Career Name - Centered on mobile */}
+              <p className="text-white uppercase font-bold text-center text-lg md:text-xl order-first sm:order-none">
                 {selectedCareer?.career_name}
               </p>
-              <div className="space-y-3">
-                <p className="p-2 bg-[#1f1f1f] text-white font-bold rounded-xl text-sm text-center">
+              
+              {/* Year/Week Info - Side by side on mobile, stacked on desktop */}
+              <div className="flex sm:flex-col gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                <p className="flex-1 sm:flex-none p-2 bg-[#1f1f1f] text-white font-bold rounded-xl text-xs sm:text-sm text-center">
                   YEAR - {selectedCareer.weekData.yearsSinceJoined}
                 </p>
-                <p className="p-2 bg-[#1f1f1f] text-white font-bold rounded-xl text-sm text-center">
+                <p className="flex-1 sm:flex-none p-2 bg-[#1f1f1f] text-white font-bold rounded-xl text-xs sm:text-sm text-center">
                   WEEK - {selectedCareer.weekData.weekNumber}/52
                 </p>
               </div>
@@ -366,22 +371,23 @@ function Page() {
 
             <div className="flex flex-col px-4 md:px-20 gap-6 py-6 bg-[#2c2c2c]">
               <div className="bg-gray-900 flex flex-col items-center w-full md:w-auto p-4 rounded-lg">
-                <div className="flex flex-row  gap-4 text-xs md:text-base min-w-20 mt-4 w-full overflow-x-scroll justify-center items-center">
-                  {tabs.map((tab) => (
-                    <>
+                <div className="flex flex-row md:justify-center gap-4 text-xs md:text-base w-full overflow-x-auto scrollbar-hide pb-2">
+                  {tabs.map((tab, index) => (
+                    <React.Fragment key={tab.key}>
                       <button
-                        key={tab.key}
                         className={`${
                           activeTab === tab.key
                             ? "text-orange-400 bg-gray-700"
                             : "text-gray-100 hover:bg-gray-700"
-                        }  font-semibold py-2 px-3 md:min-w-32`}
+                        } whitespace-nowrap font-semibold py-2 px-3 flex-shrink-0`}
                         onClick={() => setActiveTab(tab.key)}
                       >
                         {tab.label.toUpperCase()}
                       </button>
-                      <div className="h-10 px-[1px] bg-white" />
-                    </>
+                      {index < tabs.length - 1 && (
+                        <div className="h-10 px-[1px] bg-white flex-shrink-0" />
+                      )}
+                    </React.Fragment>
                   ))}
                 </div>
               </div>

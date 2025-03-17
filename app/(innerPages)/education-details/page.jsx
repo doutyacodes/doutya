@@ -1,4 +1,5 @@
 "use client"
+import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import GlobalApi from "@/app/_services/GlobalApi";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -11,8 +12,10 @@ const EducationDetailsForm = () => {
   const [childDivisionOptions, setChildDivisionOptions] = useState([]);
   const [showCustomSchool, setShowCustomSchool] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isInstitutionDropdownOpen, setIsInstitutionDropdownOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const router = useRouter();
 
   const {
@@ -38,6 +41,50 @@ const EducationDetailsForm = () => {
   const instituteId = watch("instituteId");
   const classId = watch("classId");
   const customSchoolSelected = watch("customSchool");
+
+    // Check authentication and completion status on component mount
+    useEffect(() => {
+      const checkAuth = () => {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        if (token) {
+          setIsAuthenticated(true);
+          return token;
+        }
+        router.replace("/login"); // Redirect to login if no token
+        return null;
+      };
+      
+      const getProfileStatus = async () => {
+        setLoading(true);
+        try {
+          const token = checkAuth();
+          if (!token) return;
+          
+          const resp = await GlobalApi.GetDashboarCheck(token);
+  
+          // Check if education profile is already completed and redirect accordingly
+          if (resp.data.institutionDetailsAdded) {
+            // Education profile already exists, redirect based on next incomplete step
+            if (!resp.data.educationStageExists) {
+              router.replace("/user/education-profile");
+            } else if (!resp.data.countryAdded) {
+              router.replace("/country");
+            } else {
+              router.replace("/dashboard/careers/career-suggestions");
+            }
+          }
+          // If education stage doesn't exist, we stay on this page
+        } catch (error) {
+          console.error("Error fetching profile status:", error);
+          toast.error("Error loading profile status. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      getProfileStatus();
+    }, [router]);
+    
 
   // Fetch institutions on component mount
   useEffect(() => {
@@ -158,6 +205,17 @@ const EducationDetailsForm = () => {
     { value: 11, label: "November" },
     { value: 12, label: "December" },
   ];
+
+  
+  // Show loading overlay while checking status
+  if (loading || !isAuthenticated) {
+    return (
+      <div className="h-screen flex items-center justify-center text-white">
+        <LoadingOverlay loadText={"Loading..."} />
+      </div>
+    );
+  }
+  
 
   // Generate array of years (last 10 years and next 10 years)
   const currentYear = new Date().getFullYear();

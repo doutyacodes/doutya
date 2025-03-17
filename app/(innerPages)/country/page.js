@@ -23,19 +23,47 @@ function SelectCountry() {
   const router = useRouter();
   const t = useTranslations("countryPage");
 
+  // Check authentication and completion status on component mount
   useEffect(() => {
-    const authCheck = () => {
-      if (typeof window !== "undefined") {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          router.push("/login");
-          setIsAuthenticated(false);
-        } else {
-          setIsAuthenticated(true);
+    const checkAuth = () => {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      if (token) {
+        setIsAuthenticated(true);
+        return token;
+      }
+      router.replace("/login"); // Redirect to login if no token
+      return null;
+    };
+    
+    const getProfileStatus = async () => {
+      setLoading(true);
+      try {
+        const token = checkAuth();
+        if (!token) return;
+        
+        const resp = await GlobalApi.GetDashboarCheck(token);
+
+        // Check if education profile is already completed and redirect accordingly
+        if (resp.data.countryAdded) {
+          // Education profile already exists, redirect based on next incomplete step
+          if (!resp.data.educationStageExists) {
+            router.replace("/user/education-profile");
+          } else if (!resp.data.institutionDetailsAdded) {
+            router.replace("/education-details");
+          } else {
+            router.replace("/dashboard/careers/career-suggestions");
+          }
         }
+        // If education stage doesn't exist, we stay on this page
+      } catch (error) {
+        console.error("Error fetching profile status:", error);
+        toast.error("Error loading profile status. Please try again.");
+      } finally {
+        loading(false);
       }
     };
-    authCheck();
+    
+    getProfileStatus();
   }, [router]);
 
     // Fetch User Data
