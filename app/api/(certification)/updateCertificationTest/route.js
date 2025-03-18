@@ -2,8 +2,14 @@ import { db } from '@/utils';
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { eq, and, sum, count, lte, desc } from 'drizzle-orm';
-import { CERTIFICATION_QUIZ, CERTIFICATION_USER_PROGRESS, STAR_PERCENT, TEST_PROGRESS, USER_CERTIFICATION_COMPLETION, USER_TESTS,  } from '@/utils/schema'; // Import relevant tables
+import { CERTIFICATION_QUIZ, CERTIFICATION_USER_PROGRESS, CERTIFICATIONS, STAR_PERCENT, TEST_PROGRESS, USER_CERTIFICATION_COMPLETION, USER_TESTS,  } from '@/utils/schema'; // Import relevant tables
 
+// Helper function to generate the improved certificate ID
+const generateCertificateId = () => {
+    const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, '');  // YYYYMMDD
+    const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase(); // 6 random alphanumeric chars
+    return `XCT-${datePart}-${randomPart}`;  
+};
 
 export async function POST(req) {
     const authResult = await authenticate(req);
@@ -70,19 +76,44 @@ export async function POST(req) {
         stars = 0; // If percentage is below minimum threshold (40%)
         }
 
-        await db.update(USER_CERTIFICATION_COMPLETION)
-        .set({
-            score_percentage: Math.round(percentage),
-            rating_stars: stars,
-            completed: 'yes',
-        })
-        .where(
-            and(
-                eq(USER_CERTIFICATION_COMPLETION.user_id, userId),
-                eq(USER_CERTIFICATION_COMPLETION.certification_id, certificationId)
-            )
-        );
         
+        // const stars = result.length > 0 ? result[0].stars : 0;
+
+        // 5️⃣ Get certification name
+        const certification = await db
+            .select({ certification_name: CERTIFICATIONS.certification_name })
+            .from(CERTIFICATIONS)
+            .where(eq(CERTIFICATIONS.id, certificationId))
+            .limit(1);
+
+        if (certification.length === 0) {
+            return NextResponse.json({ message: 'Certification not found' }, { status: 404 });
+        }
+
+        const certificationName = certification[0].certification_name;
+
+         // 6️⃣ Generate a new certificate ID
+         const certificateId = generateCertificateId();
+         
+
+         // 7️⃣ Update the database with the new fields
+         await db.update(USER_CERTIFICATION_COMPLETION)
+             .set({
+                 score_percentage: Math.round(percentage),
+                 rating_stars: stars,
+                 completed: 'yes',
+                 certificate_id: certificateId,                      // New field
+                 certification_name: certificationName,               // New field
+                 issued_at: new Date(),                               // New field
+                 status: 'valid',                                     // New field
+             })
+             .where(
+                 and(
+                     eq(USER_CERTIFICATION_COMPLETION.user_id, userId),
+                     eq(USER_CERTIFICATION_COMPLETION.certification_id, certificationId)
+                 )
+             );
+ 
         return NextResponse.json({ message: 'Quiz Data Completed' }, { status: 201 });
 
     } catch (error) {

@@ -93,6 +93,12 @@ const ContentGenerationLoading = ({
         description: "We're processing your personality traits and interests to find your ideal industry sectors.",
         color: "from-yellow-600 to-amber-800"
       },
+      certificationTest: {
+        icon: "🎓",
+        title: "Generating Certification Test",
+        description: "We're creating a set of test questions and answers tailored to your expertise level.",
+        color: "from-teal-600 to-blue-800"
+      },
       default: {
         icon: "⚙️",
         title: "Processing Your Request",

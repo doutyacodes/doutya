@@ -82,7 +82,9 @@ const LeftSideBar = () => {
     if (token) setIsLoggedIn(true);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
+    await fetch('/api/logout', { method: 'GET' });
+
     // Clear localStorage
     localStorage.clear();
 

@@ -338,55 +338,72 @@ export async function GenerateCourse(userId, age, course, career, courseId, birt
             throw new Error("Failed to parse response data");
         }
 
+        console.log("parsedData", parsedData)
+
+        // return { success: true, message: "Course generated and saved successfully" };
+
+
+        /* currently not using the course thing  */
 
         // . Insert course overview
-        await db.insert(COURSE_OVERVIEW).values({
-            certification_id: courseId,
-            prerequisite_description: parsedData.prerequisites,
-            skill_description: parsedData.skills_acquired,
-            application_description: parsedData.real_world_applications
-        });
+        // await db.insert(COURSE_OVERVIEW).values({
+        //     certification_id: courseId,
+        //     prerequisite_description: parsedData.prerequisites,
+        //     skill_description: parsedData.skills_acquired,
+        //     application_description: parsedData.real_world_applications
+        // });
 
         // 3. Process course structure for each week
-        for (let weekNum = 1; weekNum <= 3; weekNum++) {
-            const weekKey = `Week ${weekNum}`;
-            const weekData = parsedData.course_structure[weekKey];
+        // for (let weekNum = 1; weekNum <= 3; weekNum++) {
+        //     const weekKey = `Week ${weekNum}`;
+        //     const weekData = parsedData.course_structure[weekKey];
 
-            // Get week ID (assuming weeks 1-3 are pre-defined)
-            const [weekResult] = await db
-                .select({ id: COURSE_WEEKS.id })
-                .from(COURSE_WEEKS)
-                .where(eq(COURSE_WEEKS.week_number, weekNum));
+        //     // Get week ID (assuming weeks 1-3 are pre-defined)
+        //     const [weekResult] = await db
+        //         .select({ id: COURSE_WEEKS.id })
+        //         .from(COURSE_WEEKS)
+        //         .where(eq(COURSE_WEEKS.week_number, weekNum));
 
-            const weekId = weekResult.id;
+        //     const weekId = weekResult.id;
 
-            // Insert topics
-            for (const topic of weekData["Topics Covered"]) {
+        //     // Insert topics
+        //     for (const topic of weekData["Topics Covered"]) {
+        //         await db.insert(TOPICS_COVERED).values({
+        //             week_id: weekId,
+        //             certification_id: courseId,
+        //             topic_name: topic
+        //         });
+        //     }
+
+        //     // Insert assignments
+        //     for (const assignment of weekData.Assignments) {
+        //         await db.insert(ASSIGNMENTS).values({
+        //             week_id: weekId,
+        //             certification_id: courseId,
+        //             assignment_description: assignment
+        //         });
+        //     }
+
+        //     // Insert learning outcomes
+        //     for (const outcome of weekData["Learning Outcomes"]) {
+        //         await db.insert(LEARNING_OUTCOMES).values({
+        //             week_id: weekId,
+        //             certification_id: courseId,
+        //             outcome_description: outcome
+        //         });
+        //     }
+        // }
+
+
+        // Insert topics covered in a single batch
+        await Promise.all(
+            parsedData.topics_covered.map(async (topic) => {
                 await db.insert(TOPICS_COVERED).values({
-                    week_id: weekId,
                     certification_id: courseId,
                     topic_name: topic
                 });
-            }
-
-            // Insert assignments
-            for (const assignment of weekData.Assignments) {
-                await db.insert(ASSIGNMENTS).values({
-                    week_id: weekId,
-                    certification_id: courseId,
-                    assignment_description: assignment
-                });
-            }
-
-            // Insert learning outcomes
-            for (const outcome of weekData["Learning Outcomes"]) {
-                await db.insert(LEARNING_OUTCOMES).values({
-                    week_id: weekId,
-                    certification_id: courseId,
-                    outcome_description: outcome
-                });
-            }
-        }
+            })
+        );
 
         // 4. Process quiz questions and options
         for (const questionData of parsedData.final_quiz) {
@@ -401,13 +418,15 @@ export async function GenerateCourse(userId, age, course, career, courseId, birt
             const questionId = questionInsert[0].insertId;
 
             // Insert options for each question
-            for (const option of questionData.options) {
-                await db.insert(CERTIFICATION_QUIZ_OPTIONS).values({
-                    question_id: questionId,
-                    option_text: option.text,
-                    is_answer: option.is_answer
-                });
-            }
+            await Promise.all(
+                questionData.options.map(async (option) => {
+                    await db.insert(CERTIFICATION_QUIZ_OPTIONS).values({
+                        question_id: questionId,
+                        option_text: option.text,
+                        is_answer: option.is_answer
+                    });
+                })
+            );
         }
 
         return { success: true, message: "Course generated and saved successfully" };

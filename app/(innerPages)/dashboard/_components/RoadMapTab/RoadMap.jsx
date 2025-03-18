@@ -148,7 +148,7 @@ function RoadMap({ selectedCareer }) {
   };
 
   return (
-    <div className="p-4 bg-gray-900 text-gray-200">
+    <div className="p-2 md:p-4 bg-gray-900 text-gray-200">
 
       {/* Loading Modal */}
       <ContentGenerationLoading
@@ -178,7 +178,6 @@ function RoadMap({ selectedCareer }) {
         />
       )}
 
- {/* Modify the JSX in the return statement, specifically the tab content section: */}
       {milestones.length == 0 ? (
         <div className="flex items-center justify-center h-[300px]">
           <p className="text-gray-400">{LoadMessage}</p>
@@ -186,7 +185,7 @@ function RoadMap({ selectedCareer }) {
       ) : (
         <>
           {/* Main Tabs */}
-          <div className="flex mb-4 overflow-x-scroll gap-2">
+          <div className="flex mb-4 overflow-x-scroll gap-2 md:overflow-x-visible">
             {Object.keys(milestones).map((tab) => (
               <button
                 key={tab}
@@ -204,33 +203,32 @@ function RoadMap({ selectedCareer }) {
 
           {/* Educational Subtabs */}
           {activeTab === 'Educational Milestones' && (
-            <div className="flex flex-row gap-2 text-xs md:text-base min-w-20 mt-10 w-full overflow-x-scroll justify-center items-center">
-                {Object.keys(milestones['Educational Milestones']).map((subTab) => (
-                  <button
-                    key={subTab}
-
-                    className={`w-full rounded-md px-4 py-2 lg:py-3 bg-gray-500 font-semibold lg:text-lg text-sm text-center focus:outline-none transition-colors duration-200 ${
-                      activeEducationalSubTab === subTab
-                        ? 'bg-orange-500/20 text-orange-400'
-                        : 'text-gray-300 hover:bg-gray-500/50'
-                    }`}
-                    onClick={() => setActiveEducationalSubTab(subTab)}
-                  >
-                    {subTab}
-                  </button>
-                ))}
-              </div>
+            <div className="flex flex-row gap-2 text-xs md:text-base min-w-20 mt-10 w-full overflow-x-scroll md:overflow-x-visible justify-center items-center">
+              {Object.keys(milestones['Educational Milestones']).map((subTab) => (
+                <button
+                  key={subTab}
+                  className={`w-full rounded-md px-4 py-2 lg:py-3 bg-gray-500 font-semibold lg:text-lg text-sm text-center focus:outline-none transition-colors duration-200 ${
+                    activeEducationalSubTab === subTab
+                      ? 'bg-orange-500/20 text-orange-400'
+                      : 'text-gray-300 hover:bg-gray-500/50'
+                  }`}
+                  onClick={() => setActiveEducationalSubTab(subTab)}
+                >
+                  {subTab}
+                </button>
+              ))}
+            </div>
           )}
 
 
           {/* Tab Content */}
-          <div className="bg-gray-800 p-6 shadow-lg min-h-[300px]">
+          <div className="bg-gray-800 p-4 md:p-6 shadow-lg min-h-[300px]">
             {activeTab === 'Educational Milestones' ? (
               // Render Educational milestones with subcategories
               milestones[activeTab]?.[activeEducationalSubTab]?.length > 0 ? (
                 milestones[activeTab][activeEducationalSubTab]?.map((item) => (
-                  <div key={item.milestoneId} className="mb-6 flex sm:flex-row flex-col max-md:gap-2 items-start justify-between">
-                    <div className="flex-1 pr-4">
+                  <div key={item.milestoneId} className="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-start justify-between">
+                    <div className="flex-1 sm:pr-4">
                       <h3 className="font-bold text-lg text-white">
                         • <span className="font-normal break-words">{item.milestoneDescription}</span>
                       </h3>
@@ -240,15 +238,15 @@ function RoadMap({ selectedCareer }) {
                         {item.certificationCompletedStatus === 'yes' ? (
                           <button
                             onClick={() => router.push(`/certification-results/${item.certificationId}`)}
-                            className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-green-500"
+                            className="w-full sm:ml-4 sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-green-500"
                           >
                             View Certification
                           </button>
                         ) : (
                           <>
-                          <button
+                            <button
                               onClick={() => router.push(`/certification-quiz/${item.certificationId}`)}
-                              className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-orange-500"
+                              className="w-full sm:ml-4 sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-orange-500"
                             >
                               Get Certified
                             </button>
@@ -279,11 +277,10 @@ function RoadMap({ selectedCareer }) {
                         ) : null
                       } */}
                       </>
-
                     ) : (
                       <button
                         onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
-                        className={`ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 ${
+                        className={`w-full sm:ml-4 sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 ${
                           item.milestoneCompletionStatus ? 'bg-green-600' : 'bg-sky-600'
                         }`}
                       >
@@ -306,15 +303,15 @@ function RoadMap({ selectedCareer }) {
               milestones[activeTab]?.length > 0 ? (
                 milestones[activeTab]?.map((item) => (
                   // ... existing milestone rendering code for non-educational milestones ...
-                  <div key={item.milestoneId} className="mb-6 flex sm:flex-row flex-col max-md:gap-2 items-start justify-between">
-                    <div className="flex-1 pr-4">
+                  <div key={item.milestoneId} className="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-start justify-between">
+                    <div className="flex-1 sm:pr-4">
                       <h3 className="font-bold text-lg text-white">
                         • <span className="font-normal break-words">{item.milestoneDescription}</span>
                       </h3>
                     </div>
                     <button
                       onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
-                      className={`ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 ${
+                      className={`w-full sm:ml-4 sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 ${
                         item.milestoneCompletionStatus ? 'bg-green-600' : 'bg-sky-600'
                       }`}
                     >

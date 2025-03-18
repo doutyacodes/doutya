@@ -89,10 +89,12 @@ export async function GET(request, { params }) {
         const certificationDetails = await db
         .select({
             certificationName: CERTIFICATIONS.certification_name,   // Certification name
+            certificateID: USER_CERTIFICATION_COMPLETION.certificate_id,
             userName: USER_DETAILS.name,                            // User's full name
             username: USER_DETAILS.username,                        // Username as fallback
             ratingStars: USER_CERTIFICATION_COMPLETION.rating_stars, // Certification stars
             scorePercentage: USER_CERTIFICATION_COMPLETION.score_percentage, // Certification score percentage
+            issuedAt: USER_CERTIFICATION_COMPLETION.issued_at,
             updatedAt: USER_CERTIFICATION_COMPLETION.updated_at,    // Last updated time
             careerField: CAREER_GROUP.career_name                  // Career field from CAREER_GROUP
         })
@@ -116,6 +118,8 @@ export async function GET(request, { params }) {
         // Prepare the response with certification details
         return NextResponse.json({
             certificationName: certificationDetails[0].certificationName,
+            certificateID: certificationDetails[0].certificateID,
+            issuedAt: certificationDetails[0].issuedAt,
             userName: certificationDetails[0].userName,           // Use full name
             username: certificationDetails[0].username,           // Provide username as fallback
             ratingStars: certificationDetails[0].ratingStars,

@@ -67,8 +67,8 @@
     "loadingText": "Loading...",
     "viewResults": "View Results",
     "hideResults": "Hide Results",
-    "navigateToQuizAlt": "Navigate to Quiz Section",
-    "quizCompletedAlt": "Quiz Completed",
+    "navigateToQuizAlt": "Navigate to Test Section",
+    "quizCompletedAlt": "Test Completed",
     "takeTest": "Take the Test",
     "findStrength": "Find your Strength",
     "followCareer": "Follow the right career path",
@@ -210,20 +210,20 @@
   },
   "QuizPage": {
     "loading": "Loading...",
-    "quizCompletedSuccess": "Quiz Completed successfully",
+    "quizCompletedSuccess": "Test Completed successfully",
     "personalityAssessment": "Personality Assessment Test",
     "next": "Next",
     "quizProgress": "{current}/{total}",
     "noInternetConnection": "There was a problem saving your progress. Please check your internet connection.",
     "errorSavingProgress": "There was an error saving your progress. Please try again later.",
-    "quizSubmitSuccess": "Quiz Completed successfully!.",
-    "quizSubmitFailed": "Failed to submit quiz.",
-    "errorSubmittingQuiz": "Error: Failed to submit quiz.",
+    "quizSubmitSuccess": "Test Completed successfully!.",
+    "quizSubmitFailed": "Failed to submit test.",
+    "errorSubmittingQuiz": "Error: Failed to submit test.",
     "navigating": "Navigating to the Test page in"
   },
   "Quiz2": {
     "loading": "Loading...",
-    "quizCompleted": "Quiz Completed successfully",
+    "quizCompleted": "Test Completed successfully",
     "navigating": "Navigating to the Test page in",
     "interestRecognitionTest": "Interest Recognition Test",
     "questionProgress": "{currentQuestionIndex + 1}/30",
@@ -237,8 +237,8 @@
     "submit": "Submit"
   },
   "QuizProgress":{
-      "title": "Resume Your Quiz",
-      "message": "It looks like you've already started this quiz but didn't complete it. You will now resume from where you left off. Click the button below to continue.",
+      "title": "Resume Your test",
+      "message": "It looks like you've already started this test but didn't complete it. You will now resume from where you left off. Click the button below to continue.",
       "button": "Continue"
   },
   "IndustryAlert":{

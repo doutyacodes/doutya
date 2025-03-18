@@ -369,7 +369,7 @@ function Page() {
               </div>
             </div>
 
-            <div className="flex flex-col px-4 md:px-20 gap-6 py-6 bg-[#2c2c2c]">
+            <div className="flex flex-col px-2 md:px-20 gap-6 py-6 bg-[#2c2c2c]">
               <div className="bg-gray-900 flex flex-col items-center w-full md:w-auto p-4 rounded-lg">
                 <div className="flex flex-row md:justify-center gap-4 text-xs md:text-base w-full overflow-x-auto scrollbar-hide pb-2">
                   {tabs.map((tab, index) => (
@@ -392,8 +392,8 @@ function Page() {
                 </div>
               </div>
 
-              <div className="flex-1 bg-gray-800 p-6 rounded-lg">
-                <div className="text-white font-bold text-xl mb-4 uppercase">
+              <div className="flex-1 bg-gray-800 p-2 md:p-6 rounded-lg">
+                <div className="text-white font-bold text-center text-xl mb-4 uppercase">
                   {t(activeTab)}
                 </div>
                 {activeTab === "careerOverview" && (

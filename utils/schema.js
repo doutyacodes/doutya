@@ -1069,6 +1069,12 @@ export const USER_CERTIFICATION_COMPLETION = mysqlTable(
     certification_id: int("certification_id")
       .notNull()
       .references(() => CERTIFICATIONS.id),
+      
+    certificate_id: varchar("certificate_id", { length: 50 }).unique().notNull(),  // Unique ID for verification
+    certification_name: varchar("certification_name", { length: 100 }).notNull(),  // Certification title
+    issued_at: timestamp("issued_at").defaultNow(),                                 // Issue date
+    status: mysqlEnum("status", ["valid", "invalid"]).default("valid"), 
+
     isStarted: boolean("isStarted").notNull().default(false),
     completed: mysqlEnum("completed", ["yes", "no"]).notNull(),
     score_percentage: decimal("score_percentage", 5, 2).default(null),
@@ -1088,7 +1094,7 @@ export const COURSE_WEEKS = mysqlTable("course_weeks", {
 export const TOPICS_COVERED = mysqlTable("topics_covered", {
   id: int("id").primaryKey().autoincrement(),
   week_id: int("week_id")
-    .notNull()
+    .default(null)   // Currently there no course we are generatin and if no course no week so for now just givng a default value null
     .references(() => COURSE_WEEKS.id, { onDelete: "cascade" }),
   certification_id: int("certification_id")
     .notNull()

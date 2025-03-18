@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ArrowRight, Award, BookOpen, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import ContentGenerationLoading from "@/app/_components/ContentGenerationLoading";
 
 // function Page({ params }) {
 //   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -280,6 +281,7 @@ function Page({ params }) {
   const [showOverview, setShowOverview] = useState(true);
   
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingQuiz, setIsFetchingQuiz] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
   const courseID = params.courseID;
@@ -303,7 +305,7 @@ function Page({ params }) {
   
   useEffect(() => {
     const getQuizData = async () => {
-      setIsLoading(true);
+      setIsFetchingQuiz(true)
       try {
         const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -329,7 +331,7 @@ function Page({ params }) {
       } catch (error) {
         console.error("Error Fetching GetQuizData data:", error);
       } finally {
-        setIsLoading(false);
+        setIsFetchingQuiz(false);
       }
     };
     getQuizData();
@@ -350,7 +352,8 @@ function Page({ params }) {
       }, 1000);
 
       const timer = setTimeout(() => {
-        router.replace("/dashboard/careers/career-guide");
+        // router.replace("/dashboard/careers/career-guide");
+        router.push(`/certification-results/${courseID}`)
       }, 5000);
 
       return () => {
@@ -459,11 +462,11 @@ function Page({ params }) {
       <div className="h-screen flex items-center justify-center text-white text-center">
         <div>
           <div className="text-4xl font-semibold">
-            Certification Quiz Completed successfully
+            Certification Test Completed successfully
           </div>
 
           <p className="mt-4">
-            Navigating to the Career page in {secondsRemaining} seconds
+            Navigating to the Certification Results in {secondsRemaining} seconds
           </p>
         </div>
       </div>
@@ -550,6 +553,16 @@ function Page({ params }) {
       <Toaster position="top-center" reverseOrder={false} />
 
       {showAlert && <QuizProgressAlert />}
+
+      {/* Loading Modal */}
+      <ContentGenerationLoading
+         isOpen={isFetchingQuiz}
+         onClose={() => setIsFetchingQuiz(false)}
+         page="certificationTest" // Change this based on your current page
+         showDelay={1000} // Only show if loading takes more than 1 second
+         // Optional: auto close after 30 seconds
+         // autoCloseDelay={30000}
+       />
 
       {questions.length > 0 && (
         <div className="mt-4 pt-5 flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">

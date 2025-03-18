@@ -7,8 +7,10 @@ export async function middleware(req) {
     // '/',
     '/login',
     '/signup',
+    '/verify',
     '/api/login',
-    '/api/signup'
+    '/api/signup',
+    '/verify/verify-certificate'
   ];
 
   // Current path being accessed
@@ -28,6 +30,8 @@ export async function middleware(req) {
 
   // If no token exists, redirect to login
   if (!token) {
+    console.log("not token auth");
+    
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
