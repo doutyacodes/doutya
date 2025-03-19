@@ -259,9 +259,9 @@ const languageOptions = {
         } catch (error) {
             throw new Error("Failed to parse response data");
         }
-
-        // const milestonesForFrontend = [];
-        // return milestonesForFrontend ;
+// console.log("responseText", responseText)
+//         const milestonesForFrontend = [];
+//         return milestonesForFrontend ;
 
         try {
 

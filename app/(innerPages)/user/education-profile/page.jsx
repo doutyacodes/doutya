@@ -187,18 +187,25 @@ const onSubmit = async (data) => {
   };
   
   const addCompletedDegree = () => {
-    const currentCompletedDegrees = getValues("completedDegrees"); // Retrieve current completed degrees
+    const currentCompletedDegrees = getValues("completedDegrees");
     const updatedDegrees = [...currentCompletedDegrees, { degree: "", field: "" }];
     setValue("completedDegrees", updatedDegrees, { shouldValidate: true, shouldDirty: true });
-    setCompletedDegrees(updatedDegrees); // Sync local state
+    // Preserve the isCurrentlyWorking value
+    const currentWorkingStatus = getValues("isCurrentlyWorking");
+    setValue("isCurrentlyWorking", currentWorkingStatus, { shouldValidate: true });
+    setCompletedDegrees(updatedDegrees);
   };
   
   const removeCompletedDegree = (index) => {
-    const currentCompletedDegrees = getValues("completedDegrees"); // Retrieve current completed degrees
+    const currentCompletedDegrees = getValues("completedDegrees");
     const updatedDegrees = currentCompletedDegrees.filter((_, i) => i !== index);
     setValue("completedDegrees", updatedDegrees, { shouldValidate: true, shouldDirty: true });
-    setCompletedDegrees(updatedDegrees); // Sync local state
+    // Preserve the isCurrentlyWorking value
+    const currentWorkingStatus = getValues("isCurrentlyWorking");
+    setValue("isCurrentlyWorking", currentWorkingStatus, { shouldValidate: true });
+    setCompletedDegrees(updatedDegrees);
   };
+
   const addJob = () => {
     const currentJobs = getValues("jobs"); // Retrieve current jobs
     const updatedJobs = [...currentJobs, { jobTitle: "", yearsOfExperience: 0 }];
