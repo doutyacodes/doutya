@@ -630,13 +630,13 @@ const preloadImages = async () => {
                 <div className="text-center">
                   <div className="flex justify-center mb-2">
                     <img 
-                      src="/assets/images/doutya4.png" 
+                      src="/assets/images/md-signature.png" 
                       alt="Digital Signature" 
                       className="h-16 object-contain"
                     />
                   </div>
                   <div className="h-px w-40 bg-gray-400 mb-2"></div>
-                  <p className="text-sm font-medium text-gray-700">Program Director</p>
+                  <p className="text-sm font-medium text-gray-700">Managing Director</p>
                 </div>
                 
                 <div className="text-right">
