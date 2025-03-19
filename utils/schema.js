@@ -81,13 +81,13 @@ export const PAGE = mysqlTable("page", {
 
 export const USER_EDUCATION_STAGE = mysqlTable("user_education_stage", {
   id: int("id").primaryKey().autoincrement(),
-  user_id: int("user_id").unique().notNull().references(() => USERS.id, { onDelete: "cascade" }),
+  user_id: int("user_id").unique().notNull().references(() => USER_DETAILS.id, { onDelete: "cascade" }),
   stage: mysqlEnum("stage", ["school", "college", "completed_education"]).notNull(),
 });
 
 export const SCHOOL_EDUCATION = mysqlTable("school_education", {
   id: int("id").primaryKey().autoincrement(),
-  user_id: int("user_id").unique().notNull().references(() => USERS.id, { onDelete: "cascade" }),
+  user_id: int("user_id").unique().notNull().references(() => USER_DETAILS.id, { onDelete: "cascade" }),
   is_higher_secondary: boolean("is_higher_secondary").notNull(),
   main_subject: varchar("main_subject", 255),
   description: text("description"),
@@ -95,7 +95,7 @@ export const SCHOOL_EDUCATION = mysqlTable("school_education", {
 
 export const COLLEGE_EDUCATION = mysqlTable("college_education", {
   id: int("id").primaryKey().autoincrement(),
-  user_id: int("user_id").notNull().references(() => USERS.id, { onDelete: "cascade" }),
+  user_id: int("user_id").notNull().references(() => USER_DETAILS.id, { onDelete: "cascade" }),
   degree: varchar("degree", 255).notNull(),
   field: varchar("field", 255).notNull(),
   year_of_study: int("year_of_study").default(null), // Removed .check()

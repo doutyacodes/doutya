@@ -61,12 +61,23 @@ const EducationDetailsForm = () => {
           if (!token) return;
           
           const resp = await GlobalApi.GetDashboarCheck(token);
-  
-          // Check if education profile is already completed and redirect accordingly
-          if (resp.data.institutionDetailsAdded) {
-            // Education profile already exists, redirect based on next incomplete step
-            if (!resp.data.educationStageExists) {
-              router.replace("/user/education-profile");
+
+          // Check education profile completion in the correct order
+          if (!resp.data.educationStageExists) {
+            // Education stage not selected yet, redirect to education profile page
+            router.replace("/user/education-profile");
+          } else if (resp.data.isEducationCompleted) {
+            // User has completed education, skip institution details check
+            if (!resp.data.countryAdded) {
+              router.replace("/country");
+            } else {
+              router.replace("/dashboard/careers/career-suggestions");
+            }
+          } else {
+            // User is in school or college, check institution details
+            if (!resp.data.institutionDetailsAdded) {
+              // Stay on current page for institution details
+              // No redirection needed
             } else if (!resp.data.countryAdded) {
               router.replace("/country");
             } else {
@@ -256,7 +267,7 @@ const EducationDetailsForm = () => {
                         : "bg-gray-700 text-gray-300"
                     }`}
                     >
-                    My School is Not Listed
+                    My Institution is Not Listed
                     </button>
                 </div>
                 </div>
@@ -381,12 +392,12 @@ const EducationDetailsForm = () => {
                     </div>
                     
                     <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-300">Class/Grade</label>
+                    <label className="block text-sm font-medium text-gray-300">Class/Grade/Batch</label>
                     <input
                         type="text"
-                        {...register("class_name", { required: showCustomSchool && "Class/Grade is required" })}
+                        {...register("class_name", { required: showCustomSchool && "Class/Grade/Batch is required" })}
                         className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        placeholder="E.g., Class 10, Standard 8, Grade 6, LKG,"
+                        placeholder="E.g., Class 10, Standard 8, Grade 6, Batch, Sem"
                     />
                     {errors.class_name && (
                         <p className="mt-1 text-sm text-red-600">{errors.class_name.message}</p>

@@ -36,11 +36,6 @@ import { enhancePromptWithEducation, getUserEducationPromptData } from "@/utils/
             finalAge +
             " until they reach the age of 21."
     }(currently in week ${currentAgeWeek} of this age)
-    ${
-        (educationData.educationLevel === 'school' || educationData.educationLevel === 'college') 
-        ? ` in ${educationData.className} with ${educationData.percentageCompleted}% of the academic year completed` 
-        : ''
-    }.
     Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
             career_name: A brief title of the career.
             type: trending, offbeat, traditional, futuristic, entrepreneurial, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.

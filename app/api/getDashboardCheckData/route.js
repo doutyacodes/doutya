@@ -56,7 +56,7 @@ export async function GET(req) {
         userInfo?.academicYearEnd
         );
 
-        // Check if user has an entry in USER_EDUCATION_STAGE
+       // Check if user has an entry in USER_EDUCATION_STAGE
         const educationStage = await db
         .select()
         .from(USER_EDUCATION_STAGE)
@@ -65,13 +65,20 @@ export async function GET(req) {
 
         const educationStageExists = educationStage.length > 0; // true if entry exists, false otherwise
 
+        // Get the education stage value if it exists
+        const educationStageValue = educationStageExists ? educationStage[0].stage : null;
+
+        // Check if education is completed
+        const isEducationCompleted = educationStageValue === "completed_education";
+
         return NextResponse.json(
         {
             data,
             countryAdded, // true or false
             institutionDetailsAdded, // true or false
             educationStageExists, // true if entry exists, false otherwise
-
+            educationStage: educationStageValue, // school, college, completed_education, or null
+            isEducationCompleted, // true if completed_education, false otherwise
         },
         { status: 200 }
         );

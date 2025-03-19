@@ -71,13 +71,23 @@ export default function EducationProfileForm() {
 
         // Check if education profile is already completed and redirect accordingly
         if (resp.data.educationStageExists) {
-          // Education profile already exists, redirect based on next incomplete step
-          if (!resp.data.institutionDetailsAdded) {
-            router.replace("/education-details");
-          } else if (!resp.data.countryAdded) {
-            router.replace("/country");
+          // Check if the user has completed education
+          if (resp.data.isEducationCompleted) {
+            // If completed education, skip institution details check
+            if (!resp.data.countryAdded) {
+              router.replace("/country");
+            } else {
+              router.replace("/dashboard/careers/career-suggestions");
+            }
           } else {
-            router.replace("/dashboard/careers/career-suggestions");
+            // For school/college users, check institution details
+            if (!resp.data.institutionDetailsAdded) {
+              router.replace("/education-details");
+            } else if (!resp.data.countryAdded) {
+              router.replace("/country");
+            } else {
+              router.replace("/dashboard/careers/career-suggestions");
+            }
           }
         }
         // If education stage doesn't exist, we stay on this page

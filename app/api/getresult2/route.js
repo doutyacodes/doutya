@@ -210,8 +210,6 @@ export async function GET(req) {
 
   // console.log("prompt", prompt);
 
-
-
   const prompt = await generateCareerPrompt(
     userId, 
     type1,

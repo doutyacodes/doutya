@@ -42,19 +42,21 @@ function SelectCountry() {
         if (!token) return;
         
         const resp = await GlobalApi.GetDashboarCheck(token);
-
-        // Check if education profile is already completed and redirect accordingly
+        // Check if country is already selected and redirect accordingly
         if (resp.data.countryAdded) {
-          // Education profile already exists, redirect based on next incomplete step
+          // Country already selected, redirect to next incomplete step or dashboard
+          router.replace("/dashboard/careers/career-suggestions");
+        } else {
+          // Country not selected yet, check if previous steps are complete
           if (!resp.data.educationStageExists) {
+            // Education stage not set yet
             router.replace("/user/education-profile");
-          } else if (!resp.data.institutionDetailsAdded) {
+          } else if (!resp.data.isEducationCompleted && !resp.data.institutionDetailsAdded) {
+            // User is in school/college and institution details not provided
             router.replace("/education-details");
-          } else {
-            router.replace("/dashboard/careers/career-suggestions");
           }
+          // If all previous steps complete but country not added, we stay on this page
         }
-        // If education stage doesn't exist, we stay on this page
       } catch (error) {
         console.error("Error fetching profile status:", error);
         toast.error("Error loading profile status. Please try again.");
