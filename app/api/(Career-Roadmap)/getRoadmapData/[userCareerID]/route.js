@@ -68,9 +68,10 @@ export async function GET(req, { params }) {
       .where(eq(USER_DETAILS.id, userId));
       
     const birth_date = user_data[0].birth_date;
-    const education = user_data[0].education; // Use the fetched education
+    console.log("birth_date", birth_date)
     const age = formattedAge(birth_date);
 
+    console.log("formattedAge", age)
     // Fetch career name, type1, and type2 from USER_CAREER
     const userCareerData = await db
       .select({
@@ -137,6 +138,9 @@ export async function GET(req, { params }) {
     // If no milestones are found, start data generation
     if (userMilestones.length === 0) {
 
+      // const calculatedAge = calculateAge(birth_date) /* thisi we are using because inthe prompt we need excat age and also as integer */
+      // console.log("calculatedAge", calculatedAge)
+
       // Mark the roadmap status as "in_progress" before starting generation
       // await db
       // .update(USER_CAREER_STATUS)
@@ -169,7 +173,7 @@ export async function GET(req, { params }) {
       // });
       
       // Respond with savedData
-      const savedMilestones = await fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, education, careerGroupID, career, type1, type2,language);
+      const savedMilestones = await fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, careerGroupID, career, type1, type2,language);
       return NextResponse.json(savedMilestones, { status: 200 });
     }
   

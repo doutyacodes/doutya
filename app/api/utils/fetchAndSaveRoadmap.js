@@ -25,8 +25,8 @@ const languageOptions = {
     tam:'in Tamil'
   };
 
-  export async function fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, education, careerGroupID, career, type1, type2,language) {
-    console.log("userCareerID:",userCareerID, "age:",age, "education:",education, "career:",career, "type1:",type1, "type2:",type2);
+  export async function fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, careerGroupID, career, type1, type2,language) {
+    console.log("userCareerID:",userCareerID, "age:",age, "career:",career, "type1:",type1, "type2:",type2);
     try {
         const currentAgeWeek = getCurrentWeekOfAge(birth_date)
         // const prompt = `Provide detailed information for the career named "${career}" based on the following criteria:
@@ -225,7 +225,7 @@ const languageOptions = {
         // Ensure that the response is valid JSON, using the specified field names. Provide the response ${languageOptions[language] || 'in English'}.`;
 
         const prompt = await generateRoadmapPrompt(
-            userId, career, type1, type2, age, currentAgeWeek, education, language, languageOptions
+            userId, career, type1, type2, age, currentAgeWeek, language, languageOptions
            );
        
         console.log("prompt", prompt)
