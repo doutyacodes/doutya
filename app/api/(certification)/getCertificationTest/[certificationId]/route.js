@@ -5,7 +5,6 @@ import { and, eq, sql } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { GenerateCourse } from '@/app/api/utils/GenerateCourse';
-import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
@@ -88,11 +87,7 @@ export async function GET(request, { params }) {
         const birth_date = birthDateResult[0]?.birth_date;
         const age = calculateAge(birth_date);
 
-        const className = birthDateResult[0]?.className
-        const educationLevel = birthDateResult[0]?.educationLevel
-        const academicYearStart = birthDateResult[0]?.academicYearStart
-        const academicYearEnd = birthDateResult[0]?.academicYearEnd
-        const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
+        const className = birthDateResult[0]?.className || 'completed';
 
         const certification = await db
             .select({
@@ -159,7 +154,7 @@ export async function GET(request, { params }) {
 
         // If no questions are found, generate new course data
         if (questions.length === 0) {
-            await GenerateCourse(userId, age, certificationName, careerName, certificationId, birth_date, educationLevel, className, percentageCompleted, type1, type2);
+            await GenerateCourse(userId, age, certificationName, careerName, certificationId, birth_date, className, type1, type2);
             // await GenerateCourse(age, certificationName, careerName, certificationId, birth_date);
             // Fetch the questions again after generation
             ({ questions } = await fetchAndFormatQuestions(certificationId, age, className));

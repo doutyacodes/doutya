@@ -11,7 +11,7 @@ export const maxDuration = 60; // This function can run for a maximum of 5 secon
 export const dynamic = "force-dynamic";
 
 // Function to fetch subjects from OpenAI
-const fetchSubjectsFromOpenAI = async (userId, careerName, country, age, birthDate, className, educationLevel, percentageCompleted, type1, type2) => {
+const fetchSubjectsFromOpenAI = async (userId, careerName, country, age, birthDate, type1, type2) => {
 
 // const fetchSubjectsFromOpenAI = async (careerName, country, age, birthDate) => {
   console.log("careerName, country", careerName, country, age);
@@ -86,6 +86,7 @@ const fetchSubjectsFromOpenAI = async (userId, careerName, country, age, birthDa
 
 const saveSubjectsToDatabase = async (careerId, subjectsByAge, age, className) => {
     try {
+      console.log("in try", careerId, subjectsByAge, age, className)
       const subjectIds = new Map();
   
       for (const [ageGroup, subjects] of Object.entries(subjectsByAge)) {
@@ -110,6 +111,8 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age, className) =
               eq(SUBJECTS.class_name, className),
             )
           );
+
+          console.log("existingSubjects", existingSubjects)
   
         const existingSubjectNames = new Set(
           existingSubjects.map((subject) => subject.subject_name)
@@ -163,6 +166,8 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age, className) =
         ids.forEach((subject) => {
           subjectIds.set(subject.subject_name, subject.subject_id);
         });
+
+        console.log("brefore")
   
         // Insert the relationships between career and subjects
         const careerSubjectPromises = subjectList.map((subject) => {
@@ -195,8 +200,6 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age, className) =
     age,
     birthDate,
     className,
-    educationLevel,
-    percentageCompleted,
     type1, type2
   ) => {
   try {
@@ -206,14 +209,14 @@ const saveSubjectsToDatabase = async (careerId, subjectsByAge, age, className) =
       country,
       age,
       birthDate,
-      className,
-      educationLevel,
-      percentageCompleted,
       type1, type2
     );
     const subjects = subjectsByAge["subject-data"]; // Extract the array of subjects
 
     console.log("got subjects");
+
+    console.log( "userId", userId ,'careerName', careerName,'careerId',careerId, 'country',country, 'age',age, 'birthDate',birthDate, 'className',className, type1, type2);
+
 
     await saveSubjectsToDatabase(careerId, subjects, age, className); // Pass subjects array
   } catch (error) {

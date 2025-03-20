@@ -25,7 +25,7 @@ const languageOptions = {
     tam:'in Tamil'
   };
 
-  export async function fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, education, careerGroupID, career, type1, type2,language, className, educationLevel, percentageCompleted) {
+  export async function fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, education, careerGroupID, career, type1, type2,language) {
     console.log("userCareerID:",userCareerID, "age:",age, "education:",education, "career:",career, "type1:",type1, "type2:",type2);
     try {
         const currentAgeWeek = getCurrentWeekOfAge(birth_date)

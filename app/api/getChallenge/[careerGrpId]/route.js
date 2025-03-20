@@ -55,12 +55,13 @@ export async function GET(req, { params }) {
     const currentAgeWeek = getCurrentWeekOfAge(birth_date)
     const country = user_data[0].country;
     
-    const className = user_data[0]?.className
-    const educationLevel = user_data[0]?.educationLevel
-    const academicYearStart = user_data[0]?.academicYearStart
-    const academicYearEnd = user_data[0]?.academicYearEnd
+    const className = user_data[0]?.className || 'completed';
 
-    const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
+    const educationLevel = user_data[0]?.educationLevel
+    // const academicYearStart = user_data[0]?.academicYearStart
+    // const academicYearEnd = user_data[0]?.academicYearEnd
+
+    // const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
 
     const career_name = await db
         .select({
@@ -92,14 +93,15 @@ export async function GET(req, { params }) {
     if (existingChallenges.length > 0) {
         return NextResponse.json({ challenges: existingChallenges }, { status: 200 });
     } else {
-        // const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old (currently in week ${currentAgeWeek} of this age), aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only.Provide single data per week.Give it as a single JSON data without any wrapping other than [].`;
 
-        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old (currently in week ${currentAgeWeek} of this age),
-        ${
-            (educationLevel === 'school' || educationLevel === 'college') 
-            ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
-            : ''
-        } aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only.Provide single data per week.Give it as a single JSON data without any wrapping other than [].`;
+        // const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old (currently in week ${currentAgeWeek} of this age),
+        // ${
+        //     (educationLevel === 'school' || educationLevel === 'college') 
+        //     ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
+        //     : ''
+        // } aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only.Provide single data per week.Give it as a single JSON data without any wrapping other than [].`;
+
+        const prompt = `give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like- (Verification: Take a picture of the completed poster.) like week1, week2, till week 52, for a ${age} year old (currently in week ${currentAgeWeek} of this age), aspiring TO BE A ${career} IN ${country} and the challenges should be random. Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only.Provide single data per week.Give it as a single JSON data without any wrapping other than [].`;
 
         try {
             const response = await axios.post(

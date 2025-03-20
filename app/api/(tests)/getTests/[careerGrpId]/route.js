@@ -5,7 +5,6 @@ import { and, eq, gte, inArray, lte } from 'drizzle-orm'; // Adjust based on you
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { processCareerSubjects } from '@/app/api/utils/fetchAndSaveSubjects';
-import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 export async function GET(req, { params }) {
      // Authenticate user
@@ -41,11 +40,9 @@ export async function GET(req, { params }) {
         const age = calculateAge(birth_date[0].birth_date)
         console.log(age)
 
-        const className = birth_date[0]?.className
-        const educationLevel = birth_date[0]?.educationLevel
-        const academicYearStart = birth_date[0]?.academicYearStart
-        const academicYearEnd = birth_date[0]?.academicYearEnd
-        const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
+        // const className = birth_date[0]?.className
+        const className = birthDateResult[0]?.className || 'completed';
+
 
         // If no subjects are found for the career group, generate them
         if (!careerSubjectsExist.length) {
@@ -77,7 +74,7 @@ export async function GET(req, { params }) {
             console.log("country, careerName", country, careerName)
 
             // await processCareerSubjects(careerName, careerGrpId, country); /* Generating Subjects */
-            await processCareerSubjects(userId, careerName, careerGrpId, country, age, birth_date[0].birth_date ,className, educationLevel, percentageCompleted, type1, type2); /* Generating Subjects */
+            await processCareerSubjects(userId, careerName, careerGrpId, country, age, birth_date[0].birth_date ,className, type1, type2); /* Generating Subjects */
 
             console.log('after generate');
         }

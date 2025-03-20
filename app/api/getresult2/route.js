@@ -5,7 +5,6 @@ import { eq, and } from "drizzle-orm";
 import { db } from "@/utils";
 import axios from "axios";
 import { getCurrentWeekOfAge } from "@/lib/getCurrentWeekOfAge";
-import { calculateAcademicPercentage } from "@/lib/calculateAcademicPercentage";
 import { generateCareerPrompt } from "../services/promptService";
 
 const languageOptions = {
@@ -56,12 +55,6 @@ export async function GET(req) {
   // console.log("userDetails",userDetails);
   const country = userDetails[0].country; // Access the country
   const currentAgeWeek = getCurrentWeekOfAge(userDetails[0].birth_date)
-  const className = userDetails[0]?.className
-  const educationLevel = userDetails[0]?.educationLevel
-  const academicYearStart = userDetails[0]?.academicYearStart
-  const academicYearEnd = userDetails[0]?.academicYearEnd
-
-  const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
   
   let finalAge = 18;
   if (userDetails.length > 0) {

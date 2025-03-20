@@ -244,13 +244,13 @@ import { enhancePromptWithEducation, getUserEducationPromptData } from "@/utils/
     
         const basePrompt = `for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and  ${age} (currently in week ${currentAgeWeek} of this age) pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
     
-        Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where each age is a key, and the value is an array of important subjects. The format should be as follows:
+        Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where 'subject-data' as the key, and the value is an array of important subjects. The format should be as follows:
     
         {
         "subject-data": ["Subject1", "Subject2", "Subject3", ...]
         }
     
-        Ensure that the response is valid JSON and each array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
+        Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
   
         return enhancePromptWithEducation(basePrompt, educationData);
     };

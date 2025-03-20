@@ -6,7 +6,6 @@ import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { GenerateTestQuiz } from '@/app/api/utils/GenerateTestQuiz';
 import { getCurrentWeekOfMonth } from '@/lib/getCurrentWeekOfMonth';
-import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 // Helper to calculate week of the month for a given date
 function getWeekOfMonth(date) {
@@ -34,7 +33,7 @@ export async function GET(request, { params }) {
 
     try {
         // Fetch user's birth date and calculate age
-        const { birth_date, joined_date, educationLevel, academicYearStart, academicYearEnd, className } = await db
+        const { birth_date, joined_date, class_Name } = await db
             .select({
                 birth_date: USER_DETAILS.birth_date,
                 joined_date: USER_DETAILS.joined_date,
@@ -54,8 +53,7 @@ export async function GET(request, { params }) {
         const currentYear = new Date().getFullYear();
         const currentMonth = new Date().getMonth() + 1;
 
-        const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
-
+        const className = class_Name || 'completed';
         console.log("userJoin week", userJoinWeek);
         
         console.log("log 1");
@@ -145,7 +143,7 @@ export async function GET(request, { params }) {
             if (questionWithAnswers.length === 0) {
                 console.log("log generate");
 
-                await GenerateTestQuiz(userId, subjectId, subjectName, age, birth_date,  educationLevel, className, percentageCompleted, type1, type2,); // Call function to generate test quiz
+                await GenerateTestQuiz(userId, subjectId, subjectName, age, birth_date, className, type1, type2,); // Call function to generate test quiz
                 // await GenerateTestQuiz(subjectId, subjectName, age, birth_date); // Call function to generate test quiz
                 questionWithAnswers = await fetchQuestionsAndAnswers(); // Retry fetching questions after generating
             }

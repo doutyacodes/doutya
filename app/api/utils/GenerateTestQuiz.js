@@ -90,7 +90,7 @@ import { generateSubjectsTestsPrompt } from '../services/promptService';
 //     }
 // }
 
-export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birthDate, educationLevel, className, percentageCompleted, type1, type2, ) {
+export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birthDate, className, type1, type2, ) {
     try {
 
         const currentAgeWeek = getCurrentWeekOfAge(birthDate)

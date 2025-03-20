@@ -17,7 +17,6 @@ import { authenticate } from "@/lib/jwtMiddleware"; // Ensure this path is corre
 import { eq, and } from "drizzle-orm";
 import { formattedAge } from "@/lib/formattedAge";
 import { fetchAndSaveRoadmap } from "@/app/api/utils/fetchAndSaveRoadmap";
-import { calculateAcademicPercentage } from "@/lib/calculateAcademicPercentage";
 
 
 export const maxDuration = 60;
@@ -71,13 +70,6 @@ export async function GET(req, { params }) {
     const birth_date = user_data[0].birth_date;
     const education = user_data[0].education; // Use the fetched education
     const age = formattedAge(birth_date);
-
-    const className = user_data[0]?.className
-    const educationLevel = user_data[0]?.educationLevel
-    const academicYearStart = user_data[0]?.academicYearStart
-    const academicYearEnd = user_data[0]?.academicYearEnd
-
-    const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
 
     // Fetch career name, type1, and type2 from USER_CAREER
     const userCareerData = await db
@@ -177,7 +169,7 @@ export async function GET(req, { params }) {
       // });
       
       // Respond with savedData
-      const savedMilestones = await fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, education, careerGroupID, career, type1, type2,language, className, educationLevel, percentageCompleted);
+      const savedMilestones = await fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, education, careerGroupID, career, type1, type2,language);
       return NextResponse.json(savedMilestones, { status: 200 });
     }
   

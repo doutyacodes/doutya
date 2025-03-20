@@ -5,7 +5,6 @@ import { and, eq, gte, inArray, lte } from 'drizzle-orm'; // Adjust based on you
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { processCareerSubjects } from '@/app/api/utils/fetchAndSaveSubjects';
-import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 export const dynamic = "force-dynamic";
@@ -42,12 +41,8 @@ export async function GET(req, { params }) {
         const age = calculateAge(birthDateResult[0].birth_date);
         const effectiveAge = age;
         console.log(`User age: ${age}, Effective age: ${effectiveAge}`);
-
-        const className = birthDateResult[0]?.className
-        const educationLevel = birthDateResult[0]?.educationLevel
-        const academicYearStart = birthDateResult[0]?.academicYearStart
-        const academicYearEnd = birthDateResult[0]?.academicYearEnd
-        const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
+        // Set className to 'completed' if it is null, undefined, '', 0
+        const className = birthDateResult[0]?.className || 'completed';
 
         // Check if any subjects exist for the career group
         // const careerSubjectsExist = await db
@@ -97,7 +92,7 @@ export async function GET(req, { params }) {
 
             const { country, careerName, type1, type2 } = userCareerData[0];
             // await processCareerSubjects(careerName, careerGrpId, country, age, birthDateResult[0].birth_date); // Generate subjects
-            await processCareerSubjects(userId, careerName, careerGrpId, country, age, birthDateResult[0].birth_date, className, educationLevel, percentageCompleted, type1, type2); // Generate subjects
+            await processCareerSubjects(userId, careerName, careerGrpId, country, age, birthDateResult[0].birth_date, className, type1, type2); // Generate subjects
         }
 
         // Fetch subjects for the career and filter by user age (or set age as 17 for older users)

@@ -93,7 +93,7 @@ export async function GET(req, { params }) {
             const age = calculateAge(birth_date);
             const currentAgeWeek = getCurrentWeekOfAge(birth_date)
 
-            const className = birthDateResult[0]?.className
+            const className = birthDateResult[0]?.className || 'completed';
             const educationLevel = birthDateResult[0]?.educationLevel
             const academicYearStart = birthDateResult[0]?.academicYearStart
             const academicYearEnd = birthDateResult[0]?.academicYearEnd

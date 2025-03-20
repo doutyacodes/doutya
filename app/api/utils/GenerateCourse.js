@@ -211,7 +211,7 @@ import { generateCourseTestPrompt } from '../services/promptService';
 // }
 
 
-export async function GenerateCourse(userId, age, course, career, courseId, birthDate, educationLevel, className, percentageCompleted, type1, type2) {
+export async function GenerateCourse(userId, age, course, career, courseId, birthDate, className, type1, type2) {
 
     try {
         const currentAgeWeek = getCurrentWeekOfAge(birthDate)
