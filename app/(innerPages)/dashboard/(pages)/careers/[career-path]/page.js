@@ -298,7 +298,7 @@ function Page() {
       
                 {/* Mobile Heading */}
                 <p className="text-center font-bold sm:hidden text-white text-2xl sm:text-4xl md:pl-5 max-sm:bg-[#1f1f1f]">
-                  {t("careers")}
+                  My Careers
                 </p>
       
                 {/* Career Selector for Desktop */}
@@ -334,8 +334,8 @@ function Page() {
                 </div> */}
 
               <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
-                <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
-                  {t("careers")}
+                <p className="text-center font-bold hidden sm:flex text-white text-3xl">
+                  My Careers
                 </p>
                 
                 <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">

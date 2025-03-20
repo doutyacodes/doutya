@@ -250,7 +250,7 @@ const CareerStripe = () => {
 
       {/* Career Selector for Desktop */}
       <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
-        <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
+        <p className="text-center font-bold hidden sm:flex text-white text-3xl">
           My Careers
         </p>
       
