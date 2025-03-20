@@ -11,7 +11,7 @@ import {
   FaInfoCircle,
 } from "react-icons/fa";
 import { PiCompassRoseFill } from "react-icons/pi";
-import { ChevronLeft } from "lucide-react";
+import { AlertCircle, CheckCircle, ChevronLeft, Clock } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import GlobalApi from "@/app/_services/GlobalApi";
@@ -107,12 +107,34 @@ const LeftSideBar = () => {
     setIsInstructionsModalOpen(true);
   };
 
+   // Status icon component that works with any menu item
+   const StatusIcon = ({ status }) => {
+    const iconProps = {
+      size: 16,
+      className: "ml-2"
+    };
+
+    switch (status) {
+      case "completed":
+        return <CheckCircle {...iconProps} className="text-green-500 ml-2" />;
+      case "pending":
+        return <Clock {...iconProps} className="text-amber-500 ml-2" />;
+      case "attention":
+        return <AlertCircle {...iconProps} className="text-red-500 ml-2" />;
+      default:
+        return null;
+    }
+  };
+
   const menus = [
     {
       name: "Tests",
       icon: <FaClipboardList className="text-base" />,
       link: "/dashboard",
       submenus: [],
+      isDisabled: isTest2Completed,
+      status: isTest2Completed ? "completed" : null,
+      statusTooltip: isTest2Completed ? "All tests are completed" : null
     },
     {
       name: "Careers",
@@ -221,19 +243,25 @@ const LeftSideBar = () => {
                 {menus.map((menu, index) => (
                   <li key={index} className="relative">
                     <div
-                      className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
+                      className={`flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg ${isTest2Completed && menu.name === "Tests" ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                       onClick={() => {
-                        if (menu.submenus.length > 0) {
-                          toggleDropdown(menu.name); // Toggle dropdown for menus with submenus
-                        } else if (menu.link) {
-                          router.push(menu.link); // Directly navigate if no submenus
+                        if (!(isTest2Completed && menu.name === "Tests")) {
+                          if (menu.submenus.length > 0) {
+                            toggleDropdown(menu.name); // Toggle dropdown for menus with submenus
+                          } else if (menu.link) {
+                            router.push(menu.link); // Directly navigate if no submenus
+                          }
+                          if (menu.onClick) menu.onClick(); // Execute any extra function if provided
                         }
-                        if (menu.onClick) menu.onClick(); // Execute any extra function if provided
                       }}
+                      title={menu.name === "Tests" && isTest2Completed ? "All tests are completed" : ""}
                     >
                       {menu.icon}
                       {isOpen && <span className="text-sm pl-3">{menu.name}</span>}
                       {menu.submenus.length > 0 && isOpen && <FaChevronDown className="ml-auto text-sm" />}
+                      {isOpen && menu.name === "Tests" && isTest2Completed && (
+                        <CheckCircle size={16} className="text-green-500 ml-2" />
+                      )}
                     </div>
                     {menu.submenus.length > 0 && isOpen && activeDropdown === menu.name && (
                       <ul className="ml-8 space-y-3 mt-3">
@@ -246,65 +274,24 @@ const LeftSideBar = () => {
                         ))}
                       </ul>
                     )}
-                  {/* </div> */}
                   </li>
                 ))}
                 <li>
                   {isCareersDropdownOpen && isOpen && (
                     <ul className="ml-8 space-y-3 mt-3">
                       <li>
-                        <Link href="/dashboard/careers/career-guide" className="text-white hover:underline">
-                          Career Guide
+                        <Link href="/dashboard/careers/career-suggestions" className="text-white hover:underline">
+                          Career Suggestions
                         </Link>
                       </li>
                       <li>
-                        <Link href="/dashboard/careers/career-suggestions" className="text-white hover:underline">
-                          Career Suggestions
+                        <Link href="/dashboard/careers/career-guide" className="text-white hover:underline">
+                          Career Guide
                         </Link>
                       </li>
                     </ul>
                   )}
                 </li>
-
-                {/* School/College Link */}
-                {/* <li className="relative">
-                  <div
-                    className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
-                    onClick={()=>{
-
-                      !isOpen && toggleSidebars();
-
-                      toggleInstituteDropdown();
-                    }}
-                  >
-                    <FaBuilding className="text-xl" />
-                    {isOpen && (
-                      <>
-                        <span className="text-xl pl-3">School Activities</span>
-                        <FaChevronDown className="ml-auto" />
-                      </>
-                    )}
-                  </div>
-                  {isInstituteDropdownOpen && isOpen && (
-                    <ul className="ml-8 space-y-3 mt-3">
-                      <li>
-                        <Link href="/institution/challenges" className="text-white hover:underline">
-                          Challenges
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/institution/tests" className="text-white hover:underline">
-                          Tests
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/institution/community" className="text-white hover:underline">
-                          Community
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                </li> */}
 
                 {/* Guide Link */}
                 <li className="relative">
@@ -340,25 +327,6 @@ const LeftSideBar = () => {
                       </ul>
                     )}
                 </li>
-
-
-                {/* Profile Link */}
-                {/* <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
-                  <Link href="/dashboard/user-profile" onClick={handleLinkClick} className="flex items-center">
-                    <FaUser className="text-xl" />
-                    {isOpen && <span className="text-xl pl-3">My Profile</span>}
-                  </Link>
-                </li> */}
-
-                {/* Sign Out Link */}
-                {/* <li className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg">
-                  <button onClick={toggleLogoutPopup} className="flex items-center">
-                    <FaCog className="text-xl" />
-                    {isOpen && <span className="text-xl pl-3">Sign Out</span>}
-                  </button>
-                </li> */}
-                  {/* </li>
-                ))} */}
               </ul>
             </div>
           </div>

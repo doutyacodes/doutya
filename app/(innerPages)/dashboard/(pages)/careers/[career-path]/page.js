@@ -17,6 +17,7 @@ import FeatureRestrictionModal from "../../../_components/FeatureRestrictionModa
 import PricingCard from "@/app/_components/PricingCard";
 import CareerOverView from "../../../_components/CareerOverview/CareerOverview";
 import CareerGuideExplanation from "@/app/_components/CareerGuideExplanation";
+import TestsNotCompltedWarning from "../../../_components/TestsNotCompltedWarning/TestsNotCompltedWarning";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -32,6 +33,8 @@ function Page() {
   const [isRestricted, setIsRestricted] = useState(false);
   const [age, setAge] = useState("");
   const [country, setCountry] = useState("");
+  const [isTestCompleted, setIsTestCompleted] = useState("");
+  const [showTestWarningModal, setShowTestWarningModal] = useState(false);
   const [showFeatureModal, setShowFeatureModal] = useState(false);
   const [showPricingModal, setShowPricingModal] = useState(false);
   const router = useRouter();
@@ -124,6 +127,7 @@ function Page() {
           setCareerData(response.data.carrerData);
         }
         setAge(response.data.age);
+        setIsTestCompleted(response.data.quizStatus)
         if (response.data.age <= "9" || response.data.planType === "base"){
           setIsRestricted(true)
         }
@@ -143,7 +147,10 @@ function Page() {
   }, []);
   
   const handleAddCareerClick = () => {
-    if (isRestricted) {
+    if (isTestCompleted === 'not_completed') { 
+      setShowTestWarningModal(true);
+    }
+    else if (isRestricted) {
       setShowFeatureModal(true);
     } else {
       if (careerData.length >= 5) {
@@ -276,6 +283,13 @@ function Page() {
                     setShowPricingModal(true);
                   }}
                 />
+
+                {/* Feature Restriction Modal */}
+                <TestsNotCompltedWarning
+                  isOpen={showTestWarningModal}
+                  onClose={() => setShowTestWarningModal(false)}
+                />
+
       
                 {/* Pricing Modal */}
                 {showPricingModal && (

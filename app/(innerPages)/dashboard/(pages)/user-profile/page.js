@@ -196,7 +196,7 @@ function Page() {
   const MobileNavigation = dynamic(() => import('../../_components/Navbar/button.jsx'), { ssr: false });
 
   return (
-    <div className="min-h-screen py-12 max-md:pb-24 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen max-md:pb-24 px-4 py-10 md:py-0 md:px-0">
       <CareerStripe />
       <Toaster position="top-center" reverseOrder={false} />
         {/* <Link href={typeof window !== 'undefined' ? localStorage.getItem('dashboardUrl') : '/login'}>

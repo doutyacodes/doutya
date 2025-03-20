@@ -1,5 +1,5 @@
 import { db } from "@/utils"; // Ensure this path is correct
-import { CAREER_GROUP, USER_CAREER, USER_DETAILS } from "@/utils/schema"; // Ensure this path is correct
+import { CAREER_GROUP, QUIZ_SEQUENCES, USER_CAREER, USER_DETAILS } from "@/utils/schema"; // Ensure this path is correct
 import { NextResponse } from "next/server";
 import { authenticate } from "@/lib/jwtMiddleware"; // Ensure this path is correct
 import { eq } from "drizzle-orm";
@@ -54,8 +54,32 @@ export async function GET(req) {
       return acc;
     }, []);
 
-    // Respond with the modified career data and age
-    return NextResponse.json({ carrerData, age, planType }, { status: 201 });
+    // ✅ Check quiz completion status
+    const quizSequences = await db
+      .select()
+      .from(QUIZ_SEQUENCES)
+      .where(eq(QUIZ_SEQUENCES.user_id, userId))
+      .execute();
+
+    const quizMap = quizSequences.reduce((acc, quiz) => {
+      acc[quiz.quiz_id] = quiz.type_sequence;
+      return acc;
+    }, {});
+
+    const quiz1Completed = !!quizMap[1] && quizMap[1] !== "";
+    const quiz2Completed = !!quizMap[2] && quizMap[2] !== "";
+    const quizStatus = quiz1Completed && quiz2Completed ? 'completed' : 'not_completed';
+
+  // ✅ Send final response with career data, age, planType, and quiz status
+  return NextResponse.json(
+    { 
+      carrerData, 
+      age, 
+      planType, 
+      quizStatus 
+    }, 
+    { status: 201 }
+  );
   } catch (error) {
     console.error("Error fetching career data:", error);
     return NextResponse.json(

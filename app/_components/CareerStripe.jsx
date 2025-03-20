@@ -10,6 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import FeatureRestrictionModal from "../(innerPages)/dashboard/_components/FeatureRestrictionModal/FeatureRestrictionModal";
 import PricingCard from "./PricingCard";
+import TestsNotCompltedWarning from "../(innerPages)/dashboard/_components/TestsNotCompltedWarning/TestsNotCompltedWarning";
 
 const CareerStripe = () => {
     const [careerData, setCareerData] = useState([]);
@@ -22,8 +23,10 @@ const CareerStripe = () => {
     const [roadMapLoading, setRoadMapLoading] = useState(false);
     const [activeTab, setActiveTab] = useState("roadmap");
     const [age, setAge] = useState("");
+    const [isTestCompleted, setIsTestCompleted] = useState("");
     const [country, setCountry] = useState("");
     const [isRestricted, setIsRestricted] = useState(false);
+    const [showTestWarningModal, setShowTestWarningModal] = useState(false);
     const [showFeatureModal, setShowFeatureModal] = useState(false);
     const [showPricingModal, setShowPricingModal] = useState(false);
     const router = useRouter();
@@ -82,6 +85,7 @@ const CareerStripe = () => {
               setCareerData(response.data.carrerData);
             }
             setAge(response.data.age);
+            setIsTestCompleted(response.data.quizStatus)
             if (response.data.age <= "9" || response.data.planType === "base"){
               setIsRestricted(true)
             }
@@ -98,7 +102,11 @@ const CareerStripe = () => {
       }, []);
 
       const handleAddCareerClick = () => {
-        if (isRestricted) {
+
+        if (isTestCompleted == "not_completed") {
+          setShowTestWarningModal(true);
+        }
+        else if (isRestricted) {
           setShowFeatureModal(true);
         } else {
           if (careerData.length >= 5) {
@@ -223,6 +231,12 @@ const CareerStripe = () => {
         }}
       />
 
+      {/* Feature Restriction Modal */}
+      <TestsNotCompltedWarning
+        isOpen={showTestWarningModal}
+        onClose={() => setShowTestWarningModal(false)}
+      />
+
       {/* Pricing Modal */}
       {showPricingModal && (
         <PricingCard onClose={() => setShowPricingModal(false)} />
@@ -231,44 +245,13 @@ const CareerStripe = () => {
 
       {/* Mobile Heading */}
       <p className="text-center font-bold sm:hidden text-white text-2xl sm:text-4xl md:pl-5 max-sm:bg-[#1f1f1f]">
-        {t("careers")}
+        My Careers
       </p>
 
       {/* Career Selector for Desktop */}
-      {/* <div className="flex flex-col pt-4 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
-        <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
-          {t("careers")}
-        </p>
-
-        <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
-          {careerData.map((career, index) => (
-            <div
-              key={index}
-              onClick={() => handleCareerClick(career)}
-              className={`w-28 h-28 flex justify-center items-center sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg transition-transform transform hover:scale-105 cursor-pointer duration-150 ${
-                selectedCareer?.id === career.id
-                  ? "bg-gray-700 border-2 border-blue-500"
-                  : "bg-gray-800"
-              }`}
-            >
-              <p className="text-center text-xs sm:text-sm font-bold text-white">
-                {career.career_name}
-              </p>
-            </div>
-          ))}
-
-          <div
-            className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-700 flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150"
-            onClick={handleAddCareerClick}
-          >
-            <PlusIcon className="text-white h-6 w-6 sm:h-8 sm:w-8" />
-          </div>
-        </div>
-      </div> */}
-
       <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
         <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
-          {t("careers")}
+          My Careers
         </p>
       
       <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
