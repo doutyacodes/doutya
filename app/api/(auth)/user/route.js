@@ -74,7 +74,12 @@ export async function POST(req) {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id, birth_date: user.birth_date, isVerified: user.is_verified },
+      { 
+        userId: user.id,
+        birth_date: user.birth_date,
+        isVerified: user.is_verified,
+        plan: user.plan_type
+       },
       process.env.JWT_SECRET_KEY
     );
 

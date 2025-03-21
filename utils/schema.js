@@ -38,7 +38,8 @@ export const USER_DETAILS = mysqlTable('user_details', {
   experience: int('experience').default(null),
   education_qualification: varchar('education_qualification', { length: 255 }).default(null),
   current_job: varchar('current_job', { length: 200 }).default(null),
-  plan_type: mysqlEnum('plan_type', ['base', 'pro']).notNull().default('base'),
+  // plan_type: mysqlEnum('plan_type', ['base', 'pro']).notNull().default('base'),
+  plan_type: mysqlEnum('plan_type', ['base', 'pro']),
   joined_date: timestamp('joined_date').defaultNow(),
   account_status: mysqlEnum('account_status', ['linked', 'separated']),
   academicYearStart: varchar('academicYearStart', { length: 7 }).notNull(), // Format: YYYY-MM

@@ -255,14 +255,17 @@ function SignUp() {
         toast.success(t("successMessage"));
         if (age <= 9) {
           localStorage.setItem('dashboardUrl', '/dashboard_kids');
+          localStorage.setItem('navigateUrl', '/dashboard_kids');
           router.push('/dashboard_kids');
         } 
         else if (age <= 13) {
           localStorage.setItem('dashboardUrl', '/dashboard_junior');
+          localStorage.setItem('navigateUrl', '/dashboard_junior');
           response.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard_junior');
         } 
         else {
           localStorage.setItem('dashboardUrl', '/dashboard');
+          localStorage.setItem('navigateUrl', '/dashboard');
           response.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard');
         }
       } else {

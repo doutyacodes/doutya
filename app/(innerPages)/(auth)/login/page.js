@@ -90,9 +90,14 @@ function Login() {
         if (isDefaultUrl) {
           // Use age-based URL if backend sends the default URL
           router.push(dashboardUrl);
+
+          localStorage.setItem('navigateUrl', dashboardUrl);
         } else {
           // Use backend-provided URL if it's not the default
           router.push(navigateUrl);
+
+          localStorage.setItem('navigateUrl', navigateUrl);
+
         }
 
         toast.success("Logged in successfully");

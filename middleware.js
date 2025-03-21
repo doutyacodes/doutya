@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';  // Import jose
 
 export async function middleware(req) {
+
+  const res = NextResponse.next({
+    headers: {
+      'Cache-Control': 'no-store',  // Disable caching
+    }
+  });
+
   // Public routes that don't require authentication
   const publicRoutes = [
     // '/',
@@ -20,10 +27,12 @@ export async function middleware(req) {
   const isPublicRoute = publicRoutes.some(route => path.startsWith(route));
 
   // If it's a public route, allow access
+  // if (isPublicRoute) {
+  //   return NextResponse.next();
+  // }
   if (isPublicRoute) {
-    return NextResponse.next();
+    return res;  // Allow access to public routes without checking token
   }
-
   // Try to get the token from cookies
   const token = req.cookies.get('auth_token')?.value;
   // const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -39,7 +48,19 @@ export async function middleware(req) {
     console.log('try');
     // Verify the token using jose
     const secret = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
+
     const { payload } = await jwtVerify(token, secret);  // Verify JWT with jose
+
+    // Check Base/Pro plan in JWT payload
+    const plan = payload.plan;
+
+    console.log("plan, plan", plan)
+
+    // Redirect to activation page if no plan is set
+    if (!plan && !path.startsWith('/activation')) {
+      console.log("No plan → Redirecting to /activation");
+      return NextResponse.redirect(new URL('/activation', req.url));
+    }
 
     /* For now we are taking away the vefication penging thing away */
     // if (
@@ -50,8 +71,10 @@ export async function middleware(req) {
     // }
 
     // If everything is okay, continue the request
-    return NextResponse.next();
+    // return NextResponse.next();
     // return response; 
+
+    return res;
 
   } catch (error) {
     // Token is invalid or expired

@@ -202,7 +202,8 @@ export async function POST(req) {
       { 
         userId: existingUser.id, 
         birth_date: existingUser.birth_date, 
-        isVerified: existingUser.is_verified 
+        isVerified: existingUser.is_verified,
+        plan: existingUser.plan_type  
       },
       process.env.JWT_SECRET_KEY
     );
