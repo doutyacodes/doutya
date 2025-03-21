@@ -13,7 +13,7 @@ import { calculateAge } from "@/lib/ageCalculate";
 import { GenerateCourse } from "@/app/api/utils/GenerateCourse";
 import { calculateAcademicPercentage } from "@/lib/calculateAcademicPercentage";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
 export async function GET(req, { params }) {

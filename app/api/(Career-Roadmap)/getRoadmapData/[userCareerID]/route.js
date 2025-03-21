@@ -19,7 +19,7 @@ import { formattedAge } from "@/lib/formattedAge";
 import { fetchAndSaveRoadmap } from "@/app/api/utils/fetchAndSaveRoadmap";
 
 
-export const maxDuration = 200;
+export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
 export async function GET(req, { params }) {

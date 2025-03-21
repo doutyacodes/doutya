@@ -2,7 +2,7 @@
 
 import { enhancePromptWithEducation, getUserEducationPromptData } from "@/utils/promptUtils";
 
-export const maxDuration = 200;
+export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
     // Industry suggestions prompt

@@ -6,7 +6,7 @@ import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { processCareerSubjects } from '@/app/api/utils/fetchAndSaveSubjects';
 
-export const maxDuration = 60; // This function can run for a maximum of 5 seconds
+export const maxDuration = 300; // This function can run for a maximum of 5 seconds
 export const dynamic = "force-dynamic";
 /* this api is not currently in use if used have to include the classname as well  to filer withcalss anames  */
 export async function GET(req, { params }) {

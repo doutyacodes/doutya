@@ -7,7 +7,7 @@ import axios from "axios";
 import { and, eq, inArray } from "drizzle-orm";
 import { generateSubjectsPrompt } from "../services/promptService";
 
-export const maxDuration = 60; // This function can run for a maximum of 5 seconds
+export const maxDuration = 300; // This function can run for a maximum of 5 seconds
 export const dynamic = "force-dynamic";
 
 // Function to fetch subjects from OpenAI

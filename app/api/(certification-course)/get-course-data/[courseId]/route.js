@@ -15,7 +15,7 @@ import { authenticate } from "@/lib/jwtMiddleware"; // Ensure this path is corre
 import { eq, and } from "drizzle-orm";
 import { calculateAge } from "@/lib/ageCalculate";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
 export async function GET(req, { params }) {

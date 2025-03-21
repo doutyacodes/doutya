@@ -7,7 +7,7 @@ import { calculateAge } from '@/lib/ageCalculate';
 import axios from 'axios';
 import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 
-export const maxDuration = 60; // This function can run for a maximum of 5 seconds
+export const maxDuration = 300; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
