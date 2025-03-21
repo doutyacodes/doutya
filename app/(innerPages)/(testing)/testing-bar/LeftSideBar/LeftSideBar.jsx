@@ -141,8 +141,8 @@ const LeftSideBar = () => {
       icon: <PiCompassRoseFill className="text-base" />,
       link: "#",
       submenus: [
-        { name: "Career Guide", link: "/dashboard/careers/career-guide" },
         { name: "Career Suggestions", link: "/dashboard/careers/career-suggestions" },
+        { name: "Career Guide", link: "/dashboard/careers/career-guide" },
       ],
     },
     // {
