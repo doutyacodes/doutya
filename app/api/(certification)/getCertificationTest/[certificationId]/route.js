@@ -73,6 +73,20 @@ export async function GET(request, { params }) {
     }
 
     try {
+
+        // Step 1: Check if certification is already completed
+        const certificationStatus = await db
+        .select({ completed: USER_CERTIFICATION_COMPLETION.completed })
+        .from(USER_CERTIFICATION_COMPLETION)
+        .where(and(
+            eq(USER_CERTIFICATION_COMPLETION.user_id, userId),
+            eq(USER_CERTIFICATION_COMPLETION.certification_id, certificationId)
+        ));
+
+        if (certificationStatus.length > 0 && certificationStatus[0].completed === 'yes') {
+            return NextResponse.json({ isCompleted: true }, { status: 200 });
+        }
+
         const birthDateResult = await db
             .select({ 
                 birth_date: USER_DETAILS.birth_date,

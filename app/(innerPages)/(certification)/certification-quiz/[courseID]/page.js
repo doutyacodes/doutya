@@ -306,14 +306,18 @@ function Page({ params }) {
   useEffect(() => {
     const getQuizData = async () => {
       setIsFetchingQuiz(true)
+      setIsLoading(true)
       try {
         const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
           console.log("test Id courseID", courseID);
           
         const resp = await GlobalApi.GetCertificationTest(courseID, token);
+        if (resp.data.isCompleted){
+          setQuizCompleted(true);
+          return
+        }
         console.log(resp.data.questions);
-        
         // Store questions data
         setQuestions(resp.data.questions);
         
@@ -332,6 +336,7 @@ function Page({ params }) {
         console.error("Error Fetching GetQuizData data:", error);
       } finally {
         setIsFetchingQuiz(false);
+        setIsLoading(false)
       }
     };
     getQuizData();
@@ -352,7 +357,6 @@ function Page({ params }) {
       }, 1000);
 
       const timer = setTimeout(() => {
-        // router.replace("/dashboard/careers/career-guide");
         router.push(`/certification-results/${courseID}`)
       }, 5000);
 
@@ -445,12 +449,21 @@ function Page({ params }) {
     setShowOverview(false);
   };
   
-  if (isLoading || !isAuthenticated) {
+  if (isLoading || !isAuthenticated || isFetchingQuiz) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
         <div>
           <div className="font-semibold">
             <LoadingOverlay loadText={"Loading..."} />
+            {/* Loading Modal */}
+            <ContentGenerationLoading
+              isOpen={isFetchingQuiz}
+              onClose={() => setIsFetchingQuiz(false)}
+              page="certificationTest" // Change this based on your current page
+              showDelay={1000} // Only show if loading takes more than 1 second
+              // Optional: auto close after 30 seconds
+              // autoCloseDelay={30000}
+            />
           </div>
         </div>
       </div>
@@ -553,16 +566,6 @@ function Page({ params }) {
       <Toaster position="top-center" reverseOrder={false} />
 
       {showAlert && <QuizProgressAlert />}
-
-      {/* Loading Modal */}
-      <ContentGenerationLoading
-         isOpen={isFetchingQuiz}
-         onClose={() => setIsFetchingQuiz(false)}
-         page="certificationTest" // Change this based on your current page
-         showDelay={1000} // Only show if loading takes more than 1 second
-         // Optional: auto close after 30 seconds
-         // autoCloseDelay={30000}
-       />
 
       {questions.length > 0 && (
         <div className="mt-4 pt-5 flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">

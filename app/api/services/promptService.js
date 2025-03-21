@@ -2,6 +2,8 @@
 
 import { enhancePromptWithEducation, getUserEducationPromptData } from "@/utils/promptUtils";
 
+export const maxDuration = 200;
+export const dynamic = 'force-dynamic';
 
     // Industry suggestions prompt
     export const generateIndustryPrompt = async (userId, type2, country, language, languageOptions) => {

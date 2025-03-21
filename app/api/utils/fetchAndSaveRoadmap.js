@@ -25,6 +25,9 @@ const languageOptions = {
     tam:'in Tamil'
   };
 
+  export const maxDuration = 200;
+export const dynamic = 'force-dynamic';
+
   export async function fetchAndSaveRoadmap(userId, userCareerID, birth_date, age, careerGroupID, career, type1, type2,language) {
     console.log("userCareerID:",userCareerID, "age:",age, "career:",career, "type1:",type1, "type2:",type2);
     try {

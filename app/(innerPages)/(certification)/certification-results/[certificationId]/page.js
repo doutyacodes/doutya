@@ -8,6 +8,7 @@ import GlobalApi from '@/app/_services/GlobalApi';
 import toast from 'react-hot-toast';
 import LoadingOverlay from '@/app/_components/LoadingOverlay';
 import SelectCommunity from '@/app/(innerPages)/dashboard/_components/SelectCommunityModal/SelectCommunity';
+import { useRouter } from 'next/navigation';
 
 
 const CertificateDisplay = ({ params }) => {
@@ -18,7 +19,7 @@ const CertificateDisplay = ({ params }) => {
   const [certificateImage, setCertificateImage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCertificateLoading, setCertificateIsLoading] = useState(true);
-
+  const router = useRouter();
   const [selectedCommunities, setSelectedCommunities] = useState({
     global: false,
     countrySpecific: false
@@ -236,10 +237,10 @@ const CertificateDisplay = ({ params }) => {
             </div>
             <Button 
               variant="secondary"
-              onClick={() => window.history.back()}
+              onClick={() => router.replace("/dashboard/careers/career-guide")}
               className="mt-4"
             >
-              Return to Previous Page
+              Return to Career Guide
             </Button>
           </Card>
         </div>
@@ -479,7 +480,7 @@ const CertificateDisplay = ({ params }) => {
           <Button 
             variant="outline"
             className="gap-2"
-            onClick={() => window.history.back()}
+            onClick={() => router.replace("/dashboard/careers/career-guide")}
           >
             <ArrowLeft className="w-4 h-4" />
             Back
