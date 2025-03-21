@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { CAREER_GROUP, CAREER_SUBJECTS, SUBJECTS, TESTS, USER_CAREER, USER_DETAILS, USER_TESTS } from '@/utils/schema';
+import { CAREER_GROUP, CAREER_SUBJECTS, SUBJECTS, TESTS, USER_CAREER, USER_DETAILS, USER_EDUCATION_STAGE, USER_TESTS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq, inArray } from 'drizzle-orm'; // Adjust based on your ORM version
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -7,6 +7,7 @@ import { calculateAge } from '@/lib/ageCalculate';
 import axios from 'axios';
 import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
+import { generateInitialFeedBackPrompt } from '@/app/api/services/promptService';
 
 const languageOptions = {
   en: 'in English',
@@ -79,8 +80,8 @@ export async function GET(req, { params }) {
             const birthDateResult = await db
                 .select({ 
                   birth_date: USER_DETAILS.birth_date,
-                  education:USER_DETAILS.education,
-                  educationLevel: USER_DETAILS.education_level,
+                  // education:USER_DETAILS.education,
+                  // educationLevel: USER_DETAILS.education_level,
                   academicYearStart : USER_DETAILS.academicYearStart,
                   academicYearEnd : USER_DETAILS.academicYearEnd,
                   className: USER_DETAILS.class_name
@@ -89,16 +90,22 @@ export async function GET(req, { params }) {
                 .where(eq(USER_DETAILS.id, userId));
 
             const birth_date = birthDateResult[0]?.birth_date;
-            const education=birthDateResult[0]?.education
             const age = calculateAge(birth_date);
             const currentAgeWeek = getCurrentWeekOfAge(birth_date)
 
             const className = birthDateResult[0]?.className || 'completed';
-            const educationLevel = birthDateResult[0]?.educationLevel
             const academicYearStart = birthDateResult[0]?.academicYearStart
             const academicYearEnd = birthDateResult[0]?.academicYearEnd
 
             const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd)
+
+            // Get education stage
+              const educationStageData = await db
+                .select()
+                .from(USER_EDUCATION_STAGE)
+                .where(eq(USER_EDUCATION_STAGE.user_id, userId));
+                          
+              const educationStage = educationStageData[0].stage;
 
             // Fetch career name from the CAREER_GROUP table
             const careerGroup = await db
@@ -108,21 +115,26 @@ export async function GET(req, { params }) {
 
             const career_name = careerGroup[0]?.career_name;
             const { type1, type2, country } = userCareer[0];
+
+                      
+          //   const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} (currently in week ${currentAgeWeek} of this age)${
+          //     (educationStage === 'school' || educationStage === 'college') 
+          //     ? ` in ${className} with ${percentageCompleted}% of the academic year completed, who is pursuing their education in ${education}` 
+          //     : ` who has completed ${education}`
+          // } with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career in order to excel in this career what the person has to change. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
+
+
           
-            // const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career, such as time management, organizational skills, and other relevant skills. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the response ${languageOptions[language] || 'in English'}. Give it as a single JSON data without any wrapping other than {}`;
-            // const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} (currently in week ${currentAgeWeek} of this age) who have completed ${education} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career in order to excel in this career what the person has to change. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
-          
-            // const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} (currently in week ${currentAgeWeek} of this age)${
-            //     (educationLevel === 'school' || educationLevel === 'college') 
-            //     ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
-            //     : ''
-            // } who have completed ${education} with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career in order to excel in this career what the person has to change. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
-            
             const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} (currently in week ${currentAgeWeek} of this age)${
-                (educationLevel === 'school' || educationLevel === 'college') 
-                ? ` in ${className} with ${percentageCompleted}% of the academic year completed, who is pursuing their education in ${education}` 
-                : ` who has completed ${education}`
+                (educationStage === 'school' || educationStage === 'college') 
+                ? ` in ${className} with ${percentageCompleted}% of the academic year completed, who is pursuing their education` 
+                : ` who has completed education`
             } with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career in order to excel in this career what the person has to change. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
+
+
+              // const FINAL_PROMPT = await generateInitialFeedBackPrompt(
+              //   userId, type1, type2, age, career_name, country, currentAgeWeek, languageOptions, language
+              // );
           
               const response = await axios.post(
                 "https://api.openai.com/v1/chat/completions",

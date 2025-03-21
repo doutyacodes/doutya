@@ -420,3 +420,14 @@ import { enhancePromptWithEducation, getUserEducationPromptData } from "@/utils/
 
     return enhancePromptWithEducation(basePrompt, educationData);
     }
+
+    export const generateInitialFeedBackPrompt = async (userId, type1, type2, age, career_name, country, currentAgeWeek, languageOptions, language) =>{
+
+        const educationData = await getUserEducationPromptData(userId);
+
+        const basePrompt = `Provide a simple and concise feedback for an individual of age ${age} (currently in week ${currentAgeWeek} of this age) with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. 
+        The feedback should highlight key areas for improvement in this career in order to excel in this career what the person has to change. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data.
+        Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
+
+    return enhancePromptWithEducation(basePrompt, educationData);
+    }

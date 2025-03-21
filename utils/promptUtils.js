@@ -43,7 +43,7 @@ export const getUserEducationPromptData = async ( userId ) => {
     const academicYearStart = userDetails[0]?.academicYearStart;
     const academicYearEnd = userDetails[0]?.academicYearEnd;
     const percentageCompleted = calculateAcademicPercentage(academicYearStart, academicYearEnd);
-    const className = userDetails[0]?.class_name || "";
+    const className = userDetails[0]?.class_name || "completed";
     
     let educationData = null;
     let workData = null;
