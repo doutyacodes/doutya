@@ -6,6 +6,7 @@ import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { GenerateTestQuiz } from '@/app/api/utils/GenerateTestQuiz';
 import { getCurrentWeekOfMonth } from '@/lib/getCurrentWeekOfMonth';
+import { calculateWeekFromTimestamp } from '@/app/api/utils/calculateWeekFromTimestamp';
 
 // Helper to calculate week of the month for a given date
 function getWeekOfMonth(date) {
@@ -50,8 +51,19 @@ export async function GET(request, { params }) {
 
         const age = calculateAge(birth_date);
         const userJoinWeek = getWeekOfMonth(new Date(joined_date));
-        const currentYear = new Date().getFullYear();
-        const currentMonth = new Date().getMonth() + 1;
+        const user_days = calculateWeekFromTimestamp(joined_date);
+
+        const yearsSinceJoined = user_days.yearsSinceJoined
+        const monthsSinceJoined = user_days.monthsSinceJoined
+        const weekNumber = user_days.weekNumber
+
+        console.log("Year:", user_days.yearsSinceJoined);       // Current year based on 52-week year cycles
+        console.log("Month:", user_days.monthsSinceJoined);     // Current month (4-week months)
+        console.log("Week:", user_days.weekNumber);             // Current week (within the 52-week cycle)
+        console.log("Start of Week:", user_days.startOfWeek);
+
+        // const currentYear = new Date().getFullYear();
+        // const currentMonth = new Date().getMonth() + 1;
 
         const className = class_Name || 'completed';
         console.log("userJoin week", userJoinWeek);
@@ -94,12 +106,12 @@ export async function GET(request, { params }) {
         // Helper function to fetch questions and answers
         async function fetchQuestionsAndAnswers() {
             console.log("log fetch");
-            let weekNumber;
-            if(userJoinWeek === 1){
-                weekNumber = 1
-            } else {
-                weekNumber = getCurrentWeekOfMonth()
-            }
+            // let weekNumber;
+            // if(userJoinWeek === 1){
+            //     weekNumber = 1
+            // } else {
+            //     weekNumber = getCurrentWeekOfMonth()
+            // }
             
 
              return await db
@@ -119,8 +131,8 @@ export async function GET(request, { params }) {
                 .where(
                     and(
                         eq(TESTS.subject_id, subjectId),
-                        eq(TESTS.year, currentYear),
-                        eq(TESTS.month, currentMonth),
+                        eq(TESTS.year, yearsSinceJoined),
+                        eq(TESTS.month, monthsSinceJoined),
                         eq(TESTS.week_number, weekNumber),
                         eq(TESTS.age_group, age),
                         eq(TESTS.class_name, className),
@@ -138,7 +150,7 @@ export async function GET(request, { params }) {
         let questionWithAnswers = await fetchQuestionsAndAnswers();
         console.log("log after fetcgh");
         // Conditional logic based on user's join week
-        if (userJoinWeek === 1) {
+        if (weekNumber === 1) {
             // Week 1 logic: generate quiz if no questions found
             if (questionWithAnswers.length === 0) {
                 console.log("log generate");

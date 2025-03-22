@@ -9,7 +9,7 @@ import { GenerateCourse } from '@/app/api/utils/GenerateCourse';
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
-async function fetchAndFormatQuestions(certificationId, age, className) {
+async function fetchAndFormatQuestions(certificationId, age, className, level) {
     const existingQuestions = await db
         .select({
             questionId: CERTIFICATION_QUIZ.id,
@@ -24,7 +24,8 @@ async function fetchAndFormatQuestions(certificationId, age, className) {
             and(
                 eq(CERTIFICATION_QUIZ.certification_id, certificationId),
                 eq(CERTIFICATION_QUIZ.age, age),
-                eq(CERTIFICATION_QUIZ.class_name, className)
+                eq(CERTIFICATION_QUIZ.class_name, className),
+                eq(CERTIFICATION_QUIZ.level, level) 
             )
         );
 
@@ -67,8 +68,10 @@ export async function GET(request, { params }) {
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
     const { certificationId } = params;
+    const { searchParams } = new URL(request.url);
+    const level = searchParams.get("level");
 
-    if (!certificationId) {
+    if (!certificationId || !level) {
         return NextResponse.json({ message: 'Invalid certificationId' }, { status: 400 });
     }
 
@@ -164,14 +167,14 @@ export async function GET(request, { params }) {
         }
 
         // Check existing questions and fetch quiz progress
-        let { questions } = await fetchAndFormatQuestions(certificationId, age, className);
+        let { questions } = await fetchAndFormatQuestions(certificationId, age, className, level);
 
         // If no questions are found, generate new course data
         if (questions.length === 0) {
-            await GenerateCourse(userId, age, certificationName, careerName, certificationId, birth_date, className, type1, type2);
+            await GenerateCourse(userId, age, level, certificationName, careerName, certificationId, birth_date, className, type1, type2);
             // await GenerateCourse(age, certificationName, careerName, certificationId, birth_date);
             // Fetch the questions again after generation
-            ({ questions } = await fetchAndFormatQuestions(certificationId, age, className));
+            ({ questions } = await fetchAndFormatQuestions(certificationId, age, className, level));
         }
 
         // Only fetch topics after ensuring questions exist

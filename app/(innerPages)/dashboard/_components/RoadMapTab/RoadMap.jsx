@@ -6,10 +6,11 @@ import { useTranslations } from 'next-intl';
 import SelectCommunity from '../SelectCommunityModal/SelectCommunity';
 import { useRouter } from 'next/navigation';
 import ContentGenerationLoading from '@/app/_components/ContentGenerationLoading';
+import FeatureGuideWrapper from '@/app/_components/FeatureGuideWrapper';
 
 function RoadMap({ selectedCareer }) {
   const [activeTab, setActiveTab] = useState('Educational Milestones');
-  const [activeEducationalSubTab, setActiveEducationalSubTab] = useState('Academic Milestones'); 
+  // const [activeEducationalSubTab, setActiveEducationalSubTab] = useState('Academic Milestones'); 
   const [roadMapData, setRoadMapData] = useState([]);
   const [completedTasks, setCompletedTasks] = useState({});
   const [milestones, setMilestones] = useState([]);
@@ -63,6 +64,36 @@ function RoadMap({ selectedCareer }) {
   }, [selectedCareer]);
 
   // Modify this useEffect for organizing milestones
+    // useEffect(() => {
+    //   if (roadMapData.length > 0) {
+    //     const milestones = roadMapData.reduce((acc, milestone) => {
+    //       const { milestoneCategoryName, milestoneSubcategoryName, ...milestoneData } = milestone;
+          
+    //       // Handle Educational Milestones differently due to subcategories
+    //       if (milestoneCategoryName === 'Educational Milestones') {
+    //         if (!acc[milestoneCategoryName]) {
+    //           acc[milestoneCategoryName] = {};
+    //         }
+    //         // Organize by subcategory
+    //         if (milestoneSubcategoryName) {
+    //           if (!acc[milestoneCategoryName][milestoneSubcategoryName]) {
+    //             acc[milestoneCategoryName][milestoneSubcategoryName] = [];
+    //           }
+    //           acc[milestoneCategoryName][milestoneSubcategoryName].push(milestoneData);
+    //         }
+    //       } else {
+    //         // Handle other categories as before
+    //         if (!acc[milestoneCategoryName]) {
+    //           acc[milestoneCategoryName] = [];
+    //         }
+    //         acc[milestoneCategoryName].push(milestoneData);
+    //       }
+    //       return acc;
+    //     }, {});
+    //     setMilestones(milestones);
+    //   }
+    // }, [roadMapData]);
+
     useEffect(() => {
       if (roadMapData.length > 0) {
         const milestones = roadMapData.reduce((acc, milestone) => {
@@ -73,8 +104,8 @@ function RoadMap({ selectedCareer }) {
             if (!acc[milestoneCategoryName]) {
               acc[milestoneCategoryName] = {};
             }
-            // Organize by subcategory
-            if (milestoneSubcategoryName) {
+            // Only include Academic Milestones
+            if (milestoneSubcategoryName === 'Academic Milestones') {
               if (!acc[milestoneCategoryName][milestoneSubcategoryName]) {
                 acc[milestoneCategoryName][milestoneSubcategoryName] = [];
               }
@@ -148,17 +179,18 @@ function RoadMap({ selectedCareer }) {
   };
 
   return (
-    <div className="p-2 md:p-4 bg-gray-900 text-gray-200">
+    <FeatureGuideWrapper featureKey="roadmap">
+      <div className="p-2 md:p-4 bg-gray-900 text-gray-200">
 
       {/* Loading Modal */}
       <ContentGenerationLoading
-         isOpen={isLoading}
-         onClose={() => setIsLoading(false)}
-         page="roadmap" // Change this based on your current page
-         showDelay={1000} // Only show if loading takes more than 1 second
-         // Optional: auto close after 30 seconds
-         // autoCloseDelay={30000}
-       />
+        isOpen={isLoading}
+        onClose={() => setIsLoading(false)}
+        page="roadmap" // Change this based on your current page
+        showDelay={1000} // Only show if loading takes more than 1 second
+        // Optional: auto close after 30 seconds
+        // autoCloseDelay={30000}
+      />
 
       {/* Modal for community selection */}
       {showCommunityModal && (
@@ -201,8 +233,8 @@ function RoadMap({ selectedCareer }) {
             ))}
           </div>
 
-          {/* Educational Subtabs */}
-          {activeTab === 'Educational Milestones' && (
+          {/* Educational Subtabs - Commented out since we only want Academic Milestones */}
+          {/* {activeTab === 'Educational Milestones' && (
             <div className="flex flex-row gap-2 text-xs md:text-base min-w-20 mt-10 w-full overflow-x-scroll md:overflow-x-visible justify-center items-center">
               {Object.keys(milestones['Educational Milestones']).map((subTab) => (
                 <button
@@ -218,66 +250,21 @@ function RoadMap({ selectedCareer }) {
                 </button>
               ))}
             </div>
-          )}
+          )} */}
 
 
           {/* Tab Content */}
-          <div className="bg-gray-800 p-4 md:p-6 shadow-lg min-h-[300px]">
-            {activeTab === 'Educational Milestones' ? (
-              // Render Educational milestones with subcategories
-              milestones[activeTab]?.[activeEducationalSubTab]?.length > 0 ? (
-                milestones[activeTab][activeEducationalSubTab]?.map((item) => (
-                  <div key={item.milestoneId} className="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-start justify-between">
-                    <div className="flex-1 sm:pr-4">
-                      <h3 className="font-bold text-lg text-white">
-                        • <span className="font-normal break-words">{item.milestoneDescription}</span>
-                      </h3>
-                    </div>
-                    {activeEducationalSubTab === "Certification Milestones" ? (
-                      <>
-                        {item.certificationCompletedStatus === 'yes' ? (
-                          <button
-                            onClick={() => router.push(`/certification-results/${item.certificationId}`)}
-                            className="w-full sm:ml-4 sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-green-500"
-                          >
-                            View Certification
-                          </button>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => router.push(`/certification-quiz/${item.certificationId}`)}
-                              className="w-full sm:ml-4 sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-orange-500"
-                            >
-                              Get Certified
-                            </button>
-                          </>
-                        )}
-                        {/* {
-                          item.courseStatus === 'in_progress' ? (
-                          <button
-                            onClick={() => router.push(`/certification-course/${item.certificationId}`)}
-                            className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-blue-500"
-                          >
-                            Continue Course
-                          </button>
-                        ) : item.courseStatus === null ? (
-                          <button
-                            onClick={() => router.push(`/course-overview/${item.certificationId}`)}
-                            className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-blue-500"
-                          >
-                            Get Course
-                          </button>
-                        ) : item.courseStatus === "completed" ? (
-                          <button
-                            disabled
-                            className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-gray-300"
-                          >
-                            Course Completed
-                          </button>
-                        ) : null
-                      } */}
-                      </>
-                    ) : (
+            <div className="bg-gray-800 p-4 md:p-6 shadow-lg min-h-[300px]">
+              {activeTab === 'Educational Milestones' ? (
+                // Render Educational milestones - only Academic Milestones
+                milestones[activeTab]?.['Academic Milestones']?.length > 0 ? (
+                  milestones[activeTab]['Academic Milestones']?.map((item) => (
+                    <div key={item.milestoneId} className="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-start justify-between">
+                      <div className="flex-1 sm:pr-4">
+                        <h3 className="font-bold text-lg text-white">
+                          • <span className="font-normal break-words">{item.milestoneDescription}</span>
+                        </h3>
+                      </div>
                       <button
                         onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
                         className={`w-full sm:ml-4 sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 ${
@@ -292,13 +279,12 @@ function RoadMap({ selectedCareer }) {
                           t('buttons.complete')
                         )}
                       </button>
-                    )}
-                  </div>
-                ))
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-center">{LoadMessage}</p>
+                )
               ) : (
-                <p className="text-gray-400 text-center">{LoadMessage}</p>
-              )
-            ) : (
               // Render other milestone categories as before
               milestones[activeTab]?.length > 0 ? (
                 milestones[activeTab]?.map((item) => (
@@ -332,9 +318,10 @@ function RoadMap({ selectedCareer }) {
           </div>
         </>
       )}
-      
-      
-    </div>
+
+
+      </div>
+    </FeatureGuideWrapper>
   );
 }
 

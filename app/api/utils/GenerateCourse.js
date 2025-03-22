@@ -211,7 +211,7 @@ import { generateCourseTestPrompt } from '../services/promptService';
 // }
 
 
-export async function GenerateCourse(userId, age, course, career, courseId, birthDate, className, type1, type2) {
+export async function GenerateCourse(userId, age, level, course, career, courseId, birthDate, className, type1, type2) {
 
     try {
         const currentAgeWeek = getCurrentWeekOfAge(birthDate)
@@ -304,7 +304,7 @@ export async function GenerateCourse(userId, age, course, career, courseId, birt
         //     Ensure that the response is valid JSON, using the specified field names.
         // `;
  
-        const prompt = await generateCourseTestPrompt(userId, career, course, type1, type2, age, currentAgeWeek)
+        const prompt = await generateCourseTestPrompt(userId, career, course, type1, type2, age, level, currentAgeWeek)
 
         console.log("prompt", prompt)
         
@@ -413,6 +413,7 @@ export async function GenerateCourse(userId, age, course, career, courseId, birt
                 certification_id: courseId,
                 age: age,
                 class_name: className,
+                level: level
             });
 
             const questionId = questionInsert[0].insertId;

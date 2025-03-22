@@ -552,7 +552,7 @@ export const TESTS = mysqlTable("tests", {
   created_at: timestamp("created_at").defaultNow(),
 });
 
-export const USER_TESTS = mysqlTable("user_tests", {
+export const USER_SUBJECT_COMPLETIONUSER_TESTS = mysqlTable("user_tests", {
   user_test_id: int("user_test_id").autoincrement().primaryKey(),
   user_id: int("user_id")
     .notNull()
@@ -611,6 +611,7 @@ export const TEST_PROGRESS = mysqlTable("test_progress", {
     .notNull()
     .references(() => TESTS.test_id),
   marks: decimal("marks", 10, 3).notNull(),
+  is_answer: mysqlEnum("is_answer", ["yes", "no"]).notNull(), // Answer field
 });
 
 export const STAR_PERCENT = mysqlTable("star_percent", {
@@ -851,11 +852,13 @@ export const USER_SUBJECT_COMPLETION = mysqlTable("user_subject_completion", {
     .notNull()
     .references(() => USER_DETAILS.id), // Assuming USER_DETAILS has an 'id'
   skilled_age: int("skilled_age").default(null),
-  subject_id: int("subject_id")
+  test_id: int("test_id")
     .notNull()
-    .references(() => SUBJECTS.subject_id),
+    .references(() => TESTS.test_id),
   isStarted: boolean("isStarted").notNull().default(false), // New boolean column
   completed: mysqlEnum("completed", ["yes", "no"]).notNull(),
+  score: int("score").default(null),
+  stars_awarded: int("stars_awarded").default(null),
   created_at: timestamp("created_at").defaultNow(),
 });
 
@@ -1025,6 +1028,7 @@ export const CERTIFICATION_QUIZ = mysqlTable("certification_quiz", {
     .references(() => CERTIFICATIONS.id),
   age: decimal("age", 3, 1).notNull(),
   class_name: varchar("class_name", { length: 255 }).notNull(),
+  level: mysqlEnum("level", ["beginner", "intermediate", "advanced"]).notNull().default("beginner"), 
   created_at: timestamp("created_at").defaultNow(),
 });
 

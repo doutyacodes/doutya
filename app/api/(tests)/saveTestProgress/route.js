@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { QUIZ_PROGRESS, QUIZ_SEQUENCES, STRENGTH_QUIZ_PROGRESS, TEST_PROGRESS, USER_CAREER_PROGRESS, USER_TASKS, USER_TESTS } from '@/utils/schema';
+import { QUIZ_PROGRESS, QUIZ_SEQUENCES, STRENGTH_QUIZ_PROGRESS, TEST_PROGRESS, USER_CAREER_PROGRESS, USER_SUBJECT_COMPLETION, USER_TASKS, USER_TESTS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq, inArray } from 'drizzle-orm'; // Ensure these imports match your ORM version
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -15,25 +15,42 @@ export async function POST(req) {
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
     const { results } = await req.json(); // Directly destructuring to get quizId and results array
-    const { questionId, answerId, marks, testId } = results
+    const { questionId, answerId, isAnswer, marks, testId } = results
     try {
         try {
             // Check if the record already exists
+            // const existingUserTask = await db
+            //     .select()
+            //     .from(USER_TESTS)
+            //     .where(
+            //         and(
+            //             eq(USER_TESTS.user_id, userId),
+            //             eq(USER_TESTS.test_id, testId)
+            //         )
+            //     );          
+                
             const existingUserTask = await db
                 .select()
-                .from(USER_TESTS)
+                .from(USER_SUBJECT_COMPLETION)
                 .where(
                     and(
-                        eq(USER_TESTS.user_id, userId),
-                        eq(USER_TESTS.test_id, testId)
+                        eq(USER_SUBJECT_COMPLETION.user_id, userId),
+                        eq(USER_SUBJECT_COMPLETION.test_id, testId)
                     )
-                );                
+                ); 
         
             if (existingUserTask.length === 0) {
                 // Record doesn't exist, so insert it
-                await db.insert(USER_TESTS).values({
+                // await db.insert(USER_TESTS).values({
+                //     user_id: userId,
+                //     test_id: testId,
+                //     completed: 'no',
+                // });
+
+                await db.insert(USER_SUBJECT_COMPLETION).values({
                     user_id: userId,
                     test_id: testId,
+                    isStarted: true,
                     completed: 'no',
                 });
                 console.log("Inserted successfully");
@@ -68,7 +85,8 @@ export async function POST(req) {
                 test_questionId: questionId,
                 test_answerId: answerId,
                 marks: marks,
-                test_id: testId
+                test_id: testId,
+                is_answer: isAnswer
             };
 
             await db.insert(TEST_PROGRESS).values(insertData);

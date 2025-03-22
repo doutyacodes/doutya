@@ -15,6 +15,7 @@ import {
     SelectValue,
   } from "@/components/ui/select";
 import InitialFeedback from '../InitialFeedback/InitialFeedback';
+import FeatureGuideWrapper from '@/app/_components/FeatureGuideWrapper';
 
 
 function Feedback({ selectedCareer }) {
@@ -162,7 +163,8 @@ function Feedback({ selectedCareer }) {
     }
 
     return (
-        <div className="bg-gray-900 p-4 sm:p-10 rounded-lg space-y-8">
+        <FeatureGuideWrapper featureKey="feedback">
+                    <div className="bg-gray-900 p-4 sm:p-10 rounded-lg space-y-8">
             <div className='flex justify-between'>
                 <div>
                     {currentFeedbackview === "initialFeedback" ? (
@@ -351,6 +353,8 @@ function Feedback({ selectedCareer }) {
                 )
             }
         </div>
+        </FeatureGuideWrapper>
+
     );
 }
 

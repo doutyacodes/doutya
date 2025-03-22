@@ -115,6 +115,7 @@ function Page({ params }) {
     const answer = {
       questionId: questions[currentQuestionIndex].id,
       answerId: choice.id,
+      isAnswer: choice.isCorrect,
       marks: earnedMarks,
       testId: questions[currentQuestionIndex].testId,
     };

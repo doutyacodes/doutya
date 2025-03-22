@@ -149,9 +149,13 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birt
         const parsedData = JSON.parse(responseText);
 
         // Step 2: Insert into TESTS table
-        const currentYear = new Date().getFullYear();
-        const currentMonth = new Date().getMonth() + 1;
-        const currentWeekNumber = 1;
+        // const currentYear = new Date().getFullYear();
+        // const currentMonth = new Date().getMonth() + 1;
+
+        /* Setting these below values as the Generated tests are basically only for te initial week of joining  */
+        const currentYear = 1;
+        const currentMonth = 1;
+        const currentWeekNumber = 1; 
 
         const [testResult] = await db.insert(TESTS).values({
             subject_id: subjectId,

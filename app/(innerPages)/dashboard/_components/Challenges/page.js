@@ -4,6 +4,7 @@ import GlobalApi from '@/app/_services/GlobalApi';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 import ContentGenerationLoading from '@/app/_components/ContentGenerationLoading';
+import FeatureGuideWrapper from '@/app/_components/FeatureGuideWrapper';
 
 export default function Challenge({ selectedCareer }) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -224,10 +225,11 @@ export default function Challenge({ selectedCareer }) {
                         <h3 className="font-bold text-lg">{t('week')} {challenge.week}</h3>
                         <p><strong>{t('challenge')}:</strong> {challenge.challenge}</p>
                         <p><strong>{t('verification')}:</strong> {challenge.verification}</p>
+                        <p className="text-orange-600 font-medium mt-2">This challenge is currently under verification by our team</p>
                     </div>
                 </li>
             ));
-        } else if (activeTab === 'rejected') {
+        }else if (activeTab === 'rejected') {
             return challenges.map((challenge, index) => (
                 <li key={index} className="border p-4 rounded bg-yellow-100 flex justify-between items-center">
                     <div>
@@ -241,50 +243,53 @@ export default function Challenge({ selectedCareer }) {
     };
 
     return (
-        <div className="bg-[#1f1f1f] mb-6 p-4 text-black">
-            <Toaster />
+        <FeatureGuideWrapper featureKey="challenges">
+            <div className="bg-[#1f1f1f] mb-6 p-4 text-black">
+                <Toaster />
 
-        {/* Loading Modal */}
-        <ContentGenerationLoading
-            isOpen={fetching}
-            onClose={() => setFetching(false)}
-            page="challenges" // Change this based on your current page
-            showDelay={1000} // Only show if loading takes more than 1 second
-            // Optional: auto close after 30 seconds
-            // autoCloseDelay={30000}
-        />
+            {/* Loading Modal */}
+            <ContentGenerationLoading
+                isOpen={fetching}
+                onClose={() => setFetching(false)}
+                page="challenges" // Change this based on your current page
+                showDelay={1000} // Only show if loading takes more than 1 second
+                // Optional: auto close after 30 seconds
+                // autoCloseDelay={30000}
+            />
 
-            <div className="flex gap-1 pl-2 pr-2 overflow-x-scroll">
-                <button
-                    className={`bg-purple-400 text-white font-bold py-2 px-4 md:w-1/3 max-md:rounded ${activeTab === 'weekly' ? 'bg-purple-700' : ''}`}
-                    onClick={() => setActiveTab('weekly')}
-                >
-                    {t('weeklyChallenges')}
-                </button>
-                <button
-                    className={`bg-red-400 text-white font-bold py-2 px-4  md:w-1/3 max-md:rounded ${activeTab === 'pending' ? 'bg-red-700' : ''}`}
-                    onClick={() => setActiveTab('pending')}
-                >
-                    {t('pendingChallenges')}
-                </button>
-                <button
-                    className={`bg-blue-400 text-white font-bold py-2 px-4  md:w-1/3 max-md:rounded ${activeTab === 'rejected' ? 'bg-blue-700' : ''}`}
-                    onClick={() => setActiveTab('rejected')}
-                >
-                    {t('rejectedChallenges')}
-                </button>
+                <div className="flex gap-1 pl-2 pr-2 overflow-x-scroll">
+                    <button
+                        className={`bg-purple-400 text-white font-bold py-2 px-4 md:w-1/3 max-md:rounded ${activeTab === 'weekly' ? 'bg-purple-700' : ''}`}
+                        onClick={() => setActiveTab('weekly')}
+                    >
+                        {t('weeklyChallenges')}
+                    </button>
+                    <button
+                        className={`bg-red-400 text-white font-bold py-2 px-4  md:w-1/3 max-md:rounded ${activeTab === 'pending' ? 'bg-red-700' : ''}`}
+                        onClick={() => setActiveTab('pending')}
+                    >
+                        {t('pendingChallenges')}
+                    </button>
+                    <button
+                        className={`bg-blue-400 text-white font-bold py-2 px-4  md:w-1/3 max-md:rounded ${activeTab === 'rejected' ? 'bg-blue-700' : ''}`}
+                        onClick={() => setActiveTab('rejected')}
+                    >
+                        {t('rejectedChallenges')}
+                    </button>
+                </div>
+                <br />
+                {fetching ? (
+                    <p>{t('loadingChallenges')}</p>
+                ) : challenges.length > 0 ? (
+                    <ul className="space-y-4">
+                        {renderChallenges()}
+                        {activeTab === 'weekly' && showWaitMessage && <p>{t('waitForNextWeek')}</p>}
+                    </ul>
+                ) : (
+                    <p>{t('noChallengesAvailable')}</p>
+                )}
             </div>
-            <br />
-            {fetching ? (
-                <p>{t('loadingChallenges')}</p>
-            ) : challenges.length > 0 ? (
-                <ul className="space-y-4">
-                    {renderChallenges()}
-                    {activeTab === 'weekly' && showWaitMessage && <p>{t('waitForNextWeek')}</p>}
-                </ul>
-            ) : (
-                <p>{t('noChallengesAvailable')}</p>
-            )}
-        </div>
+        </FeatureGuideWrapper>
+
     );
 }

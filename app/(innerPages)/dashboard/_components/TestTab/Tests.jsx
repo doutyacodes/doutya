@@ -9,14 +9,16 @@ import ViewResult from '../ViewResult/ViewResult'
 import { ChevronDown } from 'lucide-react';
 import HistoryView from '../TestHistory/HistoryView'
 import ContentGenerationLoading from '@/app/_components/ContentGenerationLoading'
+import FeatureGuideWrapper from '@/app/_components/FeatureGuideWrapper'
 
 function Tests({selectedCareer}) {
 
     const [activeTab, setActiveTab] = useState('weekly');
     const [isLoading, setIsLoading] = useState(false)
-    const [testData, setTestData] = useState([])
     const [subjects, setSubjects] = useState([])
     const [selectedSubjectId, setSelectedSubjectId] = useState(null)
+    const [subjectTestId, setSubjectTestId] = useState(null)
+    
 
     const router = useRouter();
 
@@ -53,10 +55,6 @@ function Tests({selectedCareer}) {
         getSubjects()
     }, [selectedCareer])
 
-    // Handle the test button click
-    //   const handleTakeTestClick = (subject) => {
-    //     router.push(`/skillTestsSection/${subject.subjectId}`);
-    // };
     
   const WeeklyTestsView = () => (
       subjects.length > 0 ? (
@@ -112,6 +110,7 @@ function Tests({selectedCareer}) {
 
       const handleResultsNavigation = (subject) => {
         setSelectedSubjectId(subject.subjectId)
+        setSubjectTestId(subject.testID)
       };
 
       if (isLoading) {
@@ -127,63 +126,66 @@ function Tests({selectedCareer}) {
       }
 
   return (
-    <div className="w-full mx-auto">
-      {selectedSubjectId ? (
-        <ViewResult subjectId={selectedSubjectId} setSelectedSubjectId={setSelectedSubjectId}/>
-      ) : (
-        <>
-        {/* Main Tabs */}
-        <div className="w-full bg-gray-900 p-6 rounded-lg">
-          <div className="flex justify-between items-center mb-6">
-            <div className="grid grid-cols-2 gap-4 w-full">
-              <button
-                onClick={() => setActiveTab('weekly')}
-                className={`px-4 py-2 rounded transition-colors duration-300 ${
-                  activeTab === 'weekly'
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                }`}
-              >
-                <span className="uppercase text-sm">WEEKLY TESTS</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('history')}
-                className={`px-4 py-2 rounded transition-colors duration-300 ${
-                  activeTab === 'history'
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                }`}
-              >
-                <span className="uppercase text-sm">TEST HISTORY</span>
-              </button>
+    <FeatureGuideWrapper featureKey="tests">
+            <div className="w-full mx-auto">
+        {subjectTestId ? (
+          <ViewResult testID={subjectTestId} setSubjectTestId={setSubjectTestId}/>
+        ) : (
+          <>
+          {/* Main Tabs */}
+          <div className="w-full bg-gray-900 p-6 rounded-lg">
+            <div className="flex justify-between items-center mb-6">
+              <div className="grid grid-cols-2 gap-4 w-full">
+                <button
+                  onClick={() => setActiveTab('weekly')}
+                  className={`px-4 py-2 rounded transition-colors duration-300 ${
+                    activeTab === 'weekly'
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                  }`}
+                >
+                  <span className="uppercase text-sm">WEEKLY ASSESSMENTS</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('history')}
+                  className={`px-4 py-2 rounded transition-colors duration-300 ${
+                    activeTab === 'history'
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                  }`}
+                >
+                  <span className="uppercase text-sm">TEST HISTORY</span>
+                </button>
+              </div>
             </div>
+
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-white text-xl">WEEK - {currentWeek}/52</h2>
+            </div>
+
+            {activeTab === 'weekly' ? (
+              <>
+                {/* Loading Modal */}
+                <ContentGenerationLoading
+                  isOpen={isLoading}
+                  onClose={() => setIsLoading(false)}
+                  page="test" // Change this based on your current page
+                  showDelay={1000} // Only show if loading takes more than 1 second
+                  // Optional: auto close after 30 seconds
+                  // autoCloseDelay={30000}
+                />
+
+                <WeeklyTestsView /> 
+              </>
+            )
+            : <HistoryView selectedCareer = {selectedCareer} currentWeek={currentWeek}/>}
           </div>
+        </>
+        )
+      }
+    </div>
+    </FeatureGuideWrapper>
 
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-white text-xl">WEEK - {currentWeek}/52</h2>
-          </div>
-
-          {activeTab === 'weekly' ? (
-            <>
-              {/* Loading Modal */}
-              <ContentGenerationLoading
-                isOpen={isLoading}
-                onClose={() => setIsLoading(false)}
-                page="test" // Change this based on your current page
-                showDelay={1000} // Only show if loading takes more than 1 second
-                // Optional: auto close after 30 seconds
-                // autoCloseDelay={30000}
-              />
-
-              <WeeklyTestsView /> 
-            </>
-          )
-          : <HistoryView selectedCareer = {selectedCareer} currentWeek={currentWeek}/>}
-        </div>
-      </>
-      )
-    }
-  </div>
 )
 }
 

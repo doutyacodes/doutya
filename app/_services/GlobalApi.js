@@ -609,8 +609,8 @@ const AddPostComment = (token, data) => {
 };
 
 /* Certification */
-const GetCertificationTest = (id, token) => {
-  return axios.get(`/api/getCertificationTest/${id}`, {
+const GetCertificationTest = (id, token, level) => {
+  return axios.get(`/api/getCertificationTest/${id}?level=${level}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

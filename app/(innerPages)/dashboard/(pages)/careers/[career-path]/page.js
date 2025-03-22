@@ -18,6 +18,7 @@ import PricingCard from "@/app/_components/PricingCard";
 import CareerOverView from "../../../_components/CareerOverview/CareerOverview";
 import CareerGuideExplanation from "@/app/_components/CareerGuideExplanation";
 import TestsNotCompltedWarning from "../../../_components/TestsNotCompltedWarning/TestsNotCompltedWarning";
+import Certification from "../../../_components/Certification/Certification";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -81,7 +82,8 @@ function Page() {
 
   const tabs = [
     { key: "roadmap", label: t("roadmap") },
-    { key: "test", label: t("test") },
+    { key: "assessment", label: t("assessment") },
+    { key: "certification", label: "certifications" },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
     { key: "community", label: "Community" },
@@ -416,8 +418,11 @@ function Page() {
                 {activeTab === "roadmap" && (
                   <RoadMap selectedCareer={selectedCareer} />
                 )}
-                {activeTab === "test" && (
+                {activeTab === "assessment" && (
                   <Tests selectedCareer={selectedCareer} />
+                )}
+                {activeTab === "certification" && (
+                  <Certification selectedCareer={selectedCareer} />
                 )}
                 {activeTab === "feedback" && (
                   <Feedback selectedCareer={selectedCareer} />

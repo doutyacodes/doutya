@@ -263,7 +263,17 @@ export const dynamic = 'force-dynamic';
     
         const basePrompt = `
             Create 10 multiple-choice questions in ${subjectName} for a ${age} year old (currently in week ${currentAgeWeek} of this age) for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and  ${age}.
-            Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}. The questions should be unique and difficulty level should be hard.  
+            Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}. 
+            The questions should be unique and difficulty level should be hard.   
+            Ensure that the quiz questions are appropriately challenging:
+            1. The incorrect options (distractors) should be plausible and related to the course content
+            2. Avoid making the correct answer obviously different from the distractors in format, length, or category
+            3. All options should be of similar difficulty level and domain
+            4. Ensure distractors represent common misconceptions or partial understandings rather than clearly incorrect statements
+            5. All options must be in the same conceptual category - avoid having one option that clearly stands out from others
+            6. All options should have similar phrasing styles, terminology levels, and length
+            7. For numerical questions, wrong answers should reflect common calculation errors or plausible alternative values
+            8. Avoid instances where the correct answer is the only complete, grammatically correct, or specific option 
             Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
 
             {
@@ -282,7 +292,7 @@ export const dynamic = 'force-dynamic';
         return enhancePromptWithEducation(basePrompt, educationData);
     };
 
-    export const generateCourseTestPrompt = async (userId, career, course, type1, type2, age, currentAgeWeek) =>{
+    export const generateCourseTestPrompt = async (userId, career, course, type1, type2, age, level, currentAgeWeek) =>{
 
         const educationData = await getUserEducationPromptData(userId);
 
@@ -379,11 +389,54 @@ export const dynamic = 'force-dynamic';
         Ensure that the response is valid JSON, using the specified field names.
     `; */
 
+    // const basePrompt = `
+    //     Generate a comprehensive quiz for the career "${career}" with the course titled "${course}". The quiz should be designed for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and ${age} (currently in week ${currentAgeWeek} of this age).
+
+    //     ### topics_covered:
+    //     Before creating the quiz, generate a comprehensive list of topics that would be covered in this course. This should be a single consolidated list rather than divided by weeks. The number of topics should appropriately reflect the breadth and depth of the course content - don't limit to any specific number. Return this as a JSON array of strings:
+
+    //     "topics_covered": [
+    //         "Topic A",
+    //         "Topic B",
+    //         "Topic C",
+    //         ...
+    //     ]
+
+    //     ### final_quiz:
+    //     For the quiz, provide 20 questions covering key concepts and skills from the course.
+    //     For each question, provide exactly 4 answer options. Only one option should be marked as the correct answer using "is_answer": "yes" and the others should be marked with "is_answer": "no."
+
+    //     Ensure that the quiz questions are appropriately challenging:
+    //     1. The incorrect options (distractors) should be plausible and related to the course content
+    //     2. Avoid making the correct answer obviously different from the distractors in format, length, or category
+    //     3. All options should be of similar difficulty level and domain
+    //     4. Ensure distractors represent common misconceptions or partial understandings rather than clearly incorrect statements
+
+    //     Return all questions in a single JSON array, with each question following this format:
+
+    //     {
+    //         "question": "Your question text",
+    //         "options": [
+    //             { "text": "Option 1", "is_answer": "no" },
+    //             { "text": "Option 2", "is_answer": "yes" },
+    //             { "text": "Option 3", "is_answer": "no" },
+    //             { "text": "Option 4", "is_answer": "no" }
+    //         ]
+    //     }
+
+    //     Make sure there are exactly 20 questions, no more and no less, and that none of the questions or answer options are repeated.
+
+    //     Ensure that the response is valid JSON, using the specified field names.
+    //     `;
+
     const basePrompt = `
         Generate a comprehensive quiz for the career "${career}" with the course titled "${course}". The quiz should be designed for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and ${age} (currently in week ${currentAgeWeek} of this age).
 
+        ### Difficulty Level: ${level}
+        This quiz should reflect a ${level} difficulty level (beginner, intermediate, or advanced) with appropriately challenging content.
+
         ### topics_covered:
-        Before creating the quiz, generate a comprehensive list of topics that would be covered in this course. This should be a single consolidated list rather than divided by weeks. The number of topics should appropriately reflect the breadth and depth of the course content - don't limit to any specific number. Return this as a JSON array of strings:
+        Before creating the quiz, generate a comprehensive list of 10 topics that would be covered in this course. This should be a single consolidated list rather than divided by weeks. The number of topics should appropriately reflect the breadth and depth of the course content - don't limit to any specific number. Return this as a JSON array of strings:
 
         "topics_covered": [
             "Topic A",
@@ -401,6 +454,15 @@ export const dynamic = 'force-dynamic';
         2. Avoid making the correct answer obviously different from the distractors in format, length, or category
         3. All options should be of similar difficulty level and domain
         4. Ensure distractors represent common misconceptions or partial understandings rather than clearly incorrect statements
+        5. All options must be in the same conceptual category - avoid having one option that clearly stands out from others
+        6. All options should have similar phrasing styles, terminology levels, and length
+        7. For numerical questions, wrong answers should reflect common calculation errors or plausible alternative values
+        8. Avoid instances where the correct answer is the only complete, grammatically correct, or specific option
+
+        Adjust the difficulty based on the selected level (${level}):
+        - For beginner level: Focus on foundational concepts with clear but still clear distinctions
+        - For intermediate level: Include more nuanced concepts and require deeper understanding to distinguish between options
+        - For advanced level: Present sophisticated concepts with subtle distinctions that require expert-level understanding
 
         Return all questions in a single JSON array, with each question following this format:
 
@@ -418,7 +480,6 @@ export const dynamic = 'force-dynamic';
 
         Ensure that the response is valid JSON, using the specified field names.
         `;
-
 
     return enhancePromptWithEducation(basePrompt, educationData);
     }
