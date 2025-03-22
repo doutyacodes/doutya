@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import FeatureGuideModal from './FeatureGuideModal';
-import { featureGuides } from './featureGuides';
+import { FeatureGuides } from './FeatureGuides';
 
 const FeatureGuideWrapper = ({ featureKey, children }) => {
   const [showGuide, setShowGuide] = useState(true);
   
   // Get the guide data for this feature
-  const guideData = featureGuides[featureKey];
+  const guideData = FeatureGuides[featureKey];
   
   if (!guideData) {
     console.warn(`No guide data found for feature key: ${featureKey}`);

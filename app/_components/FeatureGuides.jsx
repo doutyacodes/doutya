@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const featureGuides = {
+export const FeatureGuides = {
   roadmap: {
     title: "Roadmap: Your Career Navigation Tool",
     content: (
