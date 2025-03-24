@@ -189,7 +189,7 @@ const CertificateDisplay = ({ params }) => {
     // Use the already generated image
     if (certificateImage) {
       const link = document.createElement('a');
-      link.download = `XORTCURT_${certificateData.certificationName}_Certificate_${(certificateData.userName || certificateData.username).replace(/\s+/g, '_')}.png`;
+      link.download = `XORTCUT_${certificateData.certificationName}_Certificate_${(certificateData.userName || certificateData.username).replace(/\s+/g, '_')}.png`;
       link.href = certificateImage;
       link.click();
     }
@@ -213,6 +213,20 @@ const CertificateDisplay = ({ params }) => {
   //     </div>
   //   );
   // }
+
+  {/* Helper function to return appropriate icon based on level */}
+function getLevelIcon(level) {
+  switch(level?.toLowerCase()) {
+    case 'beginner':
+      return '🔹';
+    case 'intermediate':
+      return '🔶';
+    case 'advanced':
+      return '💎';
+    default:
+      return '•';
+  }
+}
 
   // Show ineligible message if score is 0
   if (certificateData.ratingStars === 0) {
@@ -276,122 +290,129 @@ const CertificateDisplay = ({ params }) => {
             overflow: 'hidden',
           }}
         >
-          <Card 
-            className="w-full h-full overflow-hidden border-0"
-            style={{ 
-              background: "linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)"
-            }}
-          >
-            {/* Border Design */}
-            <div className="absolute inset-0 border-16 border-double border-opacity-20 pointer-events-none" style={{ borderColor: '#1a365d', padding: "24px" }}></div>
-          
-            {/* Background Pattern */} {/* for now its set to opacity 0 */}
-            <div className="absolute inset-0 opacity-0">
-              <div className="absolute inset-0" style={{
-                backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%231a365d' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E\")",
-                backgroundSize: "120px 120px"
-              }} />
+        <Card 
+          className="w-full h-full overflow-hidden border-0"
+          style={{ 
+            background: "linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)"
+          }}
+        >
+          {/* Border Design */}
+          <div className="absolute inset-0 border-16 border-double border-opacity-20 pointer-events-none" style={{ borderColor: '#1a365d', padding: "24px" }}></div>
+
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-0">
+            <div className="absolute inset-0" style={{
+              backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%231a365d' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E\")",
+              backgroundSize: "120px 120px"
+            }} />
+          </div>
+
+          {/* Decorative Corner Designs */}
+          <div className="absolute left-0 top-0 w-24 h-24 border-t-4 border-l-4 border-blue-800 opacity-40"></div>
+          <div className="absolute right-0 top-0 w-24 h-24 border-t-4 border-r-4 border-blue-800 opacity-40"></div>
+          <div className="absolute left-0 bottom-0 w-24 h-24 border-b-4 border-l-4 border-blue-800 opacity-40"></div>
+          <div className="absolute right-0 bottom-0 w-24 h-24 border-b-4 border-r-4 border-blue-800 opacity-40"></div>
+
+          {/* Certificate Content */}
+          <div className="relative z-10 flex flex-col h-full p-10 pt-8 pb-12"
+              style={{ justifyContent: "space-between" }}>
+            {/* Header with Logo */}
+            <div className="w-full flex justify-between items-center">
+              <div className="flex items-center">
+                {/* Company Logo */}
+                <img 
+                    src="/assets/images/doutya4.png" 
+                    alt="XORTCUT" 
+                    className="h-24 object-contain"
+                  />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-600 font-semibold">Certificate ID: {certificateData.certificateID}</p>
+                <p className="text-sm text-gray-600">Issue Date: {formatDate(certificateData.issuedAt)}</p>
+              </div>
             </div>
 
-            {/* Decorative Corner Designs */}
-            <div className="absolute left-0 top-0 w-24 h-24 border-t-4 border-l-4 border-blue-800 opacity-40"></div>
-            <div className="absolute right-0 top-0 w-24 h-24 border-t-4 border-r-4 border-blue-800 opacity-40"></div>
-            <div className="absolute left-0 bottom-0 w-24 h-24 border-b-4 border-l-4 border-blue-800 opacity-40"></div>
-            <div className="absolute right-0 bottom-0 w-24 h-24 border-b-4 border-r-4 border-blue-800 opacity-40"></div>
-
-            {/* Certificate Content */}
-            <div className="relative z-10 flex flex-col h-full p-10 pt-8 pb-12"
-                style={{ justifyContent: "space-between" }}>
-              {/* Header with Logo */}
-              <div className="w-full flex justify-between items-center">
-                <div className="flex items-center">
-                  {/* Company Logo */}
-                  <img 
-                      src="/assets/images/doutya4.png" 
-                      alt="XORTCURT" 
-                      className="h-24 object-contain"
-                    />
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-600 font-semibold">Certificate ID: {certificateData.certificateID}</p>
-                  <p className="text-sm text-gray-600">Issue Date: {formatDate(certificateData.issuedAt)}</p>
-                </div>
-              </div>
-
-              {/* Main Content */}
-              <div className="space-y-6 text-center w-full max-w-3xl mx-auto" 
-                style={{ marginTop: "-140px" }}>
-                <h1 className="text-4xl font-bold text-blue-900 tracking-tight">
-                  CERTIFICATE OF ACHIEVEMENT
-                </h1>
-                
-                <div className="h-px w-48 mx-auto bg-gradient-to-r from-transparent via-blue-900 to-transparent"></div>
-                
-                <p className="text-lg text-gray-700">This certifies that</p>
-                
-                <h2 className="text-3xl font-bold text-blue-800 uppercase tracking-wider py-2">
-                  {certificateData.userName || certificateData.username}
-                </h2>
-                
-                <p className="text-lg text-gray-700">has successfully completed the</p>
-                
+            {/* Main Content */}
+            <div className="space-y-6 text-center w-full max-w-3xl mx-auto" 
+              style={{ marginTop: "-140px" }}>
+              <h1 className="text-4xl font-bold text-blue-900 tracking-tight">
+                CERTIFICATE OF ACHIEVEMENT
+              </h1>
+              
+              <div className="h-px w-48 mx-auto bg-gradient-to-r from-transparent via-blue-900 to-transparent"></div>
+              
+              <p className="text-lg text-gray-700">This certifies that</p>
+              
+              <h2 className="text-3xl font-bold text-blue-800 uppercase tracking-wider py-2">
+                {certificateData.userName || certificateData.username}
+              </h2>
+              
+              <p className="text-lg text-gray-700">has successfully completed the</p>
+              
+              {/* Certification name with level directly incorporated */}
+              <div className="space-y-1">
                 <h3 className="text-2xl font-bold text-blue-900 tracking-tight">
                   {certificateData.certificationName}
                 </h3>
-                
-                <p className="text-lg text-gray-700">
-                  and is recognized for demonstrating proficiency in the field of
+                <p className="text-xl font-semibold text-blue-700">
+                  {certificateData?.level?.charAt(0).toUpperCase() + certificateData?.level?.slice(1)} Level
                 </p>
-                
-                <p className="text-xl font-semibold text-blue-800">
-                  {certificateData.careerField || "Professional Development"}
-                </p>
-                
-                {/* Stars and Score */}
-                <div className="flex flex-col items-center space-y-2 py-3">
-                  {renderStars(certificateData.ratingStars)}
-                  <p className="text-xl font-semibold text-blue-900">
-                    With a score of {certificateData.scorePercentage}%
-                  </p>
-                </div>
               </div>
+              
+              <p className="text-lg text-gray-700 mt-2">
+                and is recognized for demonstrating proficiency in the field of
+              </p>
 
-              {/* Footer with Signature */}
-              <div className="w-full flex justify-between items-end">
-                <div className="text-left">
-                  <p className="text-sm text-gray-600">
-                    Verify this certificate at:<br />
-                    <span className="font-medium">xortcurt.com/verify</span>
-                  </p>
+              <p className="text-xl font-semibold text-blue-800">
+                {certificateData?.careerField || "Professional Development"}
+              </p>
+                        
+              {/* Stars and Score */}
+              <div className="flex flex-col items-center space-y-2 py-3">
+                {renderStars(certificateData?.ratingStars)}
+                <p className="text-xl font-semibold text-blue-900">
+                  With a score of {certificateData?.scorePercentage}%
+                </p>
+              </div>
+            </div>
+
+            {/* Footer with Signature */}
+            <div className="w-full flex justify-between items-end">
+              <div className="text-left">
+                <p className="text-sm text-gray-600">
+                  Verify this certificate at:<br />
+                  <span className="font-medium">xortcut.com/verify</span>
+                </p>
+              </div>
+              
+              <div className="text-center me-16">
+                <div className="flex justify-center mb-2">
+                  <img 
+                    src="/assets/images/md-signature.png" 
+                    alt="Digital Signature" 
+                    className="h-16 object-contain"
+                  />
                 </div>
-                
-                <div className="text-center me-16">
-                  <div className="flex justify-center mb-2">
+                <div className="h-px w-40 bg-gray-400 mb-2"></div>
+                <p className="text-sm font-medium text-gray-700">Managing Director</p>
+              </div>
+              
+              <div className="text-right">
+                <div className="flex justify-end mb-1">
+                  {/* Company seal/emblem */}
+                  <div className="w-16 h-16 flex items-center">
                     <img 
-                      src="/assets/images/md-signature.png" 
-                      alt="Digital Signature" 
+                      src="/assets/images/small-logo.png" 
+                      alt="XORTCUT" 
                       className="h-16 object-contain"
                     />
-                  </div>
-                  <div className="h-px w-40 bg-gray-400 mb-2"></div>
-                  <p className="text-sm font-medium text-gray-700">Managing Director</p>
-                </div>
-                
-                <div className="text-right">
-                  <div className="flex justify-end mb-1">
-                    {/* Company seal/emblem */}
-                    <div className="w-16 h-16 flex items-center">
-                      <img 
-                        src="/assets/images/small-logo.png" 
-                        alt="XORTCURT" 
-                        className="h-16 object-contain"
-                      />
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
+        </Card>
+
         </div>
 
         {/* Certificate Display as Image */}
@@ -489,8 +510,8 @@ const CertificateDisplay = ({ params }) => {
 
         {/* Additional Information */}
         <div className="text-center text-sm text-gray-600 mt-4 max-w-2xl mx-auto">
-          <p className="mb-2">This certificate is issued by XORTCURT to verify the successful completion and proficiency in the {certificateData.certificationName} program.</p>
-          <p>To verify the authenticity of this certificate, please visit xortcurt.com/verify and enter the certificate ID shown on the document.</p>
+          <p className="mb-2">This certificate is issued by XORTCUT to verify the successful completion and proficiency in the {certificateData.certificationName} program.</p>
+          <p>To verify the authenticity of this certificate, please visit xortcut.com/verify and enter the certificate ID shown on the document.</p>
         </div>
       </div>
     </div>

@@ -94,8 +94,9 @@ export async function GET(request, { params }) {
             username: USER_DETAILS.username,                        // Username as fallback
             ratingStars: USER_CERTIFICATION_COMPLETION.rating_stars, // Certification stars
             scorePercentage: USER_CERTIFICATION_COMPLETION.score_percentage, // Certification score percentage
+            level: USER_CERTIFICATION_COMPLETION.level,       
             issuedAt: USER_CERTIFICATION_COMPLETION.issued_at,
-            updatedAt: USER_CERTIFICATION_COMPLETION.updated_at,    // Last updated time
+            updatedAt: USER_CERTIFICATION_COMPLETION.updated_at,   // Last updated time
             careerField: CAREER_GROUP.career_name                  // Career field from CAREER_GROUP
         })
         .from(USER_CERTIFICATION_COMPLETION)
@@ -125,7 +126,8 @@ export async function GET(request, { params }) {
             ratingStars: certificationDetails[0].ratingStars,
             scorePercentage: certificationDetails[0].scorePercentage,
             updatedAt: certificationDetails[0].updatedAt,
-            careerField: certificationDetails[0].careerField || null  // Career field if available
+            careerField: certificationDetails[0].careerField || null,  // Career field if available
+            level: certificationDetails[0].level
         }, { status: 200 });
 
     } catch (error) {

@@ -2,7 +2,7 @@
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import GlobalApi from "@/app/_services/GlobalApi";
 import { PlusIcon, LockIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import AddCareer from "../../../_components/AddCareer/AddCareer";
@@ -19,6 +19,17 @@ import CareerOverView from "../../../_components/CareerOverview/CareerOverview";
 import CareerGuideExplanation from "@/app/_components/CareerGuideExplanation";
 import TestsNotCompltedWarning from "../../../_components/TestsNotCompltedWarning/TestsNotCompltedWarning";
 import Certification from "../../../_components/Certification/Certification";
+
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { CheckCircle } from 'lucide-react';
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -38,6 +49,11 @@ function Page() {
   const [showTestWarningModal, setShowTestWarningModal] = useState(false);
   const [showFeatureModal, setShowFeatureModal] = useState(false);
   const [showPricingModal, setShowPricingModal] = useState(false);
+
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [completedSubject, setCompletedSubject] = useState('');
+  
+
   const router = useRouter();
   const t = useTranslations("CareerPage");
 
@@ -48,6 +64,8 @@ function Page() {
    the career adding stripe or not based on the step  */
 
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   
   useEffect(() => {
     const getQuizData = async () => {
@@ -67,6 +85,21 @@ function Page() {
     };
     getQuizData();
   }, [setIsTest2Completed]);
+
+  useEffect(() => {
+    // Check if the URL has the testCompleted parameter
+    const testCompleted = searchParams.get('testCompleted');
+    const subjectName = searchParams.get('subjectName');
+    
+    if (testCompleted === 'true') {
+      setCompletedSubject(subjectName || 'your test');
+      setShowCompletionModal(true);
+      
+      // Clean up the URL to prevent the modal from showing on refresh
+      // Create a new URL without the query parameters
+      window.history.replaceState({}, document.title, pathname);
+    }
+  }, [searchParams, pathname]);
 
   useEffect(() => {
     const PathChange = () => {
@@ -195,6 +228,16 @@ function Page() {
     setActiveTab(tab);
   };
 
+  const handleViewResults = () => {
+    setShowCompletionModal(false);
+    // Navigate to the results page
+    setActiveTab("assessment")
+  };
+  
+  const handleClose = () => {
+    setShowCompletionModal(false);
+  };
+
 
     // Render career or disabled box based on restriction
     const renderCareerBox = (career, index) => {
@@ -292,7 +335,6 @@ function Page() {
                   onClose={() => setShowTestWarningModal(false)}
                 />
 
-      
                 {/* Pricing Modal */}
                 {showPricingModal && (
                   <PricingCard onClose={() => setShowPricingModal(false)} />
@@ -353,6 +395,44 @@ function Page() {
 
       {showCareer ? (
         <>
+
+         {/* Completion Modal */}
+          <Dialog open={showCompletionModal} onOpenChange={setShowCompletionModal}>
+            <DialogContent className="bg-gray-900 text-white border border-gray-700 sm:max-w-md">
+              <DialogHeader>
+                <div className="flex justify-center items-center mb-4">
+                  <CheckCircle className="h-12 w-12 text-green-500" />
+                </div>
+                <DialogTitle className="text-xl text-center">Test Completed Successfully!</DialogTitle>
+                <DialogDescription className="text-gray-400 text-center mt-2">
+                  You've successfully completed the {completedSubject} test.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="py-4">
+                <p className="text-center text-gray-300">
+                  Your results have been saved and are ready to view. Check out your performance and get personalized insights.
+                </p>
+              </div>
+              
+              <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0 justify-center">
+                <Button
+                  onClick={handleViewResults}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg w-full sm:w-auto"
+                >
+                  View Results
+                </Button>
+                <Button
+                  onClick={handleClose}
+                  variant="outline"
+                  className="border border-gray-600 hover:bg-gray-800 text-gray-300 px-4 py-2 rounded-lg w-full sm:w-auto"
+                >
+                  Close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
           {/* CareerGuideExplanation  component*/}
           <CareerGuideExplanation />
           {/* Selected Career Content */}

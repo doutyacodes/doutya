@@ -65,34 +65,46 @@ function Tests({selectedCareer}) {
                     className="relative w-full h-full group cursor-pointer rounded-xl overflow-hidden"
                 >
                     <Card
-                        className={`shadow-lg transition-all duration-300 w-full h-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300`}
+                        className={`shadow-lg transition-all duration-300 w-full h-full 
+                            ${subject.completed === "yes" 
+                                ? "bg-gradient-to-r from-green-500 to-teal-500" 
+                                : "bg-gradient-to-r from-purple-500 to-indigo-500"} 
+                            text-white p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300`}
                     >
-                        <CardHeader>
+                        <CardHeader className="relative">
                             <CardTitle className="text-lg font-semibold text-white text-center">
                                 {subject.subjectName}
                             </CardTitle>
+                            
+                            {subject.completed === "yes" && (
+                                <div className="absolute top-0 right-0">
+                                    <span className="bg-white text-green-600 text-xs font-bold px-2 py-1 rounded-full">
+                                        Completed
+                                    </span>
+                                </div>
+                            )}
                         </CardHeader>
                     </Card>
                     {/* Overlay that shows on hover */}
                     <div className="absolute inset-0 bg-green-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         {
-                          subject.completed === "yes" ? (
+                            subject.completed === "yes" ? (
                             <button
-                              onClick={() => handleResultsNavigation(subject)} // Handle results navigation
-                              className="flex items-center bg-green-500 text-white font-extrabold py-2 px-4 rounded-lg focus:outline-none"
+                                onClick={() => handleResultsNavigation(subject)}
+                                className="flex items-center bg-green-500 text-white font-extrabold py-2 px-4 rounded-lg focus:outline-none"
                             >
-                              <span className="mr-2">View Results</span>
-                              <EyeIcon className="mr-2 h-4 w-4" />
+                                <span className="mr-2">View Results</span>
+                                <EyeIcon className="mr-2 h-4 w-4" />
                             </button>
-                          ) : (
+                            ) : (
                             <button
-                              onClick={() => handleTakeTestClick(subject)} // Handle test button
-                              className="flex items-center bg-blue-500 text-white font-extrabold py-2 px-4 rounded-lg focus:outline-none hover:bg-blue-600"
+                                onClick={() => handleTakeTestClick(subject)}
+                                className="flex items-center bg-blue-500 text-white font-extrabold py-2 px-4 rounded-lg focus:outline-none hover:bg-blue-600"
                             >
-                              <span className="mr-2">Take Test</span>
-                              <EyeIcon className="mr-2 h-4 w-4" />
+                                <span className="mr-2">Take Test</span>
+                                <EyeIcon className="mr-2 h-4 w-4" />
                             </button>
-                          )
+                            )
                         }
                     </div>
                 </div>

@@ -1079,7 +1079,7 @@ export const USER_CERTIFICATION_COMPLETION = mysqlTable(
     certification_name: varchar("certification_name", { length: 100 }).notNull(),  // Certification title
     issued_at: timestamp("issued_at").defaultNow(),                                 // Issue date
     status: mysqlEnum("status", ["valid", "invalid"]).default("valid"), 
-
+    level: mysqlEnum("level", ["beginner", "intermediate", "advanced"]).notNull().default("beginner"),
     isStarted: boolean("isStarted").notNull().default(false),
     completed: mysqlEnum("completed", ["yes", "no"]).notNull(),
     score_percentage: decimal("score_percentage", 5, 2).default(null),

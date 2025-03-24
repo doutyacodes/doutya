@@ -19,7 +19,7 @@ export async function POST(req) {
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
-    const { certificationId } = await req.json();
+    const { certificationId, level } = await req.json();
 
     try {
         // Step 1: Fetch user progress for the given Certification
@@ -102,10 +102,11 @@ export async function POST(req) {
                  score_percentage: Math.round(percentage),
                  rating_stars: stars,
                  completed: 'yes',
-                 certificate_id: certificateId,                      // New field
-                 certification_name: certificationName,               // New field
-                 issued_at: new Date(),                               // New field
-                 status: 'valid',                                     // New field
+                 certificate_id: certificateId,
+                 certification_name: certificationName,
+                 issued_at: new Date(),
+                 status: 'valid',
+                 level: level                      
              })
              .where(
                  and(

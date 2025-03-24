@@ -19,6 +19,7 @@ function Page({ params }) {
   const [questions, setQuestions] = useState([]);
   const [timer, setTimer] = useState(0);
   const [timerValue, setTimerValue] = useState(null)
+  const [subjectName, setSubjectName] = useState(null)
   const [challengeId, setChallengeId] = useState(null);
   const [progressSubmitted, setProgressSubmitted] = useState(false);
 
@@ -45,6 +46,7 @@ function Page({ params }) {
     };
     authCheck();
   }, [router]);
+
   useEffect(() => {
     const getQuizData = async () => {
       setIsLoading(true);
@@ -57,6 +59,7 @@ function Page({ params }) {
         setQuestions(resp.data.questions);
         setTimer(resp.data.timer * 1000);
         setTimerValue(resp.data.timer); /* This wont change */
+        setSubjectName(resp.data.subjectName)
 
         if (resp.data.quizProgress > 0) {
           setShowAlert(true); // Set showAlert to true when resuming the quiz
@@ -81,23 +84,31 @@ function Page({ params }) {
     // setIsLoading(false)
   }, [currentQuestionIndex, questions]);
 
-  useEffect(() => {
-    if (quizCompleted) {
-      // setIsLoading(true)
-      const interval = setInterval(() => {
-        setSecondsRemaining((prevSeconds) => prevSeconds - 1);
-      }, 1000);
+  // Reset timer when moving to the next question
+// useEffect(() => {
+//   if (questions.length > 0) {
+//     setTimer(timerValue * 1000);  // Reset timer to the original value for each question
+//   }
+// }, [currentQuestionIndex, questions]);
 
-      const timer = setTimeout(() => {
-        router.replace("/dashboard/careers/career-guide");
-      }, 5000);
 
-      return () => {
-        clearInterval(interval);
-        clearTimeout(timer);
-      };
-    }
-  }, [quizCompleted, router]);
+useEffect(() => {
+  if (quizCompleted) {
+    const interval = setInterval(() => {
+      setSecondsRemaining((prevSeconds) => prevSeconds - 1);
+    }, 1000);
+
+    const timer = setTimeout(() => {
+      // Add a query parameter to indicate test completion
+      router.replace("/dashboard/careers/career-guide?testCompleted=true&subjectName=" + encodeURIComponent(subjectName));
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    };
+  }
+}, [quizCompleted, router]);
 
   const handleChoiceSelect = (choice) => {
   
@@ -262,6 +273,15 @@ function Page({ params }) {
 
       {questions.length > 0 && (
         <div className="mt-4 pt-5 flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">
+          {/* <style jsx>{`
+            @media (hover: none) {
+              .quiz-button:hover {
+                background-color: inherit;
+                color: inherit;
+              }
+            }
+          `}</style> */}
+          
           <div>
             <p className="font">{currentQuestionIndex + 1}/{questions.length}</p>
           </div>
@@ -303,22 +323,21 @@ function Page({ params }) {
           ))}
         </div> */}
 
-          <div className="flex flex-col gap-2 w-full text-white">
-            {shuffledChoices.map((choice, index) => (
-              <button
-                key={index}
-                className={`py-2 px-4 rounded-md hover:cursor-pointer
-                  hover:bg-purple-300 hover:text-black transition duration-300 ease-in-out ${
-                    selectedChoice?.id === choice.id
-                      ? "bg-green-500"
-                      : "bg-slate-400"
-                  }`}
-                onClick={() => handleChoiceSelect(choice)}
-              >
-                {removeHtmlTags(choice.text)}
-              </button>
-            ))}
-          </div>
+      <div className="flex flex-col gap-2 w-full text-white">
+        {shuffledChoices.map((choice, index) => (
+          <button
+            key={index}
+            className={`quiz-button py-2 px-4 rounded-md
+              ${selectedChoice?.id === choice.id 
+                ? 'bg-green-500' 
+                : 'bg-slate-400 sm:hover:bg-purple-300 sm:hover:text-black'}
+              transition duration-300 ease-in-out`}
+            onClick={() => handleChoiceSelect(choice)}
+          >
+            {removeHtmlTags(choice.text)}
+          </button>
+        ))}
+      </div>
 
           {/* <div>
             <button

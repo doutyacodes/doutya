@@ -630,9 +630,10 @@ const CertificationTestProgress = (data, token) => {
   });
 };
 
-const UpdateCertificationTest = (token, certificationId) => {
+const UpdateCertificationTest = (token, certificationId, level) => {
   const payload = {
     certificationId,
+    level
   };
 
   return axios.post(`/api/updateCertificationTest`, payload, {

@@ -92,13 +92,11 @@ function SelectCountry() {
     getUserData();
   }, []);
 
-  useEffect(()=>{
-    if(currentCountry){
-      if(userAge <= 9 || userPlanType === 'base'){
-        setEducationCountry(currentCountry)
-      }
-    }
-  }, [currentCountry])
+// Updated useEffect that doesn't visually set the education country
+useEffect(()=>{
+  // We're removing the visual setting of educationCountry here
+  // The actual value will be sent in handleSubmit
+}, [currentCountry])
   
   const handleEducationCountryClick = () => {
     if (userAge <= 9 || userPlanType === 'base') {
@@ -111,18 +109,26 @@ function SelectCountry() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!educationCountry || !currentCountry) {
-      toast.error(t("pleaseSelectBoth"));
-      return;
-    }
-    // For users <= 9, only submit current country
-    const data = userAge <= 9 || userPlanType === 'base' ? {
-      currentCountry: currentCountry.label,
-      educationCountry: currentCountry.label // Set same as current country for young users
-    } : {
-      currentCountry: currentCountry.label,
-      educationCountry: educationCountry?.label
-    };
+  if (!currentCountry) {
+    toast.error(t("pleaseSelectCurrentCountry"));
+    return;
+  }
+  
+  // Only validate educationCountry for pro users (not base plan and not young users)
+  if (!(userAge <= 9 || userPlanType === 'base') && !educationCountry) {
+    toast.error(t("pleaseSelectEducationCountry"));
+    return;
+  }
+  
+  // For users <= 9 or base plan, only submit current country for both
+  const data = {
+    currentCountry: currentCountry.label,
+    // Use educationCountry from state only if not restricted, otherwise use currentCountry
+    educationCountry: (userAge <= 9 || userPlanType === 'base') 
+      ? currentCountry.label 
+      : educationCountry.label
+  };
+
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -130,18 +136,6 @@ function SelectCountry() {
 
       if (response.status === 201) {
         toast.success("Country details saved successfully!");
-        // const birth_date = response.data.birthDate;
-        // const age = calculateAge(birth_date);
-        // if (age <= 9) {
-        //   localStorage.setItem("dashboardUrl", "/dashboard_kids");
-        //   router.push("/dashboard_kids");
-        // } else if (age <= 13) {
-        //   localStorage.setItem("dashboardUrl", "/dashboard_junior");
-        //   router.push("/dashboard_junior");
-        // } else {
-        //   localStorage.setItem("dashboardUrl", "/dashboard");
-        //   router.push("/dashboard");
-        // }
         router.replace("/dashboard/careers/career-suggestions");
       } else {
         toast.error("Failed to save country details.");

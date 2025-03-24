@@ -173,7 +173,7 @@ function Page({ params }) {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("token") : null;
     try {
-      const resp = await GlobalApi.UpdateCertificationTest(token, courseID);
+      const resp = await GlobalApi.UpdateCertificationTest(token, courseID, level);
       if (resp && resp.status === 201) {
         toast.success("Quiz Completed successfully!");
       } else {

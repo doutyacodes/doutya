@@ -112,10 +112,9 @@ export async function GET(request, { params }) {
             // } else {
             //     weekNumber = getCurrentWeekOfMonth()
             // }
-            
-
              return await db
                 .select({
+                    subject_name: SUBJECTS.subject_name,
                     questionId: TEST_QUESTIONS.id,
                     questionText: TEST_QUESTIONS.question,
                     timer: TEST_QUESTIONS.timer,
@@ -177,7 +176,7 @@ export async function GET(request, { params }) {
         console.log("questionWithAnswers", questionWithAnswers);
         
         // Process and return results if questions are found
-        const { timer } = questionWithAnswers[0];
+        const { timer, subject_name } = questionWithAnswers[0];
         const result = questionWithAnswers.reduce((acc, curr) => {
             const { testId, questionId, questionText, answerId, answerText, isCorrect } = curr;
             if (!acc[questionId]) {
@@ -198,6 +197,7 @@ export async function GET(request, { params }) {
 
         return NextResponse.json({
             timer: timer,
+            subjectName: subject_name,
             questions: Object.values(result),
         });
 
