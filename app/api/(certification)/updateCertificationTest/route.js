@@ -99,7 +99,7 @@ export async function POST(req) {
          // 7️⃣ Update the database with the new fields
          await db.update(USER_CERTIFICATION_COMPLETION)
              .set({
-                 score_percentage: Math.round(percentage),
+                 score_percentage: Number(percentage.toFixed(2)),
                  rating_stars: stars,
                  completed: 'yes',
                  certificate_id: certificateId,

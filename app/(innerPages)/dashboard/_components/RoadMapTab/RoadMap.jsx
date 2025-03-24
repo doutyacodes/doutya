@@ -255,6 +255,27 @@ function RoadMap({ selectedCareer }) {
 
           {/* Tab Content */}
             <div className="bg-gray-800 p-4 md:p-6 shadow-lg min-h-[300px]">
+              {activeTab === 'Physical Milestones' && (
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 text-blue-800">
+                  <p>
+                    Physical milestones are crucial for holistic personal development. 
+                    Even in careers that may seem primarily mental or desk-bound, 
+                    maintaining physical health can significantly impact your professional performance 
+                    and overall well-being.
+                  </p>
+                </div>
+              )}
+              
+              {activeTab === 'Mental Milestones' && (
+                <div className="bg-purple-50 border-l-4 border-purple-500 p-4 mb-4 text-purple-800">
+                  <p>
+                    Mental milestones focus on psychological resilience and personal growth. 
+                    Regardless of your career path, developing emotional intelligence, 
+                    stress management, and mental well-being are key to long-term success 
+                    and personal satisfaction.
+                  </p>
+                </div>
+              )}
               {activeTab === 'Educational Milestones' ? (
                 // Render Educational milestones - only Academic Milestones
                 milestones[activeTab]?.['Academic Milestones']?.length > 0 ? (
@@ -285,10 +306,10 @@ function RoadMap({ selectedCareer }) {
                   <p className="text-gray-400 text-center">{LoadMessage}</p>
                 )
               ) : (
+
               // Render other milestone categories as before
               milestones[activeTab]?.length > 0 ? (
                 milestones[activeTab]?.map((item) => (
-                  // ... existing milestone rendering code for non-educational milestones ...
                   <div key={item.milestoneId} className="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-start justify-between">
                     <div className="flex-1 sm:pr-4">
                       <h3 className="font-bold text-lg text-white">
