@@ -3,13 +3,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaChevronRight } from "react-icons/fa";
-import { ArrowLeft } from "lucide-react"; // Add the missing import
+import { ArrowLeft, Newspaper } from "lucide-react"; // Add the missing import
 import GlobalApi from "../_services/GlobalApi";
 import { Toaster } from "@/components/ui/toaster";
 import { PlusCircle } from "lucide-react";
 import PostCreation from "../(innerPages)/dashboard/_components/(Community)/PostCreation/PostCreation";
 import PostsCard from "../(innerPages)/dashboard/_components/(Community)/PostsCard/PostsCard";
 import FeatureGuideWrapper from "./FeatureGuideWrapper";
+import CareerNews from "./CareerNews";
 
 const CommunityList = ({ careerId }) => {
   const [communityData, setCommunityData] = useState(null);
@@ -18,6 +19,7 @@ const CommunityList = ({ careerId }) => {
   const [communityPosts, setCommunityPosts] = useState([]); // Initialize as an empty array
   const [isLoading, setIsLoading] = useState(false);
   const [communityId, setCommunityId] = useState(null);
+  const [showCareerNews, setShowCareerNews] = useState(false);
   console.log("careerId", careerId);
 
   useEffect(() => {
@@ -63,7 +65,8 @@ const CommunityList = ({ careerId }) => {
     return <p>No community data found.</p>;
   }
 
-  const getCommunityPosts = async ({communityId}) => {
+  const getCommunityPosts = async (communityId) => {
+    console.log("communityId idff", communityId)
     if (communityId) {
 
     setIsLoading(true);
@@ -95,42 +98,87 @@ const CommunityList = ({ careerId }) => {
     }
   };
 
- 
+  const handleButtonClick = () => {
+    if (showCareerNews) {
+        getCommunityPosts(communityId);  // Show community posts
+    } else {
+        setCommunityPosts([]);           // Clear community posts
+    }
+    setShowCareerNews((prev) => !prev);  // Toggle the state
+};
 
   return (
     <FeatureGuideWrapper featureKey="community">
         <div className="w-full ">
           {communityId ? (
             <div className="min-h-screen bg-[#1f1f1f]">
-              <Toaster />
-              <div className="container mx-auto p-4 md:px-8 lg:px-16 xl:px-24">
-                <div className="flex justify-between items-center mb-6">
-                  <button
-                    onClick={() => setCommunityId(null)}
-                    className="flex items-center text-blue-500 hover:text-blue-600"
-                  >
-                    <ArrowLeft className="mr-2" size={24} />
-                    Back
-                  </button>
-                  <h1 className="text-2xl font-bold text-white">Community Feeds</h1>
-                  <button
-                    onClick={() => setShowAddPost(true)}
-                    className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-                  >
-                    <PlusCircle className="mr-2" size={20} />
-                    Add Post
-                  </button>
+                <Toaster />
+                <div className="container mx-auto p-4 md:px-8 lg:px-16 xl:px-24">
+                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 px-4 sm:px-0">
+                        <div className="flex items-center w-full justify-between sm:justify-start">
+                            <button
+                                onClick={() => setCommunityId(null)}
+                                className="flex items-center text-blue-500 hover:text-blue-600 md:me-5" 
+                            >
+                                <ArrowLeft className="mr-2" size={24} />
+                                <span className="hidden sm:inline">Back</span>
+                            </button>
+                            
+                            <h1 className="text-xl sm:text-2xl font-bold text-white text-center flex-grow sm:flex-grow-0">
+                                Community Feeds
+                            </h1>
+                            
+                            <div className="sm:hidden">
+                                {/* Placeholder for mobile menu or empty space */}
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                            <div className="flex justify-between w-full sm:w-auto space-x-3">
+                                {communityPosts.length > 0 && (
+                                    <button
+                                        onClick={() => setShowAddPost(true)}
+                                        className="flex-1 sm:flex-none flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                                    >
+                                        <PlusCircle className="mr-2" size={20} />
+                                        <span className="text-sm sm:text-base">Add Post</span>
+                                    </button>
+                                )}
+                                
+                                <button
+                                    onClick={handleButtonClick}
+                                    className="flex-1 sm:flex-none flex items-center bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition"
+                                >
+                                    <Newspaper className="mr-2" size={20} />
+                                    <span className="text-sm sm:text-base">
+                                        {showCareerNews ? "Community Posts" : "Career News"}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            
+                    {showCareerNews && (
+                        <CareerNews 
+                        communityId={communityId} 
+                        onClose={() => setShowCareerNews(false)} 
+                        />
+                    )}
+            
+                    {showAddPost && 
+                        <PostCreation
+                        communityId={communityId}
+                        onClose={() => setShowAddPost(false)}
+                        />
+                    }
+            
+                    <div className="space-y-6">
+                        {communityPosts.length > 0 &&
+                        communityPosts.map((post) => (
+                            <PostsCard key={post.id} post={post} />
+                        ))}
+                    </div>
                 </div>
-
-                {showAddPost && <PostCreation />}
-
-                <div className="space-y-6">
-                  {communityPosts.length > 0 &&
-                    communityPosts.map((post) => (
-                      <PostsCard key={post.id} post={post} />
-                    ))}
-                </div>
-              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

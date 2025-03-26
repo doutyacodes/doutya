@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/utils";
 import { eq, and } from "drizzle-orm/expressions";
 import { authenticate } from "@/lib/jwtMiddleware";
-import { QUIZ_SEQUENCES, USER_CAREER, USER_DETAILS, COMMUNITY, USER_COMMUNITY } from "@/utils/schema";
+import { QUIZ_SEQUENCES, USER_CAREER, USER_DETAILS, } from "@/utils/schema";
 import { saveCareer } from "../utils/saveCareer";
 
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
@@ -97,100 +97,106 @@ export async function POST(req) {
       type2
     );
 
+    /* below section is alsredy in the saveCareer Response */
+
     // Loop through career names to check or create the communities
-    for (const career of careerNames) {
-      // Check if the global community exists
-      const globalCommunity = await db
-        .select()
-        .from(COMMUNITY)
-        .where(and(eq(COMMUNITY.career, career), eq(COMMUNITY.global, 'yes')))
-        .execute();
+    // for (const career of careerNames) {
+    //   // Check if the global community exists
+    //   const globalCommunity = await db
+    //     .select()
+    //     .from(COMMUNITY)
+    //     .where(and(eq(COMMUNITY.career, career), eq(COMMUNITY.global, 'yes')))
+    //     .execute();
 
-      let globalCommunityId;
+    //   let globalCommunityId;
 
-      // If the global community does not exist, create it
-      if (globalCommunity.length === 0) {
-        const [insertGlobal] = await db
-          .insert(COMMUNITY)
-          .values({
-            career,
-            global: 'yes',
-            country: null, // Global community does not need a country
-          })
-          .execute();
+    //   // If the global community does not exist, create it
+    //   if (globalCommunity.length === 0) {
+    //     const [insertGlobal] = await db
+    //       .insert(COMMUNITY)
+    //       .values({
+    //         career,
+    //         global: 'yes',
+    //         country: null, // Global community does not need a country
+    //       })
+    //       .execute();
 
-        globalCommunityId = insertGlobal.insertId;
-      } else {
-        globalCommunityId = globalCommunity[0].id;
-      }
+    //     globalCommunityId = insertGlobal.insertId;
+    //   } else {
+    //     globalCommunityId = globalCommunity[0].id;
+    //   }
 
-      // Check if the country-specific community exists
-      const countryCommunity = await db
-        .select()
-        .from(COMMUNITY)
-        .where(
-          and(eq(COMMUNITY.career, career), eq(COMMUNITY.global, 'no'), eq(COMMUNITY.country, country))
-        )
-        .execute();
+    //   // Check if the country-specific community exists
+    //   const countryCommunity = await db
+    //     .select()
+    //     .from(COMMUNITY)
+    //     .where(
+    //       and(eq(COMMUNITY.career, career), eq(COMMUNITY.global, 'no'), eq(COMMUNITY.country, country))
+    //     )
+    //     .execute();
 
-      let countryCommunityId;
+    //   let countryCommunityId;
 
-      // If the country-specific community does not exist, create it
-      if (countryCommunity.length === 0) {
-        const [insertCountry] = await db
-          .insert(COMMUNITY)
-          .values({
-            career,
-            global: 'no',
-            country,
-          })
-          .execute();
+    //   // If the country-specific community does not exist, create it
+    //   if (countryCommunity.length === 0) {
+    //     const [insertCountry] = await db
+    //       .insert(COMMUNITY)
+    //       .values({
+    //         career,
+    //         global: 'no',
+    //         country,
+    //       })
+    //       .execute();
 
-        countryCommunityId = insertCountry.insertId;
-      } else {
-        countryCommunityId = countryCommunity[0].id;
-      }
+    //     countryCommunityId = insertCountry.insertId;
+    //   } else {
+    //     countryCommunityId = countryCommunity[0].id;
+    //   }
 
-      // Add the user to the global community if not already added
-      const globalUserCommunity = await db
-        .select()
-        .from(USER_COMMUNITY)
-        .where(
-          and(eq(USER_COMMUNITY.user_id, userId), eq(USER_COMMUNITY.community_id, globalCommunityId))
-        )
-        .execute();
+    //   // Add the user to the global community if not already added
+    //   const globalUserCommunity = await db
+    //     .select()
+    //     .from(USER_COMMUNITY)
+    //     .where(
+    //       and(eq(USER_COMMUNITY.user_id, userId), eq(USER_COMMUNITY.community_id, globalCommunityId))
+    //     )
+    //     .execute();
 
-      if (globalUserCommunity.length === 0) {
-        await db
-          .insert(USER_COMMUNITY)
-          .values({
-            user_id: userId,
-            community_id: globalCommunityId,
-            country: null, // No country for global community
-          })
-          .execute();
-      }
+    //   if (globalUserCommunity.length === 0) {
+    //     await db
+    //       .insert(USER_COMMUNITY)
+    //       .values({
+    //         user_id: userId,
+    //         community_id: globalCommunityId,
+    //         country: null, // No country for global community
+    //       })
+    //       .execute();
+    //   }
 
-      // Add the user to the country-specific community if not already added
-      const countryUserCommunity = await db
-        .select()
-        .from(USER_COMMUNITY)
-        .where(
-          and(eq(USER_COMMUNITY.user_id, userId), eq(USER_COMMUNITY.community_id, countryCommunityId))
-        )
-        .execute();
+    //   // Add the user to the country-specific community if not already added
+    //   const countryUserCommunity = await db
+    //     .select()
+    //     .from(USER_COMMUNITY)
+    //     .where(
+    //       and(eq(USER_COMMUNITY.user_id, userId), eq(USER_COMMUNITY.community_id, countryCommunityId))
+    //     )
+    //     .execute();
 
-      if (countryUserCommunity.length === 0) {
-        await db
-          .insert(USER_COMMUNITY)
-          .values({
-            user_id: userId,
-            community_id: countryCommunityId,
-            country, // Country-specific community
-          })
-          .execute();
-      }
-    }
+    //     console.log("countryUserCommunity", countryUserCommunity)
+
+    //   if (countryUserCommunity.length === 0) {
+    //     console.log("countryUserCommunity Length o s o adding ")
+
+    //     await db
+    //       .insert(USER_COMMUNITY)
+    //       .values({
+    //         user_id: userId,
+    //         community_id: countryCommunityId,
+    //         country, // Country-specific community
+    //       })
+    //       .execute();
+    //   }
+    // }
 
     return NextResponse.json(
       { message: saveCareerResponse.message, isFirstTime },

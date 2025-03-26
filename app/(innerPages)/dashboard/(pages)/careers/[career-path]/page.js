@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
+// import CommunityList from "@/app/(innerPages)/community/page";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);

@@ -63,6 +63,7 @@ export async function PUT(req) {
           user_id: userId,
           community_id: communityId,
           type: 'image',
+          post_category: 'milestone',
           caption: postCaption,
           created_at: new Date(),
           file_url: predefinedImageUrl,

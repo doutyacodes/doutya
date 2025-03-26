@@ -24,6 +24,7 @@ export async function GET(req, { params }) {
             postId: COMMUNITY_POST.id,
             caption: COMMUNITY_POST.caption,
             fileUrl: COMMUNITY_POST.file_url,
+            postCategory: COMMUNITY_POST.post_category,
             userName: USER_DETAILS.username // Fetch the userName from the USER_DETAILS table
         })
         .from(COMMUNITY_POST)
@@ -67,6 +68,7 @@ export async function GET(req, { params }) {
                 type: post.fileUrl ? 'image' : 'text', // Determine post type
                 fileUrl: post.fileUrl || null,
                 caption: post.caption,
+                postCategory: post.postCategory,
                 userName: post.userName, // Now using the userName from the joined USER_DETAILS
                 likes: likesCount.length, // Count of likes
                 likedByUser: userLike.length > 0,

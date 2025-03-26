@@ -415,6 +415,17 @@ export const USER_CAREER_STATUS = mysqlTable("user_career_status", {
   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(), // Automatically updated to current timestamp on update
 });
 
+export const CAREER_NEWS = mysqlTable("career_news", {
+  id: int("id").notNull().autoincrement().primaryKey(),
+  career_id: int("career_id").notNull().references(() => CAREER_GROUP.id),  // Connects to the career
+  title: varchar("title", { length: 255 }).notNull(),                      // News title
+  summary: text("summary").notNull(),                                      // Brief summary of the news
+  source_url: varchar("source_url", { length: 500 }).notNull(),            // Link to the full news
+  published_at: timestamp("published_at").notNull(),                       // News publish date
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
 export const STRENGTH_TYPES = mysqlTable("strength_types", {
   id: int("id").primaryKey().autoincrement(),
   type_code: varchar("type_code", { length: 10 }).notNull(),
@@ -865,6 +876,7 @@ export const USER_SUBJECT_COMPLETION = mysqlTable("user_subject_completion", {
 export const COMMUNITY = mysqlTable("community", {
   id: int("id").autoincrement().notNull().primaryKey(),
   career: varchar("career", { length: 255 }).notNull(),
+  career_id: int("career_id").notNull().references(() => CAREER_GROUP.id),
   global: mysqlEnum("global", ["yes", "no"]).notNull().default("no"),
   student: mysqlEnum("student", ["no", "yes"]).notNull().default("no"),
   country: varchar("country", { length: 100 }).default(null),
@@ -905,6 +917,9 @@ export const COMMUNITY_POST = mysqlTable("community_post", {
   file_url: varchar("file_url", { length: 255 }).default(null), // Field to store file path or filename
   caption: text("caption").notNull(),
   type: varchar("type", { length: 50 }).notNull(), // New field to store the post type (image, video, or text)
+  post_category: mysqlEnum("post_category", ["certification", "milestone", "post"])   // New field for category
+    .notNull()
+    .default("post"),   
   created_at: timestamp("created_at").defaultNow(),
 });
 

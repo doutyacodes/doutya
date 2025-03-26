@@ -4,6 +4,9 @@ import GlobalApi from '@/app/_services/GlobalApi';
 import toast from 'react-hot-toast';
 import { comment } from 'postcss';
 
+const BASE_IMAGE_URL = 'https://wowfy.in/doutya-api/photos/';
+const BASE_VIDEO_URL = 'https://wowfy.in/doutya-api/videos/';
+
 const PostsCard = ({ post }) => {
     // const [liked, setLiked] = useState(false);
     const [liked, setLiked] = useState(post.likedByUser);
@@ -67,39 +70,22 @@ const handleLikeClick = async () => {
     }
   };
 
-    // const handleLikeClick = async()=>{
-    //     setLiked(!liked)
-    //     setIsLoading(true);
-    //     const token =
-    //         typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    //     try {
-            
-    //         const resp = await GlobalApi.AddPostLike(token, post.id);
-    
-    //         if (resp && resp.status === 201) {
-    //         toast.success("Like Added");
-    //         } else {
-    //         // toast.error('Failed to create Challenge.');
-    //         toast.error("Failed to add like");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error:", error.message);
-    //         toast.error("Failed to submit");
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // }
- 
     const renderContent = () => {
         switch (post.type) {
             case 'text':
                 return <p className="text-gray-700 mb-4">{post.caption}</p>;
             case 'image':
-                return <img src={post.fileUrl} alt="Post" className="w-full rounded-lg mb-4" />;
+                return <img
+                            src={post.postCategory === "milestone" 
+                                ? post.fileUrl 
+                                : `${BASE_IMAGE_URL}${post.fileUrl}`}
+                            alt="Post"
+                            className="w-full rounded-lg mb-4"
+                        />;
             case 'video':
                 return (
                     <video controls className="w-full rounded-lg mb-4">
-                        <source src={post.fileUrl} type="video/mp4" />
+                        <source src={`${BASE_VIDEO_URL}${post.fileUrl}`} type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
                 );

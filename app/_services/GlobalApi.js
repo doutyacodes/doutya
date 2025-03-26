@@ -579,7 +579,6 @@ const AddPostToCommunity = (token, payload) => {
   return axios.post(`/api/addPostToCommunity`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -676,6 +675,22 @@ const UpdateCertificationStatus = (data, token) => {
     },
   });
 };
+
+
+const ShareCertificateToCommunity = (token, certificationId, selectedCommunities, fileUrl) => {
+  const payload = {
+    certificationId, 
+    selectedCommunities,
+    fileUrl
+  };
+
+  return axios.post(`/api/share`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 
 
 const GetAllInstitutes = () => {
@@ -784,6 +799,15 @@ const UpdateUserEducationDetails = async (data) => {
   });
 };
 
+const GetCareerNews = (token, communityId) => {
+
+  return axios.get(`/api/career/news/${communityId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 
 
 export default {
@@ -864,6 +888,7 @@ export default {
   GetCertificationCourse,
   GetCourseOverview,
   UpdateCertificationStatus,
+  ShareCertificateToCommunity,
 
   GetAllInstitutes,
   GetClassesByInstitute,
@@ -880,6 +905,10 @@ export default {
   FetchChallengesOne,
   submitQuizAnswer,
 
-  UpdateUserEducationDetails
+  UpdateUserEducationDetails,
+  
+
+  /* career News */
+  GetCareerNews,
 
 };

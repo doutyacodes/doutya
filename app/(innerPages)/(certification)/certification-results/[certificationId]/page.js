@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import LoadingOverlay from '@/app/_components/LoadingOverlay';
 import SelectCommunity from '@/app/(innerPages)/dashboard/_components/SelectCommunityModal/SelectCommunity';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 
 const CertificateDisplay = ({ params }) => {
@@ -24,6 +25,7 @@ const CertificateDisplay = ({ params }) => {
     global: false,
     countrySpecific: false
   });
+
 
   const getCertification = async () => {
     console.log("Starting getCertification");
@@ -202,31 +204,86 @@ const CertificateDisplay = ({ params }) => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="h-screen flex items-center justify-center text-white">
-  //       <div>
-  //         <div className="font-semibold">
-  //           <LoadingOverlay loadText={"Loading..."} />
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  const uploadImageToCPanel = async (file) => {
+    if (!file) return null;
+  
+    const formData = new FormData();
+    formData.append('coverImage', file);
+    formData.append('type', 'photo');
+  
+    try {
+      const response = await axios.post(
+        'https://wowfy.in/doutya-api/upload.php',
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+  
+      if (response.data.success) {
+        return response.data.filePath;
+      }
+      throw new Error(response.data.error);
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload certificate');
+      return null;
+    }
+  };
+  
+  const handleShareComplete = async () => {
+    // Close the community modal first
+    setShowCommunityModal(false);
 
-  {/* Helper function to return appropriate icon based on level */}
-function getLevelIcon(level) {
-  switch(level?.toLowerCase()) {
-    case 'beginner':
-      return '🔹';
-    case 'intermediate':
-      return '🔶';
-    case 'advanced':
-      return '💎';
-    default:
-      return '•';
-  }
-}
+    console.log("log 1");
+    
+  
+    // Check if an image is available
+    if (!certificateImage) {
+      console.log("log 2");
+
+      toast.error('Certificate image not available');
+      return;
+    }
+  
+    // Convert base64 to file
+    const base64Response = await fetch(certificateImage);
+    const blob = await base64Response.blob();
+    const file = new File([blob], 'certificate.png', { type: 'image/png' });
+  
+    // Upload image to CPanel
+    const uploadedFileName = await uploadImageToCPanel(file);
+    
+    if (!uploadedFileName) {
+      console.log("log 3");
+
+      toast.error('Failed to upload certificate');
+      return;
+    }
+  
+    try {
+      console.log("log 4");
+
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      
+      const response = await GlobalApi.ShareCertificateToCommunity(
+        token, 
+        certificationId, 
+        {
+          global: selectedCommunities.global,
+          countrySpecific: selectedCommunities.countrySpecific
+        },
+        uploadedFileName
+      );
+  
+      if (response.status === 201) {
+        toast.success('Certificate shared successfully!');
+      } else {
+        toast.error('Failed to share certificate');
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      toast.error('An error occurred while sharing the certificate');
+    }
+  };
 
   // Show ineligible message if score is 0
   if (certificateData.ratingStars === 0) {
@@ -270,6 +327,7 @@ function getLevelIcon(level) {
       {/* Modal for community selection */}
       {showCommunityModal && (
         <SelectCommunity
+          handleComplete={() => handleShareComplete()}
           handleCheckboxChange={handleCheckboxChange}
           selectedCommunities={selectedCommunities}
         />
