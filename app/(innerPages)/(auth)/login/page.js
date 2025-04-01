@@ -31,14 +31,26 @@ function Login() {
       const token = localStorage.getItem("token");
 
       // Get auth_token from cookies
-      const cookies = document.cookie.split("; ").find(row => row.startsWith("auth_token="));
-      const authToken = cookies ? cookies.split("=")[1] : null;
+      // const cookies = document.cookie.split("; ").find(row => row.startsWith("auth_token="));
+      // const authToken = cookies ? cookies.split("=")[1] : null;
 
-      if (token && authToken) {
-        router.replace("/dashboard"); // Redirect only if both exist
-      } else {
-        localStorage.clear(); // Clear localStorage if either token is missing
-      }
+      console.log("token:", token, "authToken:");
+      
+      if (token) {
+        const url = typeof window !== "undefined" ? localStorage.getItem("navigateUrl") : null;
+        router.replace(url);
+        // router.replace("/dashboard"); // Redirect only if both exist
+
+      } /* else { */
+      //   localStorage.clear(); // Clear localStorage if either token is missing
+      
+      // }
+
+      // if (token && authToken) {
+      //   router.replace("/dashboard"); // Redirect only if both exist
+      // } else {
+      //   localStorage.clear(); // Clear localStorage if either token is missing
+      // }
     }
   }, [router]);
 

@@ -53,7 +53,9 @@ function SignUp() {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("token");
         if (token) {
-          router.push("/dashboard");
+          // router.push("/dashboard");
+          const url = typeof window !== "undefined" ? localStorage.getItem("navigateUrl") : null;
+          router.replace(url);
         } 
       }
     };
