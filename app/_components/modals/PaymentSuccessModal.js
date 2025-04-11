@@ -89,7 +89,7 @@ export default function PaymentSuccessModal({ isOpen, onClose, bookingType, ment
                   
                   <div className="mt-2">
                     <p className="text-sm text-gray-400">
-                      Check your "My Bookings" section to view and manage your bookings.
+                      Check your "Mentor" section to view and manage your bookings.
                     </p>
                   </div>
                 </div>
