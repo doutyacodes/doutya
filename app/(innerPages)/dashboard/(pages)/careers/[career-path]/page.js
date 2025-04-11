@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
+import Mentorship from "../../../_components/Mentorship/Mentorship";
 // import CommunityList from "@/app/(innerPages)/community/page";
 
 function Page() {
@@ -118,6 +119,7 @@ function Page() {
     { key: "roadmap", label: t("roadmap") },
     { key: "assessment", label: t("assessment") },
     { key: "certification", label: "certifications" },
+    { key: "mentor", label: "mentor" },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
     { key: "community", label: "Community" },
@@ -510,6 +512,9 @@ function Page() {
                 )}
                 {activeTab === "challenges" && (
                   <Challenge selectedCareer={selectedCareer} />
+                )}
+                {activeTab === "mentor" && (
+                  <Mentorship selectedCareer={selectedCareer} />
                 )}
                 {activeTab === "community" && (
                   <CommunityList careerId={selectedCareer?.career_group_id} />

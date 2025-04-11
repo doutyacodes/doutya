@@ -13,6 +13,7 @@ import {
   text,
   time,
   timestamp,
+  tinyint,
   uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
@@ -1365,4 +1366,185 @@ export const USER_POINTS = mysqlTable("user_points", {
   user_id: int("user_id").notNull(), // User identifier
   points: decimal("points", { precision: 10, scale: 5 }).notNull(), // Points earned by the user for a child
   created_at: timestamp("created_at").defaultNow(), // Timestamp for record
+});
+
+
+/* ================================================ */
+
+export const MENTOR_PROFILES = mysqlTable("mentor_profiles", {
+  mentor_id: int("mentor_id").autoincrement().primaryKey(),
+  username: varchar("username", { length: 50 }).notNull().unique(),
+  email: varchar("email", { length: 100 }).notNull().unique(),
+  password_hash: varchar("password_hash", { length: 255 }).notNull(),
+  full_name: varchar("full_name", { length: 100 }).notNull(),
+  profession: varchar("profession", { length: 100 }),
+  experience_years: int("experience_years"),
+  bio: text("bio"),
+  profile_picture_url: varchar("profile_picture_url", { length: 255 }),
+  contact_email: varchar("contact_email", { length: 100 }),
+  is_active: boolean("is_active").default(true),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+export const MENTOR_SKILLS = mysqlTable("mentor_skills", {
+  skill_id: int("skill_id").autoincrement().primaryKey(),
+  mentor_id: int("mentor_id")
+    .notNull()
+    .references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
+
+  // Skill Details
+  skill_name: varchar("skill_name", { length: 100 }).notNull(),
+  proficiency_level: mysqlEnum("proficiency_level", ["Beginner", "Intermediate", "Advanced", "Expert"]).notNull(),
+  years_of_experience: int("years_of_experience"),
+});
+
+export const MENTOR_HIGHLIGHTS = mysqlTable("mentor_highlights", {
+  highlight_id: int("highlight_id").autoincrement().primaryKey(),
+  mentor_id: int("mentor_id")
+    .notNull()
+    .references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
+
+  // Highlight Details
+  highlight_type: mysqlEnum("highlight_type", ["Achievement", "Certification", "Project", "Success Story"]).notNull(),
+  title: varchar("title", { length: 150 }).notNull(),
+  description: text("description"),
+  date: date("date"),
+});
+
+
+export const MENTOR_PRICING = mysqlTable("mentor_pricing", {
+  id: int("id").autoincrement().primaryKey(),
+  mentor_id: int("mentor_id")
+    .notNull()
+    .references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
+  question_price: decimal("question_price", { precision: 10, scale: 2 }).notNull(),
+  one_on_one_session_price: decimal("one_on_one_session_price", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 10 }).default("INR"),
+});
+
+export const MENTOR_AVAILABILITY_SLOTS = mysqlTable("mentor_availability_slots", {
+  slot_id: int("slot_id").autoincrement().primaryKey(),
+  mentor_id: int("mentor_id")
+    .notNull()
+    .references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
+    day_of_week: int("day_of_week").notNull(),
+  start_time: time("start_time").notNull(),
+  end_time: time("end_time").notNull(),
+  slot_duration_minutes: int("slot_duration_minutes").default(60),
+  // is_recurring: boolean("is_recurring").default(true),
+  is_active: boolean("is_active").default(true),
+  is_booked: boolean("is_booked").default(false),
+  booked_by_user_id: int("booked_by_user_id"),
+  booking_timestamp: timestamp("booking_timestamp"),
+});
+
+export const USER_MENTOR_RELATIONSHIPS = mysqlTable("user_mentor_relationships", {
+  id: int("id").autoincrement().primaryKey(),
+  user_id: int("user_id")
+    .notNull()
+    .references(() => USER_DETAILS.id, { onDelete: "cascade" }),
+  mentor_id: int("mentor_id")
+    .notNull()
+    .references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
+  relationship_type: mysqlEnum("relationship_type", ["followed", "added"]).notNull(),
+  career_group_id: int("career_group_id")
+    .references(() => CAREER_GROUP.id, { onDelete: "set null" }),
+  added_at: timestamp("added_at").defaultNow(),
+});
+
+export const ONE_ON_ONE_SESSIONS = mysqlTable("one_on_one_sessions", {
+  session_id: int("session_id").autoincrement().primaryKey(),
+  user_id: int("user_id")
+    .notNull()
+    .references(() => USER_DETAILS.id, { onDelete: "cascade" }),
+  mentor_id: int("mentor_id")
+    .notNull()
+    .references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
+  career_group_id: int("career_group_id")
+    .references(() => CAREER_GROUP.id, { onDelete: "set null" }),
+  availability_slot_id: int("availability_slot_id")
+    .notNull()
+    .references(() => MENTOR_AVAILABILITY_SLOTS.slot_id, { onDelete: "cascade" }),
+  session_status: mysqlEnum("session_status", ["scheduled", "in_progress", "completed", "cancelled"]).notNull(),
+  start_time: timestamp("start_time"),
+  end_time: timestamp("end_time"),
+  total_price: decimal("total_price", { precision: 10, scale: 2 }),
+  payment_status: mysqlEnum("payment_status", ["pending", "paid", "refunded"]).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+export const ONE_ON_ONE_CHAT_MESSAGES = mysqlTable("one_on_one_chat_messages", {
+  message_id: int("message_id").autoincrement().primaryKey(),
+  session_id: int("session_id")
+    .notNull()
+    .references(() => ONE_ON_ONE_SESSIONS.session_id, { onDelete: "cascade" }),
+  sender_type: mysqlEnum("sender_type", ["user", "mentor"]).notNull(),
+  sender_id: int("sender_id").notNull(),
+  message_text: text("message_text").notNull(),
+  sent_at: timestamp("sent_at").defaultNow(),
+  is_read: boolean("is_read").default(false),
+});
+
+export const QUESTION_SESSIONS = mysqlTable("question_sessions", {
+  question_session_id: int("question_session_id").autoincrement().primaryKey(),
+  user_id: int("user_id")
+    .notNull()
+    .references(() => USER_DETAILS.id, { onDelete: "cascade" }),
+  mentor_id: int("mentor_id")
+    .notNull()
+    .references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
+  career_group_id: int("career_group_id")
+    .references(() => CAREER_GROUP.id, { onDelete: "set null" }),
+  session_status: mysqlEnum("session_status", ["active", "completed"]).notNull(),
+  total_price: decimal("total_price", { precision: 10, scale: 2 }),
+  payment_status: mysqlEnum("payment_status", ["pending", "paid"]).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  last_interaction_at: timestamp("last_interaction_at").defaultNow(),
+});
+
+// export const QUESTION_SESSION_MESSAGES = mysqlTable("question_session_messages", {
+//   message_id: int("message_id").autoincrement().primaryKey(),
+//   question_session_id: int("question_session_id")
+//     .notNull()
+//     .references(() => QUESTION_SESSIONS.question_session_id, { onDelete: "cascade" }),
+//   sender_type: mysqlEnum("sender_type", ["user", "mentor"]).notNull(),
+//   sender_id: int("sender_id").notNull(),
+//   message_text: text("message_text").notNull(),
+//   message_type: mysqlEnum("message_type", ["question", "answer"]).notNull(),
+//   sent_at: timestamp("sent_at").defaultNow(),
+//   is_read: boolean("is_read").default(false),
+//   character_limit: int("character_limit").default(500),
+// });
+
+export const SESSION_QUESTIONS = mysqlTable("session_questions", {
+  question_id: int("question_id").autoincrement().primaryKey(),
+  question_session_id: int("question_session_id")
+    .notNull()
+    .references(() => QUESTION_SESSIONS.question_session_id, { onDelete: "cascade" }),
+  user_id: int("user_id").notNull().references(() => USER_DETAILS.id, { onDelete: "cascade" }),
+  question_text: text("question_text").notNull(),
+  created_at: timestamp("created_at").defaultNow()
+});
+
+export const SESSION_ANSWERS = mysqlTable("session_answers", {
+  answer_id: int("answer_id").autoincrement().primaryKey(),
+  question_id: int("question_id")
+    .notNull()
+    .references(() => SESSION_QUESTIONS.question_id, { onDelete: "cascade" }),
+  mentor_id: int("mentor_id").notNull().references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
+  answer_text: text("answer_text").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  is_read: boolean("is_read").default(false)
+});
+
+export const USER_DAILY_QUESTION_LIMIT = mysqlTable("user_daily_question_limit", {
+  id: int("id").autoincrement().primaryKey(),
+  user_id: int("user_id")
+    .notNull()
+    .references(() => USER_DETAILS.id, { onDelete: "cascade" }),
+  mentor_id: int("mentor_id")
+    .notNull()
+    .references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
+  question_count: int("question_count").default(0),
+  last_reset_date: timestamp("last_reset_date").defaultNow(),
 });
