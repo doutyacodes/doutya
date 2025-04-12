@@ -31,7 +31,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
 import Mentorship from "../../../_components/Mentorship/Mentorship";
-// import CommunityList from "@/app/(innerPages)/community/page";
+import { useTopbar } from "@/app/context/TopbarContext";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -59,6 +59,9 @@ function Page() {
   const router = useRouter();
   const t = useTranslations("CareerPage");
 
+  const { refreshTopbar } = useTopbar();
+  
+
   // Total number of boxes will be 5 (career stripe)
   const totalBoxes = 5;
 
@@ -67,6 +70,11 @@ function Page() {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Refresh data here
+    getCareers(false);
+  }, [refreshTopbar]);
 
   
   useEffect(() => {
@@ -146,8 +154,8 @@ function Page() {
     }
   }, [careerData]);
 
-  const getCareers = async () => {
-    setIsLoading(true);
+  const getCareers = async (showLoader = true) => {
+    if (showLoader) setIsLoading(true);
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -176,7 +184,7 @@ function Page() {
     } catch (err) {
       toast.error("Failed to fetch career data. Please try again later.");
     } finally {
-      setIsLoading(false);
+      if (showLoader) setIsLoading(false);
     }
   };
 

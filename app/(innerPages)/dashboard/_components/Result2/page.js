@@ -13,6 +13,7 @@ import AlertDialogue from "./AlertDialogue";
 import { FaChevronRight } from "react-icons/fa";
 import { CareerSelectionComplete, IndustrySelectionComplete, InterestTestComplete } from "@/app/_components/StepCompletionNotifications";
 import ContentGenerationLoading from "@/app/_components/ContentGenerationLoading";
+import { useTopbar } from "@/app/context/TopbarContext";
 
 export default function Results2({step, setStep}) {
   const [resultData, setResultData] = useState(null);
@@ -35,6 +36,7 @@ export default function Results2({step, setStep}) {
   const [showAlert, setShowAlert] = useState(false);
   const [showCareerSelectionComplete, setShowCareerSelectionComplete] = useState(false);
   
+  const { triggerTopbarRefresh } = useTopbar();
 
   const t = useTranslations("Result2");
 
@@ -223,8 +225,9 @@ export default function Results2({step, setStep}) {
         toast.success("Career Data Saved Successfully");
         if (response.data.isFirstTime) {
           // Navigate to the careers page
-          router.push("/dashboard/careers/career-guide"); // Change "/careers" to your actual career page path
+          router.push("/dashboard/careers/career-guide");
         }
+        triggerTopbarRefresh(); 
         setShowCareerSelectionComplete(true) 
       }
     } catch (err) {

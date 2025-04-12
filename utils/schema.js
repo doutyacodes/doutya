@@ -423,6 +423,7 @@ export const CAREER_NEWS = mysqlTable("career_news", {
   summary: text("summary").notNull(),                                      // Brief summary of the news
   source_url: varchar("source_url", { length: 500 }).notNull(),            // Link to the full news
   published_at: timestamp("published_at").notNull(),                       // News publish date
+  status: mysqlEnum("status", ["pending", "completed", "failed"]).default("pending"),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
 });

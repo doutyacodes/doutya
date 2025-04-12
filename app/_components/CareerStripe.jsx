@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AddCareer from '../(innerPages)/dashboard/_components/AddCareer/AddCareer'
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import GlobalApi from "@/app/_services/GlobalApi";
@@ -11,6 +11,8 @@ import { useTranslations } from "next-intl";
 import FeatureRestrictionModal from "../(innerPages)/dashboard/_components/FeatureRestrictionModal/FeatureRestrictionModal";
 import PricingCard from "./PricingCard";
 import TestsNotCompltedWarning from "../(innerPages)/dashboard/_components/TestsNotCompltedWarning/TestsNotCompltedWarning";
+import { useTopbar } from "../context/TopbarContext";
+
 
 const CareerStripe = () => {
     const [careerData, setCareerData] = useState([]);
@@ -32,6 +34,8 @@ const CareerStripe = () => {
     const router = useRouter();
     const t = useTranslations("CareerPage");
   
+    const { refreshTopbar } = useTopbar();
+
     // Total number of boxes will be 5
     const totalBoxes = 5;
 
@@ -47,6 +51,7 @@ const CareerStripe = () => {
       };
       PathChange();
     }, [pathname]);
+    
     useEffect(() => {
         const authCheck = () => {
           if (typeof window !== "undefined") {
@@ -100,6 +105,11 @@ const CareerStripe = () => {
       useEffect(() => {
         getCareers();
       }, []);
+
+      useEffect(() => {
+        // Refresh data here
+        getCareers();
+      }, [refreshTopbar]);
 
       const handleAddCareerClick = () => {
 

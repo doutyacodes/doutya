@@ -22,6 +22,8 @@ function Page({ params }) {
   const [subjectName, setSubjectName] = useState(null)
   const [challengeId, setChallengeId] = useState(null);
   const [progressSubmitted, setProgressSubmitted] = useState(false);
+  const [timeExpired, setTimeExpired] = useState(false);
+
 
   // const [marks, setMarks] = useState(0)
 
@@ -84,13 +86,6 @@ function Page({ params }) {
     // setIsLoading(false)
   }, [currentQuestionIndex, questions]);
 
-  // Reset timer when moving to the next question
-// useEffect(() => {
-//   if (questions.length > 0) {
-//     setTimer(timerValue * 1000);  // Reset timer to the original value for each question
-//   }
-// }, [currentQuestionIndex, questions]);
-
 
 useEffect(() => {
   if (quizCompleted) {
@@ -112,7 +107,7 @@ useEffect(() => {
 
   const handleChoiceSelect = (choice) => {
   
-    if (selectedChoice || progressSubmitted) return;
+    if (selectedChoice || progressSubmitted || timeExpired) return;
 
     setSelectedChoice(choice);
     let earnedMarks = 0;
@@ -143,7 +138,8 @@ useEffect(() => {
       setTimeout(() => {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setSelectedChoice(null); // Reset selected choice for the next question
-        setProgressSubmitted(false); // Reset progress submission 
+        setProgressSubmitted(false); // Reset progress submission
+        setTimeExpired(false); // Reset time expired state
         setTimer(timerValue * 1000); // Reset timer for the new question
       }, 3000); // Delay for 3 seconds
     } else {
@@ -196,14 +192,16 @@ useEffect(() => {
     }
   };
 
-
   const handleTimeOut = async () => {
+    // Set time expired immediately to disable buttons
+    setTimeExpired(true);
+    
     // Do not submit if progress for the current question has already been submitted
     if (progressSubmitted) {
       handleNext();
       return;
     }
-
+  
     // Proceed with submitting marks: 0 if no choice was selected
     const answer = {
       questionId: questions[currentQuestionIndex].id,
@@ -217,6 +215,9 @@ useEffect(() => {
 
   useEffect(() => {
     if (!timer) return; // Exit early if the timer is not set
+
+    // Reset timeExpired when moving to a new question with a timer
+    setTimeExpired(false);
   
     const intervalId = setInterval(() => {
       setTimer((prevTimer) => {
@@ -273,15 +274,6 @@ useEffect(() => {
 
       {questions.length > 0 && (
         <div className="mt-4 pt-5 flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">
-          {/* <style jsx>{`
-            @media (hover: none) {
-              .quiz-button:hover {
-                background-color: inherit;
-                color: inherit;
-              }
-            }
-          `}</style> */}
-          
           <div>
             <p className="font">{currentQuestionIndex + 1}/{questions.length}</p>
           </div>
@@ -311,19 +303,8 @@ useEffect(() => {
             </p>
           </div>
 
-          {/* <div className='flex flex-col gap-2 w-full text-white'>
-          {questions[currentQuestionIndex]?.choices.map((choice, index) => (
-            <button
-              key={index}
-              className={`py-2 px-4 ${selectedChoice?.choiceId === choice.choiceId ? 'bg-green-500' : 'bg-slate-400'}`}
-              onClick={() => handleChoiceSelect(choice)}
-            >
-              {choice.choiceText}
-            </button>
-          ))}
-        </div> */}
 
-      <div className="flex flex-col gap-2 w-full text-white">
+      {/* <div className="flex flex-col gap-2 w-full text-white">
         {shuffledChoices.map((choice, index) => (
           <button
             key={index}
@@ -337,19 +318,29 @@ useEffect(() => {
             {removeHtmlTags(choice.text)}
           </button>
         ))}
+      </div> */}
+
+      <div className="flex flex-col gap-2 w-full text-white">
+        {shuffledChoices.map((choice, index) => (
+          <button
+            key={index}
+            className={`quiz-button py-2 px-4 rounded-md
+              ${selectedChoice?.id === choice.id 
+                ? 'bg-green-500' 
+                : timeExpired
+                  ? 'bg-slate-600 cursor-not-allowed opacity-70'
+                  : 'bg-slate-400 sm:hover:bg-purple-300 sm:hover:text-black'}
+              transition duration-300 ease-in-out`}
+            onClick={() => handleChoiceSelect(choice)}
+            disabled={selectedChoice !== null || progressSubmitted || timeExpired}
+          >
+            {timeExpired && choice.id === choice.isCorrect === 'yes' 
+              ? `${removeHtmlTags(choice.text)} ✓` 
+              : removeHtmlTags(choice.text)}
+          </button>
+        ))}
       </div>
 
-          {/* <div>
-            <button
-              className={`bg-green-600 py-2 px-5 rounded-lg text-white ${
-                selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-              }`}
-              onClick={handleNext}
-              disabled={!selectedChoice}
-            >
-              Next
-            </button>
-          </div> */}
         </div>
       )}
     </div>

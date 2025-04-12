@@ -1,11 +1,14 @@
+import { TopbarProvider } from "@/app/context/TopbarContext";
 import Navbar from "./_components/Navbar/page";
 
 const Layout = ({ children }) => {
   return (
-    <div>
-      {/* <Navbar /> */}
-      <main>{children}</main>
-    </div>
+    <TopbarProvider>
+      <div>
+        {/* <Navbar /> */}
+        <main>{children}</main>
+      </div>
+    </TopbarProvider>
   );
 };
 
