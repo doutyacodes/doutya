@@ -279,6 +279,16 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50 p-4">
+      <button 
+        onClick={handleClose}
+        className="fixed top-2 right-2 z-[60] bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg border border-gray-700"
+        aria-label="Close"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
       <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl overflow-hidden relative">
         {/* Close button */}
         <button 

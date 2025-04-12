@@ -26,6 +26,16 @@ export const StartPersonalityTest = () => {
         {
           visible && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50 p-4">
+                <button 
+                  onClick={handleClose}
+                  className="fixed top-2 right-2 z-[60] bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg border border-gray-700"
+                  aria-label="Close"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
               <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
                 {/* Content */}
                 <div className="p-10">
@@ -96,6 +106,16 @@ export const PersonalityTestComplete = () => {
       {
           visible && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50 p-4">
+                <button 
+                  onClick={handleDismiss}
+                  className="fixed top-2 right-2 z-[60] bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg border border-gray-700"
+                  aria-label="Close"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
               <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
                 {/* Content */}
                 <div className="p-10">
@@ -166,6 +186,16 @@ export const InterestTestComplete = () => {
       {
         visible && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50 p-4">
+              <button 
+                  onClick={handleClose}
+                  className="fixed top-2 right-2 z-[60] bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg border border-gray-700"
+                  aria-label="Close"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
             <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
               {/* Content */}
               <div className="p-10">
@@ -342,6 +372,16 @@ export const IndustrySelectionComplete = () => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50 p-4">
+     <button 
+        onClick={handleDismiss}
+        className="fixed top-2 right-2 z-[60] bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg border border-gray-700"
+        aria-label="Close"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
       <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
         {/* Progress bar */}
         <div className="flex justify-between bg-gray-800 px-4 md:px-6 py-2 md:py-3">
@@ -532,6 +572,16 @@ export const CareerSelectionComplete = () => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+    <button 
+      onClick={handleDismiss}
+      className="fixed top-2 right-2 z-[60] bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg border border-gray-700"
+      aria-label="Close"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
       <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
         {/* Content */}
         <div className="p-10">
@@ -768,6 +818,16 @@ export const CareerDataCollectionGuide = () => {
     // <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
     //   <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50 p-4">
+    <button 
+      onClick={handleDismiss}
+      className="fixed top-2 right-2 z-[60] bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg border border-gray-700"
+      aria-label="Close"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
       <div className="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
         {/* Content */}
         <div className="p-4 md:p-6 lg:p-10">
@@ -874,6 +934,16 @@ export const JourneyComplete = () => {
 
   return (
     <div className="bg-gradient-to-r from-indigo-800 to-indigo-600 rounded-lg shadow-lg p-4 mb-6 animate-fadeIn">
+      <button 
+        onClick={handleDismiss}
+        className="fixed top-2 right-2 z-[60] bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg border border-gray-700"
+        aria-label="Close"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
       <div className="flex items-start justify-between">
         <div className="flex">
           <div className="flex-shrink-0 bg-indigo-100 rounded-full p-2">

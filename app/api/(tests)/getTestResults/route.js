@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { SUBJECTS, TESTS, USER_TESTS, USER_DETAILS, CAREER_SUBJECTS } from '@/utils/schema';
+import { SUBJECTS, TESTS, USER_TESTS, USER_DETAILS, CAREER_SUBJECTS, USER_SUBJECT_COMPLETION } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq, gte, sql } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -19,7 +19,7 @@ export async function GET(request) {
     const careerGrpId = parseInt(searchParams.get('careerGrpId'));
     
     try {
-
+        
         // Get user's birth date
         const birthDateResult = await db
             .select({ birth_date: USER_DETAILS.birth_date })
@@ -44,17 +44,30 @@ export async function GET(request) {
                                     )
                                     .execute();
 
+        // const completedTests = await db
+        //     .select({
+        //         subjectId: SUBJECTS.subject_id,
+        //         subjectName: SUBJECTS.subject_name,
+        //         totalStars: sql`SUM(${USER_TESTS.stars_awarded})`.as('totalStars'),
+        //         totalScore: sql`SUM(${USER_TESTS.score})`.as('totalScore')
+        //     })
+        //     .from(USER_TESTS)
+        //     .innerJoin(TESTS, eq(USER_TESTS.test_id, TESTS.test_id))
+        //     .innerJoin(SUBJECTS, eq(TESTS.subject_id, SUBJECTS.subject_id))
+        //     .where(and(eq(USER_TESTS.user_id, userId), eq(USER_TESTS.completed, 'yes')))
+        //     .groupBy(SUBJECTS.subject_id, SUBJECTS.subject_name) // Include both columns in GROUP BY
+        //     .execute();
+
         const completedTests = await db
             .select({
                 subjectId: SUBJECTS.subject_id,
                 subjectName: SUBJECTS.subject_name,
-                totalStars: sql`SUM(${USER_TESTS.stars_awarded})`.as('totalStars'),
-                totalScore: sql`SUM(${USER_TESTS.score})`.as('totalScore')
+                totalStars: sql`SUM(${USER_SUBJECT_COMPLETION.stars_awarded})`.as('totalStars'),
             })
-            .from(USER_TESTS)
-            .innerJoin(TESTS, eq(USER_TESTS.test_id, TESTS.test_id))
+            .from(USER_SUBJECT_COMPLETION)
+            .innerJoin(TESTS, eq(USER_SUBJECT_COMPLETION.test_id, TESTS.test_id))
             .innerJoin(SUBJECTS, eq(TESTS.subject_id, SUBJECTS.subject_id))
-            .where(and(eq(USER_TESTS.user_id, userId), eq(USER_TESTS.completed, 'yes')))
+            .where(and(eq(USER_SUBJECT_COMPLETION.user_id, userId), eq(USER_SUBJECT_COMPLETION.completed, 'yes')))
             .groupBy(SUBJECTS.subject_id, SUBJECTS.subject_name) // Include both columns in GROUP BY
             .execute();
 

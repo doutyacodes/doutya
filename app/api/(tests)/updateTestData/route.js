@@ -2,7 +2,7 @@ import { db } from '@/utils';
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { eq, and, sum, count, lte } from 'drizzle-orm';
-import { STAR_PERCENT, TEST_PROGRESS, TEST_QUESTIONS, USER_DETAILS, USER_SUBJECT_COMPLETION, USER_TESTS } from '@/utils/schema'; // Import relevant tables
+import { STAR_PERCENT, TEST_PROGRESS, TEST_QUESTIONS, USER_DETAILS, USER_SUBJECT_COMPLETION } from '@/utils/schema'; // Import relevant tables
 import { calculateAge } from '@/lib/ageCalculate';
 
 
