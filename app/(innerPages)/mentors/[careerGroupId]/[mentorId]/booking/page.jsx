@@ -29,6 +29,8 @@ export default function MentorBookingPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
+  const careerGroupId = params.careerGroupId;
+
   // Fetch mentor data
   useEffect(() => {
     if (!mentorId) return;
@@ -213,7 +215,7 @@ export default function MentorBookingPage() {
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <button 
-            onClick={() => router.push(`/mentors/profile/${mentorId}`)}
+            onClick={() => router.push(`/mentors/${careerGroupId}/profile/${mentorId}`)}
             className="text-blue-400 hover:text-blue-300 flex items-center mb-4"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -288,10 +290,6 @@ export default function MentorBookingPage() {
                     <div className="flex items-start">
                       <CheckIcon className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                       <p className="text-gray-300">Responses typically within 48 hours</p>
-                    </div>
-                    <div className="flex items-start">
-                      <CheckIcon className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <p className="text-gray-300">Valid for 30 days from purchase</p>
                     </div>
                   </div>
                   

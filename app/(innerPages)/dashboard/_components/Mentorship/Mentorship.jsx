@@ -44,20 +44,25 @@ const Mentorship = ({ selectedCareer }) => {
     }
   }, [selectedCareer.career_group_id]);
 
+  // const handleAddMentors = () => {
+  //   router.push(`/mentors/browse?careerGroupId=${selectedCareer.career_group_id}`);
+  // };
+
   const handleAddMentors = () => {
-    router.push(`/mentors/browse?careerGroupId=${selectedCareer.career_group_id}`);
+    router.push(`/mentors/${selectedCareer.career_group_id}/browse`);
   };
   
+  
   const handleMentorProfile = (mentorId) => {
-    router.push(`/mentors/profile/${mentorId}`);
+    router.push(`/mentors/${selectedCareer.career_group_id}/profile/${mentorId}`);
   };
 
   const handleOneOnOneSessions = (mentorId) => {
-    router.push(`/mentors/${mentorId}/booking?tabIndex=1`);
+    router.push(`/mentors/${selectedCareer.career_group_id}/${mentorId}/booking?tabIndex=1`);
   };
   
   const handleChat = (mentorId) => {
-    router.push(`/mentors/${mentorId}/chat`);
+    router.push(`/mentors/${selectedCareer.career_group_id}/${mentorId}/chat`);
   };
 
   if (loading) {

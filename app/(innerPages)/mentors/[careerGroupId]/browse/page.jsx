@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { 
   Search, 
   Filter, 
@@ -21,8 +21,8 @@ const MentorsBrowsePage = () => {
   const [popularProfessions, setPopularProfessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const searchParams = useSearchParams();
-  const careerGroupId = searchParams.get('careerGroupId');
+  const params = useParams();
+  const careerGroupId = params.careerGroupId;
 
   // Filtering States
   const [selectedProfession, setSelectedProfession] = useState('');
@@ -74,7 +74,7 @@ const MentorsBrowsePage = () => {
         '/api/mentors/browse', 
         {  // Data payload (body)
             mentorId,
-            careerGroupId,
+            careerGroupId: careerGroupId,
             action: isFollowed ? 'unfollow' : 'follow'
         }, 
         {  // Config object (headers)
@@ -98,7 +98,7 @@ const MentorsBrowsePage = () => {
   };
 
   const handleMentorProfile = (mentorId) => {
-    router.push(`/mentors/profile/${mentorId}?careerGroupId=${careerGroupId}`);
+    router.push(`/mentors/${careerGroupId}/profile/${mentorId}`);
   };
 
   return (

@@ -10,7 +10,7 @@ import {
   ClipboardListIcon, 
   MessageCircleIcon 
 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 export default function MentorProfilePage({ params }) {
   const [mentor, setMentor] = useState(null);
@@ -18,15 +18,15 @@ export default function MentorProfilePage({ params }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const careerGroupId = searchParams.get('careerGroupId');
+  // const params = useParams();
+  const careerGroupId = params.careerGroupId;
 
   useEffect(() => {
     const fetchMentorProfile = async () => {
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         
-        const response = await axios.get(`/api/mentors/profile/${params.mentorId}`, {
+        const response = await axios.get(`/api/mentors/profile/${params.mentorId}/?careerGroupId=${careerGroupId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -69,11 +69,11 @@ export default function MentorProfilePage({ params }) {
   };
 
   const handleBookQuestions = () => {
-    router.push(`/mentors/${params.mentorId}/booking?tabIndex=0`);
+    router.push(`/mentors/${careerGroupId}/${params.mentorId}/booking?tabIndex=0`);
   };
   
   const handleBookOneOnOne = () => {
-    router.push(`/mentors/${params.mentorId}/booking?tabIndex=1`);
+    router.push(`/mentors/${careerGroupId}/${params.mentorId}/booking?tabIndex=1`);
   };
 
   if (loading) return <div className="text-white text-center py-10">Loading...</div>;

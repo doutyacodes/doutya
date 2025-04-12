@@ -35,6 +35,9 @@ export default function MentorChatPage() {
 
   const router = useRouter();
 
+  const params = useParams();
+  const careerGroupId = params.careerGroupId;
+
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
@@ -449,7 +452,7 @@ export default function MentorChatPage() {
                   Purchase a 5-question session to ask this mentor questions they can answer at their convenience.
                 </p>
                 <Link 
-                  href={`/mentors/${mentorId}/booking?tabIndex=0`}
+                  href={`/mentors/${careerGroupId}/${mentorId}/booking?tabIndex=0`}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md"
                 >
                   Purchase Session
@@ -558,7 +561,7 @@ export default function MentorChatPage() {
                   Book a one-on-one live chat session with this mentor to get personalized guidance.
                 </p>
                 <Link 
-                  href={`/mentors/${mentorId}/booking?tabIndex=1`}
+                  href={`/mentors/${careerGroupId}/${mentorId}/booking?tabIndex=1`}
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md"
                 >
                   Book Session
