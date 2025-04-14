@@ -29,18 +29,19 @@ export async function POST(req) {
                  eq(TEST_PROGRESS.test_id, testId)
              )
          )
+
          const quizTotal = await db
-         .select({
-             totalMarks: sum(TEST_PROGRESS.marks),
-         })
-         .from(TEST_PROGRESS)
-         .where(
-             and(
-                 eq(TEST_PROGRESS.user_id, userId),
-                 eq(TEST_PROGRESS.test_id, testId)
-             )
-         )
-         .groupBy(TEST_PROGRESS.is_answer);
+            .select({
+                totalMarks: sum(TEST_PROGRESS.marks),
+            })
+            .from(TEST_PROGRESS)
+            .where(
+                and(
+                    eq(TEST_PROGRESS.user_id, userId),
+                    eq(TEST_PROGRESS.test_id, testId)
+                )
+            )
+            .groupBy(TEST_PROGRESS.is_answer);
 
         const totalMarks = quizTotal[0]?.totalMarks || 0;
 
@@ -80,19 +81,32 @@ export async function POST(req) {
         console.log("user_id", userId, testId);
         console.log("totalMarks", totalMarks);
             
-        let stars;
-        if (totalMarks >= 8000 && totalMarks <= 13999) {   // ⭐ 1 star range
-            stars = 1;
-            console.log(`Stars for total marks ${totalMarks}: ${stars}`);
+        // let stars;
+        // if (totalMarks >= 8000 && totalMarks <= 13999) {   // ⭐ 1 star range
+        //     stars = 1;
+        //     console.log(`Stars for total marks ${totalMarks}: ${stars}`);
             
-        } else if (totalMarks >= 14000 && totalMarks <= 20000) {  // ⭐⭐ 2 stars range
-            stars = 2;
-            console.log(`Stars for total marks ${totalMarks}: ${stars}`);
+        // } else if (totalMarks >= 14000 && totalMarks <= 20000) {  // ⭐⭐ 2 stars range
+        //     stars = 2;
+        //     console.log(`Stars for total marks ${totalMarks}: ${stars}`);
 
+        // } else {
+        //     console.log('No matching stars found.');
+        //     stars = 0;   // ⭐ No stars if below 8000
+        // }
+
+        let stars;
+        if (totalMarks >= 4000 && totalMarks < 6000) {
+            stars = 1;
+        } else if (totalMarks >= 6000 && totalMarks < 8000) {
+            stars = 2;
+        } else if (totalMarks >= 8000 && totalMarks <= 10000) {
+            stars = 3;
         } else {
-            console.log('No matching stars found.');
-            stars = 0;   // ⭐ No stars if below 8000
+            stars = 0;
         }
+        console.log(`Stars for total marks ${totalMarks}: ${stars}`);
+
 
         // Step 5: Update the USER_SUBJECT_COMPLETION table
         await db
