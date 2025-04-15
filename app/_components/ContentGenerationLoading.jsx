@@ -121,13 +121,6 @@ const ContentGenerationLoading = ({
             <h3 className="text-xl font-bold text-white">
               {title || config.title}
             </h3>
-            <button 
-              onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors focus:outline-none"
-              aria-label="Close"
-            >
-              <X size={24} />
-            </button>
           </div>
           
           {/* Progress bar */}
@@ -162,14 +155,14 @@ const ContentGenerationLoading = ({
           </div>
           
           {/* Footer */}
-          <div className="bg-gray-800 px-6 py-4 flex justify-end">
+          {/* <div className="bg-gray-800 px-6 py-4 flex justify-end">
             <button 
               onClick={onClose}
               className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
             >
               Cancel
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     );

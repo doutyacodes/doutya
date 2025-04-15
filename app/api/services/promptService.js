@@ -203,7 +203,7 @@ export const dynamic = 'force-dynamic';
         2. Physical Milestones
         3. Mental Milestones
     
-        Each of the **Educational**, **Physical**, and **Mental Milestones** should have **at least three milestones**. If you have more milestones, please include them as well. Each milestone should be separated with a '|' symbol.
+        Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
     
         The **Educational Milestones** should include:
         - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the career (such as industry-standard certifications).

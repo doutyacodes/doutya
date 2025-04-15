@@ -139,7 +139,7 @@ function Tests({selectedCareer}) {
 
   return (
     <FeatureGuideWrapper featureKey="tests">
-            <div className="w-full mx-auto">
+      <div className="w-full mx-auto">
         {subjectTestId ? (
           <ViewResult testID={subjectTestId} setSubjectTestId={setSubjectTestId}/>
         ) : (

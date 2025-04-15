@@ -63,37 +63,6 @@ function RoadMap({ selectedCareer }) {
     getRoadmap();
   }, [selectedCareer]);
 
-  // Modify this useEffect for organizing milestones
-    // useEffect(() => {
-    //   if (roadMapData.length > 0) {
-    //     const milestones = roadMapData.reduce((acc, milestone) => {
-    //       const { milestoneCategoryName, milestoneSubcategoryName, ...milestoneData } = milestone;
-          
-    //       // Handle Educational Milestones differently due to subcategories
-    //       if (milestoneCategoryName === 'Educational Milestones') {
-    //         if (!acc[milestoneCategoryName]) {
-    //           acc[milestoneCategoryName] = {};
-    //         }
-    //         // Organize by subcategory
-    //         if (milestoneSubcategoryName) {
-    //           if (!acc[milestoneCategoryName][milestoneSubcategoryName]) {
-    //             acc[milestoneCategoryName][milestoneSubcategoryName] = [];
-    //           }
-    //           acc[milestoneCategoryName][milestoneSubcategoryName].push(milestoneData);
-    //         }
-    //       } else {
-    //         // Handle other categories as before
-    //         if (!acc[milestoneCategoryName]) {
-    //           acc[milestoneCategoryName] = [];
-    //         }
-    //         acc[milestoneCategoryName].push(milestoneData);
-    //       }
-    //       return acc;
-    //     }, {});
-    //     setMilestones(milestones);
-    //   }
-    // }, [roadMapData]);
-
     useEffect(() => {
       if (roadMapData.length > 0) {
         const milestones = roadMapData.reduce((acc, milestone) => {
@@ -217,11 +186,11 @@ function RoadMap({ selectedCareer }) {
       ) : (
         <>
           {/* Main Tabs */}
-          <div className="flex mb-4 overflow-x-scroll gap-2 md:overflow-x-visible">
+          <div className="flex mb-3 mb-4 overflow-x-auto gap-1 gap-2 md:overflow-x-visible">
             {Object.keys(milestones).map((tab) => (
               <button
                 key={tab}
-                className={`flex-1 rounded px-4 py-2 lg:py-3 font-semibold lg:text-lg text-sm text-center focus:outline-none ${
+                className={`flex-1 rounded px-2 px-4 md:py-2 lg:py-3 py-1.5 font-medium font-semibold md:text-base lg:text-lg text-xs text-center focus:outline-none whitespace-nowrap ${
                   activeTab === tab
                     ? 'bg-orange-500 text-white'
                     : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
@@ -232,99 +201,50 @@ function RoadMap({ selectedCareer }) {
               </button>
             ))}
           </div>
-
-          {/* Educational Subtabs - Commented out since we only want Academic Milestones */}
-          {/* {activeTab === 'Educational Milestones' && (
-            <div className="flex flex-row gap-2 text-xs md:text-base min-w-20 mt-10 w-full overflow-x-scroll md:overflow-x-visible justify-center items-center">
-              {Object.keys(milestones['Educational Milestones']).map((subTab) => (
-                <button
-                  key={subTab}
-                  className={`w-full rounded-md px-4 py-2 lg:py-3 bg-gray-500 font-semibold lg:text-lg text-sm text-center focus:outline-none transition-colors duration-200 ${
-                    activeEducationalSubTab === subTab
-                      ? 'bg-orange-500/20 text-orange-400'
-                      : 'text-gray-300 hover:bg-gray-500/50'
-                  }`}
-                  onClick={() => setActiveEducationalSubTab(subTab)}
-                >
-                  {subTab}
-                </button>
-              ))}
-            </div>
-          )} */}
-
-
+          
           {/* Tab Content */}
-            <div className="bg-gray-800 p-4 md:p-6 shadow-lg min-h-[300px]">
-              {activeTab === 'Physical Milestones' && (
-                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 text-blue-800">
-                  <p>
-                    Physical milestones are crucial for holistic personal development. 
-                    Even in careers that may seem primarily mental or desk-bound, 
-                    maintaining physical health can significantly impact your professional performance 
-                    and overall well-being.
-                  </p>
-                </div>
-              )}
-              
-              {activeTab === 'Mental Milestones' && (
-                <div className="bg-purple-50 border-l-4 border-purple-500 p-4 mb-4 text-purple-800">
-                  <p>
-                    Mental milestones focus on psychological resilience and personal growth. 
-                    Regardless of your career path, developing emotional intelligence, 
-                    stress management, and mental well-being are key to long-term success 
-                    and personal satisfaction.
-                  </p>
-                </div>
-              )}
-              {activeTab === 'Educational Milestones' ? (
-                // Render Educational milestones - only Academic Milestones
-                milestones[activeTab]?.['Academic Milestones']?.length > 0 ? (
-                  milestones[activeTab]['Academic Milestones']?.map((item) => (
-                    <div key={item.milestoneId} className="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-start justify-between">
-                      <div className="flex-1 sm:pr-4">
-                        <h3 className="font-bold text-lg text-white">
-                          • <span className="font-normal break-words">{item.milestoneDescription}</span>
-                        </h3>
-                      </div>
-                      <button
-                        onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
-                        className={`w-full sm:ml-4 sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 ${
-                          item.milestoneCompletionStatus ? 'bg-green-600' : 'bg-sky-600'
-                        }`}
-                      >
-                        {item.milestoneCompletionStatus ? (
-                          <>
-                            <CheckCircle className="mr-2" /> {t('buttons.completed')}
-                          </>
-                        ) : (
-                          t('buttons.complete')
-                        )}
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-400 text-center">{LoadMessage}</p>
-                )
-              ) : (
-
-              // Render other milestone categories as before
-              milestones[activeTab]?.length > 0 ? (
-                milestones[activeTab]?.map((item) => (
-                  <div key={item.milestoneId} className="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-start justify-between">
+          <div className="bg-gray-800 p-3 p-4 md:p-6 shadow-lg min-h-[300px]">
+            {activeTab === 'Physical Milestones' && (
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-3 p-4 mb-4 text-blue-800 text-sm md:text-base">
+                <p>
+                  Physical milestones are crucial for holistic personal development. 
+                  Even in careers that may seem primarily mental or desk-bound, 
+                  maintaining physical health can significantly impact your professional performance 
+                  and overall well-being.
+                </p>
+              </div>
+            )}
+            
+            {activeTab === 'Mental Milestones' && (
+              <div className="bg-purple-50 border-l-4 border-purple-500 p-3 p-4 mb-4 text-purple-800 text-sm md:text-base">
+                <p>
+                  Mental milestones focus on psychological resilience and personal growth. 
+                  Regardless of your career path, developing emotional intelligence, 
+                  stress management, and mental well-being are key to long-term success 
+                  and personal satisfaction.
+                </p>
+              </div>
+            )}
+            
+            {activeTab === 'Educational Milestones' ? (
+              // Render Educational milestones - only Academic Milestones
+              milestones[activeTab]?.['Academic Milestones']?.length > 0 ? (
+                milestones[activeTab]['Academic Milestones']?.map((item) => (
+                  <div key={item.milestoneId} className="mb-4 mb-6 flex flex-col sm:flex-row gap-2 sm:gap-0 sm:items-start justify-between">
                     <div className="flex-1 sm:pr-4">
-                      <h3 className="font-bold text-lg text-white">
-                        • <span className="font-normal break-words">{item.milestoneDescription}</span>
+                      <h3 className="font-bold text-base text-lg md:text-lg text-white">
+                        • <span className="font-normal break-words text-sm md:text-base">{item.milestoneDescription}</span>
                       </h3>
                     </div>
                     <button
                       onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
-                      className={`w-full sm:ml-4 sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      className={`w-full sm:ml-4 sm:w-[150px] px-3 px-4 py-1.5 py-2 font-semibold text-xs text-sm md:text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 ${
                         item.milestoneCompletionStatus ? 'bg-green-600' : 'bg-sky-600'
                       }`}
                     >
                       {item.milestoneCompletionStatus ? (
                         <>
-                          <CheckCircle className="mr-2" /> {t('buttons.completed')}
+                          <CheckCircle className="mr-1 mr-2 w-4 h-4" /> {t('buttons.completed')}
                         </>
                       ) : (
                         t('buttons.complete')
@@ -333,7 +253,36 @@ function RoadMap({ selectedCareer }) {
                   </div>
                 ))
               ) : (
-                <p className="text-gray-400 text-center">{LoadMessage}</p>
+                <p className="text-gray-400 text-center text-sm md:text-base">{LoadMessage}</p>
+              )
+            ) : (
+              // Render other milestone categories as before
+              milestones[activeTab]?.length > 0 ? (
+                milestones[activeTab]?.map((item) => (
+                  <div key={item.milestoneId} className="mb-4 mb-6 flex flex-col sm:flex-row gap-2 sm:gap-0 sm:items-start justify-between">
+                    <div className="flex-1 sm:pr-4">
+                      <h3 className="font-bold text-base text-lg md:text-lg text-white">
+                        • <span className="font-normal break-words text-sm md:text-base">{item.milestoneDescription}</span>
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
+                      className={`w-full sm:ml-4 sm:w-[150px] px-3 px-4 py-1.5 py-2 font-semibold text-xs text-sm md:text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 ${
+                        item.milestoneCompletionStatus ? 'bg-green-600' : 'bg-sky-600'
+                      }`}
+                    >
+                      {item.milestoneCompletionStatus ? (
+                        <>
+                          <CheckCircle className="mr-1 mr-2 w-4 h-4" /> {t('buttons.completed')}
+                        </>
+                      ) : (
+                        t('buttons.complete')
+                      )}
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-400 text-center text-sm md:text-base">{LoadMessage}</p>
               )
             )}
           </div>
