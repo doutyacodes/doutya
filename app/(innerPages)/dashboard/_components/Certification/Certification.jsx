@@ -164,33 +164,33 @@ function Certification({ selectedCareer }) {
         />
 
       {/* Certifications Content */}
-      <div className="bg-gray-800 p-4 md:p-6 shadow-lg min-h-[300px]">
-        <h2 className="text-xl md:text-2xl font-bold text-white mb-6">Certifications</h2>
+      <div className="bg-gray-800 p-3 p-4 md:p-6 shadow-lg min-h-[300px]">
+        <h2 className="text-lg text-xl md:text-2xl font-bold text-white mb-4 mb-6">Certifications</h2>
         
         {certificationData.length === 0 ? (
           <div className="flex items-center justify-center h-[200px]">
-            <p className="text-gray-400">{loadMessage}</p>
+            <p className="text-gray-400 text-sm md:text-base">{loadMessage}</p>
           </div>
         ) : (
           certificationData.map((item) => (
-            <div key={item.milestoneId} className="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-start justify-between border border-gray-700 rounded-lg p-4">
+            <div key={item.milestoneId} className="mb-4 mb-6 flex flex-col sm:flex-row gap-2 gap-3 sm:gap-0 sm:items-start justify-between border border-gray-700 rounded-lg p-3 p-4">
               <div className="flex-1 sm:pr-4">
-                <h3 className="font-bold text-lg text-white">
-                  <span className="font-normal break-words">{item.milestoneDescription}</span>
+                <h3 className="font-bold text-base text-lg text-white">
+                  <span className="font-normal break-words text-sm md:text-base">{item.milestoneDescription}</span>
                 </h3>
               </div>
               <div className="flex flex-col sm:flex-row gap-2">
               {item.certificationCompletedStatus === 'yes' ? (
                 <button
                     onClick={() => router.push(`/certification-results/${item.certificationId}`)}
-                    className="w-full sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-green-500"
+                    className="w-full sm:w-[150px] px-3 px-4 py-1.5 py-2 font-semibold text-xs text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-green-500"
                 >
                     View Certification
                 </button>
                 ) : (
                 <button
                     onClick={() => handleStartCertification(item.certificationId)}
-                    className="w-full sm:w-[150px] px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-orange-500"
+                    className="w-full sm:w-[150px] px-3 px-4 py-1.5 py-2 font-semibold text-xs text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-orange-500"
                 >
                     Get Certified
                 </button>
