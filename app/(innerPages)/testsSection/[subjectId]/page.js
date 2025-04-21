@@ -207,6 +207,7 @@ useEffect(() => {
       questionId: questions[currentQuestionIndex].id,
       answerId: selectedChoice ? selectedChoice.id : 0,
       testId: questions[currentQuestionIndex].testId,
+      isAnswer: "no",
       marks: 0,
     };
     quizProgressSubmit(answer);

@@ -44,20 +44,6 @@ export async function GET(request) {
                                     )
                                     .execute();
 
-        // const completedTests = await db
-        //     .select({
-        //         subjectId: SUBJECTS.subject_id,
-        //         subjectName: SUBJECTS.subject_name,
-        //         totalStars: sql`SUM(${USER_TESTS.stars_awarded})`.as('totalStars'),
-        //         totalScore: sql`SUM(${USER_TESTS.score})`.as('totalScore')
-        //     })
-        //     .from(USER_TESTS)
-        //     .innerJoin(TESTS, eq(USER_TESTS.test_id, TESTS.test_id))
-        //     .innerJoin(SUBJECTS, eq(TESTS.subject_id, SUBJECTS.subject_id))
-        //     .where(and(eq(USER_TESTS.user_id, userId), eq(USER_TESTS.completed, 'yes')))
-        //     .groupBy(SUBJECTS.subject_id, SUBJECTS.subject_name) // Include both columns in GROUP BY
-        //     .execute();
-
         const completedTests = await db
             .select({
                 subjectId: SUBJECTS.subject_id,
@@ -93,7 +79,8 @@ export async function GET(request) {
                     subject: subject.subjectName,
                     score: totalStars,
                     total: currentWeek,
-                    passed: passed
+                    passed: passed,
+                    completed: testData ? true : false 
                 };
             });
 

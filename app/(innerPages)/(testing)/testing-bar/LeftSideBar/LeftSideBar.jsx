@@ -96,7 +96,8 @@ const LeftSideBar = () => {
   };
 
   const handleLinkClick = () => {
-    if (isOpen) {
+    // Only close the sidebar on mobile devices (screen width < 768px)
+    if (isOpen && window.innerWidth < 768) {
       toggleSidebars();
     }
   };
@@ -160,16 +161,16 @@ const LeftSideBar = () => {
       link: "/dashboard/user-profile",
       submenus: [],
     },
-    {
-      name: "School Activities",
-      icon: <FaBuilding className="text-base" />,
-      link: "#",
-      submenus: [
-        { name: "Challenges", link: "/institution/challenges" },
-        { name: "Tests", link: "/institution/tests" },
-        { name: "Community", link: "/institution/community" },
-      ],
-    },
+    // {
+    //   name: "School Activities",
+    //   icon: <FaBuilding className="text-base" />,
+    //   link: "#",
+    //   submenus: [
+    //     { name: "Challenges", link: "/institution/challenges" },
+    //     { name: "Tests", link: "/institution/tests" },
+    //     { name: "Community", link: "/institution/community" },
+    //   ],
+    // },
     {
       name: "Sign Out",
       icon: <FaCog className="text-base" />,
@@ -250,6 +251,7 @@ const LeftSideBar = () => {
                             toggleDropdown(menu.name); // Toggle dropdown for menus with submenus
                           } else if (menu.link) {
                             router.push(menu.link); // Directly navigate if no submenus
+                            handleLinkClick(); //this line to close sidebar on mobile
                           }
                           if (menu.onClick) menu.onClick(); // Execute any extra function if provided
                         }
@@ -267,7 +269,7 @@ const LeftSideBar = () => {
                       <ul className="ml-8 space-y-3 mt-3">
                         {menu.submenus.map((submenu, subIndex) => (
                           <li key={subIndex}>
-                            <Link href={submenu.link} className="text-white hover:underline">
+                            <Link href={submenu.link} className="text-white hover:underline" onClick={handleLinkClick}>
                               {submenu.name}
                             </Link>
                           </li>
@@ -280,12 +282,12 @@ const LeftSideBar = () => {
                   {isCareersDropdownOpen && isOpen && (
                     <ul className="ml-8 space-y-3 mt-3">
                       <li>
-                        <Link href="/dashboard/careers/career-suggestions" className="text-white hover:underline">
+                        <Link href="/dashboard/careers/career-suggestions" className="text-white hover:underline" onClick={handleLinkClick}>
                           Career Suggestions
                         </Link>
                       </li>
                       <li>
-                        <Link href="/dashboard/careers/career-guide" className="text-white hover:underline">
+                        <Link href="/dashboard/careers/career-guide" className="text-white hover:underline" onClick={handleLinkClick}>
                           Career Guide
                         </Link>
                       </li>
@@ -314,12 +316,12 @@ const LeftSideBar = () => {
                   </div>
                     {guideDropdownOpen && isOpen && (
                       <ul className="ml-8 space-y-3 mt-3">
-                        <li>
+                        <li onClick={handleLinkClick}>
                           <div onClick={()=>openInstructions('intro')} className="text-white cursor-pointer hover:underline">
                             Introduction
                           </div>
                         </li>
-                        <li>
+                        <li onClick={handleLinkClick}>
                           <div onClick={()=>openInstructions('career-guide')} className="text-white cursor-pointer hover:underline ">
                             Carrer Guide
                           </div>
