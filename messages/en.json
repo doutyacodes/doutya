@@ -147,10 +147,11 @@
   },
   "CareerPage": {
     "careers": "Careers",
-    "roadmap": "Roadmap",
+    "roadmap": "MIlestones",
     "careerPath": "Career Path",
     "contests": "Contests",
     "assessment": "Assessment",
+    "mentor": "Mentorship",
     "certification": "Certification",
     "feedback": "Feedback",
     "challenges": "Challenges",

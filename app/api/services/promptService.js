@@ -28,7 +28,7 @@ export const dynamic = 'force-dynamic';
         industry === "any" ? "" : `in the ${industry}`
     } ${
         country ? "in " + country : ""
-    } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}. Include 3 traditional careers, 3 trending careers, 3 entrepreneurial careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Additionally, provide ${
+    } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}. Include 3 traditional careers, 3 trending careers, 3 AI-proof career 3 entrepreneurial careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Additionally, provide ${
         finalAge >= 18
         ? "3 futuristic careers for individual aged " +
             finalAge +
@@ -40,7 +40,7 @@ export const dynamic = 'force-dynamic';
     }(currently in week ${currentAgeWeek} of this age)
     Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
             career_name: A brief title of the career.
-            type: trending, offbeat, traditional, futuristic, entrepreneurial, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
+            type: trending, offbeat, traditional, futuristic, ai-proof, entrepreneurial, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
             
             Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data. Provide the response ${
         languageOptions[language] || "in English"

@@ -305,6 +305,8 @@ export default function Results2({step, setStep}) {
       "In the digital age, many careers now revolve around technology and online platforms, offering flexible and remote opportunities.",
     entrepreneurial:
     "Entrepreneurial careers involve starting and managing businesses, requiring innovation, risk-taking, and strategic thinking. These roles offer independence and the potential for high rewards but also demand resilience and adaptability.",
+    "ai-proof": 
+    "AI-proof careers are roles that are less likely to be replaced by artificial intelligence or automation. They rely on human qualities like empathy, creativity, critical thinking, and hands-on skills, making them resilient in an increasingly automated world.",
   };
 
   const careerColors = {
@@ -541,6 +543,7 @@ export default function Results2({step, setStep}) {
                       "offbeat",
                       "traditional",
                       "futuristic",
+                      "ai-proof",
                       "entrepreneurial",
                       "normal",
                       "hybrid",
