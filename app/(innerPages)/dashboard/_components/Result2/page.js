@@ -903,219 +903,137 @@ const getPrevCategory = () => {
                   })}
                 </div>
               </>
-              ) : (
-                  <>
-                  <>
-  {/* Mobile Tabs with uppercase text */}
-  <div className="md:hidden px-4 mb-6">
-    <div className="flex overflow-x-auto pb-2 gap-2">
-      {[
-        "trending",
-        "offbeat",
-        "traditional",
-        "futuristic",
-        "ai-proof",
-        "entrepreneurial",
-        "hybrid",
-        "creative",
-        "sustainable and green",
-        "social impact",
-        "tech-driven",
-        "experiential",
-        "digital and online"
-      ].map((category) => {
-        const hasCareers = resultData.some(c => c.type === category);
-        
-        return hasCareers ? (
-          <button
-            key={category}
-            onClick={() => setActiveTab(category)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap uppercase ${
-              activeTab === category
-                ? 'bg-[#7824f6] text-white'
-                : 'bg-[#2c2c2c] text-gray-300 hover:bg-[#3a3a3a]'
-            }`}
-          >
-            {category}
-          </button>
-        ) : null;
-      })}
-    </div>
-  </div>
-
-  {/* Floating navigation buttons for mobile */}
-  <div className="md:hidden">
-    {/* Left navigation button */}
-    <button
-      onClick={() => handleCategoryNavigation('prev')}
-      className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 bg-opacity-70 rounded-full p-2 shadow-lg z-50 transition-opacity duration-300"
-      id="prevCategoryBtn"
-    >
-      <FaChevronLeft size={16} color="white" />
-      <span className="sr-only">Previous category</span>
-    </button>
+              ) : singleCareer ? (
+                <>
+                  <div className="space-y-8 px-4 md:px-10">
+                    <div className="grid grid-cols-12 gap-6">
+                      {singleCareer?.reason_for_recommendation && (
+                        <div className="col-span-12 rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
+                          <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#00bf63]">
+                            <p className="text-white font-bold text-lg uppercase text-center">
+                              {t("careerSuitability")}
+                            </p>
+                          </div>
+                          <div className="bg-[#2a2b27] p-6 min-h-[150px]">
+                            <p className="text-gray-200 leading-relaxed">
+                              {singleCareer?.reason_for_recommendation}
+                            </p>
+                          </div>
+                        </div>
+                      )}
     
-    {/* Right navigation button */}
-    <button
-      onClick={() => handleCategoryNavigation('next')}
-      className="fixed right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 bg-opacity-70 rounded-full p-2 shadow-lg z-50 transition-opacity duration-300"
-      id="nextCategoryBtn"
-    >
-      <FaChevronRight size={16} color="white" />
-      <span className="sr-only">Next category</span>
-    </button>
-  </div>
-
-  {/* Desktop Layout - unchanged */}
-  <div className="hidden md:block px-4">
-    {/* Desktop content remains the same */}
-    {[
-      "trending",
-      "offbeat",
-      "traditional",
-      "futuristic",
-      "ai-proof",
-      "entrepreneurial",
-      "hybrid",
-      "creative",
-      "sustainable and green",
-      "social impact",
-      "tech-driven",
-      "experiential",
-      "digital and online"
-    ].map((category) => {
-      const careersInCategory = resultData
-        .map((career, originalIndex) => ({ career, originalIndex }))
-        .filter(({ career }) => career.type === category);
-
-      return (
-        careersInCategory.length > 0 && (
-          <div key={category} className="mb-12">
-            <div className="flex items-center mb-3">
-              <h2 className="text-2xl font-bold capitalize text-[#7824f6]">
-                {category} Careers
-              </h2>
-              <div className="h-0.5 bg-[#3a3a3a] flex-grow ml-4 rounded-full"></div>
-            </div>
-            <p className="text-sm text-gray-300 mb-6 max-w-3xl">
-              {careerDescriptions[category]}
-            </p>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {careersInCategory.map(({ career, originalIndex }) => (
-                <div
-                  key={originalIndex}
-                  className="bg-[#292931] rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group border-b-4 border-[#7824f6] hover:translate-y-[-3px]"
-                >
-                  <div className="h-20 bg-[#35354a] flex items-center justify-center p-4">
-                    <h4 className="text-white text-lg font-bold text-center">
-                      {career.career_name}
-                    </h4>
-                  </div>
-                  <div className="p-5 flex flex-col justify-between h-32 bg-gradient-to-b from-[#292931] to-[#232329]">
-                    <p className="text-gray-300 text-sm mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
-                      Discover salary potential, growth outlook, and required skills...
-                    </p>
-                    <div className="w-full flex justify-end">
+                      <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {singleCareer?.present_trends && (
+                          <div className="rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
+                            <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#ffa000]">
+                              <p className="text-white font-bold text-sm uppercase text-center">
+                                {t("presentTrends")}
+                              </p>
+                            </div>
+                            <div className="bg-[#2a2b27] p-4 min-h-[180px]">
+                              <p className="text-gray-200 text-sm">
+                                {singleCareer?.present_trends}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+    
+                        {singleCareer?.future_prospects && (
+                          <div className="rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
+                            <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#7824f6]">
+                              <p className="text-white font-bold text-sm uppercase text-center">
+                                {t("futureProspects")} ({singleCareer?.currentYear} - {singleCareer?.tillYear})
+                              </p>
+                            </div>
+                            <div className="bg-[#2a2b27] p-4 min-h-[180px]">
+                              <p className="text-gray-200 text-sm">
+                                {singleCareer?.future_prospects}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+    
+                        {singleCareer?.beyond_prospects && (
+                          <div className="rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
+                            <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#9333ea]">
+                              <p className="text-white font-bold text-sm uppercase text-center">
+                                {t("futureProspects")} ({singleCareer?.tillYear + 1} and beyond)
+                              </p>
+                            </div>
+                            <div className="bg-[#2a2b27] p-4 min-h-[180px]">
+                              <p className="text-gray-200 text-sm">
+                                {singleCareer?.beyond_prospects}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+    
+                        {singleCareer?.salary && (
+                          <div className="rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
+                            <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#5ce1e6]">
+                              <p className="text-white font-bold text-sm uppercase text-center">
+                                Salary
+                              </p>
+                            </div>
+                            <div className="bg-[#2a2b27] p-4 min-h-[180px]">
+                              <p className="text-gray-200 text-sm">
+                                {singleCareer?.salary}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+    
+                      {singleCareer?.expenses && (
+                        <div className="col-span-12 rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
+                          <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#ff0000]">
+                            <p className="text-white font-bold text-sm uppercase text-center">
+                              {t("expenses")}
+                            </p>
+                          </div>
+                          <div className="bg-[#2a2b27] p-4">
+                            <p className="text-gray-200 text-sm">
+                              {singleCareer?.expenses}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+    
+                    <div className="flex justify-center items-center">
                       <button
+                        className={`font-bold text-center md:py-4 md:px-7 py-3 px-5 max-md:text-sm uppercase rounded-md shadow-md transition-all duration-300 ${
+                          saveResultloading || singleCareer?.isCareerMoved
+                            ? "bg-gray-600 cursor-not-allowed"
+                            : "bg-[#00bf63] hover:bg-[#00a857] text-white"
+                        }`}
                         onClick={() => {
-                          setCareerIndex(originalIndex);
-                          fetchCareer(career.career_name);
+                          handleSaveResult(
+                            careerIndex,
+                            singleCareer.career_name
+                          );
                         }}
-                        className="bg-[#7824f6] hover:bg-[#6620d0] rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
+                        disabled={
+                          saveResultloading || singleCareer?.isCareerMoved
+                        }
                       >
-                        <p className="text-sm text-white font-medium">
-                          {t("readMore")}
-                        </p>
-                        <FaChevronRight size={12} color="white" />
+                        {saveResultloading ? (
+                          <div className="flex items-center">
+                            <LoaderIcon className="w-5 h-5 text-white animate-spin mr-2" />
+                            {t("saving")}
+                          </div>
+                        ) : (
+                          <p>
+                            {singleCareer?.isCareerMoved
+                              ? t("alreadyMoved")
+                              : t("moveCareer")}
+                          </p> 
+                        )}
                       </button>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )
-      );
-    })}
-  </div>
-
-  {/* Mobile Category Content with different colors for each category */}
-  <div className="md:hidden px-4">
-    {[
-      {category: "trending", color: "#7824f6"},
-      {category: "offbeat", color: "#e74c3c"},
-      {category: "traditional", color: "#2980b9"},
-      {category: "futuristic", color: "#1abc9c"},
-      {category: "ai-proof", color: "#f39c12"},
-      {category: "entrepreneurial", color: "#27ae60"},
-      {category: "hybrid", color: "#8e44ad"},
-      {category: "creative", color: "#d35400"},
-      {category: "sustainable and green", color: "#2ecc71"},
-      {category: "social impact", color: "#c0392b"},
-      {category: "tech-driven", color: "#3498db"},
-      {category: "experiential", color: "#16a085"},
-      {category: "digital and online", color: "#9b59b6"}
-    ].map(({category, color}) => {
-      const careersInCategory = resultData
-        .map((career, originalIndex) => ({ career, originalIndex }))
-        .filter(({ career }) => career.type === category);
-
-      return (activeTab === category && careersInCategory.length > 0) && (
-        <div key={category} className="mb-12">
-          <div className="flex items-center mb-3">
-            <h2 className="text-2xl font-bold capitalize" style={{color: color}}>
-              {category} Careers
-            </h2>
-            <div className="h-0.5 bg-[#3a3a3a] flex-grow ml-4 rounded-full"></div>
-          </div>
-          <p className="text-sm text-gray-300 mb-6 max-w-3xl">
-            {careerDescriptions[category]}
-          </p>
-          
-          <div className="grid grid-cols-1 gap-6">
-            {careersInCategory.map(({ career, originalIndex }) => (
-              <div
-                key={originalIndex}
-                className="bg-[#292931] rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:translate-y-[-3px]"
-                style={{borderBottom: `4px solid ${color}`}}
-              >
-                <div className="h-20 flex items-center justify-center p-4" 
-                     style={{background: `linear-gradient(to right, ${color}20, ${color}35)`}}>
-                  <h4 className="text-white text-lg font-bold text-center">
-                    {career.career_name}
-                  </h4>
-                </div>
-                <div className="p-5 flex flex-col justify-between h-32 bg-gradient-to-b from-[#292931] to-[#232329]">
-                  <p className="text-gray-300 text-sm mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
-                    Discover salary potential, growth outlook, and required skills...
-                  </p>
-                  <div className="w-full flex justify-end">
-                    <button
-                      onClick={() => {
-                        setCareerIndex(originalIndex);
-                        fetchCareer(career.career_name);
-                      }}
-                      className="rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
-                      style={{backgroundColor: color, hover: {backgroundColor: `${color}dd`}}}
-                    >
-                      <p className="text-sm text-white font-medium">
-                        {t("readMore")}
-                      </p>
-                      <FaChevronRight size={12} color="white" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    })}
-  </div>
-</>
                 </>
-              )}
+              ) : null}
             </div>
           </div>
         )}
