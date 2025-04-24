@@ -106,97 +106,15 @@ export default function Results2({step, setStep}) {
     }
   }, [resultData]);
 
-  // useEffect(() => {
-  //   // First check if resultData exists and is an array
-  //   if (!resultData || !Array.isArray(resultData)) {
-  //     return; // Exit early if resultData isn't available yet
-  //   }
-    
-  //   const categories = [
-  //     "trending",
-  //     "offbeat",
-  //     "traditional",
-  //     "futuristic",
-  //     "ai-proof",
-  //     "entrepreneurial",
-  //     "hybrid",
-  //     "creative",
-  //     "sustainable and green",
-  //     "social impact",
-  //     "tech-driven",
-  //     "experiential",
-  //     "digital and online"
-  //   ].filter(category => resultData.some(c => c.type === category));
-    
-  //   // Track if timer is active to prevent multiple timers
-  //   let hideTimeout;
-    
-  //   // Function to hide buttons with smooth transition
-  //   const hideButtons = () => {
-  //     const prevBtn = document.getElementById('prevCategoryBtn');
-  //     const nextBtn = document.getElementById('nextCategoryBtn');
-      
-  //     if (prevBtn) prevBtn.style.opacity = '0';
-  //     if (nextBtn) nextBtn.style.opacity = '0';
-  //   };
-    
-  //   // Show buttons with smooth transition
-  //   const showButtons = () => {
-  //     // Clear any existing timeout to prevent jerky behavior
-  //     if (hideTimeout) {
-  //       clearTimeout(hideTimeout);
-  //     }
-      
-  //     const prevBtn = document.getElementById('prevCategoryBtn');
-  //     const nextBtn = document.getElementById('nextCategoryBtn');
-      
-  //     if (prevBtn) {
-  //       prevBtn.style.opacity = '1';
-  //       prevBtn.style.transition = 'opacity 0.3s ease-in-out';
-  //     }
-  //     if (nextBtn) {
-  //       nextBtn.style.opacity = '1';
-  //       nextBtn.style.transition = 'opacity 0.3s ease-in-out';
-  //     }
-      
-  //     // Set new timeout
-  //     hideTimeout = setTimeout(hideButtons, 3000);
-  //   };
-    
-  //   // Debounce function to prevent excessive calls
-  //   const debounce = (func, delay) => {
-  //     let debounceTimer;
-  //     return function() {
-  //       const context = this;
-  //       const args = arguments;
-  //       clearTimeout(debounceTimer);
-  //       debounceTimer = setTimeout(() => func.apply(context, args), delay);
-  //     };
-  //   };
-    
-  //   // Debounced handler for user interactions
-  //   const handleUserInteraction = debounce(() => {
-  //     showButtons();
-  //   }, 100);
-    
-  //   // Add event listeners
-  //   window.addEventListener('scroll', handleUserInteraction);
-  //   window.addEventListener('touchstart', handleUserInteraction);
-  //   window.addEventListener('mousemove', handleUserInteraction);
-    
-  //   // Show buttons initially
-  //   showButtons();
-    
-  //   // Clean up event listeners and timers
-  //   return () => {
-  //     window.removeEventListener('scroll', handleUserInteraction);
-  //     window.removeEventListener('touchstart', handleUserInteraction);
-  //     window.removeEventListener('mousemove', handleUserInteraction);
-  //     if (hideTimeout) {
-  //       clearTimeout(hideTimeout);
-  //     }
-  //   };
-  // }, [resultData]);
+/* -------------------------------------------------------------- */
+
+useEffect(() => {
+  // Find the active tab button and scroll it into view
+  const activeTabElement = document.querySelector(`button[class*="bg-[#7824f6]"]`);
+  if (activeTabElement) {
+    activeTabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+}, [activeTab]);
 
 // Function to navigate to next or previous category
 const handleCategoryNavigation = (direction) => {
@@ -276,7 +194,6 @@ const getPrevCategory = () => {
   const prevIndex = currentIndex - 1 < 0 ? categories.length - 1 : currentIndex - 1;
   return categories[prevIndex];
 };
-
 
 /* -------------------------------------------------------------- */
 
@@ -731,8 +648,8 @@ const getPrevCategory = () => {
                   {/* Left navigation button */}
                   <button
                     onClick={() => handleCategoryNavigation('prev')}
-                    className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-[#b71c1c] bg-opacity-95 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-[#e53935]"
-                    // className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-80 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-gray-600"
+                    // className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-[#7824f6] bg-opacity-95 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-[#9b4dff]"
+                    className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-[#7824f6] bg-opacity-95 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-[#9b4dff]"
                     id="prevCategoryBtn"
                   >
                     <FaChevronLeft size={16} color="white" className="mr-2" />
@@ -744,7 +661,7 @@ const getPrevCategory = () => {
                   {/* Right navigation button */}
                   <button
                     onClick={() => handleCategoryNavigation('next')}
-                    className="fixed right-2 top-1/2  transform -translate-y-1/2 bg-[#b71c1c] bg-opacity-95 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-[#e53935]"
+                    className="fixed right-2 top-1/2  transform -translate-y-1/2 bg-[#7824f6] bg-opacity-95 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-[#9b4dff]"
                     // className="fixed right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-80 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-gray-600"
                     id="nextCategoryBtn"
                   >
@@ -908,74 +825,74 @@ const getPrevCategory = () => {
                   <div className="space-y-8 px-4 md:px-10">
                     <div className="grid grid-cols-12 gap-6">
                       {singleCareer?.reason_for_recommendation && (
-                        <div className="col-span-12 rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
-                          <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#00bf63]">
+                        <div className="col-span-12 rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
+                          <div className="bg-gradient-to-r from-[#00bf63] to-[#00bf6320] py-3 border-l-4 border-[#00bf63]">
                             <p className="text-white font-bold text-lg uppercase text-center">
                               {t("careerSuitability")}
                             </p>
                           </div>
-                          <div className="bg-[#2a2b27] p-6 min-h-[150px]">
+                          <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-6 min-h-[150px]">
                             <p className="text-gray-200 leading-relaxed">
                               {singleCareer?.reason_for_recommendation}
                             </p>
                           </div>
                         </div>
                       )}
-    
+
                       <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {singleCareer?.present_trends && (
-                          <div className="rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
-                            <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#ffa000]">
+                          <div className="rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
+                            <div className="bg-gradient-to-r from-[#ffa000] to-[#ffa00020] py-3 border-l-4 border-[#ffa000]">
                               <p className="text-white font-bold text-sm uppercase text-center">
                                 {t("presentTrends")}
                               </p>
                             </div>
-                            <div className="bg-[#2a2b27] p-4 min-h-[180px]">
+                            <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4 min-h-[180px]">
                               <p className="text-gray-200 text-sm">
                                 {singleCareer?.present_trends}
                               </p>
                             </div>
                           </div>
                         )}
-    
+
                         {singleCareer?.future_prospects && (
-                          <div className="rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
-                            <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#7824f6]">
+                          <div className="rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
+                            <div className="bg-gradient-to-r from-[#7824f6] to-[#7824f620] py-3 border-l-4 border-[#7824f6]">
                               <p className="text-white font-bold text-sm uppercase text-center">
                                 {t("futureProspects")} ({singleCareer?.currentYear} - {singleCareer?.tillYear})
                               </p>
                             </div>
-                            <div className="bg-[#2a2b27] p-4 min-h-[180px]">
+                            <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4 min-h-[180px]">
                               <p className="text-gray-200 text-sm">
                                 {singleCareer?.future_prospects}
                               </p>
                             </div>
                           </div>
                         )}
-    
+
                         {singleCareer?.beyond_prospects && (
-                          <div className="rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
-                            <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#9333ea]">
+                          <div className="rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
+                            <div className="bg-gradient-to-r from-[#9333ea] to-[#9333ea20] py-3 border-l-4 border-[#9333ea]">
                               <p className="text-white font-bold text-sm uppercase text-center">
                                 {t("futureProspects")} ({singleCareer?.tillYear + 1} and beyond)
                               </p>
                             </div>
-                            <div className="bg-[#2a2b27] p-4 min-h-[180px]">
+                            <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4 min-h-[180px]">
                               <p className="text-gray-200 text-sm">
                                 {singleCareer?.beyond_prospects}
                               </p>
                             </div>
                           </div>
                         )}
-    
+
                         {singleCareer?.salary && (
-                          <div className="rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
-                            <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#5ce1e6]">
+                          <div className="rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
+                            <div className="bg-gradient-to-r from-[#5ce1e6] to-[#5ce1e620] py-3 border-l-4 border-[#5ce1e6]">
                               <p className="text-white font-bold text-sm uppercase text-center">
                                 Salary
                               </p>
                             </div>
-                            <div className="bg-[#2a2b27] p-4 min-h-[180px]">
+                            <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4 min-h-[180px]">
                               <p className="text-gray-200 text-sm">
                                 {singleCareer?.salary}
                               </p>
@@ -983,15 +900,15 @@ const getPrevCategory = () => {
                           </div>
                         )}
                       </div>
-    
+
                       {singleCareer?.expenses && (
-                        <div className="col-span-12 rounded-md overflow-hidden shadow-md border border-[#3a3a3a]">
-                          <div className="bg-[#2c2c2c] py-3 border-l-4 border-[#ff0000]">
+                        <div className="col-span-12 rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
+                          <div className="bg-gradient-to-r from-[#ff0000] to-[#ff000020] py-3 border-l-4 border-[#ff0000]">
                             <p className="text-white font-bold text-sm uppercase text-center">
                               {t("expenses")}
                             </p>
                           </div>
-                          <div className="bg-[#2a2b27] p-4">
+                          <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4">
                             <p className="text-gray-200 text-sm">
                               {singleCareer?.expenses}
                             </p>
@@ -999,13 +916,13 @@ const getPrevCategory = () => {
                         </div>
                       )}
                     </div>
-    
+
                     <div className="flex justify-center items-center">
                       <button
                         className={`font-bold text-center md:py-4 md:px-7 py-3 px-5 max-md:text-sm uppercase rounded-md shadow-md transition-all duration-300 ${
                           saveResultloading || singleCareer?.isCareerMoved
                             ? "bg-gray-600 cursor-not-allowed"
-                            : "bg-[#00bf63] hover:bg-[#00a857] text-white"
+                            : "bg-gradient-to-r from-[#00bf63] to-[#00a857] hover:from-[#00a857] hover:to-[#009e52] text-white transform hover:translate-y-[-2px]"
                         }`}
                         onClick={() => {
                           handleSaveResult(
