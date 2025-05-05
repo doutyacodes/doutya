@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FaChevronRight, FaCheck, FaInfoCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
+import CareerStripe from "@/app/_components/CareerStripe";
 
 export default function SectorSelectionPage() {
   const [user, setUser] = useState({
@@ -16,6 +17,7 @@ export default function SectorSelectionPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [confirmingSector, setConfirmingSector] = useState(null);
+  const [selectedCareer, setSelectedCareer] = useState(null);
   const router = useRouter();
   
   // Get token from localStorage when component mounts
@@ -176,7 +178,7 @@ export default function SectorSelectionPage() {
   
       // If this is the first sector added, redirect to career guide page
       if (userSectors.length === 0) {
-        router.push("/career-guide");
+        router.push("/dashboard/careers/career-guide");
       }
     } catch (err) {
       console.error("Error saving sector:", err);
@@ -212,113 +214,116 @@ export default function SectorSelectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a1a24] text-gray-200 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Career Sector Selection</h1>
-        <p className="text-lg text-gray-300 mb-2">
-            Based on your personality assessment results
-        </p>
-        <p className="text-gray-400">
-            Select sectors that interest you 
-            {user.plan_type === "base" && (
-            <span className="text-sm ml-1 text-yellow-400">
-                (Base plan: up to 2 sectors | Pro plan: up to 5 sectors)
-            </span>
-            )}
-        </p>
-        <div className="mt-4 bg-[#292931] py-2 px-4 rounded-lg inline-block">
-            <p className="text-sm">
-            Selected: <span className="font-bold text-[#7824f6]">{userSectors.length}</span> / 
-            <span className="font-bold">{maxSelections}</span>
-            </p>
-        </div>
+    <>
+      <CareerStripe selectedItem={selectedCareer} setSelectedItem={setSelectedCareer}/>
+      <div className="min-h-screen bg-[#1a1a24] text-gray-200 p-4 md:p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Career Sector Selection</h1>
+          <p className="text-lg text-gray-300 mb-2">
+              Based on your personality assessment results
+          </p>
+          <p className="text-gray-400">
+              Select sectors that interest you 
+              {user.plan_type === "base" && (
+              <span className="text-sm ml-1 text-yellow-400">
+                  (Base plan: up to 2 sectors | Pro plan: up to 5 sectors)
+              </span>
+              )}
+          </p>
+          <div className="mt-4 bg-[#292931] py-2 px-4 rounded-lg inline-block">
+              <p className="text-sm">
+              Selected: <span className="font-bold text-[#7824f6]">{userSectors.length}</span> / 
+              <span className="font-bold">{maxSelections}</span>
+              </p>
+          </div>
+          </div>
+
+          {/* Matching Sectors Section - Updated title */}
+          <div className="mb-10">
+              <div className="flex items-center mb-6">
+                  <div className="h-px flex-1 bg-[#7824f6]"></div>
+                  <h2 className="text-2xl font-bold mx-4 text-[#7824f6]">Recommended Sectors For You</h2>
+                  <div className="h-px flex-1 bg-[#7824f6]"></div>
+              </div>
+          
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {matchingSectors.map((sector) => (
+                  <SectorCard 
+                      key={sector.id} 
+                      sector={sector} 
+                      isSelected={isSectorSelected(sector.id)}
+                      onAddClick={() => handleAddSector(sector)}
+                      recommended={true}
+                      accentColor="#7824f6"
+                  />
+                  ))}
+              </div>
+          </div>
+
+          {/* Other Sectors Section - With added explanation */}
+          <div className="mb-10">
+          <div className="flex items-center mb-6">
+              <div className="h-px flex-1 bg-gray-700"></div>
+              <h2 className="text-2xl font-bold mx-4 text-gray-400">Other Available Sectors</h2>
+              <div className="h-px flex-1 bg-gray-700"></div>
+          </div>
+          
+          <p className="text-gray-400 text-center mb-6">
+              These sectors may not directly align with your personality assessment results, but you can still explore and add them if they interest you.
+          </p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {otherSectors.map((sector) => (
+              <SectorCard 
+                  key={sector.id} 
+                  sector={sector} 
+                  isSelected={isSectorSelected(sector.id)}
+                  onAddClick={() => handleAddSector(sector)}
+                  recommended={false}
+                  accentColor="#4a4a57"
+              />
+              ))}
+          </div>
+          </div>
         </div>
 
-        {/* Matching Sectors Section - Updated title */}
-        <div className="mb-10">
-            <div className="flex items-center mb-6">
-                <div className="h-px flex-1 bg-[#7824f6]"></div>
-                <h2 className="text-2xl font-bold mx-4 text-[#7824f6]">Recommended Sectors For You</h2>
-                <div className="h-px flex-1 bg-[#7824f6]"></div>
-            </div>
-        
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {matchingSectors.map((sector) => (
-                <SectorCard 
-                    key={sector.id} 
-                    sector={sector} 
-                    isSelected={isSectorSelected(sector.id)}
-                    onAddClick={() => handleAddSector(sector)}
-                    recommended={true}
-                    accentColor="#7824f6"
-                />
-                ))}
-            </div>
-        </div>
-
-        {/* Other Sectors Section - With added explanation */}
-        <div className="mb-10">
-        <div className="flex items-center mb-6">
-            <div className="h-px flex-1 bg-gray-700"></div>
-            <h2 className="text-2xl font-bold mx-4 text-gray-400">Other Available Sectors</h2>
-            <div className="h-px flex-1 bg-gray-700"></div>
-        </div>
-        
-        <p className="text-gray-400 text-center mb-6">
-            These sectors may not directly align with your personality assessment results, but you can still explore and add them if they interest you.
-        </p>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {otherSectors.map((sector) => (
-            <SectorCard 
-                key={sector.id} 
-                sector={sector} 
-                isSelected={isSectorSelected(sector.id)}
-                onAddClick={() => handleAddSector(sector)}
-                recommended={false}
-                accentColor="#4a4a57"
-            />
-            ))}
-        </div>
-        </div>
+          {/* Confirmation Modal */}
+          {confirmingSector && (
+          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+              <div className="bg-[#292931] rounded-xl p-6 max-w-md w-full">
+              <h3 className="text-xl font-bold text-white mb-4">Add Sector</h3>
+              <p className="text-gray-300 mb-6">
+                  Are you sure you want to add <span className="font-bold text-[#7824f6]">{confirmingSector.name}</span> to your selected sectors?
+              </p>
+              {user.plan_type === 'base' && userSectors.length >= 2 && (
+                  <div className="mb-4 p-3 bg-yellow-900 bg-opacity-30 border border-yellow-700 rounded-lg">
+                  <p className="text-yellow-400 text-sm flex items-start">
+                      <FaInfoCircle className="mr-2 mt-1 flex-shrink-0" />
+                      <span>Base plan users can only add up to 2 sectors. Upgrade to Pro to add up to 5 sectors.</span>
+                  </p>
+                  </div>
+              )}
+              <div className="flex gap-3 justify-end">
+                  <button
+                  onClick={() => setConfirmingSector(null)}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors"
+                  >
+                  Cancel
+                  </button>
+                  <button
+                  onClick={confirmAddSector}
+                  className="px-4 py-2 bg-[#7824f6] hover:bg-[#6620d0] text-white rounded-md transition-colors flex items-center gap-2"
+                  >
+                  <span>Confirm</span>
+                  <FaCheck size={12} />
+                  </button>
+              </div>
+              </div>
+          </div>
+          )}
       </div>
-
-        {/* Confirmation Modal */}
-        {confirmingSector && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-            <div className="bg-[#292931] rounded-xl p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold text-white mb-4">Add Sector</h3>
-            <p className="text-gray-300 mb-6">
-                Are you sure you want to add <span className="font-bold text-[#7824f6]">{confirmingSector.name}</span> to your selected sectors?
-            </p>
-            {user.plan_type === 'base' && userSectors.length >= 2 && (
-                <div className="mb-4 p-3 bg-yellow-900 bg-opacity-30 border border-yellow-700 rounded-lg">
-                <p className="text-yellow-400 text-sm flex items-start">
-                    <FaInfoCircle className="mr-2 mt-1 flex-shrink-0" />
-                    <span>Base plan users can only add up to 2 sectors. Upgrade to Pro to add up to 5 sectors.</span>
-                </p>
-                </div>
-            )}
-            <div className="flex gap-3 justify-end">
-                <button
-                onClick={() => setConfirmingSector(null)}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors"
-                >
-                Cancel
-                </button>
-                <button
-                onClick={confirmAddSector}
-                className="px-4 py-2 bg-[#7824f6] hover:bg-[#6620d0] text-white rounded-md transition-colors flex items-center gap-2"
-                >
-                <span>Confirm</span>
-                <FaCheck size={12} />
-                </button>
-            </div>
-            </div>
-        </div>
-        )}
-    </div>
+    </>
   );
 }
 

@@ -384,7 +384,7 @@ function SignUp() {
  if (step === "dob") {
   // Calculate age if selectedDOB exists
   const age = selectedDOB ? calculateAge(selectedDOB) : null;
-  const showCollegeConfirmation = age !== null && age <= 16;
+  // const showCollegeConfirmation = age !== null && age <= 16;
   
   return (
     <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
@@ -412,7 +412,7 @@ function SignUp() {
         </div>
         
         {/* College confirmation for users 16 or younger */}
-        {showCollegeConfirmation && (
+        {/* {showCollegeConfirmation && (
           <div className="mt-4 mb-6 p-4 border border-yellow-500 bg-yellow-900 bg-opacity-20 rounded-md">
             <p className="text-yellow-300 font-medium mb-2">Confirmation Required</p>
             <p className="text-gray-300 text-sm mb-3">
@@ -438,11 +438,11 @@ function SignUp() {
             </div>
           </div>
         )}
-        
+         */}
         <button
           onClick={handleNext}
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed"
-          disabled={!selectedDOB || dobError || (showCollegeConfirmation && !isCollegeStudent)}
+          disabled={!selectedDOB || dobError }
         >
           Next
         </button>

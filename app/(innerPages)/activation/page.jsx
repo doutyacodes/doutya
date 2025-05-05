@@ -707,9 +707,6 @@ const PlanSelection = () => {
                 onChange={(e) => setActivationKey(e.target.value)}
                 placeholder="Enter your activation key"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Use <strong>{selectedPlan === 'base' ? BASE_KEY : PRO_KEY}</strong> for demonstration
-              </p>
             </div>
             
             {error && (

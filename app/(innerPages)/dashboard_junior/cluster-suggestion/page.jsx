@@ -198,8 +198,7 @@ export default function ClusterSelectionPage() {
             </div>
             
             <p className="text-gray-400 text-center mb-6">
-                These clusters are generated specifically for you based on your MBTI type ({user.personality_type}) 
-                and RIASEC interests ({user.riasec_code})
+                These clusters are generated specifically for you based on your Peronality and Career interests
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -300,92 +299,72 @@ function ClusterCard({ cluster, isSelected, onAddClick, accentColor }) {
       
       <div className="p-5 flex flex-col justify-between bg-gradient-to-b from-[#292931] to-[#232329]">
         <div className={`mb-3 ${isExpanded ? "h-auto" : "h-20"}`}>
-          <p className="text-gray-300 text-sm mb-2">
+            <p className="text-gray-300 text-sm mb-2">
             {isExpanded ? cluster.description : shortDescription}
-          </p>
-          
-          {cluster.description && cluster.description.length > 80 && (
-            <button 
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="text-xs text-[#7824f6] hover:underline flex items-center"
-            >
-              {isExpanded ? (
-                <>
-                  <span>Show less</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                  </svg>
-                </>
-              ) : (
-                <>
-                  <span>Read more</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </>
-              )}
-            </button>
-          )}
-        </div>
-        
-        {/* Related Jobs Section */}
-        <div className="mb-4">
-          <button 
-            onClick={() => setShowJobs(!showJobs)}
-            className="text-sm font-medium text-[#7824f6] hover:underline flex items-center mb-2"
-          >
-            {showJobs ? (
-              <>
-                <span>Hide related jobs</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                </svg>
-              </>
-            ) : (
-              <>
-                <span>View related jobs</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </>
-            )}
-          </button>
-          
-          {showJobs && (
-            <div className="bg-[#1d1d26] p-3 rounded-md mb-3">
-              <h5 className="text-sm font-medium text-gray-300 mb-2">Related Career Paths:</h5>
-              <div className="grid grid-cols-2 gap-2">
+            </p>
+            
+            {/* Related Jobs Section - now integrated into the expanded view */}
+            {isExpanded && (
+            <div className="mt-4">
+                <h5 className="text-sm font-medium text-gray-300 mb-2">Related Career Paths:</h5>
+                <div className="flex flex-wrap gap-2">
                 {relatedJobs.slice(0, 10).map((job, idx) => (
-                  <div key={idx} className="text-xs text-gray-400 bg-[#2a2a36] p-1.5 rounded">
+                    <span 
+                    key={idx} 
+                    className="text-xs text-gray-300 bg-[#2a2a36] px-3 py-1.5 rounded-full"
+                    >
                     {job}
-                  </div>
+                    </span>
                 ))}
-              </div>
+                </div>
             </div>
-          )}
+            )}
+            
+            {cluster.description && cluster.description.length > 80 && (
+            <button 
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-xs text-[#7824f6] hover:underline flex items-center mt-2"
+            >
+                {isExpanded ? (
+                <>
+                    <span>Show less</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                    </svg>
+                </>
+                ) : (
+                <>
+                    <span>Read more</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </>
+                )}
+            </button>
+            )}
         </div>
         
         <div className="w-full flex justify-end mt-auto">
-          {!isSelected ? (
+            {!isSelected ? (
             <button
-              onClick={onAddClick}
-              className="bg-[#7824f6] hover:bg-[#6620d0] rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
+                onClick={onAddClick}
+                className="bg-[#7824f6] hover:bg-[#6620d0] rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
             >
-              <p className="text-sm text-white font-medium">
+                <p className="text-sm text-white font-medium">
                 Add to My Clusters
-              </p>
-              <FaChevronRight size={12} color="white" />
+                </p>
+                <FaChevronRight size={12} color="white" />
             </button>
-          ) : (
+            ) : (
             <div className="px-4 py-2 bg-green-900 bg-opacity-30 rounded-md flex gap-2 items-center">
-              <p className="text-sm text-green-400 font-medium">
+                <p className="text-sm text-green-400 font-medium">
                 Added to Your Clusters
-              </p>
-              <FaCheck size={12} color="#10b981" />
+                </p>
+                <FaCheck size={12} color="#10b981" />
             </div>
-          )}
+            )}
         </div>
-      </div>
+        </div>
     </div>
   );
 }
