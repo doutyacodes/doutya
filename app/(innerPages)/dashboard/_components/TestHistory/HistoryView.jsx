@@ -14,7 +14,7 @@ function HistoryView({selectedCareer, currentWeek}) {
             setIsLoading(true)
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const response = await GlobalApi.GetTestResults(selectedCareer.career_group_id ,currentWeek, token);
+                const response = await GlobalApi.GetTestResults(selectedCareer.scope_grp_id ,currentWeek, token);
                 
                 if (response.status === 200) {  // Check for a 200 status code
                     console.log("log", response.data.results);

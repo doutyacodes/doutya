@@ -182,8 +182,8 @@ function Page() {
         response.status === 201 &&
         response.data
       ) {
-        if(response.data.carrerData.length > 0){
-          setCareerData(response.data.carrerData);
+        if(response.data.scopeData.length > 0){
+          setCareerData(response.data.scopeData);
         }
         setAge(response.data.age);
         setIsTestCompleted(response.data.quizStatus)
@@ -195,6 +195,7 @@ function Page() {
       //   toast.error("No career data available at the moment.");
       // }
     } catch (err) {
+      console.log(err)
       toast.error("Failed to fetch career data. Please try again later.");
     } finally {
       if (showLoader) setIsLoading(false);

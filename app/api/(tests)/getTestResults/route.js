@@ -38,7 +38,7 @@ export async function GET(request) {
                                     .innerJoin(SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id))
                                     .where(
                                         and(
-                                            eq(CAREER_SUBJECTS.career_id, careerGrpId),
+                                            eq(CAREER_SUBJECTS.id, careerGrpId),
                                             eq(SUBJECTS.min_age, age)
                                         )
                                     )
