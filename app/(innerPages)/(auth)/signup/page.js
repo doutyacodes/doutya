@@ -48,19 +48,20 @@ function SignUp() {
 
   const router = useRouter();
   const t = useTranslations("SignupPage");
-  useEffect(() => {
-    const authCheck = () => {
-      if (typeof window !== "undefined") {
-        const token = localStorage.getItem("token");
-        if (token) {
-          // router.push("/dashboard");
-          const url = typeof window !== "undefined" ? localStorage.getItem("navigateUrl") : null;
-          router.replace(url);
-        } 
-      }
-    };
-    authCheck();
-  }, [router]);
+  // useEffect(() => {
+  //   const authCheck = () => {
+  //     if (typeof window !== "undefined") {
+  //       const token = localStorage.getItem("token");
+  //       if (token) {
+  //         // router.push("/dashboard");
+  //         const url = typeof window !== "undefined" ? localStorage.getItem("navigateUrl") : null;
+  //         router.replace(url);
+  //       } 
+  //     }
+  //   };
+  //   authCheck();
+  // }, [router]);
+
   const {
     register,
     handleSubmit,
