@@ -22,7 +22,7 @@ function InitialFeedback({ selectedCareer }) {
             setIsLoading(true);
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const response = await GlobalApi.GetInitialFeedBack(selectedCareer.career_group_id, token, language);
+                const response = await GlobalApi.GetInitialFeedBack(selectedCareer.scope_grp_id, token, language);
                 if (response.status === 200) {
                     const feedback = response.data.feedback;
                     const parsedFeedback = typeof feedback === 'string' ? feedback : JSON.parse(feedback);

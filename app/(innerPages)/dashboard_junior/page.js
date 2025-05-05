@@ -54,7 +54,7 @@ export default function Dashboard() {
             console.log("else if");
             router.replace("/country");
         } else {
-            router.replace("/dashboard/careers/career-suggestions");
+            router.replace("/dashboard_junior/cluster-suggestion");
         }
     }, 5000);
 
@@ -148,7 +148,7 @@ export default function Dashboard() {
           <br />
           <br />
           {showResults && <Results />}
-          {showQuiz2Results && redirect("/dashboard/careers/career-suggestions")}
+          {showQuiz2Results && redirect("/dashboard_junior/cluster-suggestion")}
         </>
         ) 
       }

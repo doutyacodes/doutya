@@ -32,6 +32,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
 import Mentorship from "../../../_components/Mentorship/Mentorship";
 import { useTopbar } from "@/app/context/TopbarContext";
+import CareerStripe from "@/app/_components/CareerStripe";
 
 function Page() {
   const [careerData, setCareerData] = useState([]);
@@ -51,6 +52,7 @@ function Page() {
   const [showTestWarningModal, setShowTestWarningModal] = useState(false);
   const [showFeatureModal, setShowFeatureModal] = useState(false);
   const [showPricingModal, setShowPricingModal] = useState(false);
+  const [scopeType, setScopeType] = useState(null)
 
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [completedSubject, setCompletedSubject] = useState('');
@@ -80,9 +82,12 @@ function Page() {
   useEffect(() => {
     const getQuizData = async () => {
       try {
+        setIsLoading(true)
         const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetDashboarCheck(token);
+
+        setScopeType(resp.data.scopeType)
 
         // Check if Test 2 is completed
         const test2 = resp.data.data.find((q) => q.quiz_id === 2);
@@ -91,7 +96,9 @@ function Page() {
         }
       } catch (error) {
         console.error("Error Fetching data:", error);
-      } 
+      } finally {
+        setIsLoading(false)
+      }
     };
     getQuizData();
   }, [setIsTest2Completed]);
@@ -126,8 +133,14 @@ function Page() {
   const tabs = [
     { key: "roadmap", label: t("roadmap") },
     { key: "assessment", label: t("assessment") },
-    { key: "certification", label: "certifications" },
-    { key: "mentor", label: "mentor" },
+    // Certification: only for "career" or "cluster"
+    ...(scopeType === "career" || scopeType === "cluster"
+      ? [{ key: "certification", label: "certifications" }]
+      : []),
+    // Mentor: only for "career"
+    ...(scopeType === "career"
+      ? [{ key: "mentor", label: "mentor" }]
+      : []),
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
     { key: "community", label: "Community" },
@@ -314,93 +327,94 @@ function Page() {
       <Toaster />
         {
           step === 2 && (
-            <>
-                {/* Add Career Dialog - Only show for unrestricted users */}
-                {!isRestricted && (
-                  <AddCareer
-                    isOpen={showDialogue}
-                    onClose={() => setShowDialogue(false)}
-                    getCareers={getCareers}
-                    setCareerName={setCareerName}
-                    careerName={careerName}
-                    setCountry={setCountry}
-                    country={country}
-                    handleSubmit={handleSubmit}
-                    roadMapLoading={roadMapLoading}
-                  />
-                )}
+            // <>
+            //     {/* Add Career Dialog - Only show for unrestricted users */}
+            //     {!isRestricted && (
+            //       <AddCareer
+            //         isOpen={showDialogue}
+            //         onClose={() => setShowDialogue(false)}
+            //         getCareers={getCareers}
+            //         setCareerName={setCareerName}
+            //         careerName={careerName}
+            //         setCountry={setCountry}
+            //         country={country}
+            //         handleSubmit={handleSubmit}
+            //         roadMapLoading={roadMapLoading}
+            //       />
+            //     )}
       
-                {/* Feature Restriction Modal */}
-                <FeatureRestrictionModal
-                  isOpen={showFeatureModal}
-                  onClose={() => setShowFeatureModal(false)}
-                  onViewPlans={() => {
-                    setShowFeatureModal(false);
-                    setShowPricingModal(true);
-                  }}
-                />
+            //     {/* Feature Restriction Modal */}
+            //     <FeatureRestrictionModal
+            //       isOpen={showFeatureModal}
+            //       onClose={() => setShowFeatureModal(false)}
+            //       onViewPlans={() => {
+            //         setShowFeatureModal(false);
+            //         setShowPricingModal(true);
+            //       }}
+            //     />
 
-                {/* Feature Restriction Modal */}
-                <TestsNotCompltedWarning
-                  isOpen={showTestWarningModal}
-                  onClose={() => setShowTestWarningModal(false)}
-                />
+            //     {/* Feature Restriction Modal */}
+            //     <TestsNotCompltedWarning
+            //       isOpen={showTestWarningModal}
+            //       onClose={() => setShowTestWarningModal(false)}
+            //     />
 
-                {/* Pricing Modal */}
-                {showPricingModal && (
-                  <PricingCard onClose={() => setShowPricingModal(false)} />
-                )}
+            //     {/* Pricing Modal */}
+            //     {showPricingModal && (
+            //       <PricingCard onClose={() => setShowPricingModal(false)} />
+            //     )}
       
-                {/* Mobile Heading */}
-                <p className="text-center font-bold sm:hidden text-white text-2xl sm:text-4xl md:pl-5 max-sm:bg-[#1f1f1f]">
-                  My Careers
-                </p>
+            //     {/* Mobile Heading */}
+            //     <p className="text-center font-bold sm:hidden text-white text-2xl sm:text-4xl md:pl-5 max-sm:bg-[#1f1f1f]">
+            //       My Careers
+            //     </p>
       
-                {/* Career Selector for Desktop */}
-                {/* <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
-                  <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
-                    {t("careers")}
-                  </p>
+            //     {/* Career Selector for Desktop */}
+            //     {/* <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
+            //       <p className="text-center font-bold hidden sm:flex text-white text-2xl sm:text-4xl">
+            //         {t("careers")}
+            //       </p>
       
-                  <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
-                    {careerData.map((career, index) => (
-                      <div
-                        key={index}
-                        onClick={() => handleCareerClick(career)}
-                        className={`w-28 h-28 flex justify-center items-center sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg transition-transform transform hover:scale-105 cursor-pointer duration-150 ${
-                          selectedCareer?.id === career.id
-                            ? "bg-gray-700 border-2 border-blue-500"
-                            : "bg-gray-800"
-                        }`}
-                      >
-                        <p className="text-center text-xs sm:text-sm font-bold text-white">
-                          {career.career_name}
-                        </p>
-                      </div>
-                    ))}
+            //       <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
+            //         {careerData.map((career, index) => (
+            //           <div
+            //             key={index}
+            //             onClick={() => handleCareerClick(career)}
+            //             className={`w-28 h-28 flex justify-center items-center sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg transition-transform transform hover:scale-105 cursor-pointer duration-150 ${
+            //               selectedCareer?.id === career.id
+            //                 ? "bg-gray-700 border-2 border-blue-500"
+            //                 : "bg-gray-800"
+            //             }`}
+            //           >
+            //             <p className="text-center text-xs sm:text-sm font-bold text-white">
+            //               {career.career_name}
+            //             </p>
+            //           </div>
+            //         ))}
       
-                    <div
-                      className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-700 flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150"
-                      onClick={handleAddCareerClick}
-                    >
-                      <PlusIcon className="text-white h-6 w-6 sm:h-8 sm:w-8" />
-                    </div>
-                  </div>
-                </div> */}
+            //         <div
+            //           className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-700 flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150"
+            //           onClick={handleAddCareerClick}
+            //         >
+            //           <PlusIcon className="text-white h-6 w-6 sm:h-8 sm:w-8" />
+            //         </div>
+            //       </div>
+            //     </div> */}
 
-              <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
-                <p className="text-center font-bold hidden sm:flex text-white text-3xl">
-                  My Careers
-                </p>
+            //   <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
+            //     <p className="text-center font-bold hidden sm:flex text-white text-3xl">
+            //       My Careers
+            //     </p>
                 
-                <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
-                  {/* Render 5 total boxes */}
-                  {[...careerData, ...Array(totalBoxes - careerData.length)].slice(0, totalBoxes).map((career, index) => 
-                    renderCareerBox(career, index)
-                  )}
-                </div>
-              </div>
-            </>
+            //     <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
+            //       {/* Render 5 total boxes */}
+            //       {[...careerData, ...Array(totalBoxes - careerData.length)].slice(0, totalBoxes).map((career, index) => 
+            //         renderCareerBox(career, index)
+            //       )}
+            //     </div>
+            //   </div>
+            // </>
+            <CareerStripe selectedItem={selectedCareer}  setSelectedItem={setSelectedCareer}/>
           )
         }
 
@@ -450,15 +464,19 @@ function Page() {
           {selectedCareer && (
             <>
             <div className="bg-gray-600 mb-5 flex flex-col sm:flex-row sm:justify-between items-center px-4 py-3 sm:px-6 md:px-24 sm:py-4 gap-3 sm:gap-0">
-              {/* Career Overview Button - Full width on mobile, normal on desktop */}
-              <button
-                className={`w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-4 bg-[#2b2b2b] text-white font-bold rounded-xl text-sm flex items-center justify-center hover:bg-[#3a3a3a] focus:outline-none focus:ring-2 focus:ring-[#5a5a5a] focus:ring-offset-2 transition-colors duration-200 ${
-                  activeTab === 'careerOverview' ? 'bg-[#3b3b3b]' : ''
-                }`}
-                onClick={() => handleTabClick('careerOverview')}
-              >
-                <span className="mr-2">Career Overview</span>
-              </button>
+              {scopeType === "career" && (
+                <>
+                  {/* Career Overview Button - Full width on mobile, normal on desktop */}
+                  <button
+                    className={`w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-4 bg-[#2b2b2b] text-white font-bold rounded-xl text-sm flex items-center justify-center hover:bg-[#3a3a3a] focus:outline-none focus:ring-2 focus:ring-[#5a5a5a] focus:ring-offset-2 transition-colors duration-200 ${
+                      activeTab === 'careerOverview' ? 'bg-[#3b3b3b]' : ''
+                    }`}
+                    onClick={() => handleTabClick('careerOverview')}
+                  >
+                    <span className="mr-2">Career Overview</span>
+                  </button>
+                </>
+              )}
               
               {/* Career Name - Centered on mobile */}
               <p className="text-white uppercase font-bold text-center text-lg md:text-xl order-first sm:order-none">
@@ -503,7 +521,7 @@ function Page() {
                 <div className="text-white font-bold text-center text-xl mb-4 uppercase">
                   {t(activeTab)}
                 </div>
-                {activeTab === "careerOverview" && (
+                {activeTab === "careerOverview" &&  scopeType === "career" &&  (
                   <CareerOverView selectedCareer={selectedCareer} setMainTab={setActiveTab}/>
                 )}
                 {activeTab === "roadmap" && (
@@ -512,7 +530,7 @@ function Page() {
                 {activeTab === "assessment" && (
                   <Tests selectedCareer={selectedCareer} />
                 )}
-                {activeTab === "certification" && (
+                {activeTab === "certification" && (scopeType === "cluster" || scopeType === "career") && (
                   <Certification selectedCareer={selectedCareer} />
                 )}
                 {activeTab === "feedback" && (
@@ -521,11 +539,11 @@ function Page() {
                 {activeTab === "challenges" && (
                   <Challenge selectedCareer={selectedCareer} />
                 )}
-                {activeTab === "mentor" && (
+                {activeTab === "mentor" && scopeType === "career" && (
                   <Mentorship selectedCareer={selectedCareer} />
                 )}
                 {activeTab === "community" && (
-                  <CommunityList careerId={selectedCareer?.career_group_id} />
+                  <CommunityList careerId={selectedCareer?.scope_grp_id} />
                 )}
               </div>
             </div>

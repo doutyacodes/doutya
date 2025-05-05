@@ -1,7 +1,7 @@
 import { db } from '@/utils';
-import { CAREER_SUBJECTS, SUBJECTS, TESTS, TEST_ANSWERS, TEST_QUESTIONS, USER_CAREER, USER_DETAILS } from '@/utils/schema';
+import { CAREER_SUBJECTS, QUIZ_SEQUENCES, SUBJECTS, TESTS, TEST_ANSWERS, TEST_QUESTIONS, USER_CAREER, USER_DETAILS } from '@/utils/schema';
 import { NextResponse } from 'next/server';
-import { eq, and, gte, lte } from 'drizzle-orm';
+import { eq, and, gte, lte, inArray } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { GenerateTestQuiz } from '@/app/api/utils/GenerateTestQuiz';
@@ -80,28 +80,50 @@ export async function GET(request, { params }) {
         const subjectName = subjectData[0].subjectName;
 
 
-        const careerGroup = await db
-        .select({ careerGroupId: CAREER_SUBJECTS.career_id })
-        .from(CAREER_SUBJECTS)
-        .where(eq(CAREER_SUBJECTS.subject_id, subjectId));
+        const personalities = await db
+            .select({
+                quizId: QUIZ_SEQUENCES.quiz_id,
+                typeSequence: QUIZ_SEQUENCES.type_sequence
+            })
+            .from(QUIZ_SEQUENCES)
+            .where(
+                and(
+                eq(QUIZ_SEQUENCES.user_id, userId),
+                inArray(QUIZ_SEQUENCES.quiz_id, [1, 2])
+                )
+            );
 
-        let type1;
-        let type2;
+            let type1 = null;
+            let type2 = null;
 
-        if (careerGroup.length > 0) {
-            const careerGroupId = careerGroup[0].careerGroupId;
+            for (const p of personalities) {
+                if (p.quizId === 1) type1 = p.typeSequence;
+                else if (p.quizId === 2) type2 = p.typeSequence;
+            }
+
+
+        // const careerGroup = await db
+        // .select({ careerGroupId: CAREER_SUBJECTS.career_id })
+        // .from(CAREER_SUBJECTS)
+        // .where(eq(CAREER_SUBJECTS.subject_id, subjectId));
+
+        // let type1;
+        // let type2;
+
+        // if (careerGroup.length > 0) {
+        //     const careerGroupId = careerGroup[0].careerGroupId;
           
-            const userCareer = await db
-              .select({
-                type1: USER_CAREER.type1,
-                type2: USER_CAREER.type2,
-              })
-              .from(USER_CAREER)
-              .where(and(eq(USER_CAREER.user_id, userId), eq(USER_CAREER.career_group_id, careerGroupId)));
-              if (userCareer.length > 0) {
-                    ({ type1, type2 } = userCareer[0]); 
-                }
-          }
+        //     const userCareer = await db
+        //       .select({
+        //         type1: USER_CAREER.type1,
+        //         type2: USER_CAREER.type2,
+        //       })
+        //       .from(USER_CAREER)
+        //       .where(and(eq(USER_CAREER.user_id, userId), eq(USER_CAREER.career_group_id, careerGroupId)));
+        //       if (userCareer.length > 0) {
+        //             ({ type1, type2 } = userCareer[0]); 
+        //         }
+        //   }
 
         // Helper function to fetch questions and answers
         async function fetchQuestionsAndAnswers() {

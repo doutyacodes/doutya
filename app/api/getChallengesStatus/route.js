@@ -16,7 +16,7 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
-    const career_id = searchParams.get('id')
+    const scope_id = searchParams.get('id')
 
     try {
         // Fetch challenges based on status and userId by joining the tables
@@ -34,7 +34,7 @@ export async function GET(req) {
                 eq(CHALLENGE_PROGRESS.challenge_id, CHALLENGES.id),
                 eq(CHALLENGE_PROGRESS.user_id, userId),
                 eq(CHALLENGE_PROGRESS.status, status),
-                eq(CHALLENGES.career_id, career_id) 
+                eq(CHALLENGES.scope_id, scope_id) 
             ))
             .orderBy(CHALLENGES.week);
 

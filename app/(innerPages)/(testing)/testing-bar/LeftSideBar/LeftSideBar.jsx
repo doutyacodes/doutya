@@ -36,6 +36,8 @@ const LeftSideBar = () => {
    const [isInstructionsModalOpen, setIsInstructionsModalOpen] = useState(false);
    const [instructionsType, setInstructionsType] = useState(null);
 
+   const [scopeType, setScopeType] = useState(null)
+
   const toggleSidebars = () => setIsOpen(!isOpen);
 
   const toggleLogoutPopup = () => {
@@ -61,6 +63,8 @@ const LeftSideBar = () => {
         const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const resp = await GlobalApi.GetDashboarCheck(token);
+
+        setScopeType(resp.data.scopeType)
 
         // Check if Test 2 is completed
         const test2 = resp.data.data.find((q) => q.quiz_id === 2);
@@ -138,11 +142,18 @@ const LeftSideBar = () => {
       statusTooltip: isTest2Completed ? "All tests are completed" : null
     },
     {
-      name: "Careers",
+      name: scopeType === "career" ? "Careers" : scopeType === "sector" ? "Sectors" : "Clusters",
       icon: <PiCompassRoseFill className="text-base" />,
       link: "#",
       submenus: [
-        { name: "Career Suggestions", link: "/dashboard/careers/career-suggestions" },
+        { 
+          name: scopeType === "career" ? "Career Suggestions" : 
+                scopeType === "sector" ? "Sector Suggestions" : 
+                "Cluster Suggestions", 
+          link: scopeType === "career" ? "/dashboard/careers/career-suggestions" : 
+                scopeType === "sector" ? "/dashboard_kids/sector-suggestion" : 
+                "/dashboard_junior/cluster-suggestion" 
+        },
         { name: "Career Guide", link: "/dashboard/careers/career-guide" },
       ],
     },

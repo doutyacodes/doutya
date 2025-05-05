@@ -18,7 +18,7 @@ function Bannerkids({
    showResults, 
    onToggleQuiz2Results, 
    showQuiz2Results, 
-   setIsTest2Completed,
+   setIsTest1Completed,
    setIsCountryAdded,
    setIsInstitutionDetailsAdded,
    setEducationStageExists
@@ -44,10 +44,10 @@ function Bannerkids({
         setIsInstitutionDetailsAdded(resp.data.institutionDetailsAdded);  // Set country added state
         setEducationStageExists(resp.data.educationStageExists);  // Set country added state
 
-        // Check if Test 2 is completed
-        const test2 = resp.data.data.find(q => q.quiz_id === 2);
-        if (test2 && test2.isCompleted) {
-          setIsTest2Completed(true);
+        // Check if Test 1 is completed
+        const test1 = resp.data.data.find(q => q.quiz_id === 1);
+        if (test1 && test1.isCompleted) {
+          setIsTest1Completed(true);
         }
 
       } catch (error) {
@@ -69,6 +69,8 @@ function Bannerkids({
       setCurrentScreen(currentScreen + 1);
     }
   };
+
+  const isTest1Completed = getQuizStatus(1).isCompleted;
 
   if (loading) {
     return (
@@ -95,7 +97,7 @@ function Bannerkids({
 
   return (
     <div className="w-full overflow-x-hidden">
-      {isTest1Completed ? <PersonalityTestComplete /> : <StartPersonalityTest />}
+      {!isTest1Completed && <StartPersonalityTest />}
       {!getQuizStatus(1).isCompleted && <CareerOnboarding />}
       <div className="w-full py-8 md:text-3xl text-xl font-bold text-white text-center bg-gradient-to-r from-[#2f87aa] to-green-300">
         {t('careerAssesment')}
@@ -135,62 +137,61 @@ function Bannerkids({
           </div>
         </div>
 
-        {/* Mobile view: Swiper carousel */}
        {/* Mobile view: Swiper carousel */}
-<div className="mt-8 sm:hidden">
-  <Swiper
-    modules={[Navigation]}
-    spaceBetween={10}
-    // slidesPerView={1}
-    onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-    onSwiper={(swiper) => (swiperRef.current = swiper)}
-    className="pb-12"
-  >
-    {/* Personality Test - Mobile */}
-    <SwiperSlide>
-      <div className="pt-3 p-[1px] rounded-lg max-w-96 flex-1" style={{
-        backgroundImage: `linear-gradient(to right, #3294bb, #3294bb)`,
-      }}>
-        <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
-          {t('findStrength')}
-        </h3>
-        <div className="bg-[#191134] h-auto rounded-lg p-3 gap-3 flex flex-col justify-between">
-          <div className="space-y-4">
-            <h3 className="font-bold text-2xl text-center py-3 text-white ">
-              <p>Personality</p><p>Test</p>
-            </h3>
-            <div className="bg-slate-600 p-[1px]" />
-            <p className="text-white text-justify text-md">
-              {t('personalityTestDescription')}
-            </p>
-          </div>
-        {/* Adjusting the button placement */}
-        <div className="flex justify-center items-center mt-4 mb-6"> {/* Increased margin */}
-          {!getQuizStatus(1).isCompleted ? (
-            <div
-              onClick={() => setCurrentScreen(1)}
-              className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400 p-3 rounded-full w-40">
-              <p className="text-white font-semibold text-lg text-center">{t('takeTest')}</p>
-            </div>
-          ) : (
-            <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p>
-          )}
+        <div className="mt-8 sm:hidden">
+          <Swiper
+            modules={[Navigation]}
+            spaceBetween={10}
+            // slidesPerView={1}
+            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+            onSwiper={(swiper) => (swiperRef.current = swiper)}
+            className="pb-12"
+          >
+            {/* Personality Test - Mobile */}
+            <SwiperSlide>
+              <div className="pt-3 p-[1px] rounded-lg max-w-96 flex-1" style={{
+                backgroundImage: `linear-gradient(to right, #3294bb, #3294bb)`,
+              }}>
+                <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
+                  {t('findStrength')}
+                </h3>
+                <div className="bg-[#191134] h-auto rounded-lg p-3 gap-3 flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-2xl text-center py-3 text-white ">
+                      <p>Personality</p><p>Test</p>
+                    </h3>
+                    <div className="bg-slate-600 p-[1px]" />
+                    <p className="text-white text-justify text-md">
+                      {t('personalityTestDescription')}
+                    </p>
+                  </div>
+                {/* Adjusting the button placement */}
+                <div className="flex justify-center items-center mt-4 mb-6"> {/* Increased margin */}
+                  {!getQuizStatus(1).isCompleted ? (
+                    <div
+                      onClick={() => setCurrentScreen(1)}
+                      className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400 p-3 rounded-full w-40">
+                      <p className="text-white font-semibold text-lg text-center">{t('takeTest')}</p>
+                    </div>
+                  ) : (
+                    <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p>
+                  )}
+                </div>
+                </div>
+              </div>
+            </SwiperSlide>
+          </Swiper>
+          {/* Custom pagination dots */}
+          {/* <div className="flex justify-center space-x-2 gap-2 mt-4 mb-16">
+            {paginationDots.map((_, index) => (
+              <div
+                key={index}
+                className={`h-3 w-3 rounded-full cursor-pointer ${activeIndex === index ? 'bg-green-400' : 'bg-gray-400'}`}
+                onClick={() => swiperRef.current?.slideTo(index)}
+              ></div>
+            ))}
+          </div> */}
         </div>
-        </div>
-      </div>
-    </SwiperSlide>
-  </Swiper>
-  {/* Custom pagination dots */}
-  {/* <div className="flex justify-center space-x-2 gap-2 mt-4 mb-16">
-    {paginationDots.map((_, index) => (
-      <div
-        key={index}
-        className={`h-3 w-3 rounded-full cursor-pointer ${activeIndex === index ? 'bg-green-400' : 'bg-gray-400'}`}
-        onClick={() => swiperRef.current?.slideTo(index)}
-      ></div>
-    ))}
-  </div> */}
-</div>
       </div>
     </div>
   );

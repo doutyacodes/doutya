@@ -53,6 +53,7 @@ export const USER_DETAILS = mysqlTable('user_details', {
   class_name: varchar("class_name", { length: 100 }), 
   user_role: mysqlEnum('user_role', ['Individual', 'Institutional']).notNull().default('Individual'),
   is_verified: boolean('is_verified').default(false),
+  scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"]).notNull().default("career"),
 });
 
 export const USER_KEYS = mysqlTable("user_keys", {
@@ -323,6 +324,7 @@ export const RESULTS1 = mysqlTable("result1", {
   most_suitable_careers: text("most_suitable_careers").default(null),
   least_suitable_careers: text("least_suitable_careers").default(null),
 });
+
 export const QUIZZES = mysqlTable("quizzes", {
   id: int("id").primaryKey().autoincrement(),
   title: varchar("title", { length: 300 }).notNull(),
@@ -416,17 +418,31 @@ export const USER_CAREER_STATUS = mysqlTable("user_career_status", {
   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(), // Automatically updated to current timestamp on update
 });
 
+// export const CAREER_NEWS = mysqlTable("career_news", {
+//   id: int("id").notNull().autoincrement().primaryKey(),
+//   career_id: int("career_id").notNull().references(() => CAREER_GROUP.id),  // Connects to the career
+//   title: varchar("title", { length: 255 }).notNull(),                      // News title
+//   summary: text("summary").notNull(),                                      // Brief summary of the news
+//   source_url: varchar("source_url", { length: 500 }).notNull(),            // Link to the full news
+//   published_at: timestamp("published_at").notNull(),                       // News publish date
+//   status: mysqlEnum("status", ["pending", "completed", "failed"]).default("pending"),
+//   created_at: timestamp("created_at").defaultNow(),
+//   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+// });
+
 export const CAREER_NEWS = mysqlTable("career_news", {
   id: int("id").notNull().autoincrement().primaryKey(),
-  career_id: int("career_id").notNull().references(() => CAREER_GROUP.id),  // Connects to the career
-  title: varchar("title", { length: 255 }).notNull(),                      // News title
-  summary: text("summary").notNull(),                                      // Brief summary of the news
-  source_url: varchar("source_url", { length: 500 }).notNull(),            // Link to the full news
-  published_at: timestamp("published_at").notNull(),                       // News publish date
+  scope_id: int("scope_id").notNull(), // Generic ID
+  scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"]).notNull(), // Enum for scope type
+  title: varchar("title", { length: 255 }).notNull(),
+  summary: text("summary").notNull(),
+  source_url: varchar("source_url", { length: 500 }).notNull(),
+  published_at: timestamp("published_at").notNull(),
   status: mysqlEnum("status", ["pending", "completed", "failed"]).default("pending"),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
+
 
 export const STRENGTH_TYPES = mysqlTable("strength_types", {
   id: int("id").primaryKey().autoincrement(),
@@ -534,19 +550,35 @@ export const SUBJECTS = mysqlTable("subjects", {
   class_name: varchar("class_name", { length: 255 }).notNull(),
 });
 
+// export const CAREER_SUBJECTS = mysqlTable(
+//   "career_subjects",
+//   {
+//     career_id: int("career_id")
+//       .notNull()
+//       .references(() => CAREER_GROUP.id /* { onDelete: 'cascade' } */), // Reference to CAREER_GROUP now
+//     subject_id: int("subject_id")
+//       .notNull()
+//       .references(() => SUBJECTS.subject_id /* { onDelete: 'cascade' } */), // Foreign key to Subjects table
+//   },
+//   (table) => {
+//     return {
+//       pk: primaryKey(table.career_id, table.subject_id), // Composite primary key
+//     };
+//   }
+// );
+
 export const CAREER_SUBJECTS = mysqlTable(
   "career_subjects",
   {
-    career_id: int("career_id")
-      .notNull()
-      .references(() => CAREER_GROUP.id /* { onDelete: 'cascade' } */), // Reference to CAREER_GROUP now
+    id: int("id").notNull(), // This is the generic ID (from career/cluster/sector)
+    scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"]).notNull(),
     subject_id: int("subject_id")
       .notNull()
-      .references(() => SUBJECTS.subject_id /* { onDelete: 'cascade' } */), // Foreign key to Subjects table
+      .references(() => SUBJECTS.subject_id), // Only FK for subject
   },
   (table) => {
     return {
-      pk: primaryKey(table.career_id, table.subject_id), // Composite primary key
+      pk: primaryKey(table.id, table.scope_type, table.subject_id), // Composite PK
     };
   }
 );
@@ -720,17 +752,31 @@ export const USER_ACTIVITIES = mysqlTable("user_activities", {
 //   created_at: timestamp("created_at").defaultNow(),
 // });
 
+// export const CHALLENGES = mysqlTable("challenges", {
+//   id: int("id").notNull().primaryKey().autoincrement(),
+//   age: int("age").notNull(),
+//   country: varchar("country", 255).notNull(),
+//   career_id: int("career_id").notNull(),
+//   week: int("week").notNull(),
+//   class_name: varchar("class_name", { length: 255 }).notNull(),
+//   created_at: timestamp("created_at").defaultNow().notNull(),
+//   challenge: varchar("challenge", 255).notNull(),
+//   verification: varchar("verification", 255).notNull(),
+// });
+
 export const CHALLENGES = mysqlTable("challenges", {
   id: int("id").notNull().primaryKey().autoincrement(),
   age: int("age").notNull(),
   country: varchar("country", 255).notNull(),
-  career_id: int("career_id").notNull(),
+  scope_id: int("scope_id").notNull(), // replaces career_id
+  scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"]).notNull(),
   week: int("week").notNull(),
   class_name: varchar("class_name", { length: 255 }).notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
   challenge: varchar("challenge", 255).notNull(),
   verification: varchar("verification", 255).notNull(),
 });
+
 
 //   export const Moderator = mysqlTable('Moderator', {
 //     id: int('id').notNull().primaryKey().autoincrement(),
@@ -783,11 +829,20 @@ export const MILESTONES = mysqlTable("milestones", {
   ),
 });
 
+// export const USER_MILESTONES = mysqlTable("user_milestones", {
+//   id: int("id").notNull().autoincrement().primaryKey(),
+//   user_career_id: int("user_career_id")
+//     .notNull()
+//     .references(() => USER_CAREER.id),
+//   milestone_id: int("milestone_id")
+//     .notNull()
+//     .references(() => MILESTONES.id),
+// });
+
 export const USER_MILESTONES = mysqlTable("user_milestones", {
   id: int("id").notNull().autoincrement().primaryKey(),
-  user_career_id: int("user_career_id")
-    .notNull()
-    .references(() => USER_CAREER.id),
+  scope_id: int("scope_id").notNull(), // replaces user_career_id
+  scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"]).notNull(),
   milestone_id: int("milestone_id")
     .notNull()
     .references(() => MILESTONES.id),
@@ -875,16 +930,29 @@ export const USER_SUBJECT_COMPLETION = mysqlTable("user_subject_completion", {
   created_at: timestamp("created_at").defaultNow(),
 });
 
+// export const COMMUNITY = mysqlTable("community", {
+//   id: int("id").autoincrement().notNull().primaryKey(),
+//   career: varchar("career", { length: 255 }).notNull(),
+//   career_id: int("career_id").notNull().references(() => CAREER_GROUP.id),
+//   global: mysqlEnum("global", ["yes", "no"]).notNull().default("no"),
+//   student: mysqlEnum("student", ["no", "yes"]).notNull().default("no"),
+//   country: varchar("country", { length: 100 }).default(null),
+//   created_at: timestamp("created_at").defaultNow(),
+//   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+// });
+
 export const COMMUNITY = mysqlTable("community", {
   id: int("id").autoincrement().notNull().primaryKey(),
-  career: varchar("career", { length: 255 }).notNull(),
-  career_id: int("career_id").notNull().references(() => CAREER_GROUP.id),
+  scope_id: int("scope_id").notNull(),
+  scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"]).notNull(),
+  career: varchar("career", { length: 255 }).notNull(), /* It can be anything creer, sector, cluster */
   global: mysqlEnum("global", ["yes", "no"]).notNull().default("no"),
   student: mysqlEnum("student", ["no", "yes"]).notNull().default("no"),
   country: varchar("country", { length: 100 }).default(null),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
+
 
 export const USER_COMMUNITY = mysqlTable(
   "user_community",
@@ -1024,18 +1092,28 @@ export const COMMUNITY_POST_POINTS = mysqlTable(
   })
 );
 
+// export const CERTIFICATIONS = mysqlTable("certifications", {
+//   id: int("id").primaryKey().autoincrement(), // AUTO_INCREMENT primary key
+//   certification_name: varchar("certification_name", { length: 255 }).notNull(), // Certification name
+//   age: decimal("age", 3, 1).notNull(), // Age with one decimal place
+//   // class_name: varchar("class_name", { length: 255 }).notNull(), hav eto add later if needed
+//   career_group_id: int("career_group_id")
+//     .notNull()
+//     .references(() => CAREER_GROUP.id, { onDelete: "cascade" }), // Foreign key referencing career_group table
+//   milestone_id: int("milestone_id")
+//     .notNull()
+//     .references(() => MILESTONES.id), // Foreign key referencing milestones
+// });
+
 export const CERTIFICATIONS = mysqlTable("certifications", {
-  id: int("id").primaryKey().autoincrement(), // AUTO_INCREMENT primary key
-  certification_name: varchar("certification_name", { length: 255 }).notNull(), // Certification name
-  age: decimal("age", 3, 1).notNull(), // Age with one decimal place
-  // class_name: varchar("class_name", { length: 255 }).notNull(), hav eto add later if needed
-  career_group_id: int("career_group_id")
-    .notNull()
-    .references(() => CAREER_GROUP.id, { onDelete: "cascade" }), // Foreign key referencing career_group table
-  milestone_id: int("milestone_id")
-    .notNull()
-    .references(() => MILESTONES.id), // Foreign key referencing milestones
+  id: int("id").primaryKey().autoincrement(),
+  certification_name: varchar("certification_name", { length: 255 }).notNull(),
+  age: decimal("age", 3, 1).notNull(),
+  scope_id: int("scope_id").notNull(),
+  scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"]).notNull(),
+  milestone_id: int("milestone_id").notNull().references(() => MILESTONES.id),
 });
+
 
 export const CERTIFICATION_QUIZ = mysqlTable("certification_quiz", {
   id: int("id").autoincrement().notNull().primaryKey(),
@@ -1548,4 +1626,56 @@ export const USER_DAILY_QUESTION_LIMIT = mysqlTable("user_daily_question_limit",
     .references(() => MENTOR_PROFILES.mentor_id, { onDelete: "cascade" }),
   question_count: int("question_count").default(0),
   last_reset_date: timestamp("last_reset_date").defaultNow(),
+});
+
+/* ------------------------- */
+
+export const MBTI_SECTOR_MAP = mysqlTable("mbti_sector_map", {
+  id: int("id").notNull().autoincrement().primaryKey(),
+  mbti_type: varchar("mbti_type", { length: 10 }).notNull(),
+  sector_1_id: int("sector_1_id").notNull().references(() => SECTOR.id),
+  sector_2_id: int("sector_2_id").notNull().references(() => SECTOR.id),
+  sector_3_id: int("sector_3_id").notNull().references(() => SECTOR.id),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+export const SECTOR = mysqlTable("sector", {
+  id: int("id").notNull().autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
+  description: text("description").default(null),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+export const CLUSTER = mysqlTable("cluster", {
+  id: int("id").notNull().autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description").default(null),
+  related_jobs: text("related_jobs").default(null),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+export const USER_SECTOR = mysqlTable("user_sector", {
+  id: int("id").notNull().autoincrement().primaryKey(),
+  user_id: int("user_id").notNull().references(() => USER_DETAILS.id, { onDelete: "cascade" }),
+  sector_id: int("sector_id").notNull().references(() => SECTOR.id),
+  mbti_type: varchar("mbti_type", { length: 10 }).default(null),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+export const USER_CLUSTER = mysqlTable("user_cluster", {
+  id: int("id").notNull().autoincrement().primaryKey(),
+  user_id: int("user_id").notNull().references(() => USER_DETAILS.id, { onDelete: "cascade" }),
+  cluster_id: int("cluster_id").notNull().references(() => CLUSTER.id),
+  mbti_type: varchar("mbti_type", { length: 10 }).default(null),
+  riasec_code: varchar("riasec_code", { length: 10 }).default(null),
+  selected: boolean("selected").notNull().default(false),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+export const CONTENT_SCOPE = mysqlTable("content_scope", { 
+  id: int("id").notNull().autoincrement().primaryKey(),
+  user_id: int("user_id").notNull().references(() => USER_DETAILS.id, { onDelete: "cascade" }),
+  type: mysqlEnum("type", ["career", "cluster", "sector"]).notNull(), // Identifies what it is
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });

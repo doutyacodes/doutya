@@ -61,6 +61,7 @@ const EducationDetailsForm = () => {
           if (!token) return;
           
           const resp = await GlobalApi.GetDashboarCheck(token);
+          const scopeType = resp.data.scopeType;
 
           // Check education profile completion in the correct order
           if (!resp.data.educationStageExists) {
@@ -71,7 +72,13 @@ const EducationDetailsForm = () => {
             if (!resp.data.countryAdded) {
               router.replace("/country");
             } else {
-              router.replace("/dashboard/careers/career-suggestions");
+              if (scopeType === "career") {
+                router.replace("/dashboard/careers/career-suggestions");
+              } else if (scopeType === "sector") {
+                router.replace("/dashboard_kids/sector-suggestion");
+              } else if (scopeType === "cluster") {
+                router.replace("/dashboard_junior/cluster-suggestion");
+              }
             }
           } else {
             // User is in school or college, check institution details
@@ -81,7 +88,13 @@ const EducationDetailsForm = () => {
             } else if (!resp.data.countryAdded) {
               router.replace("/country");
             } else {
-              router.replace("/dashboard/careers/career-suggestions");
+                if (scopeType === "career") {
+                  router.replace("/dashboard/careers/career-suggestions");
+                } else if (scopeType === "sector") {
+                  router.replace("/dashboard_kids/sector-suggestion");
+                } else if (scopeType === "cluster") {
+                  router.replace("/dashboard_junior/cluster-suggestion");
+                }
             }
           }
           // If education stage doesn't exist, we stay on this page

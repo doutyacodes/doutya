@@ -1,7 +1,7 @@
 import { db } from '@/utils';
-import { CERTIFICATION_QUIZ, CERTIFICATION_QUIZ_OPTIONS, CERTIFICATION_USER_PROGRESS, CERTIFICATIONS, USER_CERTIFICATION_COMPLETION, USER_DETAILS, CAREER_GROUP, TOPICS_COVERED, USER_CAREER } from '@/utils/schema';
+import { CERTIFICATION_QUIZ, CERTIFICATION_QUIZ_OPTIONS, CERTIFICATION_USER_PROGRESS, CERTIFICATIONS, USER_CERTIFICATION_COMPLETION, USER_DETAILS, CAREER_GROUP, TOPICS_COVERED, USER_CAREER, QUIZ_SEQUENCES, CLUSTER, SECTOR } from '@/utils/schema';
 import { NextResponse } from 'next/server';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { GenerateCourse } from '@/app/api/utils/GenerateCourse';
@@ -76,7 +76,6 @@ export async function GET(request, { params }) {
     }
 
     try {
-
         // Step 1: Check if certification is already completed
         const certificationStatus = await db
         .select({ completed: USER_CERTIFICATION_COMPLETION.completed })
@@ -90,47 +89,99 @@ export async function GET(request, { params }) {
             return NextResponse.json({ isCompleted: true }, { status: 200 });
         }
 
-        const birthDateResult = await db
+        // Get user details including scope_type from USER_DETAILS
+        const userDetailsResult = await db
             .select({ 
                 birth_date: USER_DETAILS.birth_date,
                 educationLevel: USER_DETAILS.education_level,
-                academicYearStart : USER_DETAILS.academicYearStart,
-                academicYearEnd : USER_DETAILS.academicYearEnd,
-                className: USER_DETAILS.class_name
-             })
+                academicYearStart: USER_DETAILS.academicYearStart,
+                academicYearEnd: USER_DETAILS.academicYearEnd,
+                className: USER_DETAILS.class_name,
+                scope_type: USER_DETAILS.scope_type  // Get user's scope_type
+            })
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId));
 
-        const birth_date = birthDateResult[0]?.birth_date;
+        if (!userDetailsResult.length) {
+            return NextResponse.json({ message: 'User details not found.' }, { status: 404 });
+        }
+
+        const userDetails = userDetailsResult[0];
+        const birth_date = userDetails.birth_date;
         const age = calculateAge(birth_date);
+        const className = userDetails.className || 'completed';
+        const userScopeType = userDetails.scope_type || 'career'; // Default to 'career' if not specified
 
-        const className = birthDateResult[0]?.className || 'completed';
-
-        const certification = await db
+        // Get certification details including scope type and scope id
+        const certificationDetails = await db
             .select({
-                careerGrpId: CERTIFICATIONS.career_group_id,
                 certificationName: CERTIFICATIONS.certification_name,
-                careerName: CAREER_GROUP.career_name
+                scopeId: CERTIFICATIONS.scope_id,
+                scopeType: CERTIFICATIONS.scope_type
             })
             .from(CERTIFICATIONS)
-            .leftJoin(CAREER_GROUP, eq(CERTIFICATIONS.career_group_id, CAREER_GROUP.id))
             .where(eq(CERTIFICATIONS.id, certificationId));
 
-        const certificationName = certification[0]?.certificationName;
-        const careerName = certification[0]?.careerName;
-        const careerGrpId = certification[0]?.careerGrpId
+        if (!certificationDetails.length) {
+            return NextResponse.json({ message: 'Certification details not found.' }, { status: 404 });
+        }
 
-        //Get the type 1 and type 2 for the from the sequence table gy USER_CAREER table
-        const userCareer = await db
-        .select({
-            type1: USER_CAREER.type1,
-            type2: USER_CAREER.type2,
-            country: USER_CAREER.country,
-        })
-        .from(USER_CAREER)
-        .where(and(eq(USER_CAREER.user_id, userId), eq(USER_CAREER.career_group_id, careerGrpId)));
+        const certificationName = certificationDetails[0].certificationName;
+        const scopeId = certificationDetails[0].scopeId;
+        const scopeType = certificationDetails[0].scopeType;
 
-        const { type1, type2 } = userCareer[0];
+        // Get scope name based on scope type (career, cluster, or sector)
+        let scopeName = '';
+
+        if (scopeType === 'career') {
+            // Get career name
+            const careerResult = await db
+                .select({ careerName: CAREER_GROUP.career_name })
+                .from(CAREER_GROUP)
+                .where(eq(CAREER_GROUP.id, scopeId));
+                
+            scopeName = careerResult.length ? careerResult[0].careerName : '';
+        } 
+        else if (scopeType === 'cluster') {
+            // Get cluster name
+            const clusterResult = await db
+                .select({ clusterName: CLUSTER.name })
+                .from(CLUSTER)
+                .where(eq(CLUSTER.id, scopeId));
+                
+            scopeName = clusterResult.length ? clusterResult[0].clusterName : '';
+        } 
+        else if (scopeType === 'sector') {
+            // Get sector name
+            const sectorResult = await db
+                .select({ sectorName: SECTOR.name })
+                .from(SECTOR)
+                .where(eq(SECTOR.id, scopeId));
+                
+            scopeName = sectorResult.length ? sectorResult[0].sectorName : '';
+        }
+
+        // Get the type1 and type2 from the QUIZ_SEQUENCES table
+        const personalities = await db
+            .select({
+                quizId: QUIZ_SEQUENCES.quiz_id,
+                typeSequence: QUIZ_SEQUENCES.type_sequence
+            })
+            .from(QUIZ_SEQUENCES)
+            .where(
+                and(
+                eq(QUIZ_SEQUENCES.user_id, userId),
+                inArray(QUIZ_SEQUENCES.quiz_id, [1, 2])
+                )
+            );
+
+        let type1 = null;
+        let type2 = null;
+
+        for (const p of personalities) {
+            if (p.quizId === 1) type1 = p.typeSequence;
+            else if (p.quizId === 2) type2 = p.typeSequence;
+        }
 
         let totalAnswered = 0;
 
@@ -171,8 +222,20 @@ export async function GET(request, { params }) {
 
         // If no questions are found, generate new course data
         if (questions.length === 0) {
-            await GenerateCourse(userId, age, level, certificationName, careerName, certificationId, birth_date, className, type1, type2);
-            // await GenerateCourse(age, certificationName, careerName, certificationId, birth_date);
+            await GenerateCourse(
+                userId, 
+                age, 
+                level, 
+                certificationName, 
+                scopeName, 
+                certificationId, 
+                birth_date, 
+                className, 
+                type1, 
+                type2, 
+                scopeType // Pass scope type to GenerateCourse
+            );
+            
             // Fetch the questions again after generation
             ({ questions } = await fetchAndFormatQuestions(certificationId, age, className, level));
         }
@@ -192,7 +255,8 @@ export async function GET(request, { params }) {
         // Create certification overview object
         const certificationOverview = {
             certificationName,
-            careerName,
+            scopeName, // Use more generic scopeName instead of careerName
+            scopeType, // Include scope type in the response
             topics
         };
 

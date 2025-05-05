@@ -61,7 +61,7 @@ function Feedback({ selectedCareer }) {
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
                 const response = await GlobalApi.GetFeedBackData(
-                selectedCareer.career_group_id, 
+                selectedCareer.scope_grp_id, 
                 selectedPeriod.month, 
                 selectedPeriod.year, 
                 currentWeek, 

@@ -14,12 +14,13 @@ import TestsNotCompltedWarning from "../(innerPages)/dashboard/_components/Tests
 import { useTopbar } from "../context/TopbarContext";
 
 
-const CareerStripe = () => {
-    const [careerData, setCareerData] = useState([]);
+const CareerStripe = ({selectedItem, setSelectedItem}) => {
+    const [scopeData, setScopeData] = useState([]);
+    const [scopeType, setScopeType] = useState("career");
     const [isLoading, setIsLoading] = useState(false);
     const [showCareer, setShowCareer] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(true);
-    const [selectedCareer, setSelectedCareer] = useState(null);
+    // const [selectedItem, setSelectedItem] = useState(null);
     const [showDialogue, setShowDialogue] = useState(false);
     const [careerName, setCareerName] = useState("");
     const [roadMapLoading, setRoadMapLoading] = useState(false);
@@ -68,12 +69,12 @@ const CareerStripe = () => {
       }, [router]);
       
       useEffect(() => {
-        if (careerData.length > 0) {
-          setSelectedCareer(careerData[0]);
+        if (scopeData.length > 0) {
+          setSelectedItem(scopeData[0]);
         }
-      }, [careerData]);
+      }, [scopeData]);
     
-      const getCareers = async () => {
+      const getScopeData = async () => {
         setIsLoading(true);
         try {
           const token =
@@ -86,9 +87,10 @@ const CareerStripe = () => {
           const response = await GlobalApi.GetCarrerData(token);
 
           if (response.status === 201 && response.data) {
-            if(response.data.carrerData.length > 0){
-              setCareerData(response.data.carrerData);
+            if(response.data.scopeData && response.data.scopeData.length > 0){
+              setScopeData(response.data.scopeData);
             }
+            setScopeType(response.data.type || "career");
             setAge(response.data.age);
             setIsTestCompleted(response.data.quizStatus)
             if (response.data.age <= "9" || response.data.planType === "base"){
@@ -96,39 +98,74 @@ const CareerStripe = () => {
             }
           }
         } catch (err) {
-          toast.error("Failed to fetch career data. Please try again later.");
+          toast.error(`Failed to fetch ${getScopeName()} data. Please try again later.`);
         } finally {
           setIsLoading(false);
         }
       };
     
       useEffect(() => {
-        getCareers();
+        getScopeData();
       }, []);
 
       useEffect(() => {
         // Refresh data here
-        getCareers();
+        getScopeData();
       }, [refreshTopbar]);
 
-      const handleAddCareerClick = () => {
+      // Helper function to get proper display name based on scope type
+      const getScopeName = () => {
+        switch(scopeType) {
+          case "sector":
+            return "Sectors";
+          case "cluster":
+            return "Clusters";
+          case "career":
+          default:
+            return "Careers";
+        }
+      };
 
+      // const handleAddItemClick = () => {
+      //   if (isTestCompleted == "not_completed") {
+      //     setShowTestWarningModal(true);
+      //   }
+      //   else if (isRestricted) {
+      //     setShowFeatureModal(true);
+      //   } else {
+      //     if (scopeData.length >= 5) {
+      //       toast.error(`You can only add up to 5 ${getScopeName().toLowerCase()}.`);
+      //       return;
+      //     }
+      //     setShowDialogue(true);
+      //   }
+      // };
+    
+      const handleAddItemClick = () => {
         if (isTestCompleted == "not_completed") {
           setShowTestWarningModal(true);
         }
         else if (isRestricted) {
           setShowFeatureModal(true);
         } else {
-          if (careerData.length >= 5) {
-            toast.error("You can only add up to 5 careers.");
+          if (scopeData.length >= 5) {
+            toast.error(`You can only add up to 5 ${getScopeName().toLowerCase()}.`);
             return;
           }
-          setShowDialogue(true);
+          
+          // Navigate based on scopeType
+          if (scopeType === "career") {
+            setShowDialogue(true);
+          } else if (scopeType === "sector") {
+            router.push("/dashboard_kids/sector-suggestion");
+          } else if (scopeType === "cluster") {
+            router.push("/dashboard_junior/cluster-suggestion");
+          }
         }
       };
-    
-      const handleCareerClick = (career) => {
-        setSelectedCareer(career);
+      
+      const handleItemClick = (item) => {
+        setSelectedItem(item);
         setActiveTab("roadmap");
         if (pathname !== "/dashboard/careers/career-guide") {
           router.push("/dashboard/careers/career-guide");
@@ -144,20 +181,20 @@ const CareerStripe = () => {
           if (response && response.status === 200) {
             setCareerName("");
             setCountry("");
-            getCareers();
+            getScopeData();
           } else if (response && response.status === 201)  {
             toast.error(response.data.message);
           }
         } catch (error) {
-          toast.error("Failed to save career data. Please try again later.");
+          toast.error(`Failed to save ${getScopeName().toLowerCase()} data. Please try again later.`);
         } finally {
           setRoadMapLoading(false);
         }
       };
 
 
-        // Render career or disabled box based on restriction
-        const renderCareerBox = (career, index) => {
+        // Render item or disabled box based on restriction
+        const renderItemBox = (item, index) => {
           if (isRestricted && index >= 2) {
             // Disabled boxes for restricted users
             return (
@@ -175,31 +212,31 @@ const CareerStripe = () => {
             );
           }
           
-          // Regular career boxes for selected careers
-          if (career) {
+          // Regular boxes for selected items
+          if (item) {
             return (
               <div
-                key={career.id}
-                onClick={() => handleCareerClick(career)}
+                key={item.id}
+                onClick={() => handleItemClick(item)}
                 className={`w-28 h-28 flex justify-center items-center sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg transition-transform transform hover:scale-105 cursor-pointer duration-150 ${
-                  selectedCareer?.id === career.id
+                  selectedItem?.id === item.id
                     ? "bg-gray-700 border-2 border-blue-500"
                     : "bg-gray-800"
                 }`}
               >
                 <p className="text-center text-xs sm:text-sm font-bold text-white">
-                  {career.career_name}
+                  {item.name}
                 </p>
               </div>
             );
           }
           
-          // Plus button for adding new careers
+          // Plus button for adding new items
           return (
             <div
               key={`plus-${index}`}
               className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-700 flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150"
-              onClick={handleAddCareerClick}
+              onClick={handleAddItemClick}
             >
               <PlusIcon className="text-white h-6 w-6 sm:h-8 sm:w-8" />
             </div>
@@ -221,13 +258,14 @@ const CareerStripe = () => {
         <AddCareer
           isOpen={showDialogue}
           onClose={() => setShowDialogue(false)}
-          getCareers={getCareers}
+          getCareers={getScopeData}
           setCareerName={setCareerName}
           careerName={careerName}
           setCountry={setCountry}
           country={country}
           handleSubmit={handleSubmit}
           roadMapLoading={roadMapLoading}
+          scopeType={scopeType}
         />
       )}
 
@@ -255,19 +293,19 @@ const CareerStripe = () => {
 
       {/* Mobile Heading */}
       <p className="text-center font-bold sm:hidden text-white text-2xl sm:text-4xl md:pl-5 max-sm:bg-[#1f1f1f]">
-        My Careers
+        My {getScopeName()}
       </p>
 
-      {/* Career Selector for Desktop */}
+      {/* Item Selector for Desktop */}
       <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
         <p className="text-center font-bold hidden sm:flex text-white text-3xl">
-          My Careers
+          My {getScopeName()}
         </p>
       
       <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
         {/* Render 5 total boxes */}
-        {[...careerData, ...Array(totalBoxes - careerData.length)].slice(0, totalBoxes).map((career, index) => 
-          renderCareerBox(career, index)
+        {Array(totalBoxes).fill(null).map((_, index) => 
+          renderItemBox(scopeData && index < scopeData.length ? scopeData[index] : null, index)
         )}
       </div>
     </div>

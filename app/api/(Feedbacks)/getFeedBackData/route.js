@@ -1,6 +1,6 @@
 import { authenticate } from "@/lib/jwtMiddleware";
 import { db } from "@/utils";
-import { CAREER_SUBJECTS, CHALLENGE_PROGRESS, CHALLENGES, SUBJECTS, TESTS, USER_CAREER, USER_DETAILS, USER_TESTS } from "@/utils/schema";
+import { CAREER_SUBJECTS, CHALLENGE_PROGRESS, CHALLENGES, SUBJECTS, TESTS, USER_CAREER, USER_DETAILS, USER_SUBJECT_COMPLETIONUSER_TESTS } from "@/utils/schema";
 import { and, between, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -16,7 +16,7 @@ export async function GET(req) {
     const userId = userData.userId;
 
     const { searchParams } = new URL(req.url);
-    const careerGrpId = parseInt(searchParams.get('id'));
+    const scope_id = parseInt(searchParams.get('id'));
     const month = parseInt(searchParams.get('month'), 10); // Parse the month parameter from the URL
     const currentYear = parseInt(searchParams.get('year'));
     const currentWeek = parseInt(searchParams.get('week'));
@@ -54,20 +54,20 @@ export async function GET(req) {
         })
         .from(SUBJECTS)
         .innerJoin(CAREER_SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id))
-        .where(eq(CAREER_SUBJECTS.career_id, careerGrpId))
+        .where(eq(CAREER_SUBJECTS.id, scope_id))
         .execute();
   
         // Fetch test results for the requested month and year
         const testResults = await db
           .select({
             subject_id: TESTS.subject_id,
-            stars_awarded: USER_TESTS.stars_awarded,
+            stars_awarded: USER_SUBJECT_COMPLETIONUSER_TESTS.stars_awarded,
           })
-          .from(USER_TESTS)
-          .innerJoin(TESTS, eq(USER_TESTS.test_id, TESTS.test_id))
+          .from(USER_SUBJECT_COMPLETIONUSER_TESTS)
+          .innerJoin(TESTS, eq(USER_SUBJECT_COMPLETIONUSER_TESTS.test_id, TESTS.test_id))
           .where(
             and(
-              eq(USER_TESTS.user_id, userId),
+              eq(USER_SUBJECT_COMPLETIONUSER_TESTS.user_id, userId),
               eq(TESTS.year, currentYear), // Filter by the specified year
               between(TESTS.week_number, startWeek, endWeek)
             )

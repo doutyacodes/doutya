@@ -14,7 +14,8 @@ export default function Dashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [showQuiz2Results, setShowQuiz2Results] = useState(false);
-  const [isTest2Completed, setIsTest2Completed] = useState(false);
+  
+  const [isTest1Completed, setIsTest1Completed] = useState(false);
 
     const [secondsRemaining, setSecondsRemaining] = useState(5);
     const [isCountryAdded, setIsCountryAdded] = useState(null);
@@ -38,7 +39,7 @@ export default function Dashboard() {
   }, [router]);
 
   useEffect(() => {
-    if (isTest2Completed) {
+    if (isTest1Completed) {
       const interval = setInterval(() => {
         setSecondsRemaining((prevSeconds) => prevSeconds - 1);
       }, 1000);
@@ -52,7 +53,7 @@ export default function Dashboard() {
             console.log("else if");
             router.replace("/country");
         } else {
-            router.replace("/dashboard/careers/career-suggestions");
+            router.replace("/dashboard_kids/sector-suggestion");
         }
     }, 5000);
 
@@ -61,7 +62,7 @@ export default function Dashboard() {
         clearTimeout(timer);
       };
     }
-  }, [isTest2Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, router]);
+  }, [isTest1Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, router]);
 
 
   const toggleResults = () => {
@@ -84,7 +85,7 @@ export default function Dashboard() {
     );
   }
 
-  if (isTest2Completed) {
+  if (isTest1Completed) {
     return (
       <div className="h-screen flex items-center justify-center text-white text-center">
         <div>
@@ -108,14 +109,15 @@ export default function Dashboard() {
       {/* <CareerStripe/> */}
 
 
-      {!isTest2Completed && (
+      {!isTest1Completed && (
         <>
           <Bannerkids
             onToggleResults={toggleResults}
             showResults={showResults} 
             onToggleQuiz2Results={toggleQuiz2Results} 
             showQuiz2Results={showQuiz2Results} 
-            setIsTest2Completed={setIsTest2Completed}
+            // setIsTest2Completed={setIsTest2Completed}
+            setIsTest1Completed={setIsTest1Completed}
             setIsCountryAdded={setIsCountryAdded}
             setIsInstitutionDetailsAdded={setIsInstitutionDetailsAdded}
             setEducationStageExists={setEducationStageExists}
@@ -137,7 +139,7 @@ export default function Dashboard() {
           <br />
           <br />
           {showResults && <Results />}
-          {showQuiz2Results && redirect("/dashboard/careers/career-suggestions")}
+          {showQuiz2Results && redirect("/dashboard_kids/sector-suggestion")}
         </>
       ) 
     }

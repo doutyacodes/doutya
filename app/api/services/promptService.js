@@ -77,7 +77,7 @@ export const dynamic = 'force-dynamic';
 };
   
     // Roadmap prompt
-    export const generateRoadmapPrompt = async (userId, career, type1, type2, age, currentAgeWeek, language, languageOptions) => {
+    export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1, type2, age, currentAgeWeek, language, languageOptions) => {
         const educationData = await getUserEducationPromptData(userId);
         
         // const basePrompt = `Provide detailed information for the career named "${career}" based on the following criteria:
@@ -90,15 +90,15 @@ export const dynamic = 'force-dynamic';
         // - present_trends: Current trends and opportunities in the field.
         // - future_prospects: Predictions and potential growth in this career.
         // - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full-text format.
-        // - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old (currently in week ${currentAgeWeek} of this age) until the age of ${age + 1}-year-old aspiring to be a ${career} for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} The education level is '${education}'. 
+        // - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old (currently in week ${currentAgeWeek} of this age) until the age of ${age + 1}-year-old aspiring to be a ${career} for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}'. 
         
-        // The roadmap should be broken down into **intervals of every 6 months** (i.e., ${age}, ${age + 0.5}, ${age + 1}), and milestones must be provided for **each 6-month interval**. Ensure that each interval includes:
+        // The roadmap should be broken down into **intervals of every 2 months** (i.e., ${age}, ${age + 0.2}, ${age + 0.4}, ${age + 0.6}, ${age + 0.8}, ${age + 0.10}, ${age + 1}), and milestones must be provided for **each 2-month interval**. Ensure that each interval includes:
     
         // 1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
         // 2. Physical Milestones
         // 3. Mental Milestones
     
-        // Each of the **Educational**, **Physical**, and **Mental Milestones** should have **at least three milestones**. If you have more milestones, please include them as well. Each milestone should be separated with a '|' symbol.
+        // Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
     
         // The **Educational Milestones** should include:
         // - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the career (such as industry-standard certifications).
@@ -131,129 +131,133 @@ export const dynamic = 'force-dynamic';
         // }
     
         // Ensure that the response is valid JSON, using the specified field names. Provide the response ${languageOptions[language] || 'in English'}.`;
-        
-        // const basePrompt = `Provide detailed information for the career named "${career}" based on the following criteria:
-        // - Personality Type: ${type1}
-        // - RIASEC Interest Types: ${type2}
-        
-        // For this career, include the following information:
-        // - career_name: A brief title of the career.
-        // - reason_for_recommendation: Why this career is suitable for someone with these interests.
-        // - present_trends: Current trends and opportunities in the field.
-        // - future_prospects: Predictions and potential growth in this career.
-        // - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full-text format.
-        // - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old (currently in week ${currentAgeWeek} of this age) until the age of ${age + 1}-year-old aspiring to be a ${career} for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} The education level is '${education}'. 
-        
-        // The roadmap should be broken down into **intervals of every month** (i.e., ${age}, ${age + 0.1}, ${age + 0.2}, ${age + 0.3}, ${age + 0.4}, ${age + 0.5}, ${age + 0.6}, ${age + 0.7}, ${age + 0.8}, ${age + 0.9}, ${age + 0.10}, ${age + 0.11}, ${age + 1}), and milestones must be provided for **each monthly interval**. Ensure that each interval includes:
-    
-        // 1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
-        // 2. Physical Milestones
-        // 3. Mental Milestones
-    
-        // Each of the **Educational**, **Physical**, and **Mental Milestones** should have **at least three milestones**. If you have more milestones, please include them as well. Each milestone should be separated with a '|' symbol.
-    
-        // The **Educational Milestones** should include:
-        // - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the career (such as industry-standard certifications).
-        // - **Certification Milestones**: These should be general certifications relevant to the career named "${career}", and **must not be tied to private companies, organizations, or vendors like CompTIA, Microsoft, etc..**. Only include the name of the course (do not include the platform or organization offering the course).
-    
-        // Each milestone should be structured as follows:
-        // {
-        // "age": <age_with_month>,
-        // "milestones": {
-        //     "Educational Milestones": {
-        //     "Academic Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-        //     "Certification Milestones": [
-        //         {
-        //         "milestone_description": "<description1>",
-        //         "certification_course_name": "<certification_name1>"
-        //         },
-        //         {
-        //         "milestone_description": "<description2>",
-        //         "certification_course_name": "<certification_name2>"
-        //         },
-        //         {
-        //         "milestone_description": "<description3>",
-        //         "certification_course_name": "<certification_name3>"
-        //         }
-        //     ]
-        //     },
-        //     "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-        //     "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
-        // }
-        // }
-    
-        // Ensure that the response is valid JSON, using the specified field names. Provide the response ${languageOptions[language] || 'in English'}.`;
-        
-
-        const basePrompt = `Provide detailed information for the career named "${career}" based on the following criteria:
-        - Personality Type: ${type1}
-        - RIASEC Interest Types: ${type2}
-        
-        For this career, include the following information:
-        - career_name: A brief title of the career.
-        - reason_for_recommendation: Why this career is suitable for someone with these interests.
-        - present_trends: Current trends and opportunities in the field.
-        - future_prospects: Predictions and potential growth in this career.
-        - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full-text format.
-        - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old (currently in week ${currentAgeWeek} of this age) until the age of ${age + 1}-year-old aspiring to be a ${career} for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}'. 
-        
-        The roadmap should be broken down into **intervals of every 2 months** (i.e., ${age}, ${age + 0.2}, ${age + 0.4}, ${age + 0.6}, ${age + 0.8}, ${age + 0.10}, ${age + 1}), and milestones must be provided for **each 2-month interval**. Ensure that each interval includes:
-    
-        1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
-        2. Physical Milestones
-        3. Mental Milestones
-    
-        Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
-    
-        The **Educational Milestones** should include:
-        - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the career (such as industry-standard certifications).
-        - **Certification Milestones**: These should be general certifications relevant to the career named "${career}", and **must not be tied to private companies, organizations, or vendors like CompTIA, Microsoft, etc..**. Only include the name of the course (do not include the platform or organization offering the course).
-    
-        Each milestone should be structured as follows:
-        {
-        "age": <age>,
-        "milestones": {
-            "Educational Milestones": {
-            "Academic Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-            "Certification Milestones": [
-                {
-                "milestone_description": "<description1>",
-                "certification_course_name": "<certification_name1>"
-                },
-                {
-                "milestone_description": "<description2>",
-                "certification_course_name": "<certification_name2>"
-                },
-                {
-                "milestone_description": "<description3>",
-                "certification_course_name": "<certification_name3>"
-                }
-            ]
-            },
-            "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-            "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
-        }
-        }
-    
-        Ensure that the response is valid JSON, using the specified field names. Provide the response ${languageOptions[language] || 'in English'}.`;
       
+        const getLabel = (scopeType, careerLabel) => {
+            if (scopeType === "career") return `aspiring to be a ${careerLabel}`;
+            if (scopeType === "cluster") return `exploring the cluster "${careerLabel}"`;
+            if (scopeType === "sector") return `navigating the sector "${careerLabel}"`;
+          };
+          
+          const getTitle = (scopeType) => {
+            if (scopeType === "career") return "career";
+            if (scopeType === "cluster") return "cluster";
+            if (scopeType === "sector") return "sector";
+          };
+          
+          const basePrompt = `You are tasked with generating a personalized roadmap and guidance based on the user's current career exploration progress.
+          
+          The user's current exploration scope is: **${scopeType}**
+          
+          This scope refers to:
+          - **Sector**: A broad domain of related professional paths (e.g., health, technology, education) that includes various clusters and careers.
+          - **Cluster**: A group of closely related careers or disciplines within a sector.
+          - **Career**: A specific job or role a person can prepare for directly.
+          
+          Currently, we are generating the roadmap for the given **${getTitle(scopeType)}** named **"${scopeName}"**.
+          
+          The roadmap must consider:
+          - Personality Type: ${type1}
+          - RIASEC Interest Types: ${type2}
+          
+          For this ${getTitle(scopeType)}, include the following information:
+          - career_name: A brief title of the ${getTitle(scopeType)}.
+          - reason_for_recommendation: Why this ${getTitle(scopeType)} fits someone with these interests.
+          - present_trends: Current trends and opportunities in this ${getTitle(scopeType)}.
+          - future_prospects: Predictions and potential growth in this ${getTitle(scopeType)}.
+          - user_description: A narrative of the user's traits and how they align with this ${getTitle(scopeType)}.
+          
+          Now, create a step-by-step roadmap specifically tailored for ${getLabel(scopeType, scopeName)} until the age of ${age + 1}-year-old for an individual who has an interest in ${type2}, starting from age ${age} (currently in week ${currentAgeWeek}), broken down into **2-month intervals**:
+          (${age}, ${age + 0.2}, ${age + 0.4}, ${age + 0.6}, ${age + 0.8}, ${age + 1})
+          
+          Each interval must contain:
+          1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
+          2. **Physical Milestones**
+          3. **Mental Milestones**
+
+         Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
+
+         The **Educational Milestones** should include:
+        - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the selected ${scopeType === "career" ? "career" : scopeType === "cluster" ? "cluster" : "sector"}.
+        - **Certification Milestones**: These should be general certifications relevant to the selected ${scopeType === "career" ? "career named \"" + scopeName + "\"" : scopeType === "cluster" ? "cluster \"" + scopeName + "\"" : "sector \"" + scopeName + "\""}, and **must not be tied to private companies, organizations, or vendors like CompTIA, Microsoft, etc.** Only include the name of the course (do not include the platform or organization offering the course).
+          
+          Each milestone group must include exactly **three items** and follow this format:
+          
+        {
+            "age": <age>,
+            "milestones": {
+                "Educational Milestones": {
+                "Academic Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+                "Certification Milestones": [
+                    {
+                    "milestone_description": "<description1>",
+                    "certification_course_name": "<certification_name1>"
+                    },
+                    {
+                    "milestone_description": "<description2>",
+                    "certification_course_name": "<certification_name2>"
+                    },
+                    {
+                    "milestone_description": "<description3>",
+                    "certification_course_name": "<certification_name3>"
+                    }
+                ]
+                },
+                "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+                "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
+            }
+        }
+          
+          Guidelines:
+          - If the ${getTitle(scopeType)} is a **career**, give a full detailed roadmap as above.
+          - If it is a **cluster**, follow the exact same format but ensure milestones are **structured and versatile** (not limited to a single role).
+          - If it is a **sector**, follow the same format but make the milestones **simpler and more general** (broadly applicable to many paths).
+          
+          Ensure the final output is valid JSON and structured cleanly. Use the following language: ${languageOptions[language] || 'English'}.
+          `;
+          
         return enhancePromptWithEducation(basePrompt, educationData);
     };
 
 
-    export const generateSubjectsPrompt = async (userId, age, careerName, type1, type2, country, currentAgeWeek) => {
+    export const  generateSubjectsPrompt = async (userId, age, scopeName, type1, type2, country, currentAgeWeek, scopeType) => {
+
         const educationData = await getUserEducationPromptData(userId);
     
-        const basePrompt = `for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and  ${age} (currently in week ${currentAgeWeek} of this age) pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
+        // const basePrompt = `for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and  ${age} (currently in week ${currentAgeWeek} of this age) pursuing a career in ${careerName}, identify the most essential academic subjects that provide a solid foundation for this career. Focus specifically on subjects directly related to ${careerName}, considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
     
-        Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where 'subject-data' as the key, and the value is an array of important subjects. The format should be as follows:
+        // Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where 'subject-data' as the key, and the value is an array of important subjects. The format should be as follows:
     
-        {
-        "subject-data": ["Subject1", "Subject2", "Subject3", ...]
-        }
+        // {
+        // "subject-data": ["Subject1", "Subject2", "Subject3", ...]
+        // }
     
-        Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
+        // Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective age, considering the career's requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
   
+        const getLabel = (scopeType, scopeName) => {
+            if (scopeType === "career") return `pursuing a career in ${scopeName}`;
+            if (scopeType === "cluster") return `exploring the cluster "${scopeName}"`;
+            if (scopeType === "sector") return `navigating the sector "${scopeName}"`;
+          };
+          
+          const getTitle = (scopeType) => {
+            if (scopeType === "career") return "career";
+            if (scopeType === "cluster") return "cluster";
+            if (scopeType === "sector") return "sector";
+          };
+          
+          const basePrompt = `For an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and ${age} (currently in week ${currentAgeWeek} of this age), ${getLabel(scopeType, scopeName)}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(scopeType)}.
+          
+          Focus specifically on subjects directly related to the ${getTitle(scopeType)} of "${scopeName}", considering the educational standards of ${country}. The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
+          
+          Provide at least 5 to 10 key subjects relevant for this age, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
+          
+          {
+            "subject-data": ["Subject1", "Subject2", "Subject3", ...]
+          }
+          
+          Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective age, considering the ${getTitle(scopeType)}'s requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
+
+          
         return enhancePromptWithEducation(basePrompt, educationData);
     };
 
@@ -292,7 +296,7 @@ export const dynamic = 'force-dynamic';
         return enhancePromptWithEducation(basePrompt, educationData);
     };
 
-    export const generateCourseTestPrompt = async (userId, career, course, type1, type2, age, level, currentAgeWeek) =>{
+    export const generateCourseTestPrompt = async (userId, scopeName, course, type1, type2, age, level, currentAgeWeek, scopeType) =>{
 
         const educationData = await getUserEducationPromptData(userId);
 
@@ -429,8 +433,60 @@ export const dynamic = 'force-dynamic';
     //     Ensure that the response is valid JSON, using the specified field names.
     //     `;
 
+    // const basePrompt = `
+    //     Generate a comprehensive quiz for the career "${scopeName}" with the course titled "${course}". The quiz should be designed for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and ${age} (currently in week ${currentAgeWeek} of this age).
+
+    //     ### Difficulty Level: ${level}
+    //     This quiz should reflect a ${level} difficulty level (beginner, intermediate, or advanced) with appropriately challenging content.
+
+    //     ### topics_covered:
+    //     Before creating the quiz, generate a comprehensive list of 10 topics that would be covered in this course. This should be a single consolidated list rather than divided by weeks. The number of topics should appropriately reflect the breadth and depth of the course content - don't limit to any specific number. Return this as a JSON array of strings:
+
+    //     "topics_covered": [
+    //         "Topic A",
+    //         "Topic B",
+    //         "Topic C",
+    //         ...
+    //     ]
+
+    //     ### final_quiz:
+    //     For the quiz, provide 20 questions covering key concepts and skills from the course.
+    //     For each question, provide exactly 4 answer options. Only one option should be marked as the correct answer using "is_answer": "yes" and the others should be marked with "is_answer": "no."
+
+    //     Ensure that the quiz questions are appropriately challenging:
+    //     1. The incorrect options (distractors) should be plausible and related to the course content
+    //     2. Avoid making the correct answer obviously different from the distractors in format, length, or category
+    //     3. All options should be of similar difficulty level and domain
+    //     4. Ensure distractors represent common misconceptions or partial understandings rather than clearly incorrect statements
+    //     5. All options must be in the same conceptual category - avoid having one option that clearly stands out from others
+    //     6. All options should have similar phrasing styles, terminology levels, and length
+    //     7. For numerical questions, wrong answers should reflect common calculation errors or plausible alternative values
+    //     8. Avoid instances where the correct answer is the only complete, grammatically correct, or specific option
+
+    //     Adjust the difficulty based on the selected level (${level}):
+    //     - For beginner level: Focus on foundational concepts with clear but still clear distinctions
+    //     - For intermediate level: Include more nuanced concepts and require deeper understanding to distinguish between options
+    //     - For advanced level: Present sophisticated concepts with subtle distinctions that require expert-level understanding
+
+    //     Return all questions in a single JSON array, with each question following this format:
+
+    //     {
+    //         "question": "Your question text",
+    //         "options": [
+    //             { "text": "Option 1", "is_answer": "no" },
+    //             { "text": "Option 2", "is_answer": "yes" },
+    //             { "text": "Option 3", "is_answer": "no" },
+    //             { "text": "Option 4", "is_answer": "no" }
+    //         ]
+    //     }
+
+    //     Make sure there are exactly 20 questions, no more and no less, and that none of the questions or answer options are repeated.
+
+    //     Ensure that the response is valid JSON, using the specified field names.
+    //     `;
+
     const basePrompt = `
-        Generate a comprehensive quiz for the career "${career}" with the course titled "${course}". The quiz should be designed for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and ${age} (currently in week ${currentAgeWeek} of this age).
+        Generate a comprehensive quiz for the ${scopeType === "career" ? 'career' : scopeType === "cluster" ? 'given cluster' : 'selected sector'} "${scopeName}" with the course titled "${course}". The quiz should be designed for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} and ${age} (currently in week ${currentAgeWeek} of this age).
 
         ### Difficulty Level: ${level}
         This quiz should reflect a ${level} difficulty level (beginner, intermediate, or advanced) with appropriately challenging content.
@@ -480,6 +536,7 @@ export const dynamic = 'force-dynamic';
 
         Ensure that the response is valid JSON, using the specified field names.
         `;
+
 
     return enhancePromptWithEducation(basePrompt, educationData);
     }

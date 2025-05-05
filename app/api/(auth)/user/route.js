@@ -24,6 +24,18 @@ export async function POST(req) {
         { message },
         { status: 400 } // Bad Request
       );
+    }    // Calculate age from DOB
+    const dob = new Date(data?.dob);
+    const ageDiff = Date.now() - dob.getTime();
+    const ageDate = new Date(ageDiff);
+    const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+    // Determine scope_type
+    let scope_type = "career";
+    if (age >= 6 && age <= 9) {
+      scope_type = "sector";
+    } else if (age >= 10 && age <= 14) {
+      scope_type = "cluster";
     }
 
     // Insert user details into the database
@@ -47,6 +59,7 @@ export async function POST(req) {
       experience: data?.experience,
       current_job: data?.currentJob,
       account_status: 'separated',
+      scope_type: scope_type,
       // institution_id: data?.instituteId,
       // class_id: data?.classId,
       // division_id: data?.divisionId, /* moved to speratee section
@@ -78,7 +91,8 @@ export async function POST(req) {
         userId: user.id,
         birth_date: user.birth_date,
         isVerified: user.is_verified,
-        plan: user.plan_type
+        plan: user.plan_type,
+        scope_type: user.scope_type,
        },
       process.env.JWT_SECRET_KEY
     );

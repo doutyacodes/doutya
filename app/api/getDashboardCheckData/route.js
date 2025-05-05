@@ -32,7 +32,8 @@ export async function GET(req) {
             classId: USER_DETAILS.class_id,
             className: USER_DETAILS.class_name,
             academicYearStart: USER_DETAILS.academicYearStart,
-            academicYearEnd: USER_DETAILS.academicYearEnd
+            academicYearEnd: USER_DETAILS.academicYearEnd,
+            scopeType: USER_DETAILS.scope_type
         })
         .from(USER_DETAILS)
         .where(eq(USER_DETAILS.id, userId))
@@ -79,6 +80,7 @@ export async function GET(req) {
             educationStageExists, // true if entry exists, false otherwise
             educationStage: educationStageValue, // school, college, completed_education, or null
             isEducationCompleted, // true if completed_education, false otherwise
+            scopeType: userDetails[0].scopeType
         },
         { status: 200 }
         );

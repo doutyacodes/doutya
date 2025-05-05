@@ -42,11 +42,11 @@ export default function Challenge({ selectedCareer }) {
         console.log('fetching')
         setFetching(true);
         try {
-            const response = await GlobalApi.getChallenges(selectedCareer.career_group_id, token, language);
+            const response = await GlobalApi.getChallenges(selectedCareer.scope_grp_id, token, language);
             setChallenges(response.data.challenges);
 
             // Fetch the last submitted challenge for the current user
-            const lastSubmissionResponse = await GlobalApi.getLastSubmittedChallenge(selectedCareer.career_group_id,token);
+            const lastSubmissionResponse = await GlobalApi.getLastSubmittedChallenge(selectedCareer.scope_grp_id,token);
             setLastSubmittedChallenge(lastSubmissionResponse.data.lastSubmittedChallenge);
 
             const lastChallenge = lastSubmissionResponse.data.lastSubmittedChallenge;
@@ -88,7 +88,7 @@ export default function Challenge({ selectedCareer }) {
     const fetchChallengesByStatus = async (status) => {
         setFetching(true);
         try {
-            const response = await GlobalApi.getChallengesByStatus(status, selectedCareer.career_group_id,token);
+            const response = await GlobalApi.getChallengesByStatus(status, selectedCareer.scope_grp_id,token);
             setChallenges(response.data.challenges); // Update challenges based on status
         } catch (error) {
             console.error(`Error fetching ${status} challenges:`, error);
@@ -155,7 +155,7 @@ export default function Challenge({ selectedCareer }) {
                 );
 
                 // Fetch updated challenge progress
-                const updatedProgress = await GlobalApi.getLastSubmittedChallenge(selectedCareer.career_group_id, token);
+                const updatedProgress = await GlobalApi.getLastSubmittedChallenge(selectedCareer.scope_grp_id, token);
                 setLastSubmittedChallenge(updatedProgress.data.lastSubmittedChallenge);
 
                 // Update currentWeek for the next challenge

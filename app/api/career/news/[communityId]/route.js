@@ -1,74 +1,6 @@
-// import { NextResponse } from "next/server";
-// import { db } from "@/utils";
-// import { CAREER_NEWS, COMMUNITY } from "@/utils/schema";
-// import { eq, desc } from "drizzle-orm";  // ✅ Import desc for ordering
-// import { authenticate } from "@/lib/jwtMiddleware";
-
-// export async function GET(req, { params }) {
-//   try {
-//     // Authenticate the request
-//     const authResult = await authenticate(req);
-//     if (!authResult.authenticated) {
-//       return authResult.response;
-//     }
-
-//     const communityId = parseInt(params.communityId);
-
-//     if (isNaN(communityId)) {
-//       return NextResponse.json(
-//         { message: "Invalid community ID" },
-//         { status: 400 }
-//       );
-//     }
-
-//     console.log('communityId:', communityId);
-
-//     // Fetch career_id from COMMUNITY table
-//     const communityDetails = await db
-//       .select({ careerId: COMMUNITY.career_id })
-//       .from(COMMUNITY)
-//       .where(eq(COMMUNITY.id, communityId))
-//       .limit(1);   // ✅ Proper limit usage
-
-//     if (!communityDetails.length) {
-//       return NextResponse.json(
-//         { message: "Community not found" },
-//         { status: 404 }
-//       );
-//     }
-
-//     const careerId = communityDetails[0].careerId;
-
-//     // Fetch news for the specific career, ordered by most recent
-//     const news = await db
-//       .select()
-//       .from(CAREER_NEWS)
-//       .where(eq(CAREER_NEWS.career_id, careerId))
-//       .orderBy(desc(CAREER_NEWS.created_at))  // ✅ Use desc() for ordering
-//       .limit(9);   // ✅ Proper limit usage
-
-//     return NextResponse.json(
-//       { 
-//         message: "Career news fetched successfully", 
-//         news 
-//       },
-//       { status: 200 }
-//     );
-
-//   } catch (error) {
-//     console.error("Error in GET career news:", error);
-//     return NextResponse.json(
-//       { 
-//         message: error.message || "An unexpected error occurred" 
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 import { NextResponse } from "next/server";
 import { db } from "@/utils";
-import { CAREER_NEWS, COMMUNITY, CAREER_GROUP } from "@/utils/schema";
+import { CAREER_NEWS, COMMUNITY, CAREER_GROUP, CLUSTER, SECTOR } from "@/utils/schema";
 import { eq, desc, and, gte } from "drizzle-orm";
 import { authenticate } from "@/lib/jwtMiddleware";
 import axios from "axios";
@@ -79,77 +11,19 @@ export const dynamic = 'force-dynamic';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-// Helper function to check if a date is today (in UTC)
-function isToday(date) {
-  const today = new Date();
-  const compareDate = new Date(date);
-  
-  return compareDate.getUTCFullYear() === today.getUTCFullYear() &&
-         compareDate.getUTCMonth() === today.getUTCMonth() &&
-         compareDate.getUTCDate() === today.getUTCDate();
-}
+const getScopeLabel = (scopeType, scopeLabel) => {
+  if (scopeType === "career") return `the career: "${scopeLabel}"`;
+  if (scopeType === "cluster") return `the career cluster: "${scopeLabel}"`;
+  if (scopeType === "sector") return `the career sector: "${scopeLabel}"`;
+};
 
-// // News generation function from your cron job
-// const basePrompt = (career) => `
-// You are an expert news writer and your task is to generate **three recent, accurate, and concise news articles** specifically related to the career: "${career}". 
-
-// ###  **Guidelines:**
-// 1. Fetch the **latest news** about this career, including industry trends, updates, job market changes, or technological advancements.
-// 2. Ensure the news content is **genuine and realistic** with references to **diverse and valid** news sources.
-// 3. The news should be interesting and engaging for individuals pursuing or interested in this career.
-
-// ---
-
-// ###  **Output Format (Strict JSON Structure):**
-// [
-//     {
-//         "title": "<Title of the first news article>",
-//         "summary": "<A brief, clear, and engaging summary of the first news>",
-//         "source_url": "<A working, real, and valid source link>"
-//     },
-//     {
-//         "title": "<Title of the second news article>",
-//         "summary": "<A brief, clear, and engaging summary of the second news>",
-//         "source_url": "<A working, real, and valid source link>"
-//     },
-//     {
-//         "title": "<Title of the third news article>",
-//         "summary": "<A brief, clear, and engaging summary of the third news>",
-//         "source_url": "<A working, real, and valid source link>"
-//     }
-// ]
-
-// ---
-
-// ###  **Conditions and Rules:**
-// 1. **Title:**  
-//    - Concise and attention-grabbing (max 100 characters).  
-//    - Clearly reflect the main idea of the news.  
-// 2. **Summary:**  
-//    - Summarize the key points in **2-3 sentences**.  
-//    - Ensure it captures the essence of the news effectively.  
-// 3. **Source URL:**  
-//    - The \`source_url\` should link to **valid, working, and reputable news sources**.  
-//    - Use **diverse and trustworthy sources** (e.g., news agencies, industry blogs, professional journals, etc.)  
-// 4. **Ensure JSON validity:**  
-//    - Strictly return the news content in **valid JSON format**.  
-//    - No extra text, comments, or explanations.  
-
-// ---
-
-// ###  **Important Instructions:**
-// - **DO NOT** include irrelevant information or commentary.  
-// - Only return the **JSON array** with the specified keys.  
-// - The news must be **credible, relevant, and properly formatted**.  
-// `;
-
-const basePrompt = (career) => `
-You are an expert news writer and your task is to generate **three recent, accurate, and concise news articles** specifically related to the career: "${career}". 
+const basePrompt = (scopeType, scopeLabel) => `
+You are an expert news writer and your task is to generate **three recent, accurate, and concise news articles** specifically related to ${getScopeLabel(scopeType, scopeLabel)}.
 
 ###  **Guidelines:**
-1. Fetch the **latest news** about this career, including industry trends, updates, job market changes, or technological advancements.
+1. Fetch the **latest news** about this ${scopeType}, including industry trends, updates, job market changes, or technological advancements.
 2. Ensure the news content is **genuine and realistic** with references to **diverse and valid** news sources.
-3. The news should be interesting and engaging for individuals pursuing or interested in this career.
+3. The news should be interesting and engaging for individuals pursuing or interested in this ${scopeType}.
 
 ---
 
@@ -185,7 +59,7 @@ You are an expert news writer and your task is to generate **three recent, accur
    - The \`source_url\` MUST be links to REAL, EXISTING articles that actually exist on the web.
    - Only use homepage URLs of major publications (like nytimes.com, forbes.com, techcrunch.com) if you cannot find a specific article URL.
    - DO NOT invent or create fake article paths or URLs - only use URLs to real articles you know exist.
-   - Prioritize mainstream news sites, industry publications, and educational institutions that are likely to have content about this career.
+   - Prioritize mainstream news sites, industry publications, and educational institutions that are likely to have content about this ${scopeType}.
    - If unsure about a specific article URL, use the publication's main domain instead.
 4. **Ensure JSON validity:**  
    - Strictly return the news content in **valid JSON format**.  
@@ -200,16 +74,17 @@ You are an expert news writer and your task is to generate **three recent, accur
 - **NEVER invent URLs** - only use real, working URLs to actual sites and articles.
 `;
 
-async function fetchNews(careerId, careerName) {
+async function fetchNews(scopeId, scopeType, scopeName) {
   try {
-    const prompt = basePrompt(careerName);
-    console.log(`Generating news for career: ${careerName}`);
+    const prompt = basePrompt(scopeType, scopeName);
+    console.log(`Generating news for ${scopeType}: ${scopeName}`);
 
     // First create entries with pending status
     for (let i = 0; i < 3; i++) {
       await db.insert(CAREER_NEWS).values({
-        career_id: careerId,
-        title: `Generating news for ${careerName}...`,
+        scope_id: scopeId,
+        scope_type: scopeType,
+        title: `Generating news for ${scopeName}...`,
         summary: "News is being generated. Please check back shortly.",
         source_url: "#",
         published_at: new Date(),
@@ -245,7 +120,7 @@ async function fetchNews(careerId, careerName) {
     try {
       parsedData = JSON.parse(responseText);
     } catch (error) {
-      console.error(`Failed to parse response for ${careerName}:`, error);
+      console.error(`Failed to parse response for ${scopeName}:`, error);
       
       // Update pending entries to failed
       const pendingEntries = await db
@@ -253,7 +128,8 @@ async function fetchNews(careerId, careerName) {
         .from(CAREER_NEWS)
         .where(
           and(
-            eq(CAREER_NEWS.career_id, careerId),
+            eq(CAREER_NEWS.scope_id, scopeId),
+            eq(CAREER_NEWS.scope_type, scopeType),
             eq(CAREER_NEWS.status, "pending")
           )
         )
@@ -276,7 +152,8 @@ async function fetchNews(careerId, careerName) {
       .from(CAREER_NEWS)
       .where(
         and(
-          eq(CAREER_NEWS.career_id, careerId),
+          eq(CAREER_NEWS.scope_id, scopeId),
+          eq(CAREER_NEWS.scope_type, scopeType),
           eq(CAREER_NEWS.status, "pending")
         )
       )
@@ -299,7 +176,7 @@ async function fetchNews(careerId, careerName) {
 
     return parsedData;
   } catch (error) {
-    console.error(`Error generating news for career ${careerName}:`, error);
+    console.error(`Error generating news for ${scopeType} ${scopeName}:`, error);
     
     // Update pending entries to failed
     const pendingEntries = await db
@@ -307,7 +184,8 @@ async function fetchNews(careerId, careerName) {
       .from(CAREER_NEWS)
       .where(
         and(
-          eq(CAREER_NEWS.career_id, careerId),
+          eq(CAREER_NEWS.scope_id, scopeId),
+          eq(CAREER_NEWS.scope_type, scopeType),
           eq(CAREER_NEWS.status, "pending")
         )
       )
@@ -326,7 +204,7 @@ async function fetchNews(careerId, careerName) {
 }
 
 // Function to wait and check if news generation is complete
-async function waitForNewsGeneration(careerId, maxAttempts = 10, delayMs = 2000) {
+async function waitForNewsGeneration(scopeId, scopeType, maxAttempts = 10, delayMs = 2000) {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // Check if news is ready
     const news = await db
@@ -334,7 +212,8 @@ async function waitForNewsGeneration(careerId, maxAttempts = 10, delayMs = 2000)
       .from(CAREER_NEWS)
       .where(
         and(
-          eq(CAREER_NEWS.career_id, careerId),
+          eq(CAREER_NEWS.scope_id, scopeId),
+          eq(CAREER_NEWS.scope_type, scopeType),
           eq(CAREER_NEWS.status, "completed"),
           gte(CAREER_NEWS.created_at, getTodayStart())
         )
@@ -352,7 +231,8 @@ async function waitForNewsGeneration(careerId, maxAttempts = 10, delayMs = 2000)
       .from(CAREER_NEWS)
       .where(
         and(
-          eq(CAREER_NEWS.career_id, careerId),
+          eq(CAREER_NEWS.scope_id, scopeId),
+          eq(CAREER_NEWS.scope_type, scopeType),
           eq(CAREER_NEWS.status, "failed"),
           gte(CAREER_NEWS.created_at, getTodayStart())
         )
@@ -377,6 +257,41 @@ function getTodayStart() {
   return today;
 }
 
+// Helper function to get scope name based on scope type and ID
+async function getScopeName(scopeType, scopeId) {
+  try {
+    let result;
+    
+    if (scopeType === "career") {
+      result = await db
+        .select({ name: CAREER_GROUP.career_name })
+        .from(CAREER_GROUP)
+        .where(eq(CAREER_GROUP.id, scopeId))
+        .limit(1)
+        .execute();
+    } else if (scopeType === "cluster") {
+      result = await db
+        .select({ name: CLUSTER.name })
+        .from(CLUSTER)
+        .where(eq(CLUSTER.id, scopeId))
+        .limit(1)
+        .execute();
+    } else if (scopeType === "sector") {
+      result = await db
+        .select({ name: SECTOR.name })
+        .from(SECTOR)
+        .where(eq(SECTOR.id, scopeId))
+        .limit(1)
+        .execute();
+    }
+    
+    return result && result.length > 0 ? result[0].name : null;
+  } catch (error) {
+    console.error(`Error fetching scope name for ${scopeType} ID ${scopeId}:`, error);
+    return null;
+  }
+}
+
 export async function GET(req, { params }) {
   try {
     // Authenticate the request
@@ -394,9 +309,12 @@ export async function GET(req, { params }) {
       );
     }
 
-    // Fetch career_id from COMMUNITY table
+    // Fetch scope info from COMMUNITY table
     const communityDetails = await db
-      .select({ careerId: COMMUNITY.career_id })
+      .select({ 
+        scopeId: COMMUNITY.scope_id,
+        scopeType: COMMUNITY.scope_type
+      })
       .from(COMMUNITY)
       .where(eq(COMMUNITY.id, communityId))
       .limit(1);
@@ -408,7 +326,8 @@ export async function GET(req, { params }) {
       );
     }
 
-    const careerId = communityDetails[0].careerId;
+    const scopeId = communityDetails[0].scopeId;
+    const scopeType = communityDetails[0].scopeType;
 
     // Check if we have today's news that is completed
     const todayStart = getTodayStart();
@@ -418,7 +337,8 @@ export async function GET(req, { params }) {
       .from(CAREER_NEWS)
       .where(
         and(
-          eq(CAREER_NEWS.career_id, careerId),
+          eq(CAREER_NEWS.scope_id, scopeId),
+          eq(CAREER_NEWS.scope_type, scopeType),
           eq(CAREER_NEWS.status, "completed"),
           gte(CAREER_NEWS.created_at, todayStart)
         )
@@ -430,7 +350,7 @@ export async function GET(req, { params }) {
       // We have today's news already generated
       return NextResponse.json(
         { 
-          message: "Career news fetched successfully", 
+          message: "News fetched successfully", 
           news: existingNews,
           source: "cached"
         },
@@ -444,7 +364,8 @@ export async function GET(req, { params }) {
       .from(CAREER_NEWS)
       .where(
         and(
-          eq(CAREER_NEWS.career_id, careerId),
+          eq(CAREER_NEWS.scope_id, scopeId),
+          eq(CAREER_NEWS.scope_type, scopeType),
           eq(CAREER_NEWS.status, "pending"),
           gte(CAREER_NEWS.created_at, todayStart)
         )
@@ -453,12 +374,12 @@ export async function GET(req, { params }) {
 
     if (pendingNews.length > 0) {
       // News generation is already in progress, wait for it to complete
-      const completedNews = await waitForNewsGeneration(careerId);
+      const completedNews = await waitForNewsGeneration(scopeId, scopeType);
       
       if (completedNews) {
         return NextResponse.json(
           { 
-            message: "Career news fetched successfully", 
+            message: "News fetched successfully", 
             news: completedNews,
             source: "waited"
           },
@@ -469,7 +390,12 @@ export async function GET(req, { params }) {
         const fallbackNews = await db
           .select()
           .from(CAREER_NEWS)
-          .where(eq(CAREER_NEWS.career_id, careerId))
+          .where(
+            and(
+              eq(CAREER_NEWS.scope_id, scopeId),
+              eq(CAREER_NEWS.scope_type, scopeType)
+            )
+          )
           .orderBy(desc(CAREER_NEWS.created_at))
           .limit(3)
           .execute();
@@ -485,30 +411,29 @@ export async function GET(req, { params }) {
       }
     }
 
-    // No recent news and no pending generation, so get career name and generate new news
-    const careerDetails = await db
-      .select({ careerName: CAREER_GROUP.career_name })
-      .from(CAREER_GROUP)
-      .where(eq(CAREER_GROUP.id, careerId))
-      .limit(1);
+    // No recent news and no pending generation, so get scope name and generate new news
+    const scopeName = await getScopeName(scopeType, scopeId);
 
-    if (!careerDetails.length) {
+    if (!scopeName) {
       return NextResponse.json(
-        { message: "Career not found" },
+        { message: `${scopeType} not found with ID ${scopeId}` },
         { status: 404 }
       );
     }
-
-    const careerName = careerDetails[0].careerName;
     
     // Start news generation
-    const newsGeneration = fetchNews(careerId, careerName);
+    const newsGeneration = fetchNews(scopeId, scopeType, scopeName);
     
     // Don't wait for it to complete, instead check for any news we can return immediately
     const mostRecentNews = await db
       .select()
       .from(CAREER_NEWS)
-      .where(eq(CAREER_NEWS.career_id, careerId))
+      .where(
+        and(
+          eq(CAREER_NEWS.scope_id, scopeId),
+          eq(CAREER_NEWS.scope_type, scopeType)
+        )
+      )
       .orderBy(desc(CAREER_NEWS.created_at))
       .limit(3)
       .execute();
@@ -523,7 +448,7 @@ export async function GET(req, { params }) {
     );
 
   } catch (error) {
-    console.error("Error in GET career news:", error);
+    console.error("Error in GET news:", error);
     return NextResponse.json(
       { 
         message: error.message || "An unexpected error occurred" 

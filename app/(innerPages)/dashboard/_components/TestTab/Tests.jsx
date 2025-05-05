@@ -18,19 +18,19 @@ function Tests({selectedCareer}) {
     const [subjects, setSubjects] = useState([])
     const [selectedSubjectId, setSelectedSubjectId] = useState(null)
     const [subjectTestId, setSubjectTestId] = useState(null)
-    
-
     const router = useRouter();
 
     const currentYear = selectedCareer.weekData.yearsSinceJoined
     const currentWeek = selectedCareer.weekData.weekNumber
+
+  console.log("selectedcreer", selectedCareer)
 
     useEffect(()=>{
         const getSubjects = async () => {
             setIsLoading(true)
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-                const response = await GlobalApi.GetSubjects(selectedCareer.career_group_id, token);
+                const response = await GlobalApi.GetSubjects(selectedCareer.scope_grp_id, token);
                 
                 if (response.status === 200) {  // Check for a 200 status code
                     console.log("log", response.data.subjects);

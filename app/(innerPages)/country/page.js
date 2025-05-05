@@ -42,10 +42,18 @@ function SelectCountry() {
         if (!token) return;
         
         const resp = await GlobalApi.GetDashboarCheck(token);
+        const scopeType = resp.data.scopeType || "career";
+        
         // Check if country is already selected and redirect accordingly
         if (resp.data.countryAdded) {
-          // Country already selected, redirect to next incomplete step or dashboard
-          router.replace("/dashboard/careers/career-suggestions");
+          // Country already selected, redirect based on scopeType
+          if (scopeType === "career") {
+            router.replace("/dashboard/careers/career-suggestions");
+          } else if (scopeType === "sector") {
+            router.replace("/dashboard_kids/sector-suggestion");
+          } else if (scopeType === "cluster") {
+            router.replace("/dashboard_junior/cluster-suggestion");
+          }
         } else {
           // Country not selected yet, check if previous steps are complete
           if (!resp.data.educationStageExists) {
@@ -136,7 +144,19 @@ useEffect(()=>{
 
       if (response.status === 201) {
         toast.success("Country details saved successfully!");
-        router.replace("/dashboard/careers/career-suggestions");
+        
+        // Get scopeType before redirecting
+        const dashboardCheck = await GlobalApi.GetDashboarCheck(token);
+        const scopeType = dashboardCheck.data.scopeType || "career";
+        
+        // Redirect based on scopeType
+        if (scopeType === "career") {
+          router.replace("/dashboard/careers/career-suggestions");
+        } else if (scopeType === "sector") {
+          router.replace("/dashboard_kids/sector-suggestion");
+        } else if (scopeType === "cluster") {
+          router.replace("/dashboard_junior/cluster-suggestion");
+        }
       } else {
         toast.error("Failed to save country details.");
       }
