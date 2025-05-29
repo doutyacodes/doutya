@@ -91,7 +91,7 @@ export async function GET(request, { params }) {
             certificationName: CERTIFICATIONS.certification_name,   // Certification name
             certificateID: USER_CERTIFICATION_COMPLETION.certificate_id,
             userName: USER_DETAILS.name,                            // User's full name
-            username: USER_DETAILS.username,                        // Username as fallback
+            username: USER_DETAILS.username,                        // Username as fallback 
             ratingStars: USER_CERTIFICATION_COMPLETION.rating_stars, // Certification stars
             scorePercentage: USER_CERTIFICATION_COMPLETION.score_percentage, // Certification score percentage
             level: USER_CERTIFICATION_COMPLETION.level,       

@@ -83,13 +83,16 @@ export async function GET(req) {
       scopeData = data;
     
     } else if (scopeType === "career") {
+      console.log('inside th ecareer')
+      console.log('userId', userId)
+
       tableName = "career";
       const data = await db
         .select({
           id: USER_CAREER.id,
           scope_grp_id: CAREER_GROUP.id,
           name: CAREER_GROUP.career_name,
-          description: CAREER_GROUP.description,
+          // description: CAREER_GROUP.description,
           created_at: USER_CAREER.created_at
         })
         .from(USER_CAREER)
