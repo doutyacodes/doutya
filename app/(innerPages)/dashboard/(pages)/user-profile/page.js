@@ -28,6 +28,7 @@ function Page() {
   const [isSubmit, setIsSubmit] = useState(false);
   const [dashboardType, setDashboardType] = useState(''); // Possible values: 'kids', 'junior', 'senior'
   const [showKey, setShowKey] = useState(false);
+  const [selectedCareer, setSelectedCareer] = useState(null);
   const t = useTranslations('ProfilePage');
   
 
@@ -197,7 +198,7 @@ function Page() {
 
   return (
     <div className="min-h-screen max-md:pb-24 px-4 py-10 md:py-0 md:px-0">
-      <CareerStripe />
+      <CareerStripe selectedItem={selectedCareer}  setSelectedItem={setSelectedCareer}/>
       <Toaster position="top-center" reverseOrder={false} />
         {/* <Link href={typeof window !== 'undefined' ? localStorage.getItem('dashboardUrl') : '/login'}>
           <button className="text-white bg-green-600 -mt-20 mb-7 ml-20 p-3 rounded-xl">
