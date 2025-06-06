@@ -5,15 +5,6 @@ import axios from 'axios';
 
 const BASE_IMAGE_URL = 'https://wowfy.in/doutya-api/photos/';
 
-// interface Mentor {
-//   mentor_id: number;
-//   full_name: string;
-//   profession: string;
-//   experience_years: number;
-//   profile_picture_url?: string;
-//   bio?: string;
-// }
-
 const Mentorship = ({ selectedCareer }) => {
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +17,7 @@ const Mentorship = ({ selectedCareer }) => {
     const fetchMentors = async () => {
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        const response = await axios.get(`/api/mentors/${selectedCareer.career_group_id}/user-mentors`, {
+        const response = await axios.get(`/api/mentors/${selectedCareer.scope_grp_id}/user-mentors`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -39,30 +30,29 @@ const Mentorship = ({ selectedCareer }) => {
       }
     };
 
-    if (selectedCareer.career_group_id) {
+    if (selectedCareer.scope_grp_id) {
       fetchMentors();
     }
-  }, [selectedCareer.career_group_id]);
+  }, [selectedCareer.scope_grp_id]);
 
   // const handleAddMentors = () => {
-  //   router.push(`/mentors/browse?careerGroupId=${selectedCareer.career_group_id}`);
+  //   router.push(`/mentors/browse?careerGroupId=${selectedCareer.scope_grp_id}`);
   // };
 
   const handleAddMentors = () => {
-    router.push(`/mentors/${selectedCareer.career_group_id}/browse`);
+    router.push(`/mentors/${selectedCareer.scope_grp_id}/browse`);
   };
   
-  
   const handleMentorProfile = (mentorId) => {
-    router.push(`/mentors/${selectedCareer.career_group_id}/profile/${mentorId}`);
+    router.push(`/mentors/${selectedCareer.scope_grp_id}/profile/${mentorId}`);
   };
 
   const handleOneOnOneSessions = (mentorId) => {
-    router.push(`/mentors/${selectedCareer.career_group_id}/${mentorId}/booking?tabIndex=1`);
+    router.push(`/mentors/${selectedCareer.scope_grp_id}/${mentorId}/booking?tabIndex=1`);
   };
   
   const handleChat = (mentorId) => {
-    router.push(`/mentors/${selectedCareer.career_group_id}/${mentorId}/chat`);
+    router.push(`/mentors/${selectedCareer.scope_grp_id}/${mentorId}/chat`);
   };
 
   if (loading) {

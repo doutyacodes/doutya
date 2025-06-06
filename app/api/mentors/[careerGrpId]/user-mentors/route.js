@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/utils";
 import { USER_MENTOR_RELATIONSHIPS, MENTOR_PROFILES } from "@/utils/schema";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { authenticate } from "@/lib/jwtMiddleware";
 
 export async function GET(req, { params }) {
@@ -23,8 +23,10 @@ export async function GET(req, { params }) {
       })
       .from(USER_MENTOR_RELATIONSHIPS)
       .where(
-        eq(USER_MENTOR_RELATIONSHIPS.user_id, userId) &&
-        eq(USER_MENTOR_RELATIONSHIPS.career_group_id, careerGroupId)
+        and(
+          eq(USER_MENTOR_RELATIONSHIPS.user_id, userId),
+          eq(USER_MENTOR_RELATIONSHIPS.career_group_id, careerGroupId)
+        )
       );
 
     // If no mentor relationships found, return empty array
@@ -47,8 +49,10 @@ export async function GET(req, { params }) {
       })
       .from(MENTOR_PROFILES)
       .where(
-        eq(MENTOR_PROFILES.is_active, true) &&
-        inArray(MENTOR_PROFILES.mentor_id, mentorIds)
+        and(
+          eq(MENTOR_PROFILES.is_active, true),
+          inArray(MENTOR_PROFILES.mentor_id, mentorIds)
+        )
       );
 
     return NextResponse.json({ mentors }, { status: 200 });
