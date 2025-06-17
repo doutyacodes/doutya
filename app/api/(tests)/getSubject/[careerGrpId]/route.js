@@ -231,7 +231,7 @@ export async function GET(req, { params }) {
             .innerJoin(SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id))
             .where(
                 and(
-                    eq(CAREER_SUBJECTS.id, scopeId),
+                    eq(CAREER_SUBJECTS.scope_id, scopeId),
                     eq(CAREER_SUBJECTS.scope_type, scopeType),
                     eq(SUBJECTS.min_age, age),
                     eq(SUBJECTS.class_name, className)
@@ -395,7 +395,7 @@ export async function GET(req, { params }) {
             )
             .where(
                 and(
-                    eq(CAREER_SUBJECTS.id, scopeId),
+                    eq(CAREER_SUBJECTS.scope_id, scopeId),
                     eq(CAREER_SUBJECTS.scope_type, scopeType),
                     eq(SUBJECTS.min_age, effectiveAge),
                     eq(SUBJECTS.class_name, className)

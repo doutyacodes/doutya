@@ -338,7 +338,7 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
           return db
             .insert(CAREER_SUBJECTS)
             .values({
-              id: scopeId,
+              scope_id: scopeId,
               scope_type: scopeType,
               subject_id: subjectId,
             })

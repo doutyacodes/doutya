@@ -54,7 +54,7 @@ export async function GET(req) {
         })
         .from(SUBJECTS)
         .innerJoin(CAREER_SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id))
-        .where(eq(CAREER_SUBJECTS.id, scope_id))
+        .where(eq(CAREER_SUBJECTS.scope_id, scope_id))
         .execute();
   
         // Fetch test results for the requested month and year

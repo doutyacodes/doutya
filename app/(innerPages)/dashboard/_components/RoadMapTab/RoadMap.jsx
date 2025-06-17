@@ -44,7 +44,7 @@ function RoadMap({ selectedCareer }) {
       if (response.status === 200) {
         if (currentRequestId === requestIdRef.current) {
           const results = response.data;
-          console.log(results);
+          // console.log(results);
           setRoadMapData(results);
         }
       }
@@ -59,9 +59,11 @@ function RoadMap({ selectedCareer }) {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
+  if (selectedCareer && selectedCareer.id) {
     getRoadmap();
-  }, [selectedCareer]);
+  }
+}, [selectedCareer?.id]); // Only depend on the ID, not the entire object
 
     useEffect(() => {
       if (roadMapData.length > 0) {

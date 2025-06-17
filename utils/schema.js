@@ -570,7 +570,7 @@ export const SUBJECTS = mysqlTable("subjects", {
 export const CAREER_SUBJECTS = mysqlTable(
   "career_subjects",
   {
-    id: int("id").notNull(), // This is the generic ID (from career/cluster/sector)
+    scope_id: int("scope_id").notNull(), // This is the generic ID (from career/cluster/sector)
     scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"]).notNull(),
     subject_id: int("subject_id")
       .notNull()

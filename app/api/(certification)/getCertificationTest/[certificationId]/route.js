@@ -183,8 +183,8 @@ export async function GET(request, { params }) {
             else if (p.quizId === 2) type2 = p.typeSequence;
         }
 
+        let totalAnswered = 0;
         
-
         // Check if isStarted is true in the USER_CERTIFICATION_COMPLETION table
         const checkProgress = await db
             .select({

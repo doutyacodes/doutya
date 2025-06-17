@@ -131,7 +131,7 @@ export async function GET(request, { params }) {
             return NextResponse.json({quizProgress: totalAnswered, questions: formattedQuestions}, { status: 200 });
         }
         
-        const prompt = `
+            const prompt = `
                     Create 9 multiple-choice questions in ${subjectName} for a ${age} year old (currently in week ${currentAgeWeek} of this age).
                    Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}. The questions should be unique and difficulty level should be hard.  
                     Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
