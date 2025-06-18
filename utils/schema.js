@@ -14,6 +14,7 @@ import {
   time,
   timestamp,
   tinyint,
+  unique,
   uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
@@ -95,6 +96,17 @@ export const SCHOOL_EDUCATION = mysqlTable("school_education", {
   main_subject: varchar("main_subject", 255),
   description: text("description"),
 });
+
+export const USER_FEATURE_FLAGS = mysqlTable("user_feature_flags", {
+  id: int("id").autoincrement().notNull().primaryKey(),
+  user_id: int("user_id").notNull().references(() => USER_DETAILS.id, { onDelete: "cascade" }),
+  key: varchar("key", { length: 100 }).notNull(), // e.g., 'result_page_shown'
+  seen: boolean("seen").notNull().default(false),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+}, (table) => ({
+  uniqueUserKey: unique().on(table.user_id, table.key),
+}));
 
 export const COLLEGE_EDUCATION = mysqlTable("college_education", {
   id: int("id").primaryKey().autoincrement(),
@@ -570,18 +582,19 @@ export const SUBJECTS = mysqlTable("subjects", {
 export const CAREER_SUBJECTS = mysqlTable(
   "career_subjects",
   {
-    scope_id: int("scope_id").notNull(), // This is the generic ID (from career/cluster/sector)
+    scope_id: int("scope_id").notNull(),
     scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"]).notNull(),
     subject_id: int("subject_id")
       .notNull()
-      .references(() => SUBJECTS.subject_id), // Only FK for subject
+      .references(() => SUBJECTS.subject_id),
   },
   (table) => {
     return {
-      pk: primaryKey(table.id, table.scope_type, table.subject_id), // Composite PK
+      pk: primaryKey(table.scope_id, table.scope_type, table.subject_id),
     };
   }
 );
+
 
 export const TESTS = mysqlTable("tests", {
   test_id: int("test_id").autoincrement().primaryKey(),

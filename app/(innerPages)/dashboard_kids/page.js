@@ -2,12 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import Bannerkids from "./_components/Banner/page";
-import Navbarkids from "./_components/Navbar/page";
-import Results from "../dashboard/_components/Results/page";
-import Results2 from "../dashboard/_components/Result2/page";
 import dynamic from 'next/dynamic';
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
-import CareerStripe from "@/app/_components/CareerStripe";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -21,7 +17,7 @@ export default function Dashboard() {
     const [isCountryAdded, setIsCountryAdded] = useState(null);
     const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] = useState(null);
     const [educationStageExists, setEducationStageExists] = useState(null);
-    
+    const [resultPageShown, setResultPageShown] = useState(null);
 
   useEffect(() => {
     const authCheck = () => {
@@ -45,7 +41,9 @@ export default function Dashboard() {
       }, 1000);
 
       const timer = setTimeout(() => {
-        if (!educationStageExists) {
+        if (resultPageShown === false) {
+          router.replace("/user/results");
+        } else if (!educationStageExists) {
             router.replace("/user/education-profile");
         } else if (!isInstitutionDetailsAdded) {
             router.replace("/education-details");
@@ -62,8 +60,7 @@ export default function Dashboard() {
         clearTimeout(timer);
       };
     }
-  }, [isTest1Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, router]);
-
+  }, [isTest1Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, router, ]);
 
   const toggleResults = () => {
     setShowResults(prevState => !prevState);
@@ -116,11 +113,11 @@ export default function Dashboard() {
             showResults={showResults} 
             onToggleQuiz2Results={toggleQuiz2Results} 
             showQuiz2Results={showQuiz2Results} 
-            // setIsTest2Completed={setIsTest2Completed}
             setIsTest1Completed={setIsTest1Completed}
             setIsCountryAdded={setIsCountryAdded}
             setIsInstitutionDetailsAdded={setIsInstitutionDetailsAdded}
             setEducationStageExists={setEducationStageExists}
+            setResultPageShown={setResultPageShown}
           />
           <style jsx>{`
             @keyframes bounce {
@@ -138,8 +135,6 @@ export default function Dashboard() {
     
           <br />
           <br />
-          {showResults && <Results />}
-          {showQuiz2Results && redirect("/dashboard_kids/sector-suggestion")}
         </>
       ) 
     }

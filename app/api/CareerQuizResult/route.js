@@ -74,23 +74,10 @@ export async function POST(req) {
         // Log the individual scores for each type
         console.log("Scores After Calculations:", scores);
         
-        // Find the highest score
-        const maxScore = Math.max(...Object.values(scores));
-        console.log("maxScore", maxScore);
-
-        // if (maxScore === 0) {
-        //     return NextResponse.json({ 
-        //         message: 'No clear RIASEC type determined. All responses were neutral/negative.',
-        //         scores 
-        //     }, { status: 200 });
-        // }
-
         // Sort scores from highest to lowest
         const sortedScores = Object.entries(scores)
             .sort((a, b) => b[1] - a[1]); // Sort by score in descending order
-        
-        console.log("Sorted scores:", sortedScores);
-        
+                
         // Get top 3 scores, handling ties properly
         let topTypes = [];
         let includedCount = 0;

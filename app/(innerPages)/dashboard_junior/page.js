@@ -1,27 +1,23 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import Results from "../dashboard/_components/Results/page";
-import Results2 from "../dashboard/_components/Result2/page";
 import BannerJunior from "./_components/Banner/page";
 // import Navbarkids from "../dashboard_kids/_components/Navbar/page";
-import Navbar from "../dashboard/_components/Navbar/page";
 import dynamic from 'next/dynamic';
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
-import CareerStripe from "@/app/_components/CareerStripe";
 
 
 export default function Dashboard() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const [showQuiz2Results, setShowQuiz2Results] = useState(false);
   const [isTest2Completed, setIsTest2Completed] = useState(false);
 
   const [secondsRemaining, setSecondsRemaining] = useState(5);
   const [isCountryAdded, setIsCountryAdded] = useState(null);
   const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] = useState(null);
   const [educationStageExists, setEducationStageExists] = useState(null);
+  const [resultPageShown, setResultPageShown] = useState(null);
 
 
   useEffect(() => {
@@ -46,7 +42,9 @@ export default function Dashboard() {
       }, 1000);
 
       const timer = setTimeout(() => {
-        if (!educationStageExists) {
+        if (resultPageShown === false) {
+          router.replace("/user/results");
+        } else if (!educationStageExists) {
             router.replace("/user/education-profile");
         } else if (!isInstitutionDetailsAdded) {
             router.replace("/education-details");
@@ -63,16 +61,8 @@ export default function Dashboard() {
         clearTimeout(timer);
       };
     }
-  }, [isTest2Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, router]);
+  }, [isTest2Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, router, resultPageShown]);
 
-
-  const toggleResults = () => {
-    setShowResults(prevState => !prevState);
-  };
-
-  const toggleQuiz2Results = () => {
-    setShowQuiz2Results(prevState => !prevState);
-  };
 
   if (!isAuthenticated) {
     return (
@@ -93,7 +83,6 @@ export default function Dashboard() {
           <div className="text-4xl font-semibold">
             All tests are completed!
           </div>
-
           <p className="mt-4">
             Redirecting to the career suggestions in {secondsRemaining} seconds...
           </p>
@@ -113,16 +102,13 @@ export default function Dashboard() {
         !isTest2Completed &&(
           <>
           <BannerJunior 
-            onToggleResults={toggleResults} 
-            showResults={showResults} 
-            onToggleQuiz2Results={toggleQuiz2Results} 
-            showQuiz2Results={showQuiz2Results}
             setIsTest2Completed={setIsTest2Completed}
             setIsCountryAdded={setIsCountryAdded}
             setIsInstitutionDetailsAdded={setIsInstitutionDetailsAdded}
             setEducationStageExists={setEducationStageExists}
+            setResultPageShown={setResultPageShown}
           />
-  
+
           {/* Animated Image for Kids */}
           <img
             src="https://cdn.prod.website-files.com/6047c2070742bf6f0e9457e6/60d1f12db8b1d09fda86ebb1_Quiz.jpeg"
@@ -146,13 +132,9 @@ export default function Dashboard() {
           `}</style>
   
           <br />
-          <br />
-          {showResults && <Results />}
-          {showQuiz2Results && redirect("/dashboard_junior/cluster-suggestion")}
         </>
         ) 
       }
-      {/* <MobileNavigation /> */}
     </div>
     </>
   )
