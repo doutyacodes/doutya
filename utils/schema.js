@@ -388,6 +388,18 @@ export const QUIZ_SEQUENCES = mysqlTable("quiz_sequences", {
   isStarted: boolean("isStarted").notNull().default(false), // New boolean column
 });
 
+export const USER_ASSESSMENT_REPORTS = mysqlTable('user_assessment_reports', {
+  id: int('id').primaryKey().autoincrement(),
+  user_id: int("user_id").references(() => USER_DETAILS.id).notNull(),
+  assessment_date: timestamp('assessment_date').defaultNow(),
+  is_kid: int('is_kid').notNull(), // 1 = kid, 0 = adult
+  // Main report data in JSON
+  report_data: json('report_data').notNull(), // Entire response stored here
+
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').onUpdateNow().defaultNow(),
+});
+
 export const FEEDBACK = mysqlTable("feedback", {
   user_id: int("user_id")
     .primaryKey()
