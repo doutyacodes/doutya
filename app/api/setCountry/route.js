@@ -6,7 +6,7 @@ import { authenticate } from "@/lib/jwtMiddleware";
 
 export async function PUT(req) {
 
-    const authResult = await authenticate(req);
+     const authResult = await authenticate(req);
     if (!authResult.authenticated) {
         return authResult.response;
     }

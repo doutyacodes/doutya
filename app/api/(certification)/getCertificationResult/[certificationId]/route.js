@@ -63,7 +63,7 @@
 // }
 
 import { db } from '@/utils';
-import { USER_CERTIFICATION_COMPLETION, CERTIFICATIONS, USER_DETAILS, CAREER_GROUP } from '@/utils/schema';
+import { USER_CERTIFICATION_COMPLETION, CERTIFICATIONS, USER_DETAILS, CAREER_GROUP, MILESTONES } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm'; // Ensure these imports match your ORM version
 import { authenticate } from '@/lib/jwtMiddleware';

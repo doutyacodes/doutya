@@ -8,15 +8,19 @@ export const dynamic = 'force-dynamic';
     // Industry suggestions prompt
     export const generateIndustryPrompt = async (userId, type2, country, language, languageOptions) => {
     const educationData = await getUserEducationPromptData(userId);
-    
-    const basePrompt = `Provide a list of the 3 normal, 3 trending, and 3 off-beat sectors ${
-        country ? "in " + country : ""
-    } for an individual with RIASEC interest types of ${type2}. For each industry, include the following information:
-        industry_name: A brief title of the industry.
 
-        Ensure that the response is valid JSON, using the specified field names, but do not include the terms 'RIASEC' in the data.
-        Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only. Give it as a single JSON data without any wrapping other than []`;
+    const basePrompt = `Generate a list of 3 normal, 3 trending, and 3 off-beat industries${
+        country ? " in " + country : ""
+    } suitable for an individual with interest types: ${type2}.
     
+    For each industry, provide the following in JSON format:
+        - industry_name: A brief title of the industry.
+    Important instructions:
+    - Do not include the word 'RIASEC' anywhere in the data.
+    - Keep the JSON keys in English.
+    - The values (industry names) should be in ${languageOptions[language] || "English"}.
+    - Output only a single valid JSON array ([]) with all industries, without any extra text.`;
+
     return enhancePromptWithEducation(basePrompt, educationData);
     };
 
@@ -55,27 +59,33 @@ export const dynamic = 'force-dynamic';
     export const generateCareerDetailsPrompt = async (userId, careerName, type1, type2, country, education_country, currentYear) => {
     const educationData = await getUserEducationPromptData(userId);
 
-    const basePrompt = `Provide a JSON array with a single element, containing detailed information for the career named "${careerName}" for an individual with personality type ${type1} and RIASEC interest types of ${type2}. The fields should be:
+    const basePrompt = `Generate detailed information for the career "${careerName}" for an individual with personality type ${type1} and interest types ${type2}.  
+
+    The response must be a JSON array with exactly one object containing the following fields:
     {
         "career_name": "A brief title of the career.",
         "reason_for_recommendation": "Why this career is suitable for someone with these interests.",
-        "match": "Percentage of how the user is compatible with this career.Only the number is needed",
-        "expenses": "Price range to complete this career, in local currency of ${education_country ? education_country:country} , mention the country and explain shortly in a sentence or two.",
-        "salary": "low level , mid level and high level salary scale in the country ${country ? country:education_country} in a short paragraph.",
-        "present_trends": "Current trends and opportunities in the field.",
-        "future_prospects": "Predictions and potential growth in this career from the year ${currentYear} to ${currentYear + 5}.",
-        "beyond_prospects": "Predictions and potential growth in this career from the year ${currentYear + 6} and beyond.",
-        "currentYear":${currentYear},
-        "tillYear":${currentYear + 5},
+        "match": "Percentage of compatibility with this career (number only).",
+        "expenses": "Estimated cost to pursue this career in the local currency of ${education_country ? education_country : country}, mention the country and explain briefly in 1–2 sentences.",
+        "salary": "Salary scale (low, mid, high) in ${country ? country : education_country}, summarized in a short paragraph.",
+        "present_trends": "Current trends and opportunities in this career.",
+        "future_prospects": "Predictions and potential growth from ${currentYear} to ${currentYear + 5}.",
+        "beyond_prospects": "Predictions and growth from ${currentYear + 6} onward.",
+        "currentYear": ${currentYear},
+        "tillYear": ${currentYear + 5},
         "user_description": "Personality traits, strengths, and preferences that make this career a good fit.",
-        "leading_country": "Name the country with most opportunities for the career ${careerName} with short description including the opportunity(in a sentence or two).",
-        "similar_jobs": "Provide similar careers name in a sentence for the career "${careerName}" for an individual with personality type ${type1} and RIASEC interest types of ${type2}."
-    }.
-    Ensure that the response is a valid JSON array with exactly one object, no explanations, and no additional text, using the specified field names, but do not include the terms '${type1}' and '${type2}' in the data.`;
-    
+        "leading_country": "Country with the most opportunities for ${careerName}, with a short 1–2 sentence description of opportunities.",
+        "similar_jobs": "List of similar careers to ${careerName}."
+    }
+
+    Rules:
+    - Do not include the terms '${type1}' or '${type2}' in the data.
+    - Response must be a valid JSON array with exactly one object.
+    - No explanations, comments, or text outside of the JSON.`;
+
     return enhancePromptWithEducation(basePrompt, educationData);
-};
-  
+    };
+
     // Roadmap prompt
     export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1, type2, age, currentAgeWeek, language, languageOptions) => {
         const educationData = await getUserEducationPromptData(userId);
