@@ -52,7 +52,8 @@ export default function Dashboard() {
             console.log("else if");
             router.replace("/country");
         } else {
-            router.replace("/dashboard_junior/cluster-suggestion");
+            // router.replace("/dashboard_junior/cluster-suggestion");
+            router.replace("/dashboard_kids/sector-suggestion");
         }
     }, 5000);
 

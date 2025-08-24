@@ -81,15 +81,11 @@ function Page() {
   // Determine Dashboard Type and Initialize Form
   useEffect(() => {
     if (userData) {
-      // Calculate age using birth_date
-      const age = calculateAge(userData.birth_date);
+      
       let url = '/dashboard';
       let type = 'senior';
 
-      if (age <= 9) {
-        url = '/dashboard_kids';
-        type = 'kids';
-      } else if (age <= 13) {
+      if (["6", "7", "8"].includes(userData.grade)) {
         url = '/dashboard_junior';
         type = 'junior';
       }

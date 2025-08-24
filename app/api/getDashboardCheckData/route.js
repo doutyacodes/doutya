@@ -32,7 +32,8 @@ export async function GET(req) {
                 className: USER_DETAILS.class_name,
                 academicYearStart: USER_DETAILS.academicYearStart,
                 academicYearEnd: USER_DETAILS.academicYearEnd,
-                scopeType: USER_DETAILS.scope_type
+                scopeType: USER_DETAILS.scope_type,
+                grade: USER_DETAILS.grade
             })
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId))
@@ -84,7 +85,8 @@ export async function GET(req) {
                 educationStage: educationStageValue,
                 isEducationCompleted,
                 scopeType: userInfo.scopeType,
-                resultPageShown // ✅ added here
+                resultPageShown,
+                grade: userInfo.grade
             },
             { status: 200 }
         );

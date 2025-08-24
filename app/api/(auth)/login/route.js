@@ -124,6 +124,7 @@ export async function POST(req) {
       token,
       birth_date: existingUser.birth_date,
       planType: existingUser.plan_type,
+      class: existingUser.grade,
       navigateUrl
     }, { status: 200 });
 

@@ -58,28 +58,7 @@ function Login() {
     try {
       const resp = await GlobalApi.LoginUser(data);
       if (resp.status === 200) {
-        // const birth_date = resp.data.birth_date;
-        // const age = calculateAge(birth_date);
-
-        // if (resp.data.token) {
-        //   localStorage.setItem('token', resp.data.token);
-        // }
-        // toast.success("Logged in successfully");
-        // reset();
-        // // console.log("response",resp.data)
-        // if (age <= 9) {
-        //   localStorage.setItem('dashboardUrl', '/dashboard_kids');
-        //   router.push('/dashboard_kids');
-        // } 
-        // else if (age <= 13) {
-        //   localStorage.setItem('dashboardUrl', '/dashboard_junior');
-        //   resp.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard_junior');
-        // } 
-        // else {
-        //   localStorage.setItem('dashboardUrl', '/dashboard');
-        //   resp.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard');
-        // }
-        const { birth_date, token, navigateUrl } = resp.data;
+        const { birth_date, token, navigateUrl, class: userClass } = resp.data;
         const age = calculateAge(birth_date);
     
         if (token) {
@@ -89,9 +68,7 @@ function Login() {
          // Set the age-appropriate dashboard URL in localStorage
         let dashboardUrl = '/dashboard'; // Default for age > 13
 
-        if (age <= 9) {
-          dashboardUrl = '/dashboard_kids';
-        } else if (age <= 13) {
+        if (["6", "7", "8"].includes(userClass)) {
           dashboardUrl = '/dashboard_junior';
         }
 

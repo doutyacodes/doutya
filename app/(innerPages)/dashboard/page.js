@@ -21,6 +21,8 @@ export default function Dashboard() {
   const [resultPageShown, setResultPageShown] = useState(null);
   const [dashboardDataLoaded, setDashboardDataLoaded] = useState(false); // New state to track data loading
   const [initialDataCheck, setInitialDataCheck] = useState(false); // Track if initial data check is done
+  const [gradeData, setGradeData] = useState(null);
+
   
   useEffect(() => {
     const authCheck = () => {
@@ -80,7 +82,11 @@ export default function Dashboard() {
         } else if (!isCountryAdded) {
           router.replace("/country");
         } else {
-          router.replace("/dashboard/careers/career-suggestions");
+          if (["9", "10"].includes(gradeData)) {
+            router.replace("/dashboard_junior/cluster-suggestion");
+          } else if (["11", "12", "college"].includes(gradeData)){
+            router.replace("/dashboard/careers/career-suggestions");
+          }
         }
       }, 5000);
 
@@ -135,6 +141,7 @@ export default function Dashboard() {
         setIsInstitutionDetailsAdded={setIsInstitutionDetailsAdded}
         setEducationStageExists={setEducationStageExists}
         setResultPageShown={setResultPageShown}
+        setGradeData={setGradeData}
       />
       <br />
     </div>

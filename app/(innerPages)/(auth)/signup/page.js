@@ -41,6 +41,7 @@ function SignUp() {
   const [reason, setReason] = useState(0);
   const [dobError, setDobError] = useState("");
   const [ageCategory, setAgeCategory] = useState(""); // New state for age category
+  const [selectedClass, setSelectedClass] = useState("");
 
   // const [institutions, setInstitutions] = useState([]);
   // const [childClassOptions, setChildClassOptions] = useState([]);
@@ -62,6 +63,16 @@ function SignUp() {
   //   authCheck();
   // }, [router]);
 
+  // const classMapping = {
+  //   "6": "6th",
+  //   "7": "7th", 
+  //   "8": "8th",
+  //   "9": "9th",
+  //   "10": "10th",
+  //   "11": "11th",
+  //   "12": "12th",
+  //   "college": "College"
+  // };
   const {
     register,
     handleSubmit,
@@ -232,6 +243,10 @@ function SignUp() {
       });
       return;
     }
+    if (!selectedClass) {
+      toast.error("Please select your class/grade");
+      return;
+    }
     const encryptedPassword = encryptText(data.password);
     data.password = encryptedPassword;
 
@@ -245,6 +260,7 @@ function SignUp() {
     }
     data.country = selectedCountry?.label;
     data.educationLevel = educationLevelMapping[educationLevel];
+    data.class = selectedClass;
     try {
       const response = await GlobalApi.CreateNewUser(data);
 
@@ -253,29 +269,23 @@ function SignUp() {
         localStorage.setItem("token", token);
         reset();
 
-        const age = calculateAge(data.dob);
-
         toast.success(t("successMessage"));
-        if (age <= 9) {
-          localStorage.setItem('dashboardUrl', '/dashboard_kids');
-          localStorage.setItem('navigateUrl', '/dashboard_kids');
-          router.push('/dashboard_kids');
-        } 
-        else if (age <= 13) {
+        
+        // Route based on class selection
+        if (["6", "7", "8"].includes(selectedClass)) {
           localStorage.setItem('dashboardUrl', '/dashboard_junior');
           localStorage.setItem('navigateUrl', '/dashboard_junior');
-          response.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard_junior');
-        } 
-        else {
+          response.data.quizCompleted ? router.push('/dashboard/careers') : router.push('/dashboard_junior');
+        } else {
           localStorage.setItem('dashboardUrl', '/dashboard');
           localStorage.setItem('navigateUrl', '/dashboard');
-          response.data.quizCompleted ? router.push('/dashboard/careers'):router.push('/dashboard');
+          response.data.quizCompleted ? router.push('/dashboard/careers') : router.push('/dashboard');
         }
       } else {
         const errorMessage = response.data?.message || t("defaultErrorMessage");
         toast.error(`Error: ${errorMessage}`);
       }
-    } catch (err) {
+      } catch (err) {
       console.error("Error:", err);
 
       if (err.response?.status === 400 && err.response?.data?.message) {
@@ -772,6 +782,32 @@ function SignUp() {
                 </p>
               )}
             </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="class"
+              className="block text-sm font-medium text-gray-300"
+            >
+              {t("class")}
+            </label>
+            <select
+              id="class"
+              value={selectedClass}
+              onChange={(e) => setSelectedClass(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              required
+            >
+              <option value="">Select Class/Grade</option>
+              <option value="6">6th</option>
+              <option value="7">7th</option>
+              <option value="8">8th</option>
+              <option value="9">9th</option>
+              <option value="10">10th</option>
+              <option value="11">11th</option>
+              <option value="12">12th</option>
+              <option value="college">College</option>
+            </select>
           </div>
 
           {/* <div className="mb-4">

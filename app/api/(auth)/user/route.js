@@ -31,12 +31,21 @@ export async function POST(req) {
     const age = Math.abs(ageDate.getUTCFullYear() - 1970);
 
     // Determine scope_type
-    let scope_type = "career";
-    if (age >= 6 && age <= 9) {
+    // let scope_type = "career";
+    // if (age >= 6 && age <= 9) {
+    //   scope_type = "sector";
+    // } else if (age >= 10 && age <= 14) {
+    //   scope_type = "cluster";
+    // }
+
+    // Determine scope_type based on class
+    let scope_type = "career"; // default for 11th, 12th, college
+    if (["6", "7", "8"].includes(data?.class)) {
       scope_type = "sector";
-    } else if (age >= 10 && age <= 14) {
+    } else if (["9", "10"].includes(data?.class)) {
       scope_type = "cluster";
     }
+    console.log("scope_type", scope_type)
 
     // Insert user details into the database
     const result = await db.insert(USER_DETAILS).values({
@@ -60,6 +69,7 @@ export async function POST(req) {
       current_job: data?.currentJob,
       account_status: 'separated',
       scope_type: scope_type,
+      grade: data?.class,
       // institution_id: data?.instituteId,
       // class_id: data?.classId,
       // division_id: data?.divisionId, /* moved to speratee section
