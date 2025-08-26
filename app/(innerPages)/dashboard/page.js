@@ -72,22 +72,49 @@ export default function Dashboard() {
         setSecondsRemaining((prevSeconds) => prevSeconds - 1);
       }, 1000);
 
+      // const timer = setTimeout(() => {
+      //   if (resultPageShown === false) {
+      //     router.replace("/user/results");
+      //   } else if (!edweucationStageExists) {
+      //     router.replace("/user/education-profile");
+      //   } else if (!isInstitutionDetailsAdded) {
+      //     router.replace("/education-details");
+      //   } else if (!isCountryAdded) {
+      //     router.replace("/country");
+      //   } else {
+      //     if (["9", "10"].includes(gradeData)) {
+      //       router.replace("/dashboard_junior/cluster-suggestion");
+      //     } else if (["11", "12", "college"].includes(gradeData)){
+      //       router.replace("/dashboard/careers/career-suggestions");
+      //     }
+      //   }
+      // }, 5000);
+
       const timer = setTimeout(() => {
-        if (resultPageShown === false) {
-          router.replace("/user/results");
-        } else if (!educationStageExists) {
+        // 1️⃣ Check if country is added first
+        if (!isCountryAdded) {
+          router.replace("/country");
+        } 
+        // 2️⃣ Then check grade-based suggestions
+        else if (["9", "10"].includes(gradeData)) {
+          router.replace("/dashboard_junior/cluster-suggestion");
+        } 
+        else if (["11", "12", "college"].includes(gradeData)) {
+          router.replace("/dashboard/careers/career-suggestions");
+        } 
+        // 3️⃣ Then check if results page is shown
+        // else if (resultPageShown === false) {
+        //   router.replace("/user/results");
+        // } 
+        
+        // 4️⃣ Commented out checks (not using for now)
+        /*
+        else if (!educationStageExists) {
           router.replace("/user/education-profile");
         } else if (!isInstitutionDetailsAdded) {
           router.replace("/education-details");
-        } else if (!isCountryAdded) {
-          router.replace("/country");
-        } else {
-          if (["9", "10"].includes(gradeData)) {
-            router.replace("/dashboard_junior/cluster-suggestion");
-          } else if (["11", "12", "college"].includes(gradeData)){
-            router.replace("/dashboard/careers/career-suggestions");
-          }
         }
+        */
       }, 5000);
 
       return () => {

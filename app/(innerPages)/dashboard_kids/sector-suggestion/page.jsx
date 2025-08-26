@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FaChevronRight, FaCheck, FaInfoCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import CareerStripe from "@/app/_components/CareerStripe";
+import ActionButtons from "@/app/_components/ActionButtons";
 
 export default function SectorSelectionPage() {
   const [user, setUser] = useState({
@@ -128,6 +129,17 @@ export default function SectorSelectionPage() {
     return userSectors.some(s => s.sector_id === sectorId);
   };
 
+  
+  const handleViewReportClick = () => {
+    router.push('/user/results');
+  };
+
+  const handleCertificateClick = () => {
+    // Add certificate logic later
+    console.log('Get Certificate clicked');
+  };
+
+
   const confirmAddSector = async () => {
     if (!confirmingSector) return;
   
@@ -216,28 +228,49 @@ export default function SectorSelectionPage() {
   return (
     <>
       <CareerStripe selectedItem={selectedCareer} setSelectedItem={setSelectedCareer}/>
-      <div className="min-h-screen bg-[#1a1a24] text-gray-200 p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Career Sector Selection</h1>
-          <p className="text-lg text-gray-300 mb-2">
-              Based on your personality assessment results
+<div className="min-h-screen bg-[#1a1a24] text-gray-200 p-4 md:p-8">
+  <div className="max-w-7xl mx-auto">
+    <div className="mb-8">
+      {/* Title and Buttons on Same Line */}
+      <div className="relative flex items-center mb-4">
+        {/* Left spacer for balance */}
+        <div className="hidden sm:block flex-1"></div>
+        
+        {/* Centered Title */}
+        <div className="flex-1 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-white">Career Sector Selection</h1>
+        </div>
+        
+        {/* Right side buttons */}
+        <div className="flex-1 flex justify-center sm:justify-end">
+          <ActionButtons
+            onViewReportClick={handleViewReportClick}
+            onCertificateClick={handleCertificateClick}
+          />
+        </div>
+      </div>
+      
+      {/* Subtitle and Description - Centered */}
+      <div className="text-center">
+        <p className="text-lg text-gray-300 mb-2">
+          Based on your personality assessment results
+        </p>
+        <p className="text-gray-400">
+          Select sectors that interest you 
+          {user.plan_type === "base" && (
+            <span className="text-sm ml-1 text-yellow-400">
+              (Base plan: up to 2 sectors | Pro plan: up to 5 sectors)
+            </span>
+          )}
+        </p>
+        <div className="mt-4 bg-[#292931] py-2 px-4 rounded-lg inline-block">
+          <p className="text-sm">
+            Selected: <span className="font-bold text-[#7824f6]">{userSectors.length}</span> / 
+            <span className="font-bold">{maxSelections}</span>
           </p>
-          <p className="text-gray-400">
-              Select sectors that interest you 
-              {user.plan_type === "base" && (
-              <span className="text-sm ml-1 text-yellow-400">
-                  (Base plan: up to 2 sectors | Pro plan: up to 5 sectors)
-              </span>
-              )}
-          </p>
-          <div className="mt-4 bg-[#292931] py-2 px-4 rounded-lg inline-block">
-              <p className="text-sm">
-              Selected: <span className="font-bold text-[#7824f6]">{userSectors.length}</span> / 
-              <span className="font-bold">{maxSelections}</span>
-              </p>
-          </div>
-          </div>
+        </div>
+      </div>
+    </div>
 
           {/* Matching Sectors Section - Updated title */}
           <div className="mb-10">

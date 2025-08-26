@@ -14,6 +14,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { CareerSelectionComplete, IndustrySelectionComplete, InterestTestComplete } from "@/app/_components/StepCompletionNotifications";
 import ContentGenerationLoading from "@/app/_components/ContentGenerationLoading";
 import { useTopbar } from "@/app/context/TopbarContext";
+import ActionButtons from "@/app/_components/ActionButtons";
 
 export default function Results2({step, setStep}) {
   const [resultData, setResultData] = useState(null);
@@ -75,6 +76,17 @@ export default function Results2({step, setStep}) {
       }
     }
   };
+
+  
+  const handleViewReportClick = () => {
+    router.push('/user/results');
+  };
+
+  const handleCertificateClick = () => {
+    // Add certificate logic later
+    console.log('Get Certificate clicked');
+  };
+
 
   const getColorByIndex = (index) => {
     const colorCodes = [
@@ -490,10 +502,22 @@ const getPrevCategory = () => {
 
       {step === 2 && !singleCareer && (
         <>
-          <div className="bg-[#2c2c2c] h-24 mb-5 justify-center items-center flex rounded-md border-l-4 border-[#7824f6] shadow-md">
-            <p className="text-white uppercase font-bold text-center text-xl md:text-2xl">
-              Discover Your Ideal Career Path
-            </p>
+          <div className="bg-[#2c2c2c] h-24 mb-5 flex rounded-md border-l-4 border-[#7824f6] shadow-md">
+            {/* Text Section - Centered */}
+            <div className="flex-1 flex justify-center items-center px-4">
+              <p className="text-white uppercase font-bold text-center text-xl md:text-2xl">
+                Discover Your Ideal Career Path
+              </p>
+            </div>
+            
+            {/* Action Buttons - Right Side */}
+            <div className="flex items-center pr-4 sm:pr-6">
+              <ActionButtons
+                buttonSize="small"
+                onViewReportClick={handleViewReportClick}
+                onCertificateClick={handleCertificateClick}
+              />
+            </div>
           </div>
         </>
       )}

@@ -137,7 +137,8 @@ export async function GET(req) {
   } else if (userDetails[0].educationLevel === "Completed Education" && userDetails[0].experience !== null) {
     jobDescription = `currently has a job in ${userDetails[0].currentJob} with ${userDetails[0].experience} years of experience, and is looking for a career change with educational qualification of ${userDetails[0].educationQualification}, graduated from ${userDetails[0].university} university. Please exclude careers involving ${userDetails[0].currentJob}.`;
   }
-  
+
+
   // const prompt = `Provide a list of the most suitable careers ${
   //   industry === "any" ? "" : `in the ${industry}`
   // } ${

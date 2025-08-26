@@ -54,17 +54,18 @@ function SelectCountry() {
           } else if (scopeType === "cluster") {
             router.replace("/dashboard_junior/cluster-suggestion");
           }
-        } else {
-          // Country not selected yet, check if previous steps are complete
-          if (!resp.data.educationStageExists) {
-            // Education stage not set yet
-            router.replace("/user/education-profile");
-          } else if (!resp.data.isEducationCompleted && !resp.data.institutionDetailsAdded) {
-            // User is in school/college and institution details not provided
-            router.replace("/education-details");
-          }
-          // If all previous steps complete but country not added, we stay on this page
         }
+        // else {
+        //   // Country not selected yet, check if previous steps are complete
+        //   if (!resp.data.educationStageExists) {
+        //     // Education stage not set yet
+        //     router.replace("/user/education-profile");
+        //   } else if (!resp.data.isEducationCompleted && !resp.data.institutionDetailsAdded) {
+        //     // User is in school/college and institution details not provided
+        //     router.replace("/education-details");
+        //   }
+          // If all previous steps complete but country not added, we stay on this page
+        // }
       } catch (error) {
         console.error("Error fetching profile status:", error);
         toast.error("Error loading profile status. Please try again.");
@@ -76,35 +77,35 @@ function SelectCountry() {
     getProfileStatus();
   }, [router]);
 
-    // Fetch User Data
-    const getUserData = async () => {
-      setLoading(true);
-      try {
-        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        const resp = await GlobalApi.GetUserData(token);
-        // setUserData(resp.data);
-        if (resp.status === 201) {
-          const birth_date = resp.data.birth_date;
-          const age = calculateAge(birth_date);
-          setUserAge(age)
-          setUserPlanType(resp.data.plan_type)
-        }
-      } catch (error) {
-        toast.error("Error Fetching UserData:", error)
-      } finally {
-        setLoading(false);
+  // Fetch User Data
+  const getUserData = async () => {
+    setLoading(true);
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const resp = await GlobalApi.GetUserData(token);
+      // setUserData(resp.data);
+      if (resp.status === 201) {
+        const birth_date = resp.data.birth_date;
+        const age = calculateAge(birth_date);
+        setUserAge(age)
+        setUserPlanType(resp.data.plan_type)
       }
-    };
+    } catch (error) {
+      toast.error("Error Fetching UserData:", error)
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getUserData();
   }, []);
 
-// Updated useEffect that doesn't visually set the education country
-useEffect(()=>{
-  // We're removing the visual setting of educationCountry here
-  // The actual value will be sent in handleSubmit
-}, [currentCountry])
+  // Updated useEffect that doesn't visually set the education country
+  useEffect(()=>{
+    // We're removing the visual setting of educationCountry here
+    // The actual value will be sent in handleSubmit
+  }, [currentCountry])
   
   const handleEducationCountryClick = () => {
     if (userAge <= 9 || userPlanType === 'base') {

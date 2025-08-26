@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FaChevronRight, FaCheck, FaInfoCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import CareerStripe from "@/app/_components/CareerStripe";
+import ActionButtons from "@/app/_components/ActionButtons";
 
 export default function ClusterSelectionPage() {
   const [user, setUser] = useState({
@@ -80,6 +81,15 @@ export default function ClusterSelectionPage() {
 
   const handleAddCluster = (cluster) => {
     setConfirmingCluster(cluster);
+  };
+
+  const handleViewReportClick = () => {
+    router.push('/user/results');
+  };
+
+  const handleCertificateClick = () => {
+    // Add certificate logic later
+    console.log('Get Certificate clicked');
   };
 
   const isClusterSelected = (clusterId) => {
@@ -165,54 +175,73 @@ export default function ClusterSelectionPage() {
 
   return (
     <>
-        <CareerStripe selectedItem={selectedCareer}  setSelectedItem={setSelectedCareer}/>
-        <div className="min-h-screen bg-[#1a1a24] text-gray-200 p-4 md:p-8">
+      <CareerStripe selectedItem={selectedCareer}  setSelectedItem={setSelectedCareer}/>
+      <div className="min-h-screen bg-[#1a1a24] text-gray-200 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
-            <div className="mb-8 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Career Cluster Selection</h1>
-            <p className="text-lg text-gray-300 mb-2">
+          {/* Header Section with Action Buttons */}
+          <div className="mb-8">
+            {/* Top Section with Buttons */}
+              <div className="mb-6">
+                {/* Title Section - Always Centered */}
+                <div className="text-center mb-4">
+                  <h1 className="text-3xl md:text-4xl font-bold text-white">Career Cluster Suggestion</h1>
+                </div>
+                
+                {/* Action Buttons - Top Right */}
+                <div className="flex justify-center sm:justify-end">
+                  <ActionButtons
+                    onViewReportClick={handleViewReportClick}
+                    onCertificateClick={handleCertificateClick}
+                  />
+                </div>
+              </div>
+            
+            {/* Subtitle and Description */}
+            <div className="text-center">
+              <p className="text-lg text-gray-300 mb-2">
                 Based on your personality assessment and interest profile
-            </p>
-            <p className="text-gray-400">
+              </p>
+              <p className="text-gray-400">
                 Select clusters that interest you 
                 {user.plan_type === "base" && (
-                <span className="text-sm ml-1 text-yellow-400">
+                  <span className="text-sm ml-1 text-yellow-400">
                     (Base plan: up to 2 clusters | Pro plan: up to 5 clusters)
-                </span>
+                  </span>
                 )}
-            </p>
-            <div className="mt-4 bg-[#292931] py-2 px-4 rounded-lg inline-block">
+              </p>
+              <div className="mt-4 bg-[#292931] py-2 px-4 rounded-lg inline-block">
                 <p className="text-sm">
-                Selected: <span className="font-bold text-[#7824f6]">{selectedClusters.length}</span> / 
-                <span className="font-bold">{maxSelections}</span>
+                  Selected: <span className="font-bold text-[#7824f6]">{selectedClusters.length}</span> / 
+                  <span className="font-bold">{maxSelections}</span>
                 </p>
+              </div>
             </div>
-            </div>
+          </div>
 
-            {/* Clusters Grid */}
-            <div className="mb-10">
+          {/* Clusters Grid */}
+          <div className="mb-10">
             <div className="flex items-center mb-6">
-                <div className="h-px flex-1 bg-[#7824f6]"></div>
-                <h2 className="text-2xl font-bold mx-4 text-[#7824f6]">Career Clusters For You</h2>
-                <div className="h-px flex-1 bg-[#7824f6]"></div>
+              <div className="h-px flex-1 bg-[#7824f6]"></div>
+              <h2 className="text-2xl font-bold mx-4 text-[#7824f6]">Career Clusters For You</h2>
+              <div className="h-px flex-1 bg-[#7824f6]"></div>
             </div>
             
             <p className="text-gray-400 text-center mb-6">
-                These clusters are generated specifically for you based on your Peronality and Career interests
+              These clusters are generated specifically for you based on your Personality and Career interests
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {clusters.map((cluster) => (
+              {clusters.map((cluster) => (
                 <ClusterCard 
-                    key={cluster.id} 
-                    cluster={cluster} 
-                    isSelected={isClusterSelected(cluster.id)}
-                    onAddClick={() => handleAddCluster(cluster)}
-                    accentColor="#7824f6"
+                  key={cluster.id} 
+                  cluster={cluster} 
+                  isSelected={isClusterSelected(cluster.id)}
+                  onAddClick={() => handleAddCluster(cluster)}
+                  accentColor="#7824f6"
                 />
-                ))}
+              ))}
             </div>
-            </div>
+          </div>
         </div>
 
         {/* Confirmation Modal */}
@@ -249,7 +278,7 @@ export default function ClusterSelectionPage() {
             </div>
             </div>
         )}
-        </div>
+      </div>
     </>
   );
 }

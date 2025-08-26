@@ -41,21 +41,55 @@ export default function Dashboard() {
         setSecondsRemaining((prevSeconds) => prevSeconds - 1);
       }, 1000);
 
+      // const timer = setTimeout(() => {
+      //     if (resultPageShown === false) {
+      //       router.replace("/user/results");
+      //     } else if (!educationStageExists) {
+      //         router.replace("/user/education-profile");
+      //     } else if (!isInstitutionDetailsAdded) {
+      //         router.replace("/education-details");
+      //     } else if (!isCountryAdded) {
+      //         console.log("else if");
+      //         router.replace("/country");
+      //     } else {
+      //         // router.replace("/dashboard_junior/cluster-suggestion");
+      //         router.replace("/dashboard_kids/sector-suggestion");
+      //     }
+      // }, 5000);
+
       const timer = setTimeout(() => {
-        if (resultPageShown === false) {
-          router.replace("/user/results");
-        } else if (!educationStageExists) {
-            router.replace("/user/education-profile");
-        } else if (!isInstitutionDetailsAdded) {
-            router.replace("/education-details");
-        } else if (!isCountryAdded) {
-            console.log("else if");
-            router.replace("/country");
-        } else {
-            // router.replace("/dashboard_junior/cluster-suggestion");
-            router.replace("/dashboard_kids/sector-suggestion");
+        // 1️⃣ Check if country is added first
+        if (!isCountryAdded) {
+          console.log("Country not added");
+          router.replace("/country");
+        } 
+        // 2️⃣ Then go to kids/junior/career suggestion
+        else if (["9", "10"].includes(gradeData)) {
+          router.replace("/dashboard_junior/cluster-suggestion");
+        } 
+        else if (["11", "12", "college"].includes(gradeData)) {
+          router.replace("/dashboard/careers/career-suggestions");
         }
-    }, 5000);
+        else {
+          // Default for younger kids
+          router.replace("/dashboard_kids/sector-suggestion");
+        }
+
+        // 3️⃣ Finally, if results page hasn’t been shown, go there
+        // if (resultPageShown === false) {
+        //   router.replace("/user/results");
+        // }
+
+        // 4️⃣ Commented out for now
+        /*
+        else if (!educationStageExists) {
+          router.replace("/user/education-profile");
+        } else if (!isInstitutionDetailsAdded) {
+          router.replace("/education-details");
+        }
+        */
+      }, 5000);
+
 
       return () => {
         clearInterval(interval);
