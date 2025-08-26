@@ -116,13 +116,27 @@ const Page = () => {
       
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-5 sm:pt-40">
+        {/* Background Video */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src="/assets/videos/bg.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Video Overlay */}
+        <div className="absolute inset-0 bg-black/30 z-10"></div>
+        
         <motion.div
           style={{ y: backgroundY }}
-          className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-pink-900/20 to-blue-900/20"
+          className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-pink-900/20 to-blue-900/20 z-20"
         />
         
         {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden z-30">
           {[...Array(15)].map((_, i) => (
             <motion.div
               key={i}
@@ -144,7 +158,7 @@ const Page = () => {
           ))}
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 text-center">
+        <div className="relative z-40 container mx-auto px-4 sm:px-6 text-center">
           <motion.div
             style={{ y: textY }}
             initial="hidden"
@@ -178,20 +192,6 @@ const Page = () => {
               </CTAButton>
             </motion.div>
 
-            {/* Hero Visual */}
-            <motion.div
-              variants={scaleIn}
-              className="mt-8 sm:mt-12 lg:mt-16 relative max-w-4xl mx-auto px-4"
-            >
-              <div className="relative bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-lg rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-white/10">
-                <img 
-                  src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg" 
-                  alt="AI Career Guidance Visualization"
-                  className="w-full h-auto rounded-xl sm:rounded-2xl shadow-2xl"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-purple-900/50 to-transparent rounded-2xl sm:rounded-3xl" />
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </section>
