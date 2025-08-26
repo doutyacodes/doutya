@@ -1,21 +1,12 @@
 "use client";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { IoIosClose, IoIosMenu } from "react-icons/io";
-import { BsPersonWorkspace } from "react-icons/bs";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  FaBriefcase,
-  FaInfoCircle,
-  FaNewspaper,
-  FaClipboardList,
-  FaUserTie,
-  FaStore,
-  FaBlog,
-  FaPodcast,
-} from "react-icons/fa";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { BsPersonWorkspace } from "react-icons/bs";
+import { FaBlog, FaInfoCircle, FaPodcast, FaUserTie } from "react-icons/fa";
+import { IoIosClose, IoIosMenu } from "react-icons/io";
 
 const Header = ({ dark = false }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,23 +75,23 @@ const Header = ({ dark = false }) => {
     {
       name: "Careers",
       href: "/careers",
-      type: "link"
+      type: "link",
     },
     {
       name: "Resources",
       type: "dropdown",
-      items: resourceData
+      items: resourceData,
     },
     {
       name: "Company",
-      type: "dropdown", 
-      items: companyData
+      type: "dropdown",
+      items: companyData,
     },
     {
       name: "FAQ",
       href: "/faq",
-      type: "link"
-    }
+      type: "link",
+    },
   ];
 
   const DropdownMenu = ({ items, title }) => (
@@ -116,7 +107,10 @@ const Header = ({ dark = false }) => {
                 transition={{ delay: index * 0.1 }}
                 className="group/item"
               >
-                <Link href={item.href} className="block p-4 rounded-xl hover:bg-gray-50/80 transition-colors duration-200">
+                <Link
+                  href={item.href}
+                  className="block p-4 rounded-xl hover:bg-gray-50/80 transition-colors duration-200"
+                >
                   <div className="flex items-center gap-3 mb-2">
                     {item.icon}
                     <h3 className="font-semibold text-gray-800 text-sm group-hover/item:text-purple-600 transition-colors">
@@ -259,8 +253,8 @@ const Header = ({ dark = false }) => {
                 whileTap={{ scale: 0.95 }}
                 onClick={toggleMenu}
                 className={`p-2 rounded-lg transition-colors duration-200 ${
-                  !darks || isScrolled 
-                    ? "text-white hover:bg-white/10" 
+                  !darks || isScrolled
+                    ? "text-white hover:bg-white/10"
                     : "text-gray-800 hover:bg-gray-100"
                 }`}
               >
@@ -286,7 +280,7 @@ const Header = ({ dark = false }) => {
                 {navItems.map((item, index) => (
                   <MobileMenuItem key={index} item={item} index={index} />
                 ))}
-                
+
                 {/* Mobile CTA */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
