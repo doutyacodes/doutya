@@ -115,7 +115,7 @@ const Page = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-5 sm:pt-20">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-5 sm:pt-40">
         <motion.div
           style={{ y: backgroundY }}
           className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-pink-900/20 to-blue-900/20"
