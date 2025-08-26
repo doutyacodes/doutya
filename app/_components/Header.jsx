@@ -2,10 +2,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import ListComponents from "./ListComponents";
 import { IoIosClose, IoIosMenu } from "react-icons/io";
 import { BsPersonWorkspace } from "react-icons/bs";
-
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FaBriefcase,
   FaInfoCircle,
@@ -17,6 +16,7 @@ import {
   FaPodcast,
 } from "react-icons/fa";
 import { usePathname } from "next/navigation";
+
 const Header = ({ dark = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [darks, setDarks] = useState(dark);
@@ -24,7 +24,7 @@ const Header = ({ dark = false }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
+      if (window.scrollY > 50) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -37,271 +37,277 @@ const Header = ({ dark = false }) => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
   const pathname = usePathname();
-  // console.log("pathname",pathname)
+
   const companyData = [
-    // {
-    //   title: "Careers",
-    //   description: "It’s a great time to join Xortcut",
-    //   href: "/careers",
-    //   icon: <FaBriefcase className="w-4 h-4 text-[#3e0075]" />,
-    // },
     {
       title: "About",
       description: "Learn what binds us together at Xortcut",
       href: "/about",
-      icon: <FaInfoCircle className="w-4 h-4 text-[#3e0075]" />,
+      icon: <FaInfoCircle className="w-4 h-4 text-purple-400" />,
     },
-    // {
-    //   title: "Press",
-    //   description: "The latest news on Xortcut",
-    //   href: "/press",
-    //   icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
-    // },
-    // {
-    //   title: "Operating Principles",
-    //   description: "The rules that drive our day to day",
-    //   href: "/operating-principles",
-    //   icon: <FaClipboardList className="w-4 h-4 text-[#3e0075]" />,
-    // },
     {
       title: "Leadership Principles",
       description: "What it means to lead at Xortcut",
       href: "/leadership-principles",
-      icon: <FaUserTie className="w-4 h-4 text-[#3e0075]" />,
+      icon: <FaUserTie className="w-4 h-4 text-purple-400" />,
     },
     {
       title: "Operating Principles",
       description: "The rules that drive our day to day",
       href: "/operating-principles",
-      icon: <BsPersonWorkspace className="w-4 h-4 text-[#3e0075]" />,
+      icon: <BsPersonWorkspace className="w-4 h-4 text-purple-400" />,
     },
   ];
+
   const resourceData = [
-    // {
-    //   title: "Careers",
-    //   description: "It’s a great time to join Xortcut",
-    //   href: "/careers",
-    //   icon: <FaBriefcase className="w-4 h-4 text-[#3e0075]" />,
-    // },
     {
       title: "Blog",
-      description: "Learn what binds us together at Xortcut",
+      description: "Latest insights and career guidance tips",
       href: "/blog",
-      icon: <FaBlog className="w-4 h-4 text-[#3e0075]" />,
+      icon: <FaBlog className="w-4 h-4 text-emerald-400" />,
     },
-    // {
-    //   title: "Press",
-    //   description: "The latest news on Xortcut",
-    //   href: "/press",
-    //   icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
-    // },
-    // {
-    //   title: "Operating Principles",
-    //   description: "The rules that drive our day to day",
-    //   href: "/operating-principles",
-    //   icon: <FaClipboardList className="w-4 h-4 text-[#3e0075]" />,
-    // },
     {
       title: "Podcasts",
-      description: "What it means to lead at Xortcut",
+      description: "Expert discussions on career development",
       href: "/podcasts",
-      icon: <FaPodcast className="w-4 h-4 text-[#3e0075]" />,
+      icon: <FaPodcast className="w-4 h-4 text-emerald-400" />,
     },
-    // {
-    //   title: "Newsletters",
-    //   description: "The rules that drive our day to day",
-    //   href: "/newsletter",
-    //   icon: <FaNewspaper className="w-4 h-4 text-[#3e0075]" />,
-    // },
   ];
 
+  const navItems = [
+    {
+      name: "Careers",
+      href: "/careers",
+      type: "link"
+    },
+    {
+      name: "Resources",
+      type: "dropdown",
+      items: resourceData
+    },
+    {
+      name: "Company",
+      type: "dropdown", 
+      items: companyData
+    },
+    {
+      name: "FAQ",
+      href: "/faq",
+      type: "link"
+    }
+  ];
+
+  const DropdownMenu = ({ items, title }) => (
+    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-screen pt-2 hidden group-hover:block transition-opacity duration-300 z-50">
+      <div className="bg-white/95 backdrop-blur-lg border border-white/20 shadow-2xl">
+        <div className="container mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {items.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="group/item"
+              >
+                <Link href={item.href} className="block p-4 rounded-xl hover:bg-gray-50/80 transition-colors duration-200">
+                  <div className="flex items-center gap-3 mb-2">
+                    {item.icon}
+                    <h3 className="font-semibold text-gray-800 text-sm group-hover/item:text-purple-600 transition-colors">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    {item.description}
+                  </p>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const MobileMenuItem = ({ item, index }) => (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.1 }}
+      className="border-b border-gray-100 last:border-b-0"
+    >
+      {item.type === "link" ? (
+        <Link
+          href={item.href}
+          onClick={() => setIsOpen(false)}
+          className="block px-6 py-4 text-gray-700 hover:text-purple-600 hover:bg-gray-50 transition-colors duration-200"
+        >
+          {item.name}
+        </Link>
+      ) : (
+        <div className="px-6 py-4">
+          <div className="font-semibold text-gray-800 mb-3">{item.name}</div>
+          <div className="space-y-2 pl-4">
+            {item.items.map((subItem, subIndex) => (
+              <Link
+                key={subIndex}
+                href={subItem.href}
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 py-2 text-sm text-gray-600 hover:text-purple-600 transition-colors duration-200"
+              >
+                {subItem.icon}
+                <span>{subItem.title}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+
   return (
-    <header
-      className={`w-screen ${
+    <motion.header
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`fixed top-0 left-0 right-0 z-[9999] transition-all duration-300 ${
         isScrolled
-          ? "fixed z-[9999999] bg-[#1c143b]"
+          ? "bg-slate-900/95 backdrop-blur-lg shadow-xl border-b border-white/10"
           : darks
           ? "bg-transparent"
-          : "bg-[#1c143b]"
+          : "bg-slate-900/90 backdrop-blur-md"
       }`}
     >
-      <div
-        className={`mx-auto container w-full flex justify-between items-center px-4`}
-      >
-        <div>
-          <Link href={"/"}>
-            <Image
-              src={
-                darks
-                  ? "/assets/images/doutya4.png"
-                  : "/assets/images/logo-full.png"
-              }
-              width={150}
-              height={150}
-              className={`${pathname == "/" && "max-md:hidden"}`}
-            />
-            <Image
-              src={"/assets/images/doutya4.png"}
-              width={150}
-              height={150}
-              className={`${pathname == "/" ? "md:hidden" : "hidden"}`}
-            />
-          </Link>
-        </div>
-        <ul className="lg:flex hidden gap-7 ">
-          <li className="group">
-            <Link
-              href={"/careers"}
-              className="cursor-pointer relative z-[9999]"
-            >
-              <p
-                className={`text-${
-                  !darks ? "white" : "[#3e0075]"
-                } text-sm hover:font-bold`}
-              >
-                Careers
-              </p>
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex justify-between items-center py-3 sm:py-4">
+          {/* Logo */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex-shrink-0"
+          >
+            <Link href="/">
+              <Image
+                src={
+                  darks && !isScrolled
+                    ? "/assets/images/doutya4.png"
+                    : "/assets/images/logo-full.png"
+                }
+                width={240}
+                height={80}
+                alt="Xortcut Logo"
+                className="h-16 sm:h-20 w-auto"
+              />
             </Link>
-          </li>
-          <li className="group">
-            <div className="cursor-pointer relative z-[99999]">
-              <p
-                className={`text-${
-                  !darks ? "white" : "[#3e0075]"
-                } text-sm hover:font-bold`}
-                // onMouseOver={() => setDarks(!dark)}
-                // onMouseOut={() => setDarks(dark)}
-              >
-                Resources
-              </p>
-            </div>
-            <div
-              className={`absolute top-0 z-[9999] pt-20 left-0 min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300 w-screen`}
-            >
-              <div
-                className={`bg-white p-4 shadow border-b-[0.5px] border-x-[0.5px] outline-slate-300`}
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
-                  {resourceData.map((item, index) => (
-                    <div key={index} className="py-5 flex items-center">
-                      <Link href={item.href} className="flex flex-col gap-2">
-                        <div className="flex gap-2 items-center">
-                          {item.icon}
-                          <h2 className="text-[12px] font-semibold">
-                            {item.title}
-                          </h2>
-                        </div>
-                        <p className="text-[10px] text-[#3e0075] font-semibold">
-                          {item.description}
-                        </p>
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </li>
-          <li className="group">
-            <div className="cursor-pointer relative z-[99999]">
-              <p
-                className={`text-${
-                  !darks ? "white" : "[#3e0075]"
-                } text-sm hover:font-bold`}
-                // onMouseOver={() => setDarks(!dark)}
-                // onMouseOut={() => setDarks(dark)}
-              >
-                Company
-              </p>
-            </div>
-            <div
-              className={`absolute top-0 z-[9999] pt-20 left-0 min-h-72 mt-2 hidden group-hover:block transition-opacity duration-300 w-screen`}
-            >
-              <div
-                className={`bg-white p-4 shadow border-b-[0.5px] border-x-[0.5px] outline-slate-300`}
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-1">
-                  {companyData.map((item, index) => (
-                    <div key={index} className="py-5 flex items-center">
-                      <Link href={item.href} className="flex flex-col gap-2">
-                        <div className="flex gap-2 items-center">
-                          {item.icon}
-                          <h2 className="text-[12px] font-semibold">
-                            {item.title}
-                          </h2>
-                        </div>
-                        <p className="text-[10px] text-[#3e0075] font-semibold">
-                          {item.description}
-                        </p>
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </li>
-          <li className="group">
-            <Link
-              href={"/faq"}
-              className="cursor-pointer relative z-[9999]"
-            >
-              <p
-                className={`text-${
-                  !darks ? "white" : "[#3e0075]"
-                } text-sm hover:font-bold`}
-              >
-                FAQ
-              </p>
-            </Link>
-          </li>
-        </ul>
+          </motion.div>
 
-        <div>
-          <div className="hidden lg:flex justify-start md:justify-center w-full">
-            <Link
-              href={"/login"}
-              className="bg-[#01bf61] text-white rounded-full px-7 py-3 font-semibold"
-            >
-              Explore Now
-            </Link>
-          </div>
-          <div className="lg:hidden">
-            <IoIosMenu
-              size={32}
-              color="blue"
-              onClick={toggleMenu}
-              className="cursor-pointer"
-            />
-
-            <div
-              className={`min-w-80 z-[9999] py-3 absolute lg:hidden right-3 top-3 bg-white h-[80vh] shadow-xl rounded-md outline outline-slate-100 transition-all duration-300 ease-in-out transform space-y-3 ${
-                isOpen
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 -translate-y-5 pointer-events-none"
-              }`}
-            >
-              <div className="flex justify-end items-center px-3">
-                <IoIosClose
-                  size={37}
-                  color="blue"
-                  onClick={toggleMenu}
-                  className="cursor-pointer"
-                />
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-8">
+            {navItems.map((item, index) => (
+              <div key={index} className="relative group">
+                {item.type === "link" ? (
+                  <Link
+                    href={item.href}
+                    className={`text-sm font-medium transition-colors duration-200 hover:text-purple-400 ${
+                      !darks || isScrolled ? "text-white" : "text-gray-800"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  <>
+                    <button
+                      className={`text-sm font-medium transition-colors duration-200 hover:text-purple-400 ${
+                        !darks || isScrolled ? "text-white" : "text-gray-800"
+                      }`}
+                    >
+                      {item.name}
+                    </button>
+                    <DropdownMenu items={item.items} title={item.name} />
+                  </>
+                )}
               </div>
-              <p className="text-[#3e0075] text-sm cursor-pointer font-semibold focus:underline px-3 mb-2">
-                Why Xortcut?
-              </p>
-              <ul className="space-y-5">
-                <ListComponents />
-              </ul>
+            ))}
+          </nav>
+
+          {/* CTA Button & Mobile Menu */}
+          <div className="flex items-center space-x-4">
+            {/* Desktop CTA */}
+            <div className="hidden lg:block">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/login"
+                  className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-4 py-2 sm:px-6 sm:py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  Explore Now
+                </Link>
+              </motion.div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={toggleMenu}
+                className={`p-2 rounded-lg transition-colors duration-200 ${
+                  !darks || isScrolled 
+                    ? "text-white hover:bg-white/10" 
+                    : "text-gray-800 hover:bg-gray-100"
+                }`}
+              >
+                {isOpen ? <IoIosClose size={24} /> : <IoIosMenu size={24} />}
+              </motion.button>
             </div>
           </div>
         </div>
       </div>
-    </header>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="lg:hidden bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-xl"
+          >
+            <div className="container mx-auto">
+              <div className="py-4">
+                {navItems.map((item, index) => (
+                  <MobileMenuItem key={index} item={item} index={index} />
+                ))}
+                
+                {/* Mobile CTA */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: navItems.length * 0.1 }}
+                  className="px-6 py-4 border-t border-gray-200"
+                >
+                  <Link
+                    href="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="block w-full text-center bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Explore Now
+                  </Link>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 };
 
