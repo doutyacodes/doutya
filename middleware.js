@@ -11,7 +11,7 @@ export async function middleware(req) {
 
   // Public routes that don't require authentication
   const publicRoutes = [
-    // '/',
+    '/',
     '/login',
     '/signup',
     '/verify',
