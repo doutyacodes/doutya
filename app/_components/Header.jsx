@@ -77,11 +77,11 @@ const Header = ({ dark = false }) => {
       href: "/careers",
       type: "link",
     },
-    {
-      name: "Resources",
-      type: "dropdown",
-      items: resourceData,
-    },
+    // {
+    //   name: "Resources",
+    //   type: "dropdown",
+    //   items: resourceData,
+    // },
     {
       name: "Company",
       type: "dropdown",

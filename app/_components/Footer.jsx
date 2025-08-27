@@ -151,7 +151,7 @@ const Footer = () => {
             {/* Resources */}
             <motion.div variants={fadeInUp}>
               <h3 className="text-lg font-bold text-white mb-4 sm:mb-6">Resources</h3>
-              <ul className="space-y-3">
+              {/* <ul className="space-y-3">
                 {resources.map((resource, index) => (
                   <li key={index}>
                     <Link 
@@ -162,7 +162,7 @@ const Footer = () => {
                     </Link>
                   </li>
                 ))}
-              </ul>
+              </ul> */}
 
               {/* CTA Section */}
               <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl border border-white/10">

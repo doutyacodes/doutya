@@ -271,15 +271,7 @@ const Page = () => {
             ))}
           </motion.div>
 
-          <motion.div variants={scaleIn} className="text-center">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-white/20 max-w-4xl mx-auto">
-              <img 
-                src="https://images.pexels.com/photos/590020/pexels-photo-590020.jpg" 
-                alt="Dashboard Preview"
-                className="w-full h-auto rounded-xl sm:rounded-2xl shadow-2xl"
-              />
-            </div>
-          </motion.div>
+          
         </div>
       </SectionWrapper>
 
@@ -506,7 +498,7 @@ const Page = () => {
               {
                 title: "Career Test",
                 subtitle: "One-Time",
-                price: "₹499",
+                price: "₹999",
                 description: "per student",
                 features: [
                   "Comprehensive AI assessment",
@@ -535,7 +527,7 @@ const Page = () => {
               {
                 title: "Schools & Colleges",
                 subtitle: "Bulk Pricing",
-                price: "₹299",
+                price: "₹499",
                 description: "/student onwards",
                 features: [
                   "Institutional dashboard",
@@ -554,11 +546,11 @@ const Page = () => {
                   plan.popular ? 'border-purple-400 ring-2 ring-purple-400/50' : 'border-white/10'
                 } text-center hover:bg-white/10 transition-colors duration-300`}
               >
-                {plan.popular && (
+                {/* {plan.popular && (
                   <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">
                     Most Popular
                   </div>
-                )}
+                )} */}
                 
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{plan.title}</h3>
                 <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">{plan.subtitle}</p>
@@ -667,11 +659,11 @@ const Page = () => {
             {[
               {
                 question: "How accurate is the test?",
-                answer: "Our AI-powered assessment has 95% accuracy based on thousands of student outcomes and continuous learning algorithms."
+                answer: "Our AI-powered assessment has 98.65% accuracy based on thousands of student outcomes and continuous learning algorithms."
               },
               {
                 question: "Is it only for Class 12?",
-                answer: "No! Xortcut works for students from Class 9 onwards, as well as graduates and young professionals looking to pivot their careers."
+                answer: "No! Xortcut works for students from Class 6 onwards, as well as graduates and young professionals looking to pivot their careers."
               },
               {
                 question: "Can parents access the report?",
@@ -737,6 +729,26 @@ const Page = () => {
           >
             👩‍🎓 Take Test
           </Link>
+        </div>
+      </div>
+
+      {/* Sticky Footer for Desktop */}
+      <div className="hidden md:block fixed bottom-6 right-6 z-50">
+        <div className="bg-gradient-to-r from-purple-900/95 to-pink-900/95 backdrop-blur-md rounded-2xl border border-white/20 p-4 shadow-2xl">
+          <div className="flex flex-col space-y-3">
+            <a
+              href="tel:+919876543210"
+              className="bg-white text-purple-900 text-center py-2 px-4 rounded-xl font-semibold text-sm hover:bg-gray-100 transition-colors duration-200"
+            >
+              🎓 Book Demo
+            </a>
+            <Link
+              href="/login"
+              className="bg-emerald-500 text-white text-center py-2 px-4 rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-colors duration-200"
+            >
+              👩‍🎓 Take Test
+            </Link>
+          </div>
         </div>
       </div>
     </main>

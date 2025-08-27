@@ -116,7 +116,7 @@ const page = () => {
       </div>
 
    
-      <div className=" bg-white px-4 mx-auto py-10">
+      {/* <div className=" bg-white px-4 mx-auto py-10">
         <div className="container px-4 mx-auto py-10">
           <div className="grid grid-cols-12 gap-6">
             {data.sections.map((section, index) => (
@@ -142,7 +142,7 @@ const page = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
       <Footer />
     </main>
   );
