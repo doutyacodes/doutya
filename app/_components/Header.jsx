@@ -43,6 +43,12 @@ const Header = ({ dark = false }) => {
       icon: <FaInfoCircle className="w-4 h-4 text-purple-400" />,
     },
     {
+      title: "Careers",
+      description: "Join our mission to transform career guidance",
+      href: "/careers",
+      icon: <BsPersonWorkspace className="w-4 h-4 text-purple-400" />,
+    },
+    {
       title: "Leadership Principles",
       description: "What it means to lead at Xortcut",
       href: "/leadership-principles",
@@ -71,11 +77,38 @@ const Header = ({ dark = false }) => {
     },
   ];
 
+  const solutionsData = [
+    {
+      title: "How It Works",
+      description: "Simple 4-step process to career clarity",
+      href: "/#how-it-works",
+      icon: <FaInfoCircle className="w-4 h-4 text-blue-400" />,
+    },
+    {
+      title: "Pricing",
+      description: "Simple & affordable career guidance plans",
+      href: "/#pricing",
+      icon: <FaInfoCircle className="w-4 h-4 text-blue-400" />,
+    },
+    {
+      title: "For Schools",
+      description: "Turnkey career guidance for institutions",
+      href: "/#for-schools",
+      icon: <FaInfoCircle className="w-4 h-4 text-blue-400" />,
+    },
+    {
+      title: "For Students",
+      description: "Career clarity, confidence & direction",
+      href: "/#for-students",
+      icon: <FaInfoCircle className="w-4 h-4 text-blue-400" />,
+    },
+  ];
+
   const navItems = [
     {
-      name: "Careers",
-      href: "/careers",
-      type: "link",
+      name: "Solutions",
+      type: "dropdown",
+      items: solutionsData,
     },
     // {
     //   name: "Resources",

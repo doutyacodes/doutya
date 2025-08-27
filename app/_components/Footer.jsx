@@ -46,14 +46,13 @@ const Footer = () => {
   const quickLinks = [
     { title: 'About', href: '/about', icon: <FaInfoCircle className="w-4 h-4" /> },
     { title: 'Careers', href: '/careers', icon: <FaBriefcase className="w-4 h-4" /> },
-    { title: 'Blog', href: '/blog', icon: <FaBlog className="w-4 h-4" /> },
-    { title: 'Podcasts', href: '/podcasts', icon: <FaPodcast className="w-4 h-4" /> },
+    { title: 'Leadership Principles', href: '/leadership-principles', icon: <FaUserTie className="w-4 h-4" /> },
+    { title: 'Operating Principles', href: '/operating-principles', icon: <FaUserTie className="w-4 h-4" /> },
   ];
 
   const resources = [
-    { title: 'Career Test', href: '/login' },
-    { title: 'For Schools', href: '/schools' },
-    { title: 'For Students', href: '/students' },
+    { title: 'Blog', href: '/blog', icon: <FaBlog className="w-4 h-4" /> },
+    { title: 'Podcasts', href: '/podcasts', icon: <FaPodcast className="w-4 h-4" /> },
     { title: 'FAQ', href: '/faq' },
   ];
 
@@ -151,18 +150,23 @@ const Footer = () => {
             {/* Resources */}
             <motion.div variants={fadeInUp}>
               <h3 className="text-lg font-bold text-white mb-4 sm:mb-6">Resources</h3>
-              {/* <ul className="space-y-3">
+              <ul className="space-y-3">
                 {resources.map((resource, index) => (
                   <li key={index}>
                     <Link 
                       href={resource.href}
-                      className="text-sm text-gray-300 hover:text-emerald-400 transition-colors duration-200 hover:translate-x-1 transform inline-block"
+                      className="flex items-center space-x-2 text-sm text-gray-300 hover:text-emerald-400 transition-colors duration-200 group"
                     >
-                      {resource.title}
+                      {resource.icon && (
+                        <span className="text-emerald-400 group-hover:scale-110 transition-transform">
+                          {resource.icon}
+                        </span>
+                      )}
+                      <span>{resource.title}</span>
                     </Link>
                   </li>
                 ))}
-              </ul> */}
+              </ul>
 
               {/* CTA Section */}
               <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl border border-white/10">

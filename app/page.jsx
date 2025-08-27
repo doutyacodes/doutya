@@ -80,7 +80,7 @@ const Page = () => {
     </motion.div>
   );
 
-  const SectionWrapper = ({ children, className = "" }) => {
+  const SectionWrapper = ({ children, className = "", id }) => {
     const [ref, inView] = useInView({
       triggerOnce: true,
       threshold: 0.1
@@ -88,6 +88,7 @@ const Page = () => {
 
     return (
       <motion.section
+        id={id}
         ref={ref}
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
@@ -276,7 +277,7 @@ const Page = () => {
       </SectionWrapper>
 
       {/* How It Works Section */}
-      <SectionWrapper className="bg-gradient-to-r from-indigo-900/20 to-purple-900/20">
+      <SectionWrapper id="how-it-works" className="bg-gradient-to-r from-indigo-900/20 to-purple-900/20">
         <div className="container mx-auto px-4 sm:px-6">
           <motion.div variants={fadeInUp} className="text-center mb-8 sm:mb-12 lg:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 lg:mb-8">
@@ -338,7 +339,7 @@ const Page = () => {
       </SectionWrapper>
 
       {/* For Schools & Colleges Section */}
-      <SectionWrapper className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20">
+      <SectionWrapper id="for-schools" className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20">
         <div className="container mx-auto px-4 sm:px-6">
           <motion.div variants={fadeInUp} className="text-center mb-8 sm:mb-12 lg:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 lg:mb-8">
@@ -386,7 +387,7 @@ const Page = () => {
       </SectionWrapper>
 
       {/* For Students & Parents Section */}
-      <SectionWrapper className="bg-gradient-to-r from-emerald-900/20 to-green-900/20">
+      <SectionWrapper id="for-students" className="bg-gradient-to-r from-emerald-900/20 to-green-900/20">
         <div className="container mx-auto px-4 sm:px-6">
           <motion.div variants={fadeInUp} className="text-center mb-8 sm:mb-12 lg:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 lg:mb-8">
@@ -485,7 +486,7 @@ const Page = () => {
       </SectionWrapper>
 
       {/* Pricing Section */}
-      <SectionWrapper className="bg-gradient-to-r from-indigo-900/20 to-blue-900/20">
+      <SectionWrapper id="pricing" className="bg-gradient-to-r from-indigo-900/20 to-blue-900/20">
         <div className="container mx-auto px-4 sm:px-6">
           <motion.div variants={fadeInUp} className="text-center mb-8 sm:mb-12 lg:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 lg:mb-8">
