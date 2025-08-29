@@ -2,13 +2,12 @@
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import QuizProgressAlert from "@/app/_components/QuizProgressAlert";
 import GlobalApi from "@/app/_services/GlobalApi";
-// import { Toaster } from '@/components/ui/toaster';
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import 'react-circular-progressbar/dist/styles.css'; // Make sure to import the CSS
-
+import 'react-circular-progressbar/dist/styles.css';
+import { Clock, CheckCircle, ArrowRight } from "lucide-react";
 
 function Page({ params }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -24,14 +23,10 @@ function Page({ params }) {
   const [progressSubmitted, setProgressSubmitted] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
 
-
-  // const [marks, setMarks] = useState(0)
-
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
   const subjectId = params.subjectId;
-  // const { testId } = router.query;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   useEffect(() => {
@@ -60,11 +55,11 @@ function Page({ params }) {
         const resp = await GlobalApi.GetTestsData(subjectId, token);
         setQuestions(resp.data.questions);
         setTimer(resp.data.timer * 1000);
-        setTimerValue(resp.data.timer); /* This wont change */
+        setTimerValue(resp.data.timer);
         setSubjectName(resp.data.subjectName)
 
         if (resp.data.quizProgress > 0) {
-          setShowAlert(true); // Set showAlert to true when resuming the quiz
+          setShowAlert(true);
         }
       } catch (error) {
         console.error("Error Fetching GetQuizData data:", error);
@@ -76,16 +71,11 @@ function Page({ params }) {
   }, []);
 
   useEffect(() => {
-    // setIsLoading(true)
     if(questions?.length > 0){
-        // Shuffle choices when the component mounts or when the question changes
-        // const choices = questions[currentQuestionIndex].answers.map(answer => answer.text);
         const choices = questions[currentQuestionIndex].answers
         setShuffledChoices(choices.sort(() => Math.random() - 0.5));
     }
-    // setIsLoading(false)
   }, [currentQuestionIndex, questions]);
-
 
 useEffect(() => {
   if (quizCompleted) {
@@ -94,7 +84,6 @@ useEffect(() => {
     }, 1000);
 
     const timer = setTimeout(() => {
-      // Add a query parameter to indicate test completion
       router.replace("/dashboard/careers/career-guide?testCompleted=true&subjectName=" + encodeURIComponent(subjectName));
     }, 5000);
 
@@ -117,7 +106,6 @@ useEffect(() => {
       earnedMarks = Math.max(0, marks.toFixed(3));
     }
 
-    // await submitMarks(earnedMarks, answer_ids, question_ids);
     const answer = {
       questionId: questions[currentQuestionIndex].id,
       answerId: choice.id,
@@ -134,17 +122,16 @@ useEffect(() => {
   const handleNext = () => {
 
     if (currentQuestionIndex < questions.length - 1) {
-      // Add a delay before advancing to the next question
       setTimeout(() => {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedChoice(null); // Reset selected choice for the next question
-        setProgressSubmitted(false); // Reset progress submission
-        setTimeExpired(false); // Reset time expired state
-        setTimer(timerValue * 1000); // Reset timer for the new question
-      }, 3000); // Delay for 3 seconds
+        setSelectedChoice(null);
+        setProgressSubmitted(false);
+        setTimeExpired(false);
+        setTimer(timerValue * 1000);
+      }, 3000);
     } else {
       setQuizCompleted(true);
-      quizSubmit(); // Quiz finished, send data to API
+      quizSubmit();
     }
   };
 
@@ -156,7 +143,6 @@ useEffect(() => {
 
       if (resp && resp.status === 201) {
         console.log("Response");
-        // handleNext()
       } else {
         console.error("Failed to save progress. Status code:", resp.status);
         toast.error(
@@ -181,11 +167,9 @@ useEffect(() => {
         toast.success("Quiz Completed successfully!");
       } else {
         toast.error("Failed to submit quiz.");
-        // alert('Failed Submitted results');
       }
     } catch (error) {
       console.error("Error submitting quiz", error);
-      // toast.error('Error: Failed to create Challenge.');
       toast.error("Error Error: Failed to submit quiz.");
     } finally {
       setIsLoading(false);
@@ -193,16 +177,13 @@ useEffect(() => {
   };
 
   const handleTimeOut = async () => {
-    // Set time expired immediately to disable buttons
     setTimeExpired(true);
     
-    // Do not submit if progress for the current question has already been submitted
     if (progressSubmitted) {
       handleNext();
       return;
     }
   
-    // Proceed with submitting marks: 0 if no choice was selected
     const answer = {
       questionId: questions[currentQuestionIndex].id,
       answerId: selectedChoice ? selectedChoice.id : 0,
@@ -215,23 +196,22 @@ useEffect(() => {
   };
 
   useEffect(() => {
-    if (!timer) return; // Exit early if the timer is not set
+    if (!timer) return;
 
-    // Reset timeExpired when moving to a new question with a timer
     setTimeExpired(false);
   
     const intervalId = setInterval(() => {
       setTimer((prevTimer) => {
-        const newTime = Math.max(prevTimer - 100, 0); // Reduce by 100ms at a time
+        const newTime = Math.max(prevTimer - 100, 0);
         if (newTime === 0) {
-          handleTimeOut(); // Call the timeout handler when the timer hits 0
-          clearInterval(intervalId); // Clear the interval when time is up
+          handleTimeOut();
+          clearInterval(intervalId);
         }
         return newTime;
       });
-    }, 100); // Update every 100ms for a smoother progress bar
+    }, 100);
   
-    return () => clearInterval(intervalId); // Cleanup on component unmount or timer change
+    return () => clearInterval(intervalId);
   }, [timer, currentQuestionIndex]);
   
   const removeHtmlTags = (html) => {
@@ -241,7 +221,7 @@ useEffect(() => {
   
   if (isLoading || !isAuthenticated) {
     return (
-      <div className="h-screen flex items-center justify-center text-white">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center text-white">
         <div>
           <div className="font-semibold">
             <LoadingOverlay loadText={"Loading..."} />
@@ -253,95 +233,149 @@ useEffect(() => {
 
   if (quizCompleted) {
     return (
-      <div className="h-screen flex items-center justify-center text-white text-center">
-        <div>
-          <div className="text-4xl font-semibold">
-            Quiz Completed successfully
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center text-white text-center">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-500/10 rounded-2xl"></div>
+          <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-2xl p-8 shadow-2xl">
+            <div className="flex justify-center mb-6">
+              <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-full p-4">
+                <CheckCircle className="w-16 h-16 text-green-400" />
+              </div>
+            </div>
+            <div className="text-3xl lg:text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+              Quiz Completed Successfully!
+            </div>
+            <div className="w-16 h-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mb-6"></div>
+            <p className="text-lg text-gray-300 mb-4">
+              Navigating to the dashboard in <span className="text-orange-400 font-semibold">{secondsRemaining}</span> seconds
+            </p>
           </div>
-
-          <p className="mt-4">
-            Navigating to the Home page in {secondsRemaining} seconds
-          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <Toaster position="top-center" reverseOrder={false} />
 
       {showAlert && <QuizProgressAlert />}
 
       {questions.length > 0 && (
-        <div className="mt-4 pt-5 flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">
-          <div>
-            <p className="font">{currentQuestionIndex + 1}/{questions.length}</p>
+        <div className="min-h-screen flex flex-col justify-center items-center px-4 py-8">
+          <div className="w-full max-w-4xl">
+            {/* Header Section */}
+            <div className="relative mb-8">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-red-500/5 to-orange-500/5 rounded-2xl"></div>
+              <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-2xl p-6 shadow-2xl">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-full p-3">
+                      <Clock className="w-6 h-6 text-orange-400" />
+                    </div>
+                    <div>
+                      <h1 className="text-xl lg:text-2xl font-bold text-white">{subjectName || 'Test'}</h1>
+                      <p className="text-gray-400">Question {currentQuestionIndex + 1} of {questions.length}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Timer */}
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="text-sm text-gray-400">Time Remaining</p>
+                      <p className="text-lg font-bold text-orange-400">{(timer / 1000).toFixed(1)}s</p>
+                    </div>
+                    <div className="w-16 h-16">
+                      <CircularProgressbar
+                        styles={buildStyles({
+                          textSize: "16px",
+                          pathColor: "#f97316",
+                          textColor: "#f97316",
+                          trailColor: "#374151",
+                          backgroundColor: "#1f2937",
+                        })}
+                        value={timer}
+                        maxValue={timerValue * 1000}
+                        circleRatio={1}
+                        text={`${(timer / 1000).toFixed(0)}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Question Section */}
+            <div className="relative mb-8">
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-800/30 via-gray-700/20 to-gray-800/30 rounded-2xl"></div>
+              <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-2xl p-6 lg:p-8 shadow-2xl">
+                <div className="text-center">
+                  <h2 className="text-xl lg:text-3xl font-bold text-white leading-relaxed mb-6">
+                    {removeHtmlTags(questions[currentQuestionIndex].question)}
+                  </h2>
+                </div>
+
+                {/* Answer Choices */}
+                <div className="grid gap-4 max-w-3xl mx-auto">
+                  {shuffledChoices.map((choice, index) => {
+                    const isSelected = selectedChoice?.id === choice.id;
+                    const isCorrect = choice.isCorrect === 'yes';
+                    const showCorrectAnswer = timeExpired || progressSubmitted;
+                    
+                    return (
+                      <button
+                        key={index}
+                        className={`group relative pl-14 pr-4 py-4 lg:py-6 rounded-xl text-left transition-all duration-300 transform hover:scale-[1.02] ${
+                          isSelected && isCorrect
+                            ? 'bg-gradient-to-r from-green-600/30 to-emerald-600/30 border-2 border-green-500/60 shadow-lg shadow-green-500/20' 
+                            : isSelected && !isCorrect
+                            ? 'bg-gradient-to-r from-red-600/30 to-red-700/30 border-2 border-red-500/60 shadow-lg shadow-red-500/20'
+                            : showCorrectAnswer && isCorrect
+                            ? 'bg-gradient-to-r from-green-600/20 to-emerald-600/20 border-2 border-green-500/40'
+                            : timeExpired
+                            ? 'bg-gray-700/50 border border-gray-600/30 cursor-not-allowed opacity-70'
+                            : 'bg-gray-800/60 border border-gray-700/50 hover:border-orange-500/50 hover:bg-gray-700/60'
+                        }`}
+                        onClick={() => handleChoiceSelect(choice)}
+                        disabled={selectedChoice !== null || progressSubmitted || timeExpired}
+                      >
+                        {/* Choice indicator */}
+                        <div className="absolute top-1/2 left-4 transform -translate-y-1/2 w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+                          <span className="text-sm font-semibold text-gray-300">
+                            {String.fromCharCode(65 + index)}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm lg:text-lg text-gray-200 group-hover:text-white transition-colors">
+                            {removeHtmlTags(choice.text)}
+                          </span>
+                          {((showCorrectAnswer && isCorrect) || (isSelected && isCorrect)) && (
+                            <CheckCircle className="w-6 h-6 text-green-400 ml-4 flex-shrink-0" />
+                          )}
+                          {isSelected && !isCorrect && (
+                            <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center ml-4 flex-shrink-0">
+                              <span className="text-white text-sm">✗</span>
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Progress indicator */}
+                {progressSubmitted && currentQuestionIndex < questions.length - 1 && (
+                  <div className="mt-8 text-center">
+                    <div className="inline-flex items-center gap-2 bg-gray-700/50 rounded-full px-4 py-2">
+                      <ArrowRight className="w-4 h-4 text-orange-400 animate-pulse" />
+                      <span className="text-sm text-gray-300">Moving to next question...</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-
-          <div
-              style={{ position: "relative", marginBottom: "20px" }}
-              className="w-16 h-16"
-            >
-              <CircularProgressbar
-                styles={buildStyles({
-                  textSize: "20px",
-                  pathColor: "#0b6ebf",
-                  textColor: "#ffffff",
-                  trailColor: "#d6d6d6",
-                  backgroundColor: "#3e98c7",
-                })}
-                value={timer}
-                maxValue={timerValue * 1000} // Adjust to milliseconds
-                circleRatio={1}
-                text={`${(timer / 1000).toFixed(2)}s`} // Display in seconds
-              />
-          </div>
-          
-          <div>
-            <p className="font-bold p-2 text-xl md:text-3xl">
-              {removeHtmlTags(questions[currentQuestionIndex].question)}
-            </p>
-          </div>
-
-
-      {/* <div className="flex flex-col gap-2 w-full text-white">
-        {shuffledChoices.map((choice, index) => (
-          <button
-            key={index}
-            className={`quiz-button py-2 px-4 rounded-md
-              ${selectedChoice?.id === choice.id 
-                ? 'bg-green-500' 
-                : 'bg-slate-400 sm:hover:bg-purple-300 sm:hover:text-black'}
-              transition duration-300 ease-in-out`}
-            onClick={() => handleChoiceSelect(choice)}
-          >
-            {removeHtmlTags(choice.text)}
-          </button>
-        ))}
-      </div> */}
-
-      <div className="flex flex-col gap-2 w-full text-white">
-        {shuffledChoices.map((choice, index) => (
-          <button
-            key={index}
-            className={`quiz-button py-2 px-4 rounded-md
-              ${selectedChoice?.id === choice.id 
-                ? 'bg-green-500' 
-                : timeExpired
-                  ? 'bg-slate-600 cursor-not-allowed opacity-70'
-                  : 'bg-slate-400 sm:hover:bg-purple-300 sm:hover:text-black'}
-              transition duration-300 ease-in-out`}
-            onClick={() => handleChoiceSelect(choice)}
-            disabled={selectedChoice !== null || progressSubmitted || timeExpired}
-          >
-            {timeExpired && choice.id === choice.isCorrect === 'yes' 
-              ? `${removeHtmlTags(choice.text)} ✓` 
-              : removeHtmlTags(choice.text)}
-          </button>
-        ))}
-      </div>
-
         </div>
       )}
     </div>

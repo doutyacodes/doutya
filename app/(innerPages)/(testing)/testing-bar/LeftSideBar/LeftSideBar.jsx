@@ -210,7 +210,7 @@ const LeftSideBar = () => {
       {/* FAB for mobile view */}
       {(pathname != "/login" && pathname != "/signup") && (
         <button
-          className={`fixed bottom-4 right-4 bg-[#2a2b27] text-white p-4 rounded-full z-50 lg:hidden`}
+          className={`fixed bottom-6 right-6 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 lg:hidden backdrop-blur-sm border border-gray-600/20`}
           onClick={toggleSidebars}
           aria-label="Toggle Sidebar"
           aria-expanded={isOpen}
@@ -219,68 +219,74 @@ const LeftSideBar = () => {
         </button>
       )}
 
-      <div className="min-h-screen poppins-regular">
+      <div className="h-screen">
         {/* Sidebar */}
         <div
-          className={`transition-all duration-300 ease-in-out bg-[#2a2b27] text-white h-full m-2 rounded-md p-4 ${
-            isOpen ? "w-72 max-md:fixed top-0 z-[99999999999]" : "md:w-20 max-md:hidden"
+          className={`transition-all duration-300 ease-in-out bg-gray-900/95 backdrop-blur-md border-r border-gray-700/50 shadow-xl text-white h-full ${
+            isOpen ? "w-72 max-md:fixed top-0 z-[99999999999] max-md:bg-gray-900" : "md:w-20 max-md:hidden"
           }`}
         >
-          <div className="my-4">
+          <div className="p-6 border-b border-gray-700/50">
             <div className={`${isOpen ? "flex" : "block mb-10"} items-center justify-between relative gap-3`}>
               <div className="text-xl font-bold">
                   <Image
                     src={isOpen ? "/assets/images/logo-full.png" : "/assets/images/small-logo.png"}
                     width={150}
                     height={150}
+                    className="transition-all duration-300"
                   />
               </div>
               <button
                 onClick={toggleSidebars}
-                // max-md:hidden
-                className={` p-2 rounded-full hover:bg-gray-100/10 transition-all duration-200 transform ${isOpen ? "" : "rotate-180"} group absolute ${isOpen ? "-right-3" : "-right-0 mt-5"} top-6`}
+                className={`p-2 rounded-full hover:bg-gray-700/50 transition-all duration-200 transform ${isOpen ? "" : "rotate-180"} group absolute ${isOpen ? "-right-3" : "-right-0 mt-5"} top-6`}
                 aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
               >
-                <div className="bg-gray-800 rounded-full p-1.5 shadow-lg border border-gray-700 group-hover:border-gray-600 transition-colors">
-                  <ChevronLeft className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-full p-1.5 shadow-md border border-gray-600/20 group-hover:shadow-lg transition-all duration-200">
+                  <ChevronLeft className="w-4 h-4 text-white transition-colors" />
                 </div>
               </button>
             </div>
           </div>
 
           {/* Sidebar content */}
-          <div className="flex flex-col gap-5 h-full">
-            <div className="mt-4">
-              <ul className="space-y-4">
+          <div className="flex flex-col gap-5 h-full p-4">
+            <div className="flex-1">
+              <ul className="space-y-2">
                 {menus.map((menu, index) => (
                   <li key={index} className="relative">
                     <div
-                      className={`flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg ${isTest2Completed && menu.name === "Tests" ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      className={`flex items-center gap-4 hover:bg-gradient-to-r hover:from-gray-700/60 hover:to-gray-600/60 p-3 rounded-xl transition-all duration-200 group ${isTest2Completed && menu.name === "Tests" ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-sm'}`}
                       onClick={() => {
                         if (!(isTest2Completed && menu.name === "Tests")) {
                           if (menu.submenus.length > 0) {
-                            toggleDropdown(menu.name); // Toggle dropdown for menus with submenus
+                            toggleDropdown(menu.name);
                           } else if (menu.link) {
-                            router.push(menu.link); // Directly navigate if no submenus
-                            handleLinkClick(); //this line to close sidebar on mobile
+                            router.push(menu.link);
+                            handleLinkClick();
                           }
-                          if (menu.onClick) menu.onClick(); // Execute any extra function if provided
+                          if (menu.onClick) menu.onClick();
                         }
                       }}
                       title={menu.name === "Tests" && isTest2Completed ? "All tests are completed" : ""}
                     >
-                      {menu.icon}
-                      {isOpen && <span className="text-sm pl-3">{menu.name}</span>}
-                      {menu.submenus.length > 0 && isOpen && <FaChevronDown className="ml-auto text-sm" />}
+                      <div className="text-gray-400 group-hover:text-orange-400 transition-colors duration-200">
+                        {menu.icon}
+                      </div>
+                      {isOpen && <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors duration-200">{menu.name}</span>}
+                      {menu.submenus.length > 0 && isOpen && <FaChevronDown className="ml-auto text-sm text-gray-500 group-hover:text-orange-400 transition-colors duration-200" />}
                       {isOpen && menu.name === "Tests" && isTest2Completed && (
                         <CheckCircle size={16} className="text-green-500 ml-2" />
                       )}
                     </div>
                     {menu.submenus.length > 0 && isOpen && activeDropdown === menu.name && (
-                      <ul className="ml-8 space-y-3 mt-3">
+                      <ul className="ml-8 space-y-2 mt-2 border-l-2 border-orange-500/30 pl-4">
                         {menu.submenus.map((submenu, subIndex) => (
                           <li key={subIndex}>
-                            <Link href={submenu.link} className="text-white hover:underline" onClick={handleLinkClick}>
+                            <Link 
+                              href={submenu.link} 
+                              className="text-gray-400 hover:text-orange-400 hover:bg-gray-700/60 px-3 py-2 rounded-lg transition-all duration-200 block text-sm font-medium" 
+                              onClick={handleLinkClick}
+                            >
                               {submenu.name}
                             </Link>
                           </li>
@@ -291,14 +297,22 @@ const LeftSideBar = () => {
                 ))}
                 <li>
                   {isCareersDropdownOpen && isOpen && (
-                    <ul className="ml-8 space-y-3 mt-3">
+                    <ul className="ml-8 space-y-2 mt-2 border-l-2 border-orange-500/30 pl-4">
                       <li>
-                        <Link href="/dashboard/careers/career-suggestions" className="text-white hover:underline" onClick={handleLinkClick}>
+                        <Link 
+                          href="/dashboard/careers/career-suggestions" 
+                          className="text-gray-400 hover:text-orange-400 hover:bg-gray-700/60 px-3 py-2 rounded-lg transition-all duration-200 block text-sm font-medium" 
+                          onClick={handleLinkClick}
+                        >
                           Career Suggestions
                         </Link>
                       </li>
                       <li>
-                        <Link href="/dashboard/careers/career-guide" className="text-white hover:underline" onClick={handleLinkClick}>
+                        <Link 
+                          href="/dashboard/careers/career-guide" 
+                          className="text-gray-400 hover:text-orange-400 hover:bg-gray-700/60 px-3 py-2 rounded-lg transition-all duration-200 block text-sm font-medium" 
+                          onClick={handleLinkClick}
+                        >
                           Career Guide
                         </Link>
                       </li>
@@ -309,32 +323,38 @@ const LeftSideBar = () => {
                 {/* Guide Link */}
                 <li className="relative">
                   <div
-                    className="flex items-center gap-4 hover:bg-white/10 p-3 rounded-lg cursor-pointer"
+                    className="flex items-center gap-4 hover:bg-gradient-to-r hover:from-gray-700/60 hover:to-gray-600/60 p-3 rounded-xl cursor-pointer transition-all duration-200 group hover:shadow-sm"
                     onClick={()=>{
-
                       !isOpen && toggleSidebars();
-
                       toggleInstructionDropdown();
                     }}
                   >
-                    <FaInfoCircle className="text-base" />
+                    <div className="text-gray-400 group-hover:text-orange-400 transition-colors duration-200">
+                      <FaInfoCircle className="text-base" />
+                    </div>
                     {isOpen && (
                       <>
-                        <span className="text-sm pl-3">Instructions</span>
-                        <FaChevronDown className="ml-auto" />
+                        <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors duration-200">Instructions</span>
+                        <FaChevronDown className="ml-auto text-gray-500 group-hover:text-orange-400 transition-colors duration-200" />
                       </>
                     )}
                   </div>
                     {guideDropdownOpen && isOpen && (
-                      <ul className="ml-8 space-y-3 mt-3">
+                      <ul className="ml-8 space-y-2 mt-2 border-l-2 border-orange-500/30 pl-4">
                         <li onClick={handleLinkClick}>
-                          <div onClick={()=>openInstructions('intro')} className="text-white cursor-pointer hover:underline">
+                          <div 
+                            onClick={()=>openInstructions('intro')} 
+                            className="text-gray-400 hover:text-orange-400 hover:bg-gray-700/60 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer text-sm font-medium"
+                          >
                             Introduction
                           </div>
                         </li>
                         <li onClick={handleLinkClick}>
-                          <div onClick={()=>openInstructions('career-guide')} className="text-white cursor-pointer hover:underline ">
-                            Carrer Guide
+                          <div 
+                            onClick={()=>openInstructions('career-guide')} 
+                            className="text-gray-400 hover:text-orange-400 hover:bg-gray-700/60 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer text-sm font-medium"
+                          >
+                            Career Guide
                           </div>
                         </li>
                       </ul>
@@ -348,22 +368,29 @@ const LeftSideBar = () => {
 
       {/* Logout confirmation popup */}
       {isLogoutPopupOpen && (
-        <div className="fixed inset-0 px-3 bg-black bg-opacity-50 z-[999999999999] flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-            <h2 className="text-xl mb-4">Are you sure you want to sign out?</h2>
-            <div className="flex justify-center gap-4">
-              <button
+        <div className="fixed inset-0 px-3 bg-black/50 backdrop-blur-sm z-[999999999999] flex justify-center items-center">
+          <div className="bg-white p-8 rounded-2xl shadow-2xl text-center border border-gray-200 max-w-md mx-auto">
+            <div className="mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FaCog className="text-red-600 text-2xl" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Sign Out</h2>
+              <p className="text-gray-600">Are you sure you want to sign out of your account?</p>
+            </div>
+            <div className="flex gap-3">
+              <Button
                 onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 Sign Out
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={toggleLogoutPopup}
-                className="bg-gray-300 px-4 py-2 rounded"
+                variant="outline"
+                className="flex-1 border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-800 font-medium py-3 rounded-xl transition-all duration-200"
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         </div>

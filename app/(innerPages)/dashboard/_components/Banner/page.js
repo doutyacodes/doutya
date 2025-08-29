@@ -84,86 +84,82 @@ function Banner({
     <div className="max-md:pb-14">
       {isTest1Completed ? <PersonalityTestComplete /> : <StartPersonalityTest />}
       {!getQuizStatus(1).isCompleted && <CareerOnboarding />}
-      <div className="w-full py-8 md:text-3xl text-xl font-bold text-white text-center bg-gradient-to-r from-[#2f87aa] to-green-300">
+      <div className="w-full py-8 md:text-3xl text-xl font-bold text-white text-center bg-gradient-to-r from-orange-500 to-red-500">
         {t("careerAssesment")}
       </div>
-      <div className="p-4">
+      <div className="p-4 bg-gradient-to-br from-gray-900/50 via-gray-800/50 to-gray-900/50">
         <div className="mt-8 md:flex hidden md:flex-row justify-evenly gap-10 w-full">
           {/* Personality Test */}
           {!getQuizStatus(1).isCompleted && (
-            <div
-              className="pt-3 p-[1px] rounded-lg  md:w-[400px]"
-              style={{
-                backgroundImage: `linear-gradient(to right, #3294bb, #3294bb)`,
-              }}
-            >
-              <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
-                {t("findStrength")}
-              </h3>
-              <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between  ">
-                <div className="space-y-4 flex flex-col">
-                  <h3 className="font-bold text-2xl text-center py-3 text-white">
-                    {t("personalityTestTitle")}
-                  </h3>
-                  <div className="bg-slate-600 p-[1px]" />
-                  <p className="text-white text-justify text-md p-4">
-                    {t("personalityTestDescription")}
-                  </p>
+            <div className="relative md:w-[400px]">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-2xl blur-xl"></div>
+              <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-2xl p-6 shadow-2xl">
+                <div className="text-center mb-4">
+                  <div className="inline-block px-4 py-1 bg-orange-500/20 border border-orange-500/30 rounded-full mb-4">
+                    <h3 className="font-bold text-orange-400 text-sm uppercase tracking-wide">
+                      {t("findStrength")}
+                    </h3>
+                  </div>
                 </div>
-                <div className="flex justify-center items-center p-4 mt-auto">
-                  {/* {!getQuizStatus(1).isCompleted ? ( */}
-                  <Link
-                    href="/quiz-section/1"
-                    className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400 p-3 rounded-full w-40"
-                  >
-                    <p className="text-white font-semibold text-lg text-center">
-                      {t("takeTest")}
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-bold text-2xl text-center text-white mb-4">
+                      {t("personalityTestTitle")}
+                    </h3>
+                    <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mb-4"></div>
+                    <p className="text-gray-200 text-justify leading-relaxed">
+                      {t("personalityTestDescription")}
                     </p>
-                  </Link>
-                  {/* ) : (
-                         <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p> */}
-                  {/* )} */}
+                  </div>
+                  <div className="flex justify-center pt-4">
+                    <Link
+                      href="/quiz-section/1"
+                      className="inline-block bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-8 py-3 rounded-xl font-semibold text-white transition-all duration-200 transform hover:scale-105 shadow-lg shadow-orange-500/25"
+                    >
+                      {t("takeTest")}
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
           {/* Interest Test */}
-          <div
-            className="pt-3 p-[1px] rounded-lg w-full md:w-[400px]"
-            style={{
-              backgroundImage: `linear-gradient(to right, #f39033fb, #f39033fb)`,
-            }}
-          >
-            <h3 className="font-bold text-center text-black text-md pb-2 uppercase">
-              {t("followCareer")}
-            </h3>
-            <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between">
-              <div className="space-y-4 flex flex-col">
-                <h3 className="font-bold text-2xl text-center py-3 text-white">
-                  {t("interestTestTitle")}
-                </h3>
-                <div className="bg-slate-600 p-[1px]" />
-                <p className="text-white text-justify text-md p-4">
-                  {t("interestTestDescription")}
-                </p>
+          <div className="relative w-full md:w-[400px]">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl"></div>
+            <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-2xl p-6 shadow-2xl">
+              <div className="text-center mb-4">
+                <div className="inline-block px-4 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full mb-4">
+                  <h3 className="font-bold text-blue-400 text-sm uppercase tracking-wide">
+                    {t("followCareer")}
+                  </h3>
+                </div>
               </div>
-              <div className="flex justify-center items-center p-4 mt-auto">
-                {!getQuizStatus(2).isCompleted &&
-                getQuizStatus(1).isCompleted ? (
-                  <Link
-                    href="/CareerQuizSection/2"
-                    className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400 p-3 rounded-full w-40"
-                  >
-                    <p className="text-white font-semibold text-lg text-center">
-                      {t("takeTest")}
-                    </p>
-                  </Link>
-                ) : (
-                  <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">
-                    {t("takeTest")}
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-bold text-2xl text-center text-white mb-4">
+                    {t("interestTestTitle")}
+                  </h3>
+                  <div className="w-16 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-4"></div>
+                  <p className="text-gray-200 text-justify leading-relaxed">
+                    {t("interestTestDescription")}
                   </p>
-                )}
+                </div>
+                <div className="flex justify-center pt-4">
+                  {!getQuizStatus(2).isCompleted &&
+                  getQuizStatus(1).isCompleted ? (
+                    <Link
+                      href="/CareerQuizSection/2"
+                      className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 px-8 py-3 rounded-xl font-semibold text-white transition-all duration-200 transform hover:scale-105 shadow-lg shadow-blue-500/25"
+                    >
+                      {t("takeTest")}
+                    </Link>
+                  ) : (
+                    <div className="inline-block bg-gradient-to-r from-gray-600 to-gray-700 px-8 py-3 rounded-xl font-semibold text-gray-400 cursor-not-allowed">
+                      {t("takeTest")}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -182,38 +178,34 @@ function Banner({
             {/* Personality Test - Mobile */}
             {!getQuizStatus(1).isCompleted && (
               <SwiperSlide>
-                <div
-                  className="pt-3 p-[1px] rounded-lg w-full"
-                  style={{
-                    backgroundImage: `linear-gradient(to right, #3294bb, #3294bb)`,
-                  }}
-                >
-                  <h3 className="font-bold text-center text-white text-md pb-2 uppercase">
-                    {t("findStrength")}
-                  </h3>
-                  <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between min-h-[430px]">
-                    <div className="space-y-4 flex flex-col">
-                      <h3 className="font-bold text-2xl text-center py-3 text-white">
-                        {t("personalityTestTitle")}
-                      </h3>
-                      <div className="bg-slate-600 p-[1px]" />
-                      <p className="text-white text-justify text-md p-4 flex-grow">
-                        {t("personalityTestDescription")}
-                      </p>
+                <div className="relative w-full">
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-2xl blur-xl"></div>
+                  <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-2xl p-6 shadow-2xl min-h-[430px] flex flex-col">
+                    <div className="text-center mb-4">
+                      <div className="inline-block px-4 py-1 bg-orange-500/20 border border-orange-500/30 rounded-full mb-4">
+                        <h3 className="font-bold text-orange-400 text-sm uppercase tracking-wide">
+                          {t("findStrength")}
+                        </h3>
+                      </div>
                     </div>
-                    <div className="flex justify-center items-center p-4 mt-auto">
-                      {/* {!getQuizStatus(1).isCompleted ? ( */}
+                    <div className="flex-1 space-y-6">
+                      <div>
+                        <h3 className="font-bold text-2xl text-center text-white mb-4">
+                          {t("personalityTestTitle")}
+                        </h3>
+                        <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mb-4"></div>
+                        <p className="text-gray-200 text-justify leading-relaxed">
+                          {t("personalityTestDescription")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex justify-center pt-6">
                       <Link
                         href="/quiz-section/1"
-                        className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400 p-3 rounded-full w-40"
+                        className="inline-block bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-8 py-3 rounded-xl font-semibold text-white transition-all duration-200 transform hover:scale-105 shadow-lg shadow-orange-500/25"
                       >
-                        <p className="text-white font-semibold text-lg text-center">
-                          {t("takeTest")}
-                        </p>
+                        {t("takeTest")}
                       </Link>
-                      {/* ) : (
-                            <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">{t('takeTest')}</p>
-                        )} */}
                     </div>
                   </div>
                 </div>
@@ -222,40 +214,40 @@ function Banner({
 
             {/* Interest Test - Mobile */}
             <SwiperSlide>
-              <div
-                className="pt-3 p-[1px] rounded-lg w-full"
-                style={{
-                  backgroundImage: `linear-gradient(to right, #f39033fb, #f39033fb)`,
-                }}
-              >
-                <h3 className="font-bold text-center text-black text-md pb-2 uppercase">
-                  {t("followCareer")}
-                </h3>
-                <div className="bg-[#191134] rounded-lg p-3 flex flex-col justify-between min-h-[430px]">
-                  <div className="space-y-4 flex flex-col">
-                    <h3 className="font-bold text-2xl text-center py-3 text-white">
-                      {t("interestTestTitle")}
-                    </h3>
-                    <div className="bg-slate-600 p-[1px]" />
-                    <p className="text-white text-justify text-md p-4 flex-grow">
-                      {t("interestTestDescription")}
-                    </p>
+              <div className="relative w-full">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl"></div>
+                <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-2xl p-6 shadow-2xl min-h-[430px] flex flex-col">
+                  <div className="text-center mb-4">
+                    <div className="inline-block px-4 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full mb-4">
+                      <h3 className="font-bold text-blue-400 text-sm uppercase tracking-wide">
+                        {t("followCareer")}
+                      </h3>
+                    </div>
                   </div>
-                  <div className="flex justify-center items-center p-4 mt-auto">
+                  <div className="flex-1 space-y-6">
+                    <div>
+                      <h3 className="font-bold text-2xl text-center text-white mb-4">
+                        {t("interestTestTitle")}
+                      </h3>
+                      <div className="w-16 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-4"></div>
+                      <p className="text-gray-200 text-justify leading-relaxed">
+                        {t("interestTestDescription")}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex justify-center pt-6">
                     {!getQuizStatus(2).isCompleted &&
                     getQuizStatus(1).isCompleted ? (
                       <Link
                         href="/CareerQuizSection/2"
-                        className="hover:cursor-pointer bg-gradient-to-r from-[#2f87aa] to-green-400 p-3 rounded-full w-40"
+                        className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 px-8 py-3 rounded-xl font-semibold text-white transition-all duration-200 transform hover:scale-105 shadow-lg shadow-blue-500/25"
                       >
-                        <p className="text-white font-semibold text-lg text-center">
-                          {t("takeTest")}
-                        </p>
+                        {t("takeTest")}
                       </Link>
                     ) : (
-                      <p className="text-white font-semibold bg-gradient-to-r from-[#2f87aa] to-green-400 text-lg text-center opacity-50 p-3 rounded-full w-40">
+                      <div className="inline-block bg-gradient-to-r from-gray-600 to-gray-700 px-8 py-3 rounded-xl font-semibold text-gray-400 cursor-not-allowed">
                         {t("takeTest")}
-                      </p>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -269,8 +261,8 @@ function Banner({
               {paginationDots.map((_, index) => (
                 <div
                   key={index}
-                  className={`h-3 w-3 rounded-full cursor-pointer ${
-                    activeIndex === index ? "bg-green-400" : "bg-gray-400"
+                  className={`h-3 w-3 rounded-full cursor-pointer transition-all duration-200 ${
+                    activeIndex === index ? "bg-orange-400 shadow-lg" : "bg-gray-400 hover:bg-gray-300"
                   }`}
                   onClick={() => swiperRef.current?.slideTo(index)}
                 ></div>

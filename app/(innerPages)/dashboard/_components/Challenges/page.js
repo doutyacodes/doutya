@@ -189,105 +189,227 @@ export default function Challenge({ selectedCareer }) {
             return challenges
                 .filter((challenge) => challenge.week === currentWeek )
                 .map((challenge, index) => (
-                    <li key={index} className="border p-4 rounded border-[#2f2f2f] text-white bg-[#2f2f2f] flex justify-between items-center">
-                        <div>
-                            <h3 className="font-bold text-lg">{t('week')} {challenge.week}</h3>
-                            <p><strong>{t('challenge')}:</strong> {challenge.challenge}</p>
-                            <p><strong>{t('verification')}:</strong> {challenge.verification}</p>
+                    <div key={index} className="group relative cursor-pointer">
+                        {/* Modern Card Design */}
+                        <div className="relative overflow-hidden rounded-2xl transition-all duration-300 group-hover:scale-105">
+                            <div className="absolute inset-0 bg-gradient-to-br from-gray-800/20 via-gray-700/10 to-gray-800/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            
+                            <div className="relative backdrop-blur-sm border-2 rounded-2xl p-6 shadow-xl transition-all duration-300 min-h-[200px] bg-gradient-to-br from-blue-600/30 to-purple-600/30 border-blue-500/40 hover:border-blue-400/60 shadow-blue-500/20">
+                                {/* Header */}
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
+                                        <span className="text-xs font-medium text-gray-300 uppercase tracking-wide">
+                                            {t('week')} {challenge.week}
+                                        </span>
+                                    </div>
+                                    <div className="px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-purple-500">
+                                        Active
+                                    </div>
+                                </div>
+
+                                {/* Challenge Content */}
+                                <div className="mb-6">
+                                    <h3 className="text-lg font-bold text-white mb-3 leading-tight">
+                                        {challenge.challenge}
+                                    </h3>
+                                    <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                                        <strong>{t('verification')}:</strong> {challenge.verification}
+                                    </p>
+                                </div>
+
+                                {/* Upload Section */}
+                                <div className="space-y-3">
+                                    <label className="group/upload relative flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl cursor-pointer transition-all duration-200 shadow-lg hover:shadow-blue-500/30 hover:scale-105">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        </svg>
+                                        <span>{t('uploadImage')}</span>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleFileChange(e, challenge.week)}
+                                            className="hidden"
+                                        />
+                                    </label>
+                                    
+                                    {fileNames[challenge.week] && (
+                                        <p className="text-center text-sm text-gray-300 bg-gray-800/50 rounded-lg py-2 px-3">
+                                            📎 {fileNames[challenge.week]}
+                                        </p>
+                                    )}
+                                    
+                                    <button
+                                        onClick={() => handleSubmit(challenge.week, challenge.id)}
+                                        className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-emerald-500/30 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                        disabled={submitting[challenge.id]}
+                                    >
+                                        {submitting[challenge.id] ? (
+                                            <div className="flex items-center justify-center gap-2">
+                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                {t('submitting')}
+                                            </div>
+                                        ) : (
+                                            t('submit')
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex flex-col">
-                            <label className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer mb-2">
-                                {t('uploadImage')}
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => handleFileChange(e, challenge.week)}
-                                    className="hidden"
-                                />
-                            </label>
-                            <button
-                                onClick={() => handleSubmit(challenge.week, challenge.id)}
-                                className="bg-green-500 text-white px-4 py-2 rounded"
-                                disabled={submitting[challenge.id]}
-                            >
-                                {submitting[challenge.id] ? t('submitting') : t('submit')}
-                            </button>
-                            <p className="mt-2 text-sm text-gray-600">
-                                {fileNames[challenge.week] || t('noFileChosen')}
-                            </p>
-                        </div>
-                    </li>
+                    </div>
                 ));
         } else if (activeTab === 'pending') {
             return challenges.map((challenge, index) => (
-                <li key={index} className="border p-4 rounded bg-yellow-100 flex justify-between items-center">
-                    <div>
-                        <h3 className="font-bold text-lg">{t('week')} {challenge.week}</h3>
-                        <p><strong>{t('challenge')}:</strong> {challenge.challenge}</p>
-                        <p><strong>{t('verification')}:</strong> {challenge.verification}</p>
-                        <p className="text-orange-600 font-medium mt-2">This challenge is currently under verification by our team</p>
+                <div key={index} className="group relative">
+                    <div className="relative overflow-hidden rounded-2xl transition-all duration-300">
+                        <div className="relative backdrop-blur-sm border-2 rounded-2xl p-6 shadow-xl min-h-[160px] bg-gradient-to-br from-yellow-600/30 to-orange-600/30 border-yellow-500/40 shadow-yellow-500/20">
+                            {/* Header */}
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
+                                    <span className="text-xs font-medium text-gray-300 uppercase tracking-wide">
+                                        {t('week')} {challenge.week}
+                                    </span>
+                                </div>
+                                <div className="px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-yellow-500 to-orange-500">
+                                    Under Review
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="mb-4">
+                                <h3 className="text-lg font-bold text-white mb-2 leading-tight">
+                                    {challenge.challenge}
+                                </h3>
+                                <p className="text-gray-300 text-sm mb-3">
+                                    <strong>{t('verification')}:</strong> {challenge.verification}
+                                </p>
+                                <p className="text-orange-200 font-medium text-sm bg-orange-500/20 rounded-lg p-3">
+                                    ⏳ This challenge is currently under verification by our team
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </li>
+                </div>
             ));
-        }else if (activeTab === 'rejected') {
+        } else if (activeTab === 'rejected') {
             return challenges.map((challenge, index) => (
-                <li key={index} className="border p-4 rounded bg-yellow-100 flex justify-between items-center">
-                    <div>
-                        <h3 className="font-bold text-lg">{t('week')} {challenge.week}</h3>
-                        <p><strong>{t('challenge')}:</strong> {challenge.challenge}</p>
-                        <p><strong>{t('verification')}:</strong> {challenge.verification}</p>
+                <div key={index} className="group relative">
+                    <div className="relative overflow-hidden rounded-2xl transition-all duration-300">
+                        <div className="relative backdrop-blur-sm border-2 rounded-2xl p-6 shadow-xl min-h-[160px] bg-gradient-to-br from-red-600/30 to-pink-600/30 border-red-500/40 shadow-red-500/20">
+                            {/* Header */}
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                                    <span className="text-xs font-medium text-gray-300 uppercase tracking-wide">
+                                        {t('week')} {challenge.week}
+                                    </span>
+                                </div>
+                                <div className="px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-red-500 to-pink-500">
+                                    Rejected
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="mb-4">
+                                <h3 className="text-lg font-bold text-white mb-2 leading-tight">
+                                    {challenge.challenge}
+                                </h3>
+                                <p className="text-gray-300 text-sm mb-3">
+                                    <strong>{t('verification')}:</strong> {challenge.verification}
+                                </p>
+                                <p className="text-red-200 font-medium text-sm bg-red-500/20 rounded-lg p-3">
+                                    ❌ This submission was rejected. Please review and resubmit.
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </li>
+                </div>
             ));
         }
     };
 
     return (
         <FeatureGuideWrapper featureKey="challenges">
-            <div className="bg-[#1f1f1f] mb-6 p-4 text-black">
+            <div className="w-full mx-auto">
                 <Toaster />
 
-            {/* Loading Modal */}
-            <ContentGenerationLoading
-                isOpen={fetching}
-                onClose={() => setFetching(false)}
-                page="challenges" // Change this based on your current page
-                showDelay={1000} // Only show if loading takes more than 1 second
-                // Optional: auto close after 30 seconds
-                // autoCloseDelay={30000}
-            />
+                {/* Loading Modal */}
+                <ContentGenerationLoading
+                    isOpen={fetching}
+                    onClose={() => setFetching(false)}
+                    page="challenges"
+                    showDelay={1000}
+                />
 
-                <div className="flex gap-1 pl-2 pr-2 overflow-x-scroll">
-                    <button
-                        className={`bg-purple-400 text-white font-bold py-2 px-4 md:w-1/3 max-md:rounded ${activeTab === 'weekly' ? 'bg-purple-700' : ''}`}
-                        onClick={() => setActiveTab('weekly')}
-                    >
-                        {t('weeklyChallenges')}
-                    </button>
-                    <button
-                        className={`bg-red-400 text-white font-bold py-2 px-4  md:w-1/3 max-md:rounded ${activeTab === 'pending' ? 'bg-red-700' : ''}`}
-                        onClick={() => setActiveTab('pending')}
-                    >
-                        {t('pendingChallenges')}
-                    </button>
-                    <button
-                        className={`bg-blue-400 text-white font-bold py-2 px-4  md:w-1/3 max-md:rounded ${activeTab === 'rejected' ? 'bg-blue-700' : ''}`}
-                        onClick={() => setActiveTab('rejected')}
-                    >
-                        {t('rejectedChallenges')}
-                    </button>
+                {/* Main Container */}
+                <div className="w-full bg-gray-900 p-6 rounded-lg">
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="grid grid-cols-3 gap-4 w-full">
+                            <button
+                                onClick={() => setActiveTab('weekly')}
+                                className={`px-4 py-2 rounded transition-colors duration-300 ${
+                                    activeTab === 'weekly'
+                                        ? 'bg-orange-500 text-white'
+                                        : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                                }`}
+                            >
+                                <span className="uppercase text-sm">{t('weeklyChallenges')}</span>
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('pending')}
+                                className={`px-4 py-2 rounded transition-colors duration-300 ${
+                                    activeTab === 'pending'
+                                        ? 'bg-orange-500 text-white'
+                                        : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                                }`}
+                            >
+                                <span className="uppercase text-sm">{t('pendingChallenges')}</span>
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('rejected')}
+                                className={`px-4 py-2 rounded transition-colors duration-300 ${
+                                    activeTab === 'rejected'
+                                        ? 'bg-orange-500 text-white'
+                                        : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                                }`}
+                            >
+                                <span className="uppercase text-sm">{t('rejectedChallenges')}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {currentWeek && (
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-white text-xl">WEEK - {currentWeek}/52 CHALLENGES</h2>
+                        </div>
+                    )}
+
+                    {fetching ? (
+                        <div className="text-center py-16">
+                            <div className="text-6xl mb-4">⏳</div>
+                            <p className="text-gray-400 text-lg">{t('loadingChallenges')}</p>
+                        </div>
+                    ) : challenges.length > 0 ? (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                            {renderChallenges()}
+                        </div>
+                    ) : (
+                        <div className="text-center py-16">
+                            <div className="text-6xl mb-4">🎯</div>
+                            <p className="text-gray-400 text-lg">{t('noChallengesAvailable')}</p>
+                            <p className="text-gray-500 text-sm mt-2">Check back later for new challenges</p>
+                        </div>
+                    )}
+
+                    {activeTab === 'weekly' && showWaitMessage && (
+                        <div className="mt-6 text-center">
+                            <div className="bg-yellow-500/20 border border-yellow-500/40 rounded-lg p-4">
+                                <p className="text-yellow-200 font-medium">⏰ {t('waitForNextWeek')}</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
-                <br />
-                {fetching ? (
-                    <p>{t('loadingChallenges')}</p>
-                ) : challenges.length > 0 ? (
-                    <ul className="space-y-4">
-                        {renderChallenges()}
-                        {activeTab === 'weekly' && showWaitMessage && <p>{t('waitForNextWeek')}</p>}
-                    </ul>
-                ) : (
-                    <p>{t('noChallengesAvailable')}</p>
-                )}
             </div>
         </FeatureGuideWrapper>
 
