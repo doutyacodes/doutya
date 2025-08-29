@@ -147,7 +147,7 @@ const Footer = () => {
               </ul>
             </motion.div>
 
-            {/* Resources */}
+            {/* Resources - Commented out for now
             <motion.div variants={fadeInUp}>
               <h3 className="text-lg font-bold text-white mb-4 sm:mb-6">Resources</h3>
               <ul className="space-y-3">
@@ -168,7 +168,6 @@ const Footer = () => {
                 ))}
               </ul>
 
-              {/* CTA Section */}
               <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl border border-white/10">
                 <h4 className="text-base font-semibold text-white mb-2">Ready to get started?</h4>
                 <p className="text-sm text-gray-300 mb-4">Take your career test today</p>
@@ -180,6 +179,7 @@ const Footer = () => {
                 </Link>
               </div>
             </motion.div>
+            */}
           </div>
         </motion.div>
 
