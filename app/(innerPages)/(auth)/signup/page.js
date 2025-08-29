@@ -272,7 +272,7 @@ function SignUp() {
         toast.success(t("successMessage"));
         
         // Route based on class selection
-        if (["6", "7", "8"].includes(selectedClass)) {
+        if (["5", "6", "7"].includes(selectedClass)) {
           localStorage.setItem('dashboardUrl', '/dashboard_junior');
           localStorage.setItem('navigateUrl', '/dashboard_junior');
           response.data.quizCompleted ? router.push('/dashboard/careers') : router.push('/dashboard_junior');
@@ -799,6 +799,7 @@ function SignUp() {
               required
             >
               <option value="">Select Class/Grade</option>
+              <option value="5">5th</option>
               <option value="6">6th</option>
               <option value="7">7th</option>
               <option value="8">8th</option>

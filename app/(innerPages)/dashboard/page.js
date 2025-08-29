@@ -96,7 +96,7 @@ export default function Dashboard() {
           router.replace("/country");
         } 
         // 2️⃣ Then check grade-based suggestions
-        else if (["9", "10"].includes(gradeData)) {
+        else if (["8", "9", "10"].includes(gradeData)) {
           router.replace("/dashboard_junior/cluster-suggestion");
         } 
         else if (["11", "12", "college"].includes(gradeData)) {

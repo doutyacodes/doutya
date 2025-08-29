@@ -85,7 +85,7 @@ function Page() {
       let url = '/dashboard';
       let type = 'senior';
 
-      if (["6", "7", "8"].includes(userData.grade)) {
+      if (["5", "6", "7"].includes(userData.grade)) {
         url = '/dashboard_junior';
         type = 'junior';
       }

@@ -138,79 +138,13 @@ export async function GET(req) {
     jobDescription = `currently has a job in ${userDetails[0].currentJob} with ${userDetails[0].experience} years of experience, and is looking for a career change with educational qualification of ${userDetails[0].educationQualification}, graduated from ${userDetails[0].university} university. Please exclude careers involving ${userDetails[0].currentJob}.`;
   }
 
-
-  // const prompt = `Provide a list of the most suitable careers ${
-  //   industry === "any" ? "" : `in the ${industry}`
-  // } ${
-  //   country ? "in " + country : ""
-  // } for an individual who ${jobDescription} and has an ${type1} personality type and RIASEC interest types of ${type2} ${
-  //   type3 ? " and Gallup Strengths types of " + type3 : ""
-  // }. Include 3 traditional careers, 3 trending careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Additionally, provide ${
-  //   finalAge >= 18
-  //     ? "3 futuristic careers for an individual aged " +
-  //       finalAge +
-  //       " in the year " +
-  //       (new Date().getFullYear() + 3)
-  //     : "3 futuristic careers for an individual aged " +
-  //       finalAge +
-  //       " until they reach the age of 21."
-  // }(currently in week ${currentAgeWeek} of this age)
-  // ${
-  //   (educationLevel === 'school' || educationLevel === 'college') 
-  //   ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
-  //   : ''
-  // }.
-  //  Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
-  //       career_name: A brief title of the career.
-  //       type: trending, offbeat, traditional, futuristic, entrepreneurial, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
-        
-  //       Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data. Provide the response ${
-  //   languageOptions[language] || "in English"
-  // }, keeping the keys in English only, but the career names should be ${
-  //   languageOptions[language] || "in English"
-  // }. Present it as a single JSON data array without any wrapping other than []`;
-
-  // const prompt = `Provide a list of the most suitable careers ${
-  //   industry === "any" ? "" : `in the ${industry}`
-  // } ${
-  //   country ? "in " + country : ""
-  // } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2} ${
-  //   type3 ? " and Gallup Strengths types of " + type3 : ""
-  // }. Include 3 traditional careers, 3 trending careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Additionally, provide ${
-  //   finalAge >= 18
-  //     ? "3 futuristic careers for an individual aged " +
-  //       finalAge +
-  //       " in the year " +
-  //       (new Date().getFullYear() + 3)
-  //     : "3 futuristic careers for an individual aged " +
-  //       finalAge +
-  //       " until they reach the age of 21."
-  // }(currently in week ${currentAgeWeek} of this age)
-  // ${
-  //   (educationLevel === 'school' || educationLevel === 'college') 
-  //   ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
-  //   : ''
-  // }.
-  //  Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
-  //       career_name: A brief title of the career.
-  //       type: trending, offbeat, traditional, futuristic, entrepreneurial, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
-        
-  //       Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data. Provide the response ${
-  //   languageOptions[language] || "in English"
-  // }, keeping the keys in English only, but the career names should be ${
-  //   languageOptions[language] || "in English"
-  // }. Present it as a single JSON data array without any wrapping other than []`;
-
-
-  // console.log("prompt", prompt);
-
   const prompt = await generateCareerPrompt(
     userId, 
     type1,
     type2, 
     industry,
     country, 
-    finalAge, 
+    finalAge,
     currentAgeWeek, 
     language, 
     languageOptions
@@ -222,7 +156,7 @@ export async function GET(req) {
     {
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 5000, // Adjust the token limit as needed
+      max_tokens: 7000, // Adjust the token limit as needed
     },
     {
       headers: {

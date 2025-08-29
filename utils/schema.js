@@ -408,6 +408,14 @@ export const QUIZZES = mysqlTable("quizzes", {
   description: text("description").notNull(),
 });
 
+export const PERSONALITY_PROFILES = mysqlTable("PERSONALITY_PROFILES", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 10 }).notNull(),  // e.g. INTJ (for internal use only)
+  data: json("data").notNull(), // stores the whole JSON personality_analysis
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
 export const PERSONALITY_TYPES = mysqlTable("personality_types", {
   id: int("id").primaryKey().autoincrement(),
   type_code: varchar("type_code", { length: 10 }).notNull(),
@@ -1835,19 +1843,32 @@ export const MBTI_SECTOR_MAP = mysqlTable("mbti_sector_map", {
   created_at: timestamp("created_at").defaultNow(),
 });
 
+
 export const SECTOR = mysqlTable("sector", {
   id: int("id").notNull().autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull().unique(),
-  description: text("description").default(null),
+
+  // New fields
+  brief_overview: text("brief_overview").notNull(),
+  why_suitable: text("why_suitable").notNull(),
+  future_potential: text("future_potential").notNull(),
+  recommended_stream: varchar("recommended_stream", { length: 255 }).notNull(),
+
   created_at: timestamp("created_at").defaultNow(),
 });
+
 
 export const CLUSTER = mysqlTable("cluster", {
   id: int("id").notNull().autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
-  description: text("description").default(null),
-  related_jobs: text("related_jobs").default(null),
+  why_suitable: text("why_suitable"),
+  related_jobs: text("related_jobs"),
   created_at: timestamp("created_at").defaultNow(),
+  sector: varchar("sector", { length: 100 }),
+  ideal_stream: varchar("ideal_stream", { length: 150 }),
+  updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+  brief_overview: text("brief_overview"),
+  future_potential: text("future_potential"),
 });
 
 export const USER_SECTOR = mysqlTable("user_sector", {

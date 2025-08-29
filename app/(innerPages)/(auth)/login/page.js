@@ -68,7 +68,7 @@ function Login() {
          // Set the age-appropriate dashboard URL in localStorage
         let dashboardUrl = '/dashboard'; // Default for age > 13
 
-        if (["6", "7", "8"].includes(userClass)) {
+        if (["5", "6", "7"].includes(userClass)) {
           dashboardUrl = '/dashboard_junior';
         }
 

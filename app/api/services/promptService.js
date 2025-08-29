@@ -42,11 +42,23 @@ export const dynamic = 'force-dynamic';
             finalAge +
             " until they reach the age of 21."
     }(currently in week ${currentAgeWeek} of this age)
-    Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. For each career, include the following information:
+    Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. 
+        For each career, include the following information:
             career_name: A brief title of the career.
             type: trending, offbeat, traditional, futuristic, ai-proof, entrepreneurial, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
-            
-            Ensure that the response is valid JSON, using the specified field names, but do not include the terms '${type1}' in the data. Provide the response ${
+            description: Why this specific career is suitable for this user based on their ${type1} personality type and ${type2} RIASEC interests. Explain the alignment with their personality traits and interests.
+            brief_overview: A concise description of what this career involves, key responsibilities, and typical work environment.
+            future_potential: Future growth prospects, emerging opportunities, job market outlook, salary expectations, and career advancement possibilities in this field.
+
+            Ensure that the response is valid JSON with the following structure for each career:
+            {
+            "career_name": "Career Title",
+            "type": "career type",
+            "description": "Why suitable for this user",
+            "brief_overview": "What the career involves",
+            "future_potential": "Growth and opportunities"
+            }
+            Do not include the terms '${type1}' in the data.
         languageOptions[language] || "in English"
     }, keeping the keys in English only, but the career names should be ${
         languageOptions[language] || "in English"

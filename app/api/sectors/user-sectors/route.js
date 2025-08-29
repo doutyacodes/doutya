@@ -76,7 +76,7 @@ export async function GET(req) {
         sector_id: USER_SECTOR.sector_id,
         mbti_type: USER_SECTOR.mbti_type,
         name: SECTOR.name,
-        description: SECTOR.description,
+        description: SECTOR.why_suitable,
         created_at: USER_SECTOR.created_at
       })
       .from(USER_SECTOR)
