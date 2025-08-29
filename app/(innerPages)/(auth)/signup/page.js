@@ -313,39 +313,47 @@ function SignUp() {
   // Language Step
   if (step === "language") {
     return (
-    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center pt-8 pb-8 px-4">
       <Toaster />
-      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
-        <h1 className="text-xl font-bold mb-4 text-center text-white">
-          Choose Your Language
-        </h1>
-        <p className="text-center mb-4 text-gray-300">
-          You won't be able to modify it later, so choose wisely.
-        </p>
-        <div className="mb-4">
-          <select
-            className="block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            value={selectedLanguage}
-            onChange={(e) => handleLanguageChange(e)}
-          >
-            <option value="en">English</option>
-            <option value="hi">Hindi</option>
-            <option value="mar">Marathi</option>
-            <option value="ur">Urdu</option>
-            <option value="sp">Spanish</option>
-            <option value="ben">Bengali</option>
-            <option value="assa">Assamese</option>
-            <option value="ge">German</option>
-            <option value="tam">Tamil</option>
-            <option value="mal">Malayalam</option>
-          </select>
+      <div className="relative w-full max-w-lg">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
+        <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Choose Your Language
+            </h1>
+            <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mb-4"></div>
+            <p className="text-gray-300">
+              You won't be able to modify it later, so choose wisely.
+            </p>
+          </div>
+          <div className="space-y-6">
+            <div>
+              <select
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                value={selectedLanguage}
+                onChange={(e) => handleLanguageChange(e)}
+              >
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="mar">Marathi</option>
+                <option value="ur">Urdu</option>
+                <option value="sp">Spanish</option>
+                <option value="ben">Bengali</option>
+                <option value="assa">Assamese</option>
+                <option value="ge">German</option>
+                <option value="tam">Tamil</option>
+                <option value="mal">Malayalam</option>
+              </select>
+            </div>
+            <button
+              onClick={handleNext}
+              className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+            >
+              Next
+            </button>
+          </div>
         </div>
-        <button
-          onClick={handleNext}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
-        >
-          Next
-        </button>
       </div>
     </div>
   );
@@ -354,34 +362,38 @@ function SignUp() {
   // Eligibility Info Step
   if (step === "eligibility_info") {
     return (
-      <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
-        <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
-          <h1 className="text-2xl font-bold mb-6 text-center text-white">
-            {t("eligibilityTitle") || "Welcome to Xortcut"}
-          </h1>
-          
-          <div className="mb-8 text-center">
-            <div className="flex justify-center mb-6">
-              <img 
-                src={"/assets/images/logo-full.png"}
-                alt="Xortcut Logo" 
-                className="w-32 md:w-48 h-auto mb-2 object-contain"
-              />
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center pt-8 pb-8 px-4">
+        <div className="relative w-full max-w-lg">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
+          <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-white mb-6">
+                {t("eligibilityTitle") || "Welcome to Xortcut"}
+              </h1>
+              
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-3xl blur-xl"></div>
+                <div className="relative p-4">
+                  <img 
+                    src={"/assets/images/logo-full.png"}
+                    alt="Xortcut Logo" 
+                    className="w-32 md:w-48 h-auto mx-auto object-contain filter drop-shadow-2xl"
+                  />
+                </div>
+              </div>
+              
+              <p className="text-gray-200 mb-4 leading-relaxed">
+                {t("eligibilityInfo") || "Xortcut is designed for college students and working professionals."}
+              </p>
+              
+              <p className="text-gray-400 text-sm mb-8 leading-relaxed">
+                {t("eligibilityDetails") || "By continuing, you confirm that you are a college student or a working professional."}
+              </p>
             </div>
             
-            <p className="text-gray-300 mb-4">
-              {t("eligibilityInfo") || "Xortcut is designed for college students and working professionals."}
-            </p>
-            
-            <p className="text-gray-400 text-sm mb-8">
-              {t("eligibilityDetails") || "By continuing, you confirm that you are a college student or a working professional."}
-            </p>
-          </div>
-          
-          <div className="flex flex-col gap-4">
             <button
               onClick={handleNext}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
+              className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500/50"
             >
               {t("continue") || "Continue"}
             </button>
@@ -398,29 +410,35 @@ function SignUp() {
   // const showCollegeConfirmation = age !== null && age <= 16;
   
   return (
-    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center pt-8 pb-8 px-4">
       <Toaster />
-      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
-        <h1 className="text-xl font-bold mb-4 text-center text-white">
-          Enter Your Date of Birth
-        </h1>
-        <p className="text-center mb-4 text-gray-300">
-          You won't be able to modify it later, so enter carefully.
-        </p>
-        <div className="mb-4 w-full">
-          <input
-            type="date"
-            value={selectedDOB}
-            placeholder="Enter your Date of Birth"
-            onChange={handleDOBChange}
-            max={new Date().toISOString().split("T")[0]}
-            className="mt-1 block w-full min-w-72 px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            required
-          />
-          {dobError && (
-            <p className="mt-2 text-sm text-red-600">{dobError}</p>
-          )}
-        </div>
+      <div className="relative w-full max-w-lg">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
+        <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Enter Your Date of Birth
+            </h1>
+            <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mb-4"></div>
+            <p className="text-gray-300">
+              You won't be able to modify it later, so enter carefully.
+            </p>
+          </div>
+          <div className="space-y-6">
+            <div>
+              <input
+                type="date"
+                value={selectedDOB}
+                placeholder="Enter your Date of Birth"
+                onChange={handleDOBChange}
+                max={new Date().toISOString().split("T")[0]}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                required
+              />
+              {dobError && (
+                <p className="mt-2 text-sm text-red-400">{dobError}</p>
+              )}
+            </div>
         
         {/* College confirmation for users 16 or younger */}
         {/* {showCollegeConfirmation && (
@@ -450,13 +468,19 @@ function SignUp() {
           </div>
         )}
          */}
-        <button
-          onClick={handleNext}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed"
-          disabled={!selectedDOB || dobError }
-        >
-          Next
-        </button>
+            <button
+              onClick={handleNext}
+              className={`w-full py-3 px-6 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-orange-500/50 ${
+                !selectedDOB || dobError
+                  ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-orange-500/25 hover:scale-[1.02]'
+              }`}
+              disabled={!selectedDOB || dobError }
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -643,50 +667,55 @@ function SignUp() {
 
    return (
     // Main Signup Form
-    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center pt-8 pb-8 px-4">
       <Toaster />
-      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
-        <h1 className="text-2xl font-bold mb-6 text-center text-white">{t("title")}</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex gap-4 mb-4">
-            <div className="flex-1">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-300"
-              >
-                {t("name")}
-              </label>
-              <input
-                type="text"
-                {...register("name")}
-                className="mt-1 block w-full px-3 py-[6.5px] border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                required
-              />
-            </div>
+      <div className="relative w-full max-w-lg">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
+        <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">{t("title")}</h1>
+            <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto"></div>
           </div>
-          <div className="mb-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-200 mb-2"
+            >
+              {t("name")}
+            </label>
+            <input
+              type="text"
+              {...register("name")}
+              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+          <div>
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-gray-300"
+              className="block text-sm font-medium text-gray-200 mb-2"
             >
               {t("username")}
             </label>
             <input
               type="text"
               {...register("username")}
-              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+              placeholder="Choose a username"
               required
             />
           </div>
           {errors.username && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-400 text-sm mt-1">
               {errors.username.message}
             </p>
           )}
-          <div className="mb-4">
+          <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-300"
+              className="block text-sm font-medium text-gray-200 mb-2"
             >
               {t("password")}
             </label>
@@ -703,36 +732,38 @@ function SignUp() {
                   message: t("passwordPattern"),
                 },
               })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+              placeholder="Create a password"
               required
             />
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-red-400 text-sm mt-1">
                 {errors.password.message}
               </p>
             )}
           </div>
-          <div className="mb-4">
+          <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-300"
+              className="block text-sm font-medium text-gray-200 mb-2"
             >
               {t("confirmPassword")}
             </label>
             <input
               type="password"
               {...register("confirmPassword")}
-              className={`mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
+              className={`w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200 ${
                 errors.confirmPassword ? "border-red-500" : ""
               }`}
+              placeholder="Confirm your password"
               required
             />
             {errors.confirmPassword && (
-              <p className="mt-2 text-sm text-red-600">
+              <p className="mt-2 text-sm text-red-400">
                 {errors.confirmPassword.message}
               </p>
             )}
-            <div className="md:text-sm text-xs text-gray-400">{t("passWord")}</div>
+            <div className="md:text-sm text-xs text-gray-400 mt-2">{t("passWord")}</div>
           </div>
           <div className="flex gap-4 mb-4">
             <div className="">
@@ -985,22 +1016,19 @@ function SignUp() {
             </div>
           )}
 
-          <div className="mb-4">
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
-            >
-              {t("submit")}
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+          >
+            {t("submit")}
+          </button>
         </form>
-        <div className="flex justify-between">
-          <div className="flex justify-between gap-2">
-            <span className="text-gray-400">{t("alreadyRegistered")}</span>
-            <Link href="/login" className="text-blue-500 hover:text-blue-400">
-              {t("login")}
-            </Link>
-          </div>
+        <div className="text-center mt-6">
+          <span className="text-gray-300">{t("alreadyRegistered")} </span>
+          <Link href="/login" className="text-orange-400 hover:text-orange-300 font-medium transition-colors duration-200">
+            {t("login")}
+          </Link>
+        </div>
         </div>
       </div>
     </div>

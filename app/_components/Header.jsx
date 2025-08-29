@@ -207,7 +207,7 @@ const Header = ({ dark = false }) => {
         isScrolled
           ? "bg-slate-900/95 backdrop-blur-lg shadow-xl border-b border-white/10"
           : darks
-          ? "bg-transparent"
+          ? "bg-slate-900/90 backdrop-blur-md"
           : "bg-slate-900/90 backdrop-blur-md"
       }`}
     >
@@ -223,7 +223,7 @@ const Header = ({ dark = false }) => {
               <Image
                 src={
                   darks && !isScrolled
-                    ? "/assets/images/doutya4.png"
+                    ? "/assets/images/logo-full.png"
                     : "/assets/images/logo-full.png"
                 }
                 width={240}
@@ -242,7 +242,10 @@ const Header = ({ dark = false }) => {
                   <Link
                     href={item.href}
                     className={`text-sm font-medium transition-colors duration-200 hover:text-purple-400 ${
-                      !darks || isScrolled ? "text-white" : "text-gray-800"
+                      !darks || isScrolled
+                        ? "text-white"
+                        : // "text-gray-800"
+                          "text-white"
                     }`}
                   >
                     {item.name}
@@ -251,7 +254,10 @@ const Header = ({ dark = false }) => {
                   <>
                     <button
                       className={`text-sm font-medium transition-colors duration-200 hover:text-purple-400 ${
-                        !darks || isScrolled ? "text-white" : "text-gray-800"
+                        !darks || isScrolled
+                          ? "text-white"
+                          : // "text-gray-800"
+                            "text-white"
                       }`}
                     >
                       {item.name}
@@ -288,7 +294,8 @@ const Header = ({ dark = false }) => {
                 className={`p-2 rounded-lg transition-colors duration-200 ${
                   !darks || isScrolled
                     ? "text-white hover:bg-white/10"
-                    : "text-gray-800 hover:bg-gray-100"
+                    : //  "text-gray-800 hover:bg-gray-100"
+                      "text-white hover:bg-white/10"
                 }`}
               >
                 {isOpen ? <IoIosClose size={24} /> : <IoIosMenu size={24} />}

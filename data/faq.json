@@ -1,0 +1,92 @@
+{
+  "General": [
+    {
+      "question": "What is Xortcut?",
+      "answer": "Xortcut is an AI-powered Career Guidance Cell for schools and colleges. Instead of a one-time career test, it gives every learner a living roadmap with monthly milestones, knowledge assessments, real-world challenges, and bi-monthly feedback reports."
+    },
+    {
+      "question": "How is Xortcut different from a normal career test?",
+      "answer": "Traditional tests give static results. Xortcut is agentic AI — it tracks progress month by month, adapts to changes in interests, and ensures students stay on a guided path from Class 5 to 12."
+    },
+    {
+      "question": "From what age can a student use Xortcut?",
+      "answer": "From Class 5 onwards.\n\nClasses 5–7: explore sectors (broad fields like Tech, Healthcare, Law, Arts).\n\nClasses 8–10: narrow into clusters (focused areas like Engineering, Design, Finance).\n\nClasses 11–12: decide on specific careers (e.g., Ethical Hacker, CA, IAS, Pilot)."
+    },
+    {
+      "question": "Does Xortcut replace school counselors?",
+      "answer": "No. It complements them. Most schools cannot afford full-time counselors. Xortcut automates 80% of structured guidance so teachers and parents can focus on mentoring and emotional support."
+    },
+    {
+      "question": "Is Xortcut aligned with CBSE/ICSE/NEP?",
+      "answer": "Yes. The progression from Sectors → Clusters → Careers matches the NEP 2020 emphasis on early exposure, stream alignment, and career readiness."
+    }
+  ],
+  "For Parents / Students": [
+    {
+      "question": "Who sees my child’s career report?",
+      "answer": "Your child’s detailed report belongs to you and your family. Schools only see batch-level insights (e.g., how many are interested in Science vs Commerce). Sharing of individual reports with schools is consent-based."
+    },
+    {
+      "question": "How often will we get updates?",
+      "answer": "Every two months, you receive a feedback report highlighting achievements, gaps, and next steps. You can also check progress anytime in the portal."
+    },
+    {
+      "question": "What if my child changes their career interest?",
+      "answer": "That’s expected. Xortcut supports multiple career slots. You can select 3 (standard) or upgrade to 6. Students can add or switch careers as they grow."
+    },
+    {
+      "question": "Can my child choose unusual careers (like Sports, Esports, Priest, NBA player)?",
+      "answer": "Yes. We allow custom careers in addition to curated ones. Xortcut adapts milestones and challenges to keep passion alive."
+    },
+    {
+      "question": "Can we plan for studying or working abroad?",
+      "answer": "Yes. You can set a country of education and a desired country of work. Xortcut adapts the roadmap (exams, licensing, scholarships, immigration notes)."
+    },
+    {
+      "question": "How is progress measured?",
+      "answer": "Not by one long % bar. Students see:\n\nAnnual milestones completed (e.g., 9/12 this year).\n\nStreaks (consistency).\n\nBadges for achievements (Resilience, Research, Communication).\n\nYear-end summaries with clear takeaways."
+    },
+    {
+      "question": "Will this add pressure to my child?",
+      "answer": "No. Milestones and challenges are age-appropriate. For Class 5, a “challenge” could be visiting an airport or making a paper plane. For Class 12, it could be drafting a CV or solving a mock case study."
+    }
+  ],
+  "For Schools / Colleges": [
+    {
+      "question": "What do schools/colleges get from Xortcut?",
+      "answer": "Batch-level dashboards (how many aiming for Science, Commerce, Arts, Jobs, Exams, Higher Studies).\n\nParent-ready reports to show value during PTMs.\n\nPlug-and-play setup — no need to hire counselors.\n\nReputation boost — parents see your institution as future-ready."
+    },
+    {
+      "question": "How much does it cost for institutions?",
+      "answer": "Flat ₹2,499 per student per year (3 career slots). This includes test, roadmap, milestones, challenges, bi-monthly feedback, and dashboards."
+    },
+    {
+      "question": "Can schools charge parents differently?",
+      "answer": "Yes. Schools collect the “Career Guidance Fee” from parents and pay Xortcut per student. Final fee may vary by institution."
+    },
+    {
+      "question": "Does Xortcut integrate with our existing placement/career cell?",
+      "answer": "Yes. For colleges, Xortcut strengthens the placement cell by:\n\nIdentifying early which students want jobs, exams, or higher studies.\n\nTracking employability milestones (projects, communication, internships).\n\nProviding readiness analytics for recruiters."
+    }
+  ],
+  "Privacy & Data": [
+    {
+      "question": "How secure is student data?",
+      "answer": "Data is encrypted in transit and at rest.\n\nWe comply with Indian IT laws and global best practices.\n\nParents can request export or deletion of student data at any time."
+    },
+    {
+      "question": "Does Xortcut sell student data?",
+      "answer": "No. We do not sell or share student data with third parties. Insights are only for parents and institutions (in aggregate)."
+    }
+  ],
+  "Vision": [
+    {
+      "question": "What comes next in Xortcut?",
+      "answer": "Integration with Xortlist: age-appropriate corporate challenges & internships.\n\nMentorship: connect students with alumni & professionals.\n\nCertifications: skill badges from industry."
+    },
+    {
+      "question": "Why “Agentic AI”?",
+      "answer": "Because Xortcut isn’t static. It plans, adapts, nudges, and tracks progress over years, not hours. It acts like a career agent for each student."
+    }
+  ]
+}

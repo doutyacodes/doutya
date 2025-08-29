@@ -137,10 +137,10 @@ function Feedback({ selectedCareer }) {
 
     if (isRestricted) {
         return (
-            <div className="bg-gray-900 p-4 sm:p-10 rounded-lg">
+            <div>
                 <div className="flex flex-col items-center justify-center text-center py-6 sm:py-8 px-3 sm:px-4">
                     <div className="bg-gray-800 rounded-full p-3 sm:p-4 mb-4 sm:mb-6">
-                        <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
+                        <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
                     </div>
                     <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-white">
                         {t('careerFeedback')}
@@ -150,7 +150,7 @@ function Feedback({ selectedCareer }) {
                     </p>
                     <button
                         onClick={() => setShowPricing(true)}
-                        className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium"
+                        className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg transition-colors font-medium shadow-lg hover:shadow-orange-500/20"
                     >
                         View Pro Features
                     </button>
@@ -164,20 +164,20 @@ function Feedback({ selectedCareer }) {
     
     return (
         <FeatureGuideWrapper featureKey="feedback">
-            <div className="bg-gray-900 p-4 sm:p-10 rounded-lg space-y-6 sm:space-y-8">
+            <div className="space-y-6 sm:space-y-8">
                 <div className="flex flex-col sm:flex-row sm:justify-between gap-4 sm:gap-0">
                     <div>
                         {currentFeedbackview === "initialFeedback" ? (
                             <button
                             onClick={() => setCurrentFeedbackview("monthlyFeedback")}
-                            className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium"
+                            className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg transition-colors font-medium shadow-lg hover:shadow-orange-500/20"
                             >
                             View Monthly Feedback
                             </button>
                         ) : (
                             <button
                             onClick={() => setCurrentFeedbackview("initialFeedback")}
-                            className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium"
+                            className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg transition-colors font-medium shadow-lg hover:shadow-orange-500/20"
                             >
                             View Initial Feedback
                             </button>
@@ -189,7 +189,7 @@ function Feedback({ selectedCareer }) {
                             defaultValue={selectedPeriod.year?.toString()} 
                             onValueChange={handleYearChange}
                         >
-                            <SelectTrigger className="bg-black text-white px-3 sm:px-4 py-2 rounded-lg w-full sm:w-32 text-sm sm:text-base">
+                            <SelectTrigger className="bg-gray-800/60 border border-gray-700/50 text-white px-3 sm:px-4 py-2 rounded-lg w-full sm:w-32 text-sm sm:text-base hover:border-orange-500/50 transition-colors">
                                 <div className="flex items-center justify-between w-full">
                                     <SelectValue placeholder="Select Year" />
                                     <ChevronDown size={18} />
@@ -212,7 +212,7 @@ function Feedback({ selectedCareer }) {
                             defaultValue={selectedPeriod.month?.toString()} 
                             onValueChange={handleMonthChange}
                         >
-                            <SelectTrigger className="bg-black text-white px-3 sm:px-4 py-2 rounded-lg w-full sm:w-32 text-sm sm:text-base">
+                            <SelectTrigger className="bg-gray-800/60 border border-gray-700/50 text-white px-3 sm:px-4 py-2 rounded-lg w-full sm:w-32 text-sm sm:text-base hover:border-orange-500/50 transition-colors">
                                 <div className="flex items-center justify-between w-full">
                                     <SelectValue placeholder="Select Month" />
                                     <ChevronDown size={18} />
@@ -239,30 +239,22 @@ function Feedback({ selectedCareer }) {
                     ):
                     (
                         feedbackData.message ? (
-                        <div className="bg-gray-900 p-4 sm:p-10 rounded-lg">
                         <div className="flex flex-col items-center justify-center text-center py-6 sm:py-8 px-3 sm:px-4">
                           <div className="bg-gray-800 rounded-full p-3 sm:p-4 mb-4 sm:mb-6">
-                            <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
+                            <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
                           </div>
                           <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-white">Monthly Feedback</h2>
                           <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6 max-w-md">
                             {feedbackData.message}
                           </p>
                         </div>
-                      </div>
                         ):(
                             <>
-                                {/* Header Section */}
-                                <div className="text-center mb-5 sm:mb-8">
-                                    <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Monthly Feedback Report</h1>
-                                    <p className="text-sm sm:text-base text-gray-400">Your detailed performance analysis and feedback</p>
-                                </div>
-    
                                 {/* Consolidated Feedback Card */}
-                                <div className="bg-gray-800/50 rounded-xl p-4 sm:p-6 border border-gray-700">
+                                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-gray-700/50 shadow-xl">
                                     <div className="flex items-start gap-3 sm:gap-4">
-                                    <div className="p-2 sm:p-3 bg-blue-500/10 rounded-lg">
-                                        <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
+                                    <div className="p-2 sm:p-3 bg-orange-500/10 rounded-lg">
+                                        <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" />
                                     </div>
                                     <div>
                                         <h2 className="text-lg sm:text-xl font-semibold text-white mb-1 sm:mb-2">Overall Progress</h2>
@@ -276,11 +268,11 @@ function Feedback({ selectedCareer }) {
                                     {feedbackData.feedback?.map((subject, index) => (
                                     <div 
                                         key={index}
-                                        className="bg-gray-800/50 rounded-xl p-4 sm:p-6 border border-gray-700 transition-all hover:border-gray-600"
+                                        className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-gray-700/50 transition-all hover:border-orange-500/50 shadow-xl hover:shadow-orange-500/10"
                                     >
                                         <div className="flex items-start gap-3 sm:gap-4">
-                                        <div className="p-2 sm:p-3 bg-purple-500/10 rounded-lg">
-                                            <Book className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
+                                        <div className="p-2 sm:p-3 bg-red-500/10 rounded-lg">
+                                            <Book className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" />
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2 sm:gap-0">
@@ -304,7 +296,7 @@ function Feedback({ selectedCareer }) {
                                 </div>
     
                                 {/* Challenge Feedback Card */}
-                                <div className="bg-gray-800/50 rounded-xl p-4 sm:p-6 border border-gray-700">
+                                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-gray-700/50 shadow-xl">
                                     <div className="flex items-start gap-3 sm:gap-4">
                                     <div className="p-2 sm:p-3 bg-green-500/10 rounded-lg">
                                         <Award className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />

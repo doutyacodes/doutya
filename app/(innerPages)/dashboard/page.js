@@ -1,12 +1,8 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import Banner from './_components/Banner/page'
-import Results from './_components/Results/page'
-import Results2 from './_components/Result2/page'
-import { redirect, useRouter } from 'next/navigation'
-import dynamic from 'next/dynamic';
-import LoadingOverlay from '@/app/_components/LoadingOverlay'
-import CareerStripe from '@/app/_components/CareerStripe'
+"use client";
+import LoadingOverlay from "@/app/_components/LoadingOverlay";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Banner from "./_components/Banner/page";
 
 export default function Dashboard() {
   const [showResults, setShowResults] = useState(false);
@@ -16,27 +12,27 @@ export default function Dashboard() {
   const [secondsRemaining, setSecondsRemaining] = useState(5);
   const [loading, setLoading] = useState(true); // Start with loading true
   const [isCountryAdded, setIsCountryAdded] = useState(null);
-  const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] = useState(null);
+  const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] =
+    useState(null);
   const [educationStageExists, setEducationStageExists] = useState(null);
   const [resultPageShown, setResultPageShown] = useState(null);
   const [dashboardDataLoaded, setDashboardDataLoaded] = useState(false); // New state to track data loading
   const [initialDataCheck, setInitialDataCheck] = useState(false); // Track if initial data check is done
   const [gradeData, setGradeData] = useState(null);
 
-  
   useEffect(() => {
     const authCheck = () => {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         const token = localStorage.getItem("token");
         if (!token) {
-          router.push('/login');
-          setIsAuthenticated(false)
+          router.push("/login");
+          setIsAuthenticated(false);
         } else {
-          setIsAuthenticated(true)
+          setIsAuthenticated(true);
         }
       }
     };
-    authCheck()
+    authCheck();
   }, [router]);
 
   // New useEffect to handle dashboard data loading completion
@@ -52,9 +48,9 @@ export default function Dashboard() {
 
     // This will be triggered when Banner component sets the required states
     if (
-      isCountryAdded !== null && 
-      isInstitutionDetailsAdded !== null && 
-      educationStageExists !== null && 
+      isCountryAdded !== null &&
+      isInstitutionDetailsAdded !== null &&
+      educationStageExists !== null &&
       resultPageShown !== null
     ) {
       setDashboardDataLoaded(true);
@@ -64,7 +60,13 @@ export default function Dashboard() {
     }
 
     return () => clearTimeout(timeout);
-  }, [isCountryAdded, isInstitutionDetailsAdded, educationStageExists, resultPageShown, initialDataCheck]);
+  }, [
+    isCountryAdded,
+    isInstitutionDetailsAdded,
+    educationStageExists,
+    resultPageShown,
+    initialDataCheck,
+  ]);
 
   useEffect(() => {
     if (isTest2Completed && dashboardDataLoaded) {
@@ -94,19 +96,18 @@ export default function Dashboard() {
         // 1️⃣ Check if country is added first
         if (!isCountryAdded) {
           router.replace("/country");
-        } 
+        }
         // 2️⃣ Then check grade-based suggestions
         else if (["8", "9", "10"].includes(gradeData)) {
           router.replace("/dashboard_junior/cluster-suggestion");
-        } 
-        else if (["11", "12", "college"].includes(gradeData)) {
+        } else if (["11", "12", "college"].includes(gradeData)) {
           router.replace("/dashboard/careers/career-suggestions");
-        } 
+        }
         // 3️⃣ Then check if results page is shown
         // else if (resultPageShown === false) {
         //   router.replace("/user/results");
-        // } 
-        
+        // }
+
         // 4️⃣ Commented out checks (not using for now)
         /*
         else if (!educationStageExists) {
@@ -122,19 +123,27 @@ export default function Dashboard() {
         clearTimeout(timer);
       };
     }
-  }, [isTest2Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, resultPageShown, router, dashboardDataLoaded]);
+  }, [
+    isTest2Completed,
+    isInstitutionDetailsAdded,
+    isCountryAdded,
+    educationStageExists,
+    resultPageShown,
+    router,
+    dashboardDataLoaded,
+  ]);
 
   // Show loading while authentication or dashboard data is being checked
   if (isAuthenticated === null || (loading && !initialDataCheck)) {
     return (
-      <div className='h-screen flex items-center justify-center text-white'>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
         <div>
-          <div className='font-semibold'>
+          <div className="font-semibold">
             <LoadingOverlay loadText={"Preparing dashboard..."} />
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // If not authenticated, don't render anything (redirect will happen)
@@ -145,14 +154,16 @@ export default function Dashboard() {
   // Show completion message and countdown if test is completed
   if (isTest2Completed) {
     return (
-      <div className="h-screen flex items-center justify-center text-white text-center">
-        <div>
-          <div className="text-4xl font-semibold">
-            All tests are completed!
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
+          <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl text-center">
+            <div className="text-4xl font-bold text-white mb-6">All tests are completed!</div>
+            <div className="w-24 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mb-6"></div>
+            <p className="text-gray-300 text-lg">
+              Redirecting to the career suggestions in <span className="text-orange-400 font-semibold">{secondsRemaining}</span> seconds...
+            </p>
           </div>
-          <p className="mt-4">
-            Redirecting to the career suggestions in {secondsRemaining} seconds...
-          </p>
         </div>
       </div>
     );
@@ -172,5 +183,5 @@ export default function Dashboard() {
       />
       <br />
     </div>
-  )
+  );
 }

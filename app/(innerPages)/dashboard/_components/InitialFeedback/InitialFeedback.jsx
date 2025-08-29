@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 import PricingCard from '@/app/_components/PricingCard';
-import { Lock } from 'lucide-react';
+import { Lock, MessageSquare } from 'lucide-react';
 
 function InitialFeedback({ selectedCareer }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -62,20 +62,20 @@ function InitialFeedback({ selectedCareer }) {
 
     if (isRestricted) {
         return (
-            <div className="bg-gray-900 p-4 sm:p-10 rounded-lg">
-                <div className="flex flex-col items-center justify-center text-center py-8 px-4">
-                    <div className="bg-gray-800 rounded-full p-4 mb-6">
-                        <Lock className="w-8 h-8 text-blue-400" />
+            <div>
+                <div className="flex flex-col items-center justify-center text-center py-6 sm:py-8 px-3 sm:px-4">
+                    <div className="bg-gray-800 rounded-full p-3 sm:p-4 mb-4 sm:mb-6">
+                        <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
                     </div>
-                    <h2 className="text-2xl font-semibold mb-4 text-white">
+                    <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-white">
                         {t('careerFeedback')}
                     </h2>
-                    <p className="text-gray-300 mb-6 max-w-md">
+                    <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6 max-w-md">
                         Unlock personalized career feedback and insights with our Pro plan. Get detailed analysis and recommendations for your career path.
                     </p>
                     <button
                         onClick={() => setShowPricing(true)}
-                        className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium"
+                        className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg transition-colors font-medium shadow-lg hover:shadow-orange-500/20"
                     >
                         View Pro Features
                     </button>
@@ -88,21 +88,38 @@ function InitialFeedback({ selectedCareer }) {
     }
 
     return (
-        <div className="bg-gray-900 p-4 sm:p-10 rounded-lg">
-            <div className="grid grid-cols-1 gap-6 mt-4">
-                <h2 className="text-2xl font-semibold mb-4 text-white">
-                    {t('careerFeedback')}
-                </h2>
-                {feedBackData ? (
-                    <div className="bg-gray-800 p-4 sm:p-6 rounded-md shadow-md">
-                        <p className="text-base sm:text-lg text-gray-300">
-                            {feedBackData}
-                        </p>
+        <div className="space-y-6">
+            {feedBackData ? (
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-gray-700/50 shadow-xl">
+                    <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="p-2 sm:p-3 bg-orange-500/10 rounded-lg">
+                            <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" />
+                        </div>
+                        <div className="flex-1">
+                            <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
+                                {t('careerFeedback')}
+                            </h2>
+                            <div className="prose prose-invert max-w-none">
+                                <p className="text-sm sm:text-base text-gray-300 leading-relaxed whitespace-pre-line">
+                                    {feedBackData}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                ) : (
-                    <p className="text-gray-500">{t('noFeedbackAvailable')}.</p>
-                )}
-            </div>
+                </div>
+            ) : (
+                <div className="flex flex-col items-center justify-center text-center py-6 sm:py-8 px-3 sm:px-4">
+                    <div className="bg-gray-800/50 rounded-full p-3 sm:p-4 mb-4 sm:mb-6">
+                        <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-gray-500" />
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-white">
+                        No Feedback Available
+                    </h2>
+                    <p className="text-sm sm:text-base text-gray-400 max-w-md">
+                        {t('noFeedbackAvailable')}.
+                    </p>
+                </div>
+            )}
         </div>
     );
 }

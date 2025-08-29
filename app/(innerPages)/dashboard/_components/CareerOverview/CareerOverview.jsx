@@ -1,63 +1,61 @@
-import GlobalApi from '@/app/_services/GlobalApi';
-import { ArrowLeft } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import CareerPath from '../CareerPathTab/CareerPath';
-import Overview from '../About/Overview.jsx';
+import { useState } from "react";
+import Overview from "../About/Overview.jsx";
+import CareerPath from "../CareerPathTab/CareerPath";
 
 export default function CareerOverView({ selectedCareer, setMainTab }) {
-    const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
 
-    const tabs = [
-        { key: "overview", label: "Overview" },
-        { key: "careerPath", label: "Career Path" },
-    ]
+  const tabs = [
+    { key: "overview", label: "Overview" },
+    { key: "careerPath", label: "Career Path" },
+  ];
 
-    const handleTabClick = (tab) => {
-      setActiveTab(tab);
-    };
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
 
-    return (
-        <>
-            <button
-                onClick={()=>setMainTab("roadmap")}
-                className="flex items-center text-gray-300 hover:text-gray-100 mb-4"
-            >
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                Back
-            </button>
-
-            <div className="flex flex-row gap-4 text-xs md:text-base min-w-20 mt-4 w-full overflow-x-scroll justify-center items-center">
-                {tabs.map((tab) => (
-                <>
-                    <button
-                    key={tab.key}
-                    className={`flex-1 rounded px-4 py-2 lg:py-3 font-semibold lg:text-lg text-sm text-center focus:outline-none ${
-                        activeTab === tab.key
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                      }`}
-                    // className={`${
-                    //     activeTab === tab.key
-                    //     ? "text-orange-600"
-                    //     : "text-gray-800 hover:bg-gray-700"
-                    // } text-white font-semibold py-2 px-3 md:min-w-32`}
-                    onClick={() => setActiveTab(tab.key)}
-                    >
-                    {tab.label.toUpperCase()}
-                    </button>
-                </>
-                ))}
-            </div>
-            <div className='mt-4'>
-                {activeTab === "overview" && (
-                    <Overview selectedCareer={selectedCareer} />
+  return (
+    <div className="space-y-4">
+      {/* Modern Tab Navigation */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-red-500/5 to-orange-500/5 rounded-lg"></div>
+        <div className="relative backdrop-blur-sm bg-gray-800/40 border border-gray-700/50 rounded-lg p-2 shadow-xl">
+          <div className="flex gap-3 justify-center">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                className={`group relative flex-1 px-4 py-2.5 rounded-md font-semibold text-sm transition-all duration-300 hover:scale-105 ${
+                  activeTab === tab.key
+                    ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30 border border-orange-400/50"
+                    : "bg-gray-700/50 text-gray-300 hover:bg-gray-600/60 hover:text-white border border-gray-600/30 hover:border-gray-500/50"
+                }`}
+                onClick={() => setActiveTab(tab.key)}
+              >
+                <span className="relative z-10">{tab.label.toUpperCase()}</span>
+                {activeTab === tab.key && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-red-600/20 rounded-md animate-pulse"></div>
                 )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-                {activeTab === "careerPath" && (
-                    <CareerPath selectedCareer={selectedCareer} />
-                )}
+      {/* Tab Content */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-800/30 via-gray-700/20 to-gray-800/30 rounded-lg"></div>
+        <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-lg shadow-2xl min-h-[400px]">
+          {activeTab === "overview" && (
+            <div className="p-4">
+              <Overview selectedCareer={selectedCareer} />
             </div>
-        </>
-    );    
+          )}
+
+          {activeTab === "careerPath" && (
+            <CareerPath selectedCareer={selectedCareer} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -200,11 +200,14 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
             return (
               <div
                 key={`restricted-${index}`}
-                className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-600 flex justify-center items-center opacity-50 cursor-not-allowed"
+                className="group relative w-32 h-20 lg:w-36 lg:h-24 cursor-not-allowed"
               >
-                <div className="flex flex-col items-center justify-center text-center">
-                  <LockIcon className="text-white h-6 w-6 sm:h-8 sm:w-8 mb-2" />
-                  <p className="text-xs sm:text-sm font-bold text-white">
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-600/40 to-gray-800/40 rounded-xl backdrop-blur-sm border border-gray-600/30"></div>
+                <div className="relative h-full flex flex-col items-center justify-center text-center space-y-1 opacity-50">
+                  <div className="p-2 bg-gray-700/50 rounded-lg">
+                    <LockIcon className="text-gray-400 h-4 w-4 lg:h-5 lg:w-5" />
+                  </div>
+                  <p className="text-xs font-semibold text-gray-400 leading-tight px-1">
                     Pro Users Only
                   </p>
                 </div>
@@ -214,19 +217,37 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
           
           // Regular boxes for selected items
           if (item) {
+            const isSelected = selectedItem?.id === item.id;
             return (
               <div
                 key={item.id}
                 onClick={() => handleItemClick(item)}
-                className={`w-28 h-28 flex justify-center items-center sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg transition-transform transform hover:scale-105 cursor-pointer duration-150 ${
-                  selectedItem?.id === item.id
-                    ? "bg-gray-700 border-2 border-blue-500"
-                    : "bg-gray-800"
-                }`}
+                className="group relative w-32 h-20 lg:w-36 lg:h-24 cursor-pointer"
               >
-                <p className="text-center text-xs sm:text-sm font-bold text-white">
-                  {item.name}
-                </p>
+                <div className={`absolute inset-0 rounded-xl transition-all duration-300 ${
+                  isSelected 
+                    ? 'bg-gradient-to-br from-blue-500/30 to-purple-500/30 border-2 border-blue-400/60 shadow-lg shadow-blue-500/20' 
+                    : 'bg-gradient-to-br from-gray-700/60 to-gray-800/60 border border-gray-600/40 group-hover:from-gray-600/60 group-hover:to-gray-700/60 group-hover:border-gray-500/60 group-hover:shadow-lg'
+                }`}></div>
+                
+                <div className="relative h-full flex items-center justify-center p-2 transition-all duration-300 group-hover:scale-105 overflow-hidden">
+                  <p className={`text-center text-xs lg:text-sm font-bold whitespace-nowrap transition-colors duration-300 px-1 overflow-x-auto scrollbar-hide max-w-full ${
+                    isSelected 
+                      ? 'text-blue-200' 
+                      : 'text-gray-200 group-hover:text-white'
+                  }`}>
+                    {item.career_name || item.name}
+                  </p>
+                </div>
+                
+                {isSelected && (
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                  </div>
+                )}
+                
+                {/* Subtle gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
               </div>
             );
           }
@@ -235,10 +256,22 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
           return (
             <div
               key={`plus-${index}`}
-              className="w-28 h-28 sm:w-32 sm:h-32 p-2 shadow-lg rounded-lg bg-gray-700 flex justify-center items-center transition-transform transform hover:scale-105 cursor-pointer duration-150"
+              className="group relative w-32 h-20 lg:w-36 lg:h-24 cursor-pointer"
               onClick={handleAddItemClick}
             >
-              <PlusIcon className="text-white h-6 w-6 sm:h-8 sm:w-8" />
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-700/60 to-gray-800/60 border border-gray-600/40 rounded-xl transition-all duration-300 group-hover:from-green-600/20 group-hover:to-emerald-600/20 group-hover:border-green-500/50 group-hover:shadow-lg group-hover:shadow-green-500/20"></div>
+              
+              <div className="relative h-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                <div className="p-2.5 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-lg group-hover:from-green-500/30 group-hover:to-emerald-500/30 transition-all duration-300">
+                  <PlusIcon className="text-green-400 h-5 w-5 lg:h-6 lg:w-6 group-hover:text-green-300 transition-colors duration-300" />
+                </div>
+              </div>
+              
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="bg-gray-800/90 backdrop-blur-sm px-2 py-1 rounded-md whitespace-nowrap">
+                  <p className="text-xs text-gray-300">Add {getScopeName().slice(0, -1)}</p>
+                </div>
+              </div>
             </div>
           );
         };
@@ -251,7 +284,7 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
         );
       }
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       <Toaster />
 
       {!isRestricted && (
@@ -290,26 +323,79 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
         <PricingCard onClose={() => setShowPricingModal(false)} />
       )}
 
+      {/* Modern Career Stripe Container */}
+      <div className="relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-800/50 via-gray-700/30 to-gray-800/50"></div>
+        
+        {/* Main container */}
+        <div className="relative backdrop-blur-sm bg-gray-800/60 border-y border-gray-700/30 shadow-2xl">
+          <div className="px-3 py-4 lg:px-6 lg:py-5">
+            
+            {/* Header Section */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-2">
+              <div className="text-center lg:text-left">
+                <h2 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  My {getScopeName()}
+                </h2>
+                <p className="text-xs lg:text-sm text-gray-400 mt-1">
+                  Select or add your {getScopeName().toLowerCase()} to get started
+                </p>
+              </div>
+              
+              {/* Progress indicator */}
+              <div className="flex items-center gap-2 max-lg:hidden">
+                <div className="flex gap-1">
+                  {Array(totalBoxes).fill(null).map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index < scopeData.length 
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-500' 
+                          : 'bg-gray-600/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs text-gray-400 ml-2">
+                  {scopeData.length}/{totalBoxes}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 lg:hidden justify-center mb-2">
+                <div className="flex gap-1">
+                  {Array(totalBoxes).fill(null).map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index < scopeData.length 
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-500' 
+                          : 'bg-gray-600/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs text-gray-400 ml-2">
+                  {scopeData.length}/{totalBoxes}
+                </span>
+              </div>
 
-      {/* Mobile Heading */}
-      <p className="text-center font-bold sm:hidden text-white text-2xl sm:text-4xl md:pl-5 max-sm:bg-[#1f1f1f]">
-        My {getScopeName()}
-      </p>
-
-      {/* Item Selector for Desktop */}
-      <div className="flex flex-col pt-4 px-6 md:px-24 sm:flex-row justify-start sm:items-center items-start gap-4 text-white bg-[#2c2c2c] sm:p-10 mb-5 overflow-x-scroll">
-        <p className="text-center font-bold hidden sm:flex text-white text-3xl">
-          My {getScopeName()}
-        </p>
-      
-      <div className="flex gap-4 justify-start items-center max-md:pl-4 w-fit pb-2">
-        {/* Render 5 total boxes */}
-        {Array(totalBoxes).fill(null).map((_, index) => 
-          renderItemBox(scopeData && index < scopeData.length ? scopeData[index] : null, index)
-        )}
+            {/* Career Items Container */}
+            <div className="relative">
+              <div className="flex gap-3 lg:gap-4 justify-start items-center overflow-x-auto scrollbar-hide pb-2">
+                {/* Render 5 total boxes */}
+                {Array(totalBoxes).fill(null).map((_, index) => 
+                  renderItemBox(scopeData && index < scopeData.length ? scopeData[index] : null, index)
+                )}
+              </div>
+              
+              {/* Scroll indicators */}
+              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-800/60 to-transparent pointer-events-none"></div>
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-800/60 to-transparent pointer-events-none"></div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-
     </div>
   )
 }

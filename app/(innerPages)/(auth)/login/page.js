@@ -104,46 +104,76 @@ function Login() {
   const s = useTranslations('SignupPage');
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <Toaster />
-      <div className="flex items-center flex-col gap-2 justify-center min-h-screen px-3 bg-black bg-opacity-90">
-        <div>
-          <Image
-            src={"/assets/images/logo-full.png"}
-            width={140}
-            height={120}
-          />
+      <div className="flex items-center flex-col gap-6 justify-center min-h-screen px-4">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-3xl blur-xl"></div>
+          <div className="relative p-4">
+            <Image
+              src={"/assets/images/logo-full.png"}
+              width={160}
+              height={140}
+              className="filter drop-shadow-2xl"
+            />
+          </div>
         </div>
-        <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-          <h1 className="text-2xl font-bold mb-6 text-center text-white">{t('title')}</h1>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-4">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300">{t('username')}</label>
-              <input
-                type="text"
-                {...register("username")}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
-                required
-              />
+        
+        <div className="relative w-full max-w-md">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
+          <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-white mb-2">{t('title')}</h1>
+              <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto"></div>
             </div>
-            <div className="mb-6">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300">{t('password')}</label>
-              <input
-                type="password"
-                {...register("password")}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
-                required
-              />
-            </div>
-            <span className='text-gray-400'>{t('NoAccount')} <Link className='text-blue-500 hover:text-blue-400' href="/signup">{t('Signup')}</Link></span>
-            <br /> <br />
-            <button
-              type="submit"
-              className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-            >
-              {t('LoginButton')}
-            </button>
-          </form>
+            
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-200 mb-2">
+                  {t('username')}
+                </label>
+                <input
+                  type="text"
+                  {...register("username")}
+                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                  placeholder="Enter your username"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-2">
+                  {t('password')}
+                </label>
+                <input
+                  type="password"
+                  {...register("password")}
+                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+              
+              <div className="text-center">
+                <span className='text-gray-300'>
+                  {t('NoAccount')}{' '}
+                  <Link 
+                    className='text-orange-400 hover:text-orange-300 font-medium transition-colors duration-200' 
+                    href="/signup"
+                  >
+                    {t('Signup')}
+                  </Link>
+                </span>
+              </div>
+              
+              <button
+                type="submit"
+                className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              >
+                {t('LoginButton')}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

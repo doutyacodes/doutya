@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
-import GlobalApi from "@/app/_services/GlobalApi";
-import toast, { LoaderIcon, Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import html2canvas from "html2canvas";
+import ActionButtons from "@/app/_components/ActionButtons";
+import ContentGenerationLoading from "@/app/_components/ContentGenerationLoading";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
-import { ChevronsLeft } from "lucide-react";
+import { CareerSelectionComplete, IndustrySelectionComplete, InterestTestComplete } from "@/app/_components/StepCompletionNotifications";
+import GlobalApi from "@/app/_services/GlobalApi";
+import { useTopbar } from "@/app/context/TopbarContext";
+import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import PDFCareerPage from "./PDFCareerPage";
+import { ChevronsLeft, Sparkles, TrendingUp, Award } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import toast, { LoaderIcon, Toaster } from "react-hot-toast";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import AddIndustry from "./AddIndustry";
 import AlertDialogue from "./AlertDialogue";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { CareerSelectionComplete, IndustrySelectionComplete, InterestTestComplete } from "@/app/_components/StepCompletionNotifications";
-import ContentGenerationLoading from "@/app/_components/ContentGenerationLoading";
-import { useTopbar } from "@/app/context/TopbarContext";
-import ActionButtons from "@/app/_components/ActionButtons";
 
 export default function Results2({step, setStep}) {
   const [resultData, setResultData] = useState(null);
@@ -29,7 +28,6 @@ export default function Results2({step, setStep}) {
   const [fetchingIndustry, setFetchingIndustry] = useState(false);
   const [fetchingCareer, setFetchingCareer] = useState(false);
   const [user_feedback, setUserFeedback] = useState("");
-  // const [step, setStep] = useState(1);
   const [industries, setIndustries] = useState([]);
   const [saveResultloading, setSaveResultLoading] = useState(false);
 
@@ -83,24 +81,23 @@ export default function Results2({step, setStep}) {
   };
 
   const handleCertificateClick = () => {
-    // Add certificate logic later
     console.log('Get Certificate clicked');
   };
 
 
   const getColorByIndex = (index) => {
     const colorCodes = [
-      "#FFA500",
-      "#800080",
-      "#FFC0CB",
-      "#00FF00",
-      "#808080",
-      "#FFFF00",
-      "#00FFFF",
-      "#FF4500",
-      "#0000FF",
+      "#f97316", // orange-500
+      "#ef4444", // red-500
+      "#eab308", // yellow-500
+      "#22c55e", // green-500
+      "#3b82f6", // blue-500
+      "#a855f7", // purple-500
+      "#ec4899", // pink-500
+      "#f59e0b", // amber-500
+      "#06b6d4", // cyan-500
     ];
-    return colorCodes[index] || undefined;
+    return colorCodes[index] || "#f97316";
   };
 
   const handleOptionSelect = async (e) => {
@@ -121,8 +118,7 @@ export default function Results2({step, setStep}) {
 /* -------------------------------------------------------------- */
 
 useEffect(() => {
-  // Find the active tab button and scroll it into view
-  const activeTabElement = document.querySelector(`button[class*="bg-[#7824f6]"]`);
+  const activeTabElement = document.querySelector(`button[class*="bg-gradient-to-r from-orange-500"]`);
   if (activeTabElement) {
     activeTabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }
@@ -210,9 +206,7 @@ const getPrevCategory = () => {
 /* -------------------------------------------------------------- */
 
   const fetchResults = async (selectedIndustry) => {
-    // console.log("selectedIndustry", selectedIndustry);
     setFetchingCareer(true)
-    // setLoading(true);
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -222,7 +216,6 @@ const getPrevCategory = () => {
         industryParam,
         language
       );
-      // console.log(response.data);
       if (response.status === 200) {
         const parsedResult = JSON.parse(response.data.result);
         setResultData(parsedResult);
@@ -238,17 +231,13 @@ const getPrevCategory = () => {
     } catch (err) {
       console.error("Failed to fetch results:", err);
     } finally {
-      // setLoading(false);
       setFetchingCareer(false)
     }
   };
 
   const fetchCareer = async (career_name) => {
-    // console.log("Fetching career information for:", career_name);
-
     setLoading(true);
     try {
-      // Validate career_name
       if (!career_name || typeof career_name !== "string") {
         throw new Error("Invalid career name provided.");
       }
@@ -256,7 +245,6 @@ const getPrevCategory = () => {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-      // Ensure language is passed and defined
       const response = await GlobalApi.getResult2Career(
         token,
         career_name,
@@ -266,11 +254,9 @@ const getPrevCategory = () => {
       if (response.status === 200) {
         const result = response.data.result;
 
-        // Check if result is defined and is an array
         if (Array.isArray(result) && result.length > 0) {
-          const parsedResult = result[0]; // Access the first item in the array
+          const parsedResult = result[0];
           setSingleCareer(parsedResult);
-          // console.log("Career data fetched successfully:", parsedResult);
         } else {
           console.error("Unexpected result format:", result);
           throw new Error("Unexpected result format from API.");
@@ -329,7 +315,6 @@ const getPrevCategory = () => {
       if (response.status === 200) {
         toast.success("Career Data Saved Successfully");
         if (response.data.isFirstTime) {
-          // Navigate to the careers page
           router.push("/dashboard/careers/career-guide");
         }
         triggerTopbarRefresh(); 
@@ -361,8 +346,8 @@ const getPrevCategory = () => {
           format: "a4",
         });
 
-        const imgWidth = 210; // A4 width in mm
-        const pageHeight = 297; // A4 height in mm
+        const imgWidth = 210;
+        const pageHeight = 297;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         let heightLeft = imgHeight;
         let position = 0;
@@ -415,19 +400,16 @@ const getPrevCategory = () => {
   };
 
   const fetchIndustry = async () => {
-    // setLoading(true);
     setFetchingIndustry(true)
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const data = await GlobalApi.GetIndustry(token, language);
       const parsedResult = JSON.parse(data.data.result);
-      // console.log("parsedResult", parsedResult);
       setIndustries(parsedResult);
     } catch (err) {
       console.error("Failed to fetch industries:", err);
     } finally {
-      // setLoading(false);
       setFetchingIndustry(false)
     }
   };
@@ -449,33 +431,27 @@ const getPrevCategory = () => {
   }
 
   return (
-    <div className="mx-auto bg-[#1f1f1f] text-white max-md:pb-7">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white max-md:pb-7">
       <Toaster position="top-center" reverseOrder={false} />
 
         {
           fetchingIndustry && (
             <>
-               {/* Loading Modal */}
                <ContentGenerationLoading
               isOpen={fetchingIndustry}
               onClose={() => setFetchingIndustry(false)}
-              page="industrySelection" // Change this based on your current page
-              showDelay={1000} // Only show if loading takes more than 1 second
-              // Optional: auto close after 30 seconds
-              // autoCloseDelay={30000}
+              page="industrySelection"
+              showDelay={1000}
             />
             </> 
           )}
           {fetchingCareer && (
             <>
-                {/* Loading Modal */}
                   <ContentGenerationLoading
                   isOpen={fetchingCareer}
                   onClose={() => setFetchingCareer(false)}
-                  page="careerSuggestions" // Change this based on your current page
-                  showDelay={1000} // Only show if loading takes more than 1 second
-                  // Optional: auto close after 30 seconds
-                  // autoCloseDelay={30000}
+                  page="careerSuggestions"
+                  showDelay={1000}
                 />  
               </>
           )
@@ -485,16 +461,24 @@ const getPrevCategory = () => {
     {step === 1 && industries.length > 0 && (
         <>
           <InterestTestComplete />
-          <div className="bg-[#2c2c2c] h-24 my-4 justify-center items-center flex rounded-md border-l-4 border-[#7824f6] shadow-md">
-            <p className="text-white uppercase font-bold text-center text-xl">
-              Select Industry
-            </p>
+          <div className="relative mx-4 mb-6">
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-red-500/5 to-orange-500/5 rounded-xl"></div>
+            <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl p-6 shadow-2xl">
+              <div className="flex items-center justify-center gap-3">
+                <div className="p-3 bg-orange-500/10 rounded-full">
+                  <Sparkles className="w-8 h-8 text-orange-400" />
+                </div>
+                <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+                  SELECT INDUSTRY
+                </h1>
+              </div>
+              <div className="w-20 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mt-4"></div>
+            </div>
           </div>
         </>
       )}
 
       {
-        // popup modals
         step === 2 && ( 
           showCareerSelectionComplete ? <CareerSelectionComplete /> : <IndustrySelectionComplete />
         )
@@ -502,55 +486,67 @@ const getPrevCategory = () => {
 
       {step === 2 && !singleCareer && (
         <>
-          <div className="bg-[#2c2c2c] h-24 mb-5 flex rounded-md border-l-4 border-[#7824f6] shadow-md">
-            {/* Text Section - Centered */}
-            <div className="flex-1 flex justify-center items-center px-4">
-              <p className="text-white uppercase font-bold text-center text-xl md:text-2xl">
-                Discover Your Ideal Career Path
-              </p>
-            </div>
-            
-            {/* Action Buttons - Right Side */}
-            <div className="flex items-center pr-4 sm:pr-6">
-              <ActionButtons
-                buttonSize="small"
-                onViewReportClick={handleViewReportClick}
-                onCertificateClick={handleCertificateClick}
-              />
+          <div className="relative mx-4 mb-6">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-xl"></div>
+            <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl p-4 lg:p-6 shadow-2xl">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div className="flex-1 text-center lg:text-left">
+                  <div className="flex items-center justify-center lg:justify-start gap-3 mb-2">
+                    <div className="p-2 bg-blue-500/10 rounded-full">
+                      <TrendingUp className="w-6 h-6 text-blue-400" />
+                    </div>
+                    <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                      DISCOVER YOUR IDEAL CAREER PATH
+                    </h1>
+                  </div>
+                  <div className="w-16 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto lg:mx-0"></div>
+                </div>
+                
+                <div className="flex items-center justify-center">
+                  <ActionButtons
+                    buttonSize="small"
+                    onViewReportClick={handleViewReportClick}
+                    onCertificateClick={handleCertificateClick}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </>
       )}
 
       {singleCareer?.career_name && (
-        <div className="bg-[#2c2c2c] md:py-5 md:mb-5 py-3 rounded-md border-l-4 border-[#7824f6] shadow-md">
-          <div className="max-sm:relative flex md:justify-between justify-center items-center md:px-4 mx-auto h-full container">
-            <div className="flex md:items-center gap-2 mb-2 md:mb-0 max-sm:absolute max-sm:top-0 max-sm:left-3">
+        <div className="relative mx-4 mb-6">
+          <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 via-emerald-500/5 to-green-500/5 rounded-xl"></div>
+          <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl p-4 lg:p-6 shadow-2xl">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <button
                 onClick={() => {
                   setCareerIndex(null);
                   setSingleCareer(null);
                 }}
-                className="text-white flex items-center hover:bg-[#3a3a3a] p-2 rounded-md transition-all duration-200"
+                className="group flex items-center gap-2 bg-gray-700/50 hover:bg-gray-600/50 border border-gray-600/50 hover:border-orange-500/50 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200 backdrop-blur-sm w-fit"
               >
-                <ChevronsLeft className="text-white md:text-lg" />
-                <span className="uppercase font-bold md:flex hidden">
-                  Back to Careers
-                </span>
+                <ChevronsLeft className="w-5 h-5 group-hover:text-orange-400 transition-colors" />
+                <span className="font-semibold">BACK TO CAREERS</span>
               </button>
-            </div>
-            <div className="text-center">
-              <p className="text-white uppercase font-bold md:text-2xl md:mb-2">
-                {singleCareer.career_name}
-              </p>
-            </div>
-            <div>
-              <div className="flex max-md:w-full opacity-0 md:items-center gap-4 mb-2 md:mb-0">
-                <div className="text-white flex items-center">
-                  <ChevronsLeft className="text-white md:text-lg" />
-                  <span className="uppercase font-bold md:flex hidden">
-                    Back to Careers
-                  </span>
+              
+              <div className="flex-1 text-center">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="p-2 bg-green-500/10 rounded-full">
+                    <Award className="w-6 h-6 text-green-400" />
+                  </div>
+                  <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                    {singleCareer.career_name.toUpperCase()}
+                  </h1>
+                </div>
+                <div className="w-16 h-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mt-2"></div>
+              </div>
+              
+              <div className="w-fit opacity-0 pointer-events-none lg:block">
+                <div className="flex items-center gap-2 py-2 px-4">
+                  <ChevronsLeft className="w-5 h-5" />
+                  <span className="font-semibold">BACK TO CAREERS</span>
                 </div>
               </div>
             </div>
@@ -561,37 +557,51 @@ const getPrevCategory = () => {
       <div className="flex flex-col md:px-6 lg:px-12 gap-6 w-full">
         {step === 1 && industries.length > 0 && (
           <div className="p-6 rounded-lg text-white mt-6 w-full max-sm:pb-24">
-            <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-6xl mx-auto">
               {showAlert && (
                 <AlertDialogue
                   fetchResults={fetchResults}
                   setShowAlert={setShowAlert}
                 />
               )}
-              <button
-                onClick={() => setShowAlert(true)}
-                className="sm:col-span-6 md:col-span-6 col-span-12 text-[#341e44] p-[1px] rounded-lg hover:opacity-70"
-                style={{ backgroundColor: "#FFA500" }}
-              >
-                <div className="flex flex-col items-center justify-center py-3 text-white">
-                  {t("industryAgnostic")}
+              
+              {/* Industry Agnostic Button */}
+              <div className="sm:col-span-6 md:col-span-6 col-span-12 group cursor-pointer" onClick={() => setShowAlert(true)}>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-2xl"></div>
+                  <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 hover:border-orange-500/50 rounded-2xl p-6 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]">
+                    <div className="text-center mb-4">
+                      <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full font-semibold text-sm">
+                        <Sparkles className="w-4 h-4" />
+                        {t("industryAgnostic")}
+                      </div>
+                    </div>
+                    <div className="bg-gray-700/50 rounded-xl p-4 min-h-[120px] flex items-center justify-center">
+                      <p className="text-gray-200 text-sm text-center leading-relaxed">
+                        Explore career suggestions across various industries
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
-                  Explore career suggestions across various industries
-                </div>
-              </button>
+              </div>
 
-              <button
-                onClick={handleAddIndustryClick}
-                className="sm:col-span-6 md:col-span-6 col-span-12 text-[#341e44] p-[1px] rounded-lg hover:opacity-70"
-                style={{ backgroundColor: "#008000" }}
-              >
-                <div className="flex flex-col items-center justify-center py-3 text-white">
-                  {t("industrySpecific")}
-                </div>
-                <div className="bg-[#1a1236] w-full p-3 h-28 flex justify-center items-center rounded-lg text-white">
-                  Enter your preferred industry to discover tailored career
-                  options
+              {/* Industry Specific Button */}
+              <div className="sm:col-span-6 md:col-span-6 col-span-12 group cursor-pointer" onClick={handleAddIndustryClick}>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl"></div>
+                  <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 hover:border-green-500/50 rounded-2xl p-6 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]">
+                    <div className="text-center mb-4">
+                      <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full font-semibold text-sm">
+                        <TrendingUp className="w-4 h-4" />
+                        {t("industrySpecific")}
+                      </div>
+                    </div>
+                    <div className="bg-gray-700/50 rounded-xl p-4 min-h-[120px] flex items-center justify-center">
+                      <p className="text-gray-200 text-sm text-center leading-relaxed">
+                        Enter your preferred industry to discover tailored career options
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <AddIndustry
@@ -599,27 +609,48 @@ const getPrevCategory = () => {
                   onClose={() => setShowDialogue(false)}
                   fetchResults={fetchResults}
                 />
-              </button>
+              </div>
 
-              <div className="col-span-12 h-20 my-4 justify-center items-center flex">
-                <p className="text-white uppercase font-bold text-center">
+              <div className="col-span-12 text-center py-8">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mb-2">
                   {t("selectBelowIndustry")}
-                </p>
+                </h2>
+                <div className="w-24 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto"></div>
               </div>
 
               {industries.map((industry, index) => {
                 const color = getColorByIndex(index);
                 return (
-                  <button
+                  <div
                     key={index}
+                    className="sm:col-span-6 md:col-span-4 col-span-6 group cursor-pointer"
                     onClick={handleOptionSelect}
-                    className="sm:col-span-6 md:col-span-4 max-w-72 col-span-6 text-[#341e44] p-[1px] md:pt-8 pt-4 rounded-lg hover:opacity-70 "
-                    style={{ backgroundColor: color }}
                   >
-                    <div className="bg-[#1a1236] w-full md:p-3 p-1 md:h-28 h-20 flex justify-center items-center rounded-lg text-white max-sm:text-sm flex-wrap">
-                      {industry.industry_name}
+                    <div className="relative">
+                      <div 
+                        className="absolute inset-0 opacity-20 rounded-2xl"
+                        style={{ background: `linear-gradient(135deg, ${color}40, ${color}20)` }}
+                      ></div>
+                      <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 hover:border-gray-600/50 rounded-2xl p-4 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]">
+                        <div className="text-center mb-3">
+                          <div 
+                            className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-3"
+                            style={{ backgroundColor: `${color}20` }}
+                          >
+                            <div 
+                              className="w-6 h-6 rounded-full"
+                              style={{ backgroundColor: color }}
+                            ></div>
+                          </div>
+                        </div>
+                        <div className="bg-gray-700/50 rounded-xl p-4 min-h-[100px] flex items-center justify-center">
+                          <p className="text-gray-200 text-sm text-center font-medium leading-relaxed">
+                            {industry.industry_name}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -630,7 +661,7 @@ const getPrevCategory = () => {
             <div ref={resultsRef} className="mt-8">
               {resultData && !singleCareer ? (
                 <>
-                {/* Mobile Tabs with uppercase text */}
+                {/* Mobile Tabs */}
                 <div className="md:hidden px-4 mb-6">
                   <div className="flex overflow-x-auto pb-2 gap-2">
                     {[
@@ -654,10 +685,10 @@ const getPrevCategory = () => {
                         <button
                           key={category}
                           onClick={() => setActiveTab(category)}
-                          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap uppercase ${
+                          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap uppercase transition-all duration-200 ${
                             activeTab === category
-                              ? 'bg-[#7824f6] text-white'
-                              : 'bg-[#2c2c2c] text-gray-300 hover:bg-[#3a3a3a]'
+                              ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
+                              : 'bg-gray-800/60 text-gray-300 hover:bg-gray-700/60 border border-gray-700/50'
                           }`}
                         >
                           {category}
@@ -669,11 +700,9 @@ const getPrevCategory = () => {
               
                 {/* Floating navigation buttons for mobile */}
                 <div className="md:hidden">
-                  {/* Left navigation button */}
                   <button
                     onClick={() => handleCategoryNavigation('prev')}
-                    // className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-[#7824f6] bg-opacity-95 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-[#9b4dff]"
-                    className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-[#7824f6] bg-opacity-95 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-[#9b4dff]"
+                    className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl px-3 py-2 shadow-lg z-50 transition-all duration-300 flex items-center border border-orange-400/50"
                     id="prevCategoryBtn"
                   >
                     <FaChevronLeft size={16} color="white" className="mr-2" />
@@ -682,11 +711,9 @@ const getPrevCategory = () => {
                     </span>
                   </button>
                   
-                  {/* Right navigation button */}
                   <button
                     onClick={() => handleCategoryNavigation('next')}
-                    className="fixed right-2 top-1/2  transform -translate-y-1/2 bg-[#7824f6] bg-opacity-95 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-[#9b4dff]"
-                    // className="fixed right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-80 rounded-lg px-3 py-2 shadow-lg z-50 transition-opacity duration-300 flex items-center border border-gray-600"
+                    className="fixed right-2 top-1/2  transform -translate-y-1/2 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl px-3 py-2 shadow-lg z-50 transition-all duration-300 flex items-center border border-orange-400/50"
                     id="nextCategoryBtn"
                   >
                     <span className="text-white text-xs font-medium capitalize mr-2">
@@ -696,9 +723,8 @@ const getPrevCategory = () => {
                   </button>
                 </div>
               
-                {/* Desktop Layout - unchanged */}
+                {/* Desktop Layout */}
                 <div className="hidden md:block px-4">
-                  {/* Desktop content remains the same */}
                   {[
                     "trending",
                     "offbeat",
@@ -721,13 +747,13 @@ const getPrevCategory = () => {
                     return (
                       careersInCategory.length > 0 && (
                         <div key={category} className="mb-12">
-                          <div className="flex items-center mb-3">
-                            <h2 className="text-2xl font-bold capitalize text-[#7824f6]">
+                          <div className="flex items-center mb-6">
+                            <h2 className="text-2xl font-bold capitalize bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
                               {category} Careers
                             </h2>
-                            <div className="h-0.5 bg-[#3a3a3a] flex-grow ml-4 rounded-full"></div>
+                            <div className="h-0.5 bg-gradient-to-r from-orange-500/50 to-red-500/50 flex-grow ml-4 rounded-full"></div>
                           </div>
-                          <p className="text-sm text-gray-300 mb-6 max-w-3xl">
+                          <p className="text-sm text-gray-300 mb-6 max-w-4xl leading-relaxed">
                             {careerDescriptions[category]}
                           </p>
                           
@@ -735,30 +761,33 @@ const getPrevCategory = () => {
                             {careersInCategory.map(({ career, originalIndex }) => (
                               <div
                                 key={originalIndex}
-                                className="bg-[#292931] rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group border-b-4 border-[#7824f6] hover:translate-y-[-3px]"
+                                className="group relative"
                               >
-                                <div className="h-20 bg-[#35354a] flex items-center justify-center p-4">
-                                  <h4 className="text-white text-lg font-bold text-center">
-                                    {career.career_name}
-                                  </h4>
-                                </div>
-                                <div className="p-5 flex flex-col justify-between h-32 bg-gradient-to-b from-[#292931] to-[#232329]">
-                                  <p className="text-gray-300 text-sm mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
-                                    Discover salary potential, growth outlook, and required skills...
-                                  </p>
-                                  <div className="w-full flex justify-end">
-                                    <button
-                                      onClick={() => {
-                                        setCareerIndex(originalIndex);
-                                        fetchCareer(career.career_name);
-                                      }}
-                                      className="bg-[#7824f6] hover:bg-[#6620d0] rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
-                                    >
-                                      <p className="text-sm text-white font-medium">
-                                        {t("readMore")}
-                                      </p>
-                                      <FaChevronRight size={12} color="white" />
-                                    </button>
+                                <div className="absolute inset-0 bg-gradient-to-br from-gray-800/30 via-gray-700/20 to-gray-800/30 rounded-xl"></div>
+                                <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 hover:border-orange-500/50 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:translate-y-[-3px] overflow-hidden">
+                                  <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 p-6 border-b border-gray-700/50">
+                                    <h4 className="text-white text-lg font-bold text-center">
+                                      {career.career_name}
+                                    </h4>
+                                  </div>
+                                  <div className="p-6 flex flex-col justify-between min-h-[140px]">
+                                    <p className="text-gray-300 text-sm mb-4 opacity-90 group-hover:opacity-100 transition-opacity leading-relaxed">
+                                      Discover salary potential, growth outlook, and required skills...
+                                    </p>
+                                    <div className="w-full flex justify-end">
+                                      <button
+                                        onClick={() => {
+                                          setCareerIndex(originalIndex);
+                                          fetchCareer(career.career_name);
+                                        }}
+                                        className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 rounded-lg px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md hover:shadow-lg font-medium"
+                                      >
+                                        <span className="text-sm text-white">
+                                          {t("readMore")}
+                                        </span>
+                                        <FaChevronRight size={12} color="white" />
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -770,22 +799,22 @@ const getPrevCategory = () => {
                   })}
                 </div>
               
-                {/* Mobile Category Content with different colors for each category */}
+                {/* Mobile Category Content */}
                 <div className="md:hidden px-4">
                   {[
-                    {category: "trending", color: "#7824f6"},
-                    {category: "offbeat", color: "#e74c3c"},
-                    {category: "traditional", color: "#2980b9"},
-                    {category: "futuristic", color: "#1abc9c"},
-                    {category: "ai-proof", color: "#f39c12"},
-                    {category: "entrepreneurial", color: "#27ae60"},
-                    {category: "hybrid", color: "#8e44ad"},
-                    {category: "creative", color: "#d35400"},
-                    {category: "sustainable and green", color: "#2ecc71"},
-                    {category: "social impact", color: "#c0392b"},
-                    {category: "tech-driven", color: "#3498db"},
-                    {category: "experiential", color: "#16a085"},
-                    {category: "digital and online", color: "#9b59b6"}
+                    {category: "trending", color: "#f97316"},
+                    {category: "offbeat", color: "#ef4444"},
+                    {category: "traditional", color: "#3b82f6"},
+                    {category: "futuristic", color: "#22c55e"},
+                    {category: "ai-proof", color: "#f59e0b"},
+                    {category: "entrepreneurial", color: "#10b981"},
+                    {category: "hybrid", color: "#8b5cf6"},
+                    {category: "creative", color: "#f97316"},
+                    {category: "sustainable and green", color: "#22c55e"},
+                    {category: "social impact", color: "#ef4444"},
+                    {category: "tech-driven", color: "#3b82f6"},
+                    {category: "experiential", color: "#06b6d4"},
+                    {category: "digital and online", color: "#a855f7"}
                   ].map(({category, color}) => {
                     const careersInCategory = resultData
                       .map((career, originalIndex) => ({ career, originalIndex }))
@@ -793,13 +822,13 @@ const getPrevCategory = () => {
               
                     return (activeTab === category && careersInCategory.length > 0) && (
                       <div key={category} className="mb-12">
-                        <div className="flex items-center mb-3">
+                        <div className="flex items-center mb-6">
                           <h2 className="text-2xl font-bold capitalize" style={{color: color}}>
                             {category} Careers
                           </h2>
-                          <div className="h-0.5 bg-[#3a3a3a] flex-grow ml-4 rounded-full"></div>
+                          <div className="h-0.5 bg-gray-600 flex-grow ml-4 rounded-full"></div>
                         </div>
-                        <p className="text-sm text-gray-300 mb-6 max-w-3xl">
+                        <p className="text-sm text-gray-300 mb-6 max-w-4xl leading-relaxed">
                           {careerDescriptions[category]}
                         </p>
                         
@@ -807,33 +836,36 @@ const getPrevCategory = () => {
                           {careersInCategory.map(({ career, originalIndex }) => (
                             <div
                               key={originalIndex}
-                              className="bg-[#292931] rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:translate-y-[-3px]"
-                              style={{borderBottom: `4px solid ${color}`}}
+                              className="group relative"
                             >
-                              <div className="h-20 flex items-center justify-center p-4" 
-                                   style={{background: `linear-gradient(to right, ${color}20, ${color}35)`}}>
-                                <h4 className="text-white text-lg font-bold text-center">
-                                  {career.career_name}
-                                </h4>
-                              </div>
-                              <div className="p-5 flex flex-col justify-between h-32 bg-gradient-to-b from-[#292931] to-[#232329]">
-                                <p className="text-gray-300 text-sm mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
-                                  Discover salary potential, growth outlook, and required skills...
-                                </p>
-                                <div className="w-full flex justify-end">
-                                  <button
-                                    onClick={() => {
-                                      setCareerIndex(originalIndex);
-                                      fetchCareer(career.career_name);
-                                    }}
-                                    className="rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
-                                    style={{backgroundColor: color, hover: {backgroundColor: `${color}dd`}}}
-                                  >
-                                    <p className="text-sm text-white font-medium">
-                                      {t("readMore")}
-                                    </p>
-                                    <FaChevronRight size={12} color="white" />
-                                  </button>
+                              <div className="absolute inset-0 bg-gradient-to-br from-gray-800/30 via-gray-700/20 to-gray-800/30 rounded-xl"></div>
+                              <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 hover:border-gray-600/50 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:translate-y-[-3px] overflow-hidden"
+                                   style={{borderBottom: `4px solid ${color}`}}>
+                                <div className="p-4 border-b border-gray-700/50" 
+                                     style={{background: `linear-gradient(135deg, ${color}20, ${color}10)`}}>
+                                  <h4 className="text-white text-lg font-bold text-center">
+                                    {career.career_name}
+                                  </h4>
+                                </div>
+                                <div className="p-6 flex flex-col justify-between min-h-[140px]">
+                                  <p className="text-gray-300 text-sm mb-4 opacity-90 group-hover:opacity-100 transition-opacity leading-relaxed">
+                                    Discover salary potential, growth outlook, and required skills...
+                                  </p>
+                                  <div className="w-full flex justify-end">
+                                    <button
+                                      onClick={() => {
+                                        setCareerIndex(originalIndex);
+                                        fetchCareer(career.career_name);
+                                      }}
+                                      className="rounded-lg px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md font-medium text-white"
+                                      style={{backgroundColor: color}}
+                                    >
+                                      <span className="text-sm">
+                                        {t("readMore")}
+                                      </span>
+                                      <FaChevronRight size={12} color="white" />
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -849,93 +881,111 @@ const getPrevCategory = () => {
                   <div className="space-y-8 px-4 md:px-10">
                     <div className="grid grid-cols-12 gap-6">
                       {singleCareer?.reason_for_recommendation && (
-                        <div className="col-span-12 rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
-                          <div className="bg-gradient-to-r from-[#00bf63] to-[#00bf6320] py-3 border-l-4 border-[#00bf63]">
-                            <p className="text-white font-bold text-lg uppercase text-center">
-                              {t("careerSuitability")}
-                            </p>
-                          </div>
-                          <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-6 min-h-[150px]">
-                            <p className="text-gray-200 leading-relaxed">
-                              {singleCareer?.reason_for_recommendation}
-                            </p>
+                        <div className="col-span-12 relative group">
+                          <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 via-emerald-500/5 to-green-500/5 rounded-xl"></div>
+                          <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:translate-y-[-3px] overflow-hidden">
+                            <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 p-4 border-b border-gray-700/50 border-l-4 border-green-500">
+                              <h3 className="text-white font-bold text-lg text-center">
+                                {t("careerSuitability")}
+                              </h3>
+                            </div>
+                            <div className="p-6">
+                              <p className="text-gray-200 leading-relaxed">
+                                {singleCareer?.reason_for_recommendation}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       )}
 
                       <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {singleCareer?.present_trends && (
-                          <div className="rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
-                            <div className="bg-gradient-to-r from-[#ffa000] to-[#ffa00020] py-3 border-l-4 border-[#ffa000]">
-                              <p className="text-white font-bold text-sm uppercase text-center">
-                                {t("presentTrends")}
-                              </p>
-                            </div>
-                            <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4 min-h-[180px]">
-                              <p className="text-gray-200 text-sm">
-                                {singleCareer?.present_trends}
-                              </p>
+                          <div className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-amber-500/5 rounded-xl"></div>
+                            <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:translate-y-[-3px] overflow-hidden">
+                              <div className="bg-gradient-to-r from-orange-500/20 to-amber-500/20 p-3 border-b border-gray-700/50 border-l-4 border-orange-500">
+                                <h3 className="text-white font-bold text-sm text-center">
+                                  {t("presentTrends")}
+                                </h3>
+                              </div>
+                              <div className="p-4 min-h-[180px] flex items-start">
+                                <p className="text-gray-200 text-sm leading-relaxed">
+                                  {singleCareer?.present_trends}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         )}
 
                         {singleCareer?.future_prospects && (
-                          <div className="rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
-                            <div className="bg-gradient-to-r from-[#7824f6] to-[#7824f620] py-3 border-l-4 border-[#7824f6]">
-                              <p className="text-white font-bold text-sm uppercase text-center">
-                                {t("futureProspects")} ({singleCareer?.currentYear} - {singleCareer?.tillYear})
-                              </p>
-                            </div>
-                            <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4 min-h-[180px]">
-                              <p className="text-gray-200 text-sm">
-                                {singleCareer?.future_prospects}
-                              </p>
+                          <div className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 rounded-xl"></div>
+                            <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:translate-y-[-3px] overflow-hidden">
+                              <div className="bg-gradient-to-r from-purple-500/20 to-indigo-500/20 p-3 border-b border-gray-700/50 border-l-4 border-purple-500">
+                                <h3 className="text-white font-bold text-sm text-center">
+                                  {t("futureProspects")} ({singleCareer?.currentYear} - {singleCareer?.tillYear})
+                                </h3>
+                              </div>
+                              <div className="p-4 min-h-[180px] flex items-start">
+                                <p className="text-gray-200 text-sm leading-relaxed">
+                                  {singleCareer?.future_prospects}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         )}
 
                         {singleCareer?.beyond_prospects && (
-                          <div className="rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
-                            <div className="bg-gradient-to-r from-[#9333ea] to-[#9333ea20] py-3 border-l-4 border-[#9333ea]">
-                              <p className="text-white font-bold text-sm uppercase text-center">
-                                {t("futureProspects")} ({singleCareer?.tillYear + 1} and beyond)
-                              </p>
-                            </div>
-                            <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4 min-h-[180px]">
-                              <p className="text-gray-200 text-sm">
-                                {singleCareer?.beyond_prospects}
-                              </p>
+                          <div className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-rose-500/5 rounded-xl"></div>
+                            <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:translate-y-[-3px] overflow-hidden">
+                              <div className="bg-gradient-to-r from-pink-500/20 to-rose-500/20 p-3 border-b border-gray-700/50 border-l-4 border-pink-500">
+                                <h3 className="text-white font-bold text-sm text-center">
+                                  {t("futureProspects")} ({singleCareer?.tillYear + 1} and beyond)
+                                </h3>
+                              </div>
+                              <div className="p-4 min-h-[180px] flex items-start">
+                                <p className="text-gray-200 text-sm leading-relaxed">
+                                  {singleCareer?.beyond_prospects}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         )}
 
                         {singleCareer?.salary && (
-                          <div className="rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
-                            <div className="bg-gradient-to-r from-[#5ce1e6] to-[#5ce1e620] py-3 border-l-4 border-[#5ce1e6]">
-                              <p className="text-white font-bold text-sm uppercase text-center">
-                                Salary
-                              </p>
-                            </div>
-                            <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4 min-h-[180px]">
-                              <p className="text-gray-200 text-sm">
-                                {singleCareer?.salary}
-                              </p>
+                          <div className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 rounded-xl"></div>
+                            <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:translate-y-[-3px] overflow-hidden">
+                              <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 p-3 border-b border-gray-700/50 border-l-4 border-cyan-500">
+                                <h3 className="text-white font-bold text-sm text-center">
+                                  Salary
+                                </h3>
+                              </div>
+                              <div className="p-4 min-h-[180px] flex items-start">
+                                <p className="text-gray-200 text-sm leading-relaxed">
+                                  {singleCareer?.salary}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         )}
                       </div>
 
                       {singleCareer?.expenses && (
-                        <div className="col-span-12 rounded-md overflow-hidden shadow-lg border border-[#3a3a3a] transform transition-all duration-300 hover:translate-y-[-3px]">
-                          <div className="bg-gradient-to-r from-[#ff0000] to-[#ff000020] py-3 border-l-4 border-[#ff0000]">
-                            <p className="text-white font-bold text-sm uppercase text-center">
-                              {t("expenses")}
-                            </p>
-                          </div>
-                          <div className="bg-gradient-to-b from-[#2a2b27] to-[#222420] p-4">
-                            <p className="text-gray-200 text-sm">
-                              {singleCareer?.expenses}
-                            </p>
+                        <div className="col-span-12 relative group">
+                          <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 via-rose-500/5 to-red-500/5 rounded-xl"></div>
+                          <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:translate-y-[-3px] overflow-hidden">
+                            <div className="bg-gradient-to-r from-red-500/20 to-rose-500/20 p-4 border-b border-gray-700/50 border-l-4 border-red-500">
+                              <h3 className="text-white font-bold text-lg text-center">
+                                {t("expenses")}
+                              </h3>
+                            </div>
+                            <div className="p-6">
+                              <p className="text-gray-200 leading-relaxed">
+                                {singleCareer?.expenses}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -943,10 +993,10 @@ const getPrevCategory = () => {
 
                     <div className="flex justify-center items-center">
                       <button
-                        className={`font-bold text-center md:py-4 md:px-7 py-3 px-5 max-md:text-sm uppercase rounded-md shadow-md transition-all duration-300 ${
+                        className={`font-bold text-center py-3 px-6 text-sm lg:text-base uppercase rounded-xl shadow-lg transition-all duration-300 ${
                           saveResultloading || singleCareer?.isCareerMoved
-                            ? "bg-gray-600 cursor-not-allowed"
-                            : "bg-gradient-to-r from-[#00bf63] to-[#00a857] hover:from-[#00a857] hover:to-[#009e52] text-white transform hover:translate-y-[-2px]"
+                            ? "bg-gray-600/60 cursor-not-allowed"
+                            : "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white transform hover:translate-y-[-2px] hover:shadow-xl"
                         }`}
                         onClick={() => {
                           handleSaveResult(
@@ -964,11 +1014,11 @@ const getPrevCategory = () => {
                             {t("saving")}
                           </div>
                         ) : (
-                          <p>
+                          <span>
                             {singleCareer?.isCareerMoved
                               ? t("alreadyMoved")
                               : t("moveCareer")}
-                          </p> 
+                          </span>
                         )}
                       </button>
                     </div>

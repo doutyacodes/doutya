@@ -1,9 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
-import Navbar from "../dashboard/_components/Navbar/page";
-import CareerStripe from "@/app/_components/CareerStripe";
 
 const Home = () => {
   const router = useRouter();
