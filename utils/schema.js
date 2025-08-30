@@ -541,6 +541,25 @@ export const USER_CAREER_STATUS = mysqlTable("user_career_status", {
   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(), // Automatically updated to current timestamp on update
 });
 
+export const SUBJECT_GENERATION_STATUS = mysqlTable("subject_generation_status", {
+  id: int("id").autoincrement().notNull().primaryKey(),
+  key_hash: varchar("key_hash", { length: 64 }).notNull().unique(), 
+  // hash of age+class+stream+board+country etc
+  status: mysqlEnum("status", [
+    "not_started",   // no request yet
+    "in_progress",   // generation is happening
+    "completed",     // generated and saved
+    "failed"         // generation failed
+  ])
+    .default("not_started")
+    .notNull(),
+
+  generated_by: varchar("generated_by", { length: 36 }), // optional, who triggered it first
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+
 // export const CAREER_NEWS = mysqlTable("career_news", {
 //   id: int("id").notNull().autoincrement().primaryKey(),
 //   career_id: int("career_id").notNull().references(() => CAREER_GROUP.id),  // Connects to the career

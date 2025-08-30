@@ -1,31 +1,21 @@
-import axios from 'axios';
-import { db } from "@/utils";
-import { TESTS, TEST_QUESTIONS, TEST_ANSWERS } from "@/utils/schema"; 
-import { eq } from "drizzle-orm";
-import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
-import { generateSubjectsTestsPrompt } from '../services/promptService';
+// import axios from 'axios';
+// import { db } from "@/utils";
+// import { TESTS, TEST_QUESTIONS, TEST_ANSWERS } from "@/utils/schema"; 
+// import { eq } from "drizzle-orm";
+// import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
+// import { generateSubjectsTestsPrompt } from '../services/promptService';
 
-// export async function GenerateTestQuiz(subjectId, subjectName, age, birthDate) {
+// export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birthDate, className, type1, type2, country ) {
 //     try {
-//         const currentAgeWeek = getCurrentWeekOfAge(birthDate) 
-//         // Step 1: Generate questions using OpenAI API
-//         const prompt = `
-//             Create 10 multiple-choice questions in ${subjectName} for a ${age} year old (currently in week ${currentAgeWeek} of this age).
-//             Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}. The questions should be unique and difficulty level should be hard.  
-//             Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
 
-//             {
-//             "question": "Question text here",
-//             "options": [
-//                 { "text": "Option 1", "is_answer": "no" },
-//                 { "text": "Option 2", "is_answer": "yes" },
-//                 { "text": "Option 3", "is_answer": "no" },
-//                 { "text": "Option 4", "is_answer": "no" }
-//             ]
-//             }
+//         const currentAgeWeek = getCurrentWeekOfAge(birthDate)
 
-//             Only return the array of 10 questions, nothing else.
-//             `;
+//           const prompt = await generateSubjectsTestsPrompt(
+//             userId, age, subjectName, type1, type2, currentAgeWeek, className, country
+//           );
+
+//         console.log("prompt", prompt);
+          
 
 //         const response = await axios.post(
 //             "https://api.openai.com/v1/chat/completions",
@@ -42,14 +32,22 @@ import { generateSubjectsTestsPrompt } from '../services/promptService';
 //             }
 //         );
 
+//         console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
+//         console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+//         console.log(`Total tokens Test quiz: ${response.data.usage.total_tokens}`);
+
 //         let responseText = response.data.choices[0].message.content.trim();
 //         responseText = responseText.replace(/```json|```/g, "").trim();
 //         const parsedData = JSON.parse(responseText);
 
 //         // Step 2: Insert into TESTS table
-//         const currentYear = new Date().getFullYear();
-//         const currentMonth = new Date().getMonth() + 1;
-//         const currentWeekNumber = 1;
+//         // const currentYear = new Date().getFullYear();
+//         // const currentMonth = new Date().getMonth() + 1;
+
+//         /* Setting these below values as the Generated tests are basically only for te initial week of joining  */
+//         const currentYear = 1;
+//         const currentMonth = 1;
+//         const currentWeekNumber = 1; 
 
 //         const [testResult] = await db.insert(TESTS).values({
 //             subject_id: subjectId,
@@ -58,6 +56,7 @@ import { generateSubjectsTestsPrompt } from '../services/promptService';
 //             year: currentYear,
 //             month: currentMonth,
 //             week_number: currentWeekNumber,
+//             class_name: className,
 //         }).execute();
 
 //         const testId = testResult.insertId;
@@ -65,7 +64,7 @@ import { generateSubjectsTestsPrompt } from '../services/promptService';
 //         // Step 3: Insert questions and answers into TEST_QUESTIONS and TEST_ANSWERS
 //         for (const questionData of parsedData) {
 //             const [questionResult] = await db.insert(TEST_QUESTIONS).values({
-//                 timer: 15, // 15 seconds for each question
+//                 timer: 40, // 15 seconds for each question
 //                 question: questionData.question,
 //                 test_id: testId,
 //             }).execute();
@@ -90,45 +89,29 @@ import { generateSubjectsTestsPrompt } from '../services/promptService';
 //     }
 // }
 
-export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birthDate, className, type1, type2, ) {
+import axios from 'axios';
+import { db } from "@/utils";
+import { TESTS, TEST_QUESTIONS, TEST_ANSWERS, SUBJECT_GENERATION_STATUS } from "@/utils/schema"; 
+import { eq } from "drizzle-orm";
+import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
+import { generateSubjectsTestsPrompt } from '../services/promptService';
+
+export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birthDate, className, type1, type2, country, testKeyHash = null) {
     try {
+        console.log(`Starting test generation for subject: ${subjectName}, keyHash: ${testKeyHash}`);
 
-        const currentAgeWeek = getCurrentWeekOfAge(birthDate)
+        const currentAgeWeek = getCurrentWeekOfAge(birthDate);
 
-        // Step 1: Generate questions using OpenAI API
-        // const prompt = `
-        //     Create 10 multiple-choice questions in ${subjectName} for a ${age} year old (currently in week ${currentAgeWeek} of this age)${
-        //         (educationLevel === 'school' || educationLevel === 'college') 
-        //         ? ` in ${className} with ${percentageCompleted}% of the academic year completed` 
-        //         : ''
-        //     }.
-        //     Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}. The questions should be unique and difficulty level should be hard.  
-        //     Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
-
-        //     {
-        //     "question": "Question text here",
-        //     "options": [
-        //         { "text": "Option 1", "is_answer": "no" },
-        //         { "text": "Option 2", "is_answer": "yes" },
-        //         { "text": "Option 3", "is_answer": "no" },
-        //         { "text": "Option 4", "is_answer": "no" }
-        //     ]
-        //     }
-
-        //     Only return the array of 10 questions, nothing else.
-        //     `;
-
-          const prompt = await generateSubjectsTestsPrompt(
-            userId, age, subjectName, type1, type2, currentAgeWeek
-          );
+        const prompt = await generateSubjectsTestsPrompt(
+            userId, age, subjectName, type1, type2, currentAgeWeek, className, country
+        );
 
         console.log("prompt", prompt);
-          
 
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4o-mini", // Update model if needed
+                model: "gpt-4o-mini",
                 messages: [{ role: "user", content: prompt }],
                 max_tokens: 2500,
             },
@@ -148,15 +131,12 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birt
         responseText = responseText.replace(/```json|```/g, "").trim();
         const parsedData = JSON.parse(responseText);
 
-        // Step 2: Insert into TESTS table
-        // const currentYear = new Date().getFullYear();
-        // const currentMonth = new Date().getMonth() + 1;
-
-        /* Setting these below values as the Generated tests are basically only for te initial week of joining  */
+        // Setting these values as the Generated tests are basically only for the initial week of joining
         const currentYear = 1;
         const currentMonth = 1;
         const currentWeekNumber = 1; 
 
+        // Step 2: Insert into TESTS table
         const [testResult] = await db.insert(TESTS).values({
             subject_id: subjectId,
             test_date: new Date(),
@@ -172,7 +152,7 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birt
         // Step 3: Insert questions and answers into TEST_QUESTIONS and TEST_ANSWERS
         for (const questionData of parsedData) {
             const [questionResult] = await db.insert(TEST_QUESTIONS).values({
-                timer: 15, // 15 seconds for each question
+                timer: 40, // 15 seconds for each question
                 question: questionData.question,
                 test_id: testId,
             }).execute();
@@ -190,9 +170,25 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birt
             }
         }
 
-        console.log("Test quiz generated and saved successfully.");
+        console.log(`Test quiz generated and saved successfully for keyHash: ${testKeyHash}`);
+        
     } catch (error) {
-        console.error("Error generating or saving test quiz:", error);
+        console.error(`Error generating or saving test quiz for keyHash: ${testKeyHash}:`, error);
+        
+        // If testKeyHash is provided, update the generation status to failed
+        if (testKeyHash) {
+            try {
+                await db
+                    .update(SUBJECT_GENERATION_STATUS)
+                    .set({ status: 'failed' })
+                    .where(eq(SUBJECT_GENERATION_STATUS.key_hash, testKeyHash));
+                
+                console.log(`Updated test generation status to failed for keyHash: ${testKeyHash}`);
+            } catch (updateError) {
+                console.error(`Failed to update test generation status for keyHash: ${testKeyHash}:`, updateError);
+            }
+        }
+        
         throw error;
     }
 }
