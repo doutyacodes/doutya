@@ -182,7 +182,7 @@ export async function POST(req) {
         sector_id: USER_SECTOR.sector_id,
         mbti_type: USER_SECTOR.mbti_type,
         name: SECTOR.name,
-        description: SECTOR.description,
+        description: SECTOR.brief_overview,
         created_at: USER_SECTOR.created_at
       })
       .from(USER_SECTOR)

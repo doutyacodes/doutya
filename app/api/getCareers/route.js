@@ -51,7 +51,7 @@ export async function GET(req) {
           id: USER_SECTOR.id,
           scope_grp_id: SECTOR.id,
           name: SECTOR.name,
-          description: SECTOR.description,
+          description: SECTOR.brief_overview,
           created_at: USER_SECTOR.created_at
         })
         .from(USER_SECTOR)
@@ -67,7 +67,7 @@ export async function GET(req) {
           id: USER_CLUSTER.id,
           scope_grp_id: CLUSTER.id,
           name: CLUSTER.name,
-          description: CLUSTER.description,
+          description: CLUSTER.brief_overview,
           created_at: USER_CLUSTER.created_at,
           riasec_code: USER_CLUSTER.riasec_code,
           selected: USER_CLUSTER.selected
