@@ -507,6 +507,24 @@ export const USER_CAREER = mysqlTable("user_career", {
   feedback: text("feedback").default(null),
 });
 
+export const USER_FEEDBACK = mysqlTable("user_feedback", {
+  id: int("id").autoincrement().primaryKey().notNull(),
+
+  // Link to the user_details table
+  user_id: int("user_id")
+    .notNull()
+    .references(() => USER_DETAILS.id),
+
+  // Feedback content
+  feedback: text("feedback").notNull(),
+
+  // Optional categorization fields
+  feedback_type: varchar("feedback_type", { length: 100 }).default(null), // e.g., "career", "sector", cluster.
+
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+
 export const USER_CAREER_STATUS = mysqlTable("user_career_status", {
   id: int("id").autoincrement().notNull().primaryKey(),
   user_career_id: varchar("user_career_id", { length: 36 })
