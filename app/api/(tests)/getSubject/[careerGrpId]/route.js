@@ -287,7 +287,7 @@ export async function GET(req, { params }) {
                         mbtiType: USER_CLUSTER.mbti_type,
                         riasecCode: USER_CLUSTER.riasec_code,
                         clusterName: CLUSTER.name,
-                        description: CLUSTER.description
+                        description: CLUSTER.brief_overview
                     })
                     .from(USER_CLUSTER)
                     .innerJoin(CLUSTER, eq(USER_CLUSTER.cluster_id, CLUSTER.id))
@@ -314,7 +314,7 @@ export async function GET(req, { params }) {
                         sectorId: USER_SECTOR.sector_id,
                         mbtiType: USER_SECTOR.mbti_type,
                         sectorName: SECTOR.name,
-                        description: SECTOR.description
+                        description: SECTOR.brief_overview
                     })
                     .from(USER_SECTOR)
                     .innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id))
