@@ -5,7 +5,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import GlobalApi from '@/app/_services/GlobalApi'
 
-function AddCareer({ isOpen, onClose, setCareerName, careerName, setCountry, country, handleSubmit, roadMapLoading}) {
+function AddCareer({ isOpen, onClose, setCareerName, careerName, handleSubmit, roadMapLoading}) {
     // const [loading, setLoading] = useState(false)
 
     return (
@@ -37,13 +37,6 @@ function AddCareer({ isOpen, onClose, setCareerName, careerName, setCountry, cou
                                             onChange={(e) => setCareerName(e.target.value)}
                                             className="mt-4 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                             placeholder="Enter career name"
-                                        />
-                                        <input
-                                            type="text"
-                                            value={country}
-                                            onChange={(e) => setCountry(e.target.value)}
-                                            className="mt-4 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Enter the country you are interested in to explore this career."
                                         />
                                     </div>
                                     

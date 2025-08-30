@@ -93,8 +93,12 @@ export default function Dashboard() {
       // }, 5000);
 
       const timer = setTimeout(() => {
-        // 1️⃣ Check if country is added first
-        if (!isCountryAdded) {
+        if (!educationStageExists) {
+          router.replace("/user/education-profile");
+        } else if (!isInstitutionDetailsAdded) {
+          router.replace("/education-details");
+        } else if (!isCountryAdded) {
+          // 1️⃣ Check if country is added first
           router.replace("/country");
         }
         // 2️⃣ Then check grade-based suggestions

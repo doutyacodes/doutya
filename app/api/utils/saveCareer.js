@@ -13,9 +13,17 @@ export async function saveCareer(
   country, 
   userId, 
   type1, 
-  type2
+  type2,
+  locationData = {} // New parameter for location data
 ) {
   try {
+    // Extract location data
+    const {
+      schoolingLocation = null,
+      graduationLocation = null,
+      postGraduationLocation = null
+    } = locationData;
+
     for (const career of careersArray) {
       // Helper function to reduce repeated code for community creation
       const findOrCreateCommunity = async (isGlobal) => {
@@ -99,7 +107,7 @@ export async function saveCareer(
         };
       }
 
-      // Insert user career
+      // Insert user career with location data
       const [userCareerInsert] = await db
         .insert(USER_CAREER)
         .values({
@@ -108,6 +116,9 @@ export async function saveCareer(
           country,
           type1,
           type2,
+          schooling_location: schoolingLocation,
+          graduation_location: graduationLocation,
+          post_graduation_location: postGraduationLocation,
         })
         .execute();
 

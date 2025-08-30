@@ -4,7 +4,7 @@ import { eq, and } from "drizzle-orm/expressions";
 import { authenticate } from "@/lib/jwtMiddleware";
 import { USER_DETAILS, QUIZ_SEQUENCES } from "@/utils/schema";
 
-export const maxDuration = 10;
+export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 export async function GET(req) {

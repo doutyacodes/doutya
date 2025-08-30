@@ -55,17 +55,17 @@ function SelectCountry() {
             router.replace("/dashboard_junior/cluster-suggestion");
           }
         }
-        // else {
-        //   // Country not selected yet, check if previous steps are complete
-        //   if (!resp.data.educationStageExists) {
-        //     // Education stage not set yet
-        //     router.replace("/user/education-profile");
-        //   } else if (!resp.data.isEducationCompleted && !resp.data.institutionDetailsAdded) {
-        //     // User is in school/college and institution details not provided
-        //     router.replace("/education-details");
-        //   }
+        else {
+          // Country not selected yet, check if previous steps are complete
+          if (!resp.data.educationStageExists) {
+            // Education stage not set yet
+            router.replace("/user/education-profile");
+          } else if (!resp.data.isEducationCompleted && !resp.data.institutionDetailsAdded) {
+            // User is in school/college and institution details not provided
+            router.replace("/education-details");
+          }
           // If all previous steps complete but country not added, we stay on this page
-        // }
+        }
       } catch (error) {
         console.error("Error fetching profile status:", error);
         toast.error("Error loading profile status. Please try again.");

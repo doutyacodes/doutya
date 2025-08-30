@@ -17,9 +17,9 @@ export async function POST(req) {
 
     try {
 
-        const { career, country } = await req.json();
+        const { career, country, locationData } = await req.json();
         // Validate career data
-        const validationResult = await validateCareer(career);
+        const validationResult = await validateCareer(career.careerName);
 
         if (!validationResult.isValid) {
             return NextResponse.json({ message: validationResult.message }, { status: 201 });
@@ -41,7 +41,7 @@ export async function POST(req) {
         const type2 = personalityTypes.find(pt => pt.quizId === 2)?.typeSequence || 'defaultType2';
         console.log("saveCareer adata", [validatedCareer], country, userId, type1, type2);
         
-        await saveCareer([validatedCareer], country, userId, type1, type2);
+        await saveCareer([validatedCareer], country, userId, type1, type2, locationData);
 
         return NextResponse.json({ success: true, message: 'Career saved successfully.' }, { status: 200 });
     } catch (error) {

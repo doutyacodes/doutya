@@ -4,7 +4,7 @@ import { MBTI_SECTOR_MAP, SECTOR } from "@/utils/schema";
 import { eq } from "drizzle-orm/expressions";
 import { authenticate } from "@/lib/jwtMiddleware";
 
-export const maxDuration = 10;
+export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 export async function GET(req, { params }) {

@@ -309,6 +309,10 @@ function SignUp() {
     }
   };
 
+  const handleQuickSignup = () => {
+    router.push('/quick-signup');
+  };
+
   const collegeStudent = watch("student");
   // Language Step
   if (step === "language") {
@@ -397,6 +401,12 @@ function SignUp() {
             >
               {t("continue") || "Continue"}
             </button>
+            <button
+                onClick={handleQuickSignup}
+                className="w-full py-2 px-6 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white font-medium rounded-xl border border-gray-600/50 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-500/50 mt-3"
+              >
+                Quick Signup (Testing)
+              </button>
           </div>
         </div>
       </div>

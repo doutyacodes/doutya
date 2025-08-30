@@ -4,6 +4,8 @@ const { default: axios } = require("axios");
 // axios.defaults.timeout = 35000; // 35 seconds
 
 const CreateNewUser = (data) => axios.post("/api/user", data);
+const QuickCreateUser = (data) => axios.post("/api/quick-signup", data);
+
 const LoginUser = (data) => axios.post("/api/login", data);
 const GetUser = (token) =>
   axios.get("/api/getUser", {
@@ -813,6 +815,7 @@ const GetCareerNews = (token, communityId) => {
 export default {
   CreateNewUser,
   LoginUser,
+  QuickCreateUser,
   GetUser,
   GetQuizData,
   SaveQuizResult,

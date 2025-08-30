@@ -4,7 +4,7 @@ import { CLUSTER, COMMUNITY, USER_CLUSTER, USER_COMMUNITY, USER_DETAILS } from "
 import { eq, and } from "drizzle-orm/expressions";
 import { authenticate } from "@/lib/jwtMiddleware";
 
-export const maxDuration = 10;
+export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 // Helper function to reduce repeated code for community creation

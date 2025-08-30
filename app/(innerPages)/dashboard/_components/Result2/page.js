@@ -14,6 +14,7 @@ import toast, { LoaderIcon, Toaster } from "react-hot-toast";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import AddIndustry from "./AddIndustry";
 import AlertDialogue from "./AlertDialogue";
+import LocationDetailsModal from "@/app/_components/LocationDetailsModal";
 
 export default function Results2({step, setStep}) {
   const [resultData, setResultData] = useState(null);
@@ -34,6 +35,9 @@ export default function Results2({step, setStep}) {
   const [showDialogue, setShowDialogue] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showCareerSelectionComplete, setShowCareerSelectionComplete] = useState(false);
+
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [pendingCareerData, setPendingCareerData] = useState(null);
   
   const { triggerTopbarRefresh } = useTopbar();
 
@@ -303,35 +307,96 @@ const getPrevCategory = () => {
       }
     }
   };
-
   const handleSaveResult = async (careerIndex, careerName) => {
+    // Store the career data temporarily
+    setPendingCareerData({
+      careerIndex,
+      careerName,
+      selectedCareerObjects: [resultData[careerIndex]]
+    });
+    
+    // Show the location modal
+    setShowLocationModal(true);
+  };
+  // Add this new function to handle the actual saving after location data is collected
+  const handleSaveWithLocationData = async (locationData) => {
+    if (!pendingCareerData) return;
+
     setSaveResultLoading(true);
-    const selectedCareerObjects = [resultData[careerIndex]];
-    const payload = { results: selectedCareerObjects };
+    const { selectedCareerObjects } = pendingCareerData;
+    const payload = { 
+      results: selectedCareerObjects,
+      locationData: locationData // Include location data in payload
+    };
+
     try {
-      const token =
-        typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const response = await GlobalApi.SaveCarrerData(token, payload);
+      
       if (response.status === 200) {
         toast.success("Career Data Saved Successfully");
         if (response.data.isFirstTime) {
           router.push("/dashboard/careers/career-guide");
         }
         triggerTopbarRefresh(); 
-        setShowCareerSelectionComplete(true) 
+        setShowCareerSelectionComplete(true);
+        setShowLocationModal(false); // Close modal
+        setPendingCareerData(null); // Reset pending data
       }
     } catch (err) {
       console.error("Failed to save career data:", err);
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(`${err.response.data.message}`);
-        setShowCareerSelectionComplete(true) 
+        setShowCareerSelectionComplete(true);
       } else {
         toast.error("Failed to save career data. Please try again later.");
       }
     } finally {
       setSaveResultLoading(false);
-      fetchCareer(careerName);
+      if (pendingCareerData) {
+        fetchCareer(pendingCareerData.careerName);
+      }
     }
+  };
+
+
+  // const handleSaveResult = async (careerIndex, careerName) => {
+  //   setSaveResultLoading(true);
+  //   const selectedCareerObjects = [resultData[careerIndex]];
+  //   const payload = { results: selectedCareerObjects };
+  //   try {
+  //     const token =
+  //       typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  //     const response = await GlobalApi.SaveCarrerData(token, payload);
+  //     if (response.status === 200) {
+  //       toast.success("Career Data Saved Successfully");
+  //       if (response.data.isFirstTime) {
+  //         router.push("/dashboard/careers/career-guide");
+  //       }
+  //       triggerTopbarRefresh(); 
+  //       setShowCareerSelectionComplete(true) 
+  //     }
+  //   } catch (err) {
+  //     console.error("Failed to save career data:", err);
+  //     if (err.response && err.response.data && err.response.data.message) {
+  //       toast.error(`${err.response.data.message}`);
+  //       setShowCareerSelectionComplete(true) 
+  //     } else {
+  //       toast.error("Failed to save career data. Please try again later.");
+  //     }
+  //   } finally {
+  //     setSaveResultLoading(false);
+  //     fetchCareer(careerName);
+  //   }
+  // };
+
+  
+  // Add this function to handle modal close
+  
+  const handleLocationModalClose = () => {
+    setShowLocationModal(false);
+    setPendingCareerData(null);
+    setSaveResultLoading(false);
   };
 
   const downloadResultsAsImage = async () => {
@@ -454,11 +519,11 @@ const getPrevCategory = () => {
                   showDelay={1000}
                 />  
               </>
-          )
+            )
         }
 
 
-    {step === 1 && industries.length > 0 && (
+      {step === 1 && industries.length > 0 && (
         <>
           <InterestTestComplete />
           <div className="relative mx-4 mb-6">
@@ -1029,6 +1094,15 @@ const getPrevCategory = () => {
           </div>
         )}
       </div>
+
+    {/* Location Details Modal */}
+    <LocationDetailsModal
+      isOpen={showLocationModal}
+      onClose={handleLocationModalClose}
+      onSave={handleSaveWithLocationData}
+      selectedCareers={singleCareer ? [singleCareer.career_name] : []}
+      loading={saveResultloading}
+    />
     </div>
   );
 }

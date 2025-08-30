@@ -9,6 +9,7 @@ import {
   FaChevronDown,
   FaBuilding,
   FaInfoCircle,
+  FaVial,
 } from "react-icons/fa";
 import { PiCompassRoseFill } from "react-icons/pi";
 import { AlertCircle, CheckCircle, ChevronLeft, Clock } from "lucide-react";
@@ -19,6 +20,7 @@ import CareerGuideExplanation from "@/app/_components/CareerGuideExplanation";
 import CareerOnboarding from "@/app/_components/CareerOnboarding";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import TestTypeSelectorModal from "@/app/_components/TestTypeSelectorModal";
 
 const LeftSideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +30,8 @@ const LeftSideBar = () => {
   const [isCareersDropdownOpen, setIsCareersDropdownOpen] = useState(false);
   const [isInstituteDropdownOpen, setIsInstituteDropdownOpen] = useState(false);
   const [guideDropdownOpen, setGuideDropdownOpen] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   const [isTest2Completed, setIsTest2Completed] = useState(false);
@@ -54,6 +58,10 @@ const LeftSideBar = () => {
 
   const toggleInstructionDropdown = () => {
     setGuideDropdownOpen(!isCareersDropdownOpen);
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
   };
 
 
@@ -188,6 +196,13 @@ const LeftSideBar = () => {
       link: "#",
       submenus: [],
       onClick: toggleLogoutPopup,
+    },
+    {
+      name: "Manual Results",
+      icon: <FaVial className="text-base" />,
+      link: "#",
+      submenus: [],
+      onClick: handleOpenModal,
     },
     // {
     //   name: "Instructions",
@@ -413,6 +428,11 @@ const LeftSideBar = () => {
           )}
         </>
       )}
+
+      <TestTypeSelectorModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 };

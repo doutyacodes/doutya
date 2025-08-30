@@ -498,6 +498,12 @@ export const USER_CAREER = mysqlTable("user_career", {
   type2: varchar("type2", { length: 255 }).notNull(),
   type1: varchar("type1", { length: 255 }).notNull(),
   country: text("country").default(null),
+
+    // New fields
+  schooling_location: text("schooling_location").default(null),      // Where user is/was doing school
+  graduation_location: text("graduation_location").default(null),    // Where user is/was doing graduation
+  post_graduation_location: text("post_graduation_location").default(null), // Where user is/was doing post-grad
+
   feedback: text("feedback").default(null),
 });
 

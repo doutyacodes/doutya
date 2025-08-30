@@ -13,18 +13,6 @@ const fetchPersonalityTypes = async () => {
     }, {});
 };
 
-const fetchQuestionsByType = async () => {
-    // Query the full range of questions, not just 61-90
-    const questions = await db.select().from(PERSONALITY_QUESTIONS);
-    return questions.reduce((acc, question) => {
-        if (!acc[question.personality_types_id]) {
-            acc[question.personality_types_id] = [];
-        }
-        acc[question.personality_types_id].push(question.id);
-        return acc;
-    }, {});
-};
-
 export async function POST(req) {
     const authResult = await authenticate(req);
     if (!authResult.authenticated) {

@@ -3,7 +3,7 @@ import { db } from "@/utils";
 import { SECTOR } from "@/utils/schema";
 import { authenticate } from "@/lib/jwtMiddleware";
 
-export const maxDuration = 10; // This function can run for a maximum of 10 seconds
+export const maxDuration = 300; // This function can run for a maximum of 10 seconds
 export const dynamic = "force-dynamic";
 
 export async function GET(req) {

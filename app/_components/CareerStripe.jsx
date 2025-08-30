@@ -12,6 +12,7 @@ import FeatureRestrictionModal from "../(innerPages)/dashboard/_components/Featu
 import PricingCard from "./PricingCard";
 import TestsNotCompltedWarning from "../(innerPages)/dashboard/_components/TestsNotCompltedWarning/TestsNotCompltedWarning";
 import { useTopbar } from "../context/TopbarContext";
+import LocationDetailsModal from "./LocationDetailsModal";
 
 
 const CareerStripe = ({selectedItem, setSelectedItem}) => {
@@ -32,6 +33,10 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
     const [showTestWarningModal, setShowTestWarningModal] = useState(false);
     const [showFeatureModal, setShowFeatureModal] = useState(false);
     const [showPricingModal, setShowPricingModal] = useState(false);
+
+    const [showLocationModal, setShowLocationModal] = useState(false);
+    const [pendingCareerData, setPendingCareerData] = useState(null);
+    
     const router = useRouter();
     const t = useTranslations("CareerPage");
   
@@ -173,25 +178,63 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
       };
 
       const handleSubmit = async () => {
-        setRoadMapLoading(true);
-        setShowDialogue(false);
-        try {
-          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-          const response = await GlobalApi.SaveInterestedCareer(token, careerName, country);
-          if (response && response.status === 200) {
-            setCareerName("");
-            setCountry("");
-            getScopeData();
-          } else if (response && response.status === 201)  {
-            toast.error(response.data.message);
-          }
-        } catch (error) {
-          toast.error(`Failed to save ${getScopeName().toLowerCase()} data. Please try again later.`);
-        } finally {
-          setRoadMapLoading(false);
-        }
-      };
+      // Validate career name first
+      if (!careerName.trim()) {
+        toast.error("Please enter a career name");
+        return;
+      }
 
+      // Store the career data temporarily and show location modal
+      setPendingCareerData({
+        careerName: careerName.trim()
+      });
+      
+      // Close the AddCareer dialog and show location modal
+      setShowDialogue(false);
+      setShowLocationModal(true);
+    };
+
+    const handleSaveWithLocationData = async (locationData) => {
+      if (!pendingCareerData) return;
+
+      setRoadMapLoading(true);
+      
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        
+        // Prepare the payload with both career name and location data
+        const payload = {
+          careerName: pendingCareerData.careerName,
+          locationData: locationData
+        };
+
+        const response = await GlobalApi.SaveInterestedCareer(token, payload);
+        
+        if (response && response.status === 200) {
+          toast.success("Career saved successfully!");
+          setCareerName("");
+          setShowLocationModal(false);
+          setPendingCareerData(null);
+          getScopeData();
+        } else if (response && response.status === 201) {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error saving career:", error);
+        toast.error(`Failed to save ${getScopeName().toLowerCase()} data. Please try again later.`);
+      } finally {
+        setRoadMapLoading(false);
+      }
+    };
+
+    // Add this function to handle modal close
+    const handleLocationModalClose = () => {
+      setShowLocationModal(false);
+      setPendingCareerData(null);
+      setRoadMapLoading(false);
+      // Optionally reopen the AddCareer dialog if user cancels
+      // setShowDialogue(true);
+    };
 
         // Render item or disabled box based on restriction
         const renderItemBox = (item, index) => {
@@ -294,13 +337,19 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
           getCareers={getScopeData}
           setCareerName={setCareerName}
           careerName={careerName}
-          setCountry={setCountry}
-          country={country}
           handleSubmit={handleSubmit}
           roadMapLoading={roadMapLoading}
           scopeType={scopeType}
         />
       )}
+
+      <LocationDetailsModal
+        isOpen={showLocationModal}
+        onClose={handleLocationModalClose}
+        onSave={handleSaveWithLocationData}
+        selectedCareers={pendingCareerData ? [pendingCareerData.careerName] : []}
+        loading={roadMapLoading}
+      />
 
       {/* Feature Restriction Modal */}
       <FeatureRestrictionModal
