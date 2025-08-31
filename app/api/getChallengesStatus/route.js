@@ -1,3 +1,4 @@
+// app\api\getChallengesStatus
 import { db } from '@/utils';
 import { CHALLENGE_PROGRESS, CHALLENGES } from '@/utils/schema';
 import { eq, and } from 'drizzle-orm';

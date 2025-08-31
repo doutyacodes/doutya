@@ -1,3 +1,4 @@
+// app\api\getLastSubmittedChallenge
 import { NextResponse } from 'next/server';
 import { db } from '@/utils'; 
 import { authenticate } from '@/lib/jwtMiddleware'; 

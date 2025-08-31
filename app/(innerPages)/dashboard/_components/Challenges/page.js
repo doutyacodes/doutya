@@ -151,7 +151,7 @@ export default function Challenge({ selectedCareer }) {
 
                 // Remove the submitted challenge from the state
                 setChallenges((prevChallenges) =>
-                    prevChallenges.filter((challenge) => challenge.week !== week)
+                    prevChallenges.filter((challenge) => challenge.id !== challengeId)
                 );
 
                 // Fetch updated challenge progress

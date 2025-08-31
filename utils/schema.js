@@ -541,24 +541,50 @@ export const USER_CAREER_STATUS = mysqlTable("user_career_status", {
   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(), // Automatically updated to current timestamp on update
 });
 
-export const SUBJECT_GENERATION_STATUS = mysqlTable("subject_generation_status", {
-  id: int("id").autoincrement().notNull().primaryKey(),
-  key_hash: varchar("key_hash", { length: 64 }).notNull().unique(), 
-  // hash of age+class+stream+board+country etc
-  status: mysqlEnum("status", [
-    "not_started",   // no request yet
-    "in_progress",   // generation is happening
-    "completed",     // generated and saved
-    "failed"         // generation failed
-  ])
-    .default("not_started")
-    .notNull(),
+// export const SUBJECT_GENERATION_STATUS = mysqlTable("subject_generation_status", {
+//   id: int("id").autoincrement().notNull().primaryKey(),
+//   key_hash: varchar("key_hash", { length: 64 }).notNull().unique(), 
+//   // hash of age+class+stream+board+country etc
+//   status: mysqlEnum("status", [
+//     "not_started",   // no request yet
+//     "in_progress",   // generation is happening
+//     "completed",     // generated and saved
+//     "failed"         // generation failed
+//   ])
+//     .default("not_started")
+//     .notNull(),
 
-  generated_by: varchar("generated_by", { length: 36 }), // optional, who triggered it first
+//   generated_by: varchar("generated_by", { length: 36 }), // optional, who triggered it first
+//   created_at: timestamp("created_at").defaultNow(),
+//   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+// });
+
+export const GENERATION_STATUS = mysqlTable("generation_status", {
+  id: int("id").autoincrement().notNull().primaryKey(),
+
+  generation_type: varchar("generation_type", { length: 50 }).notNull(), // e.g. "subject", "career", "challenge", etc.
+
+  key_hash: varchar("key_hash", { length: 64 }).notNull(), 
+  // hash of inputs (age+class+board+country etc.)
+
+  status: mysqlEnum("status", [
+    "not_started",
+    "in_progress",
+    "completed",
+    "failed"
+  ]).default("not_started").notNull(),
+
+  generated_by: varchar("generated_by", { length: 36 }),
+
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
-});
-
+},
+(table) => ({
+  uniqueGeneration: uniqueIndex("unique_generation").on(
+    table.generation_type,
+    table.key_hash
+  )
+}));
 
 // export const CAREER_NEWS = mysqlTable("career_news", {
 //   id: int("id").notNull().autoincrement().primaryKey(),

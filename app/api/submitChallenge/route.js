@@ -1,3 +1,4 @@
+// app\api\submitChallenge\route.js
 import { db } from '@/utils';
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
