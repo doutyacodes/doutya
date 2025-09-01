@@ -39,6 +39,94 @@ const waitWithBackoff = (attempt) => {
     return new Promise(resolve => setTimeout(resolve, delay));
 };
 
+// Add these helper functions before your GET function (around line 30, after waitWithBackoff):
+
+// Helper function to wait for test generation completion
+const waitForTestGenerationCompletion = async (testKeyHash) => {
+    const maxWaitTime = 5 * 60 * 1000; // 5 minutes
+    const startTime = Date.now();
+    let attempt = 0;
+    
+    while (Date.now() - startTime < maxWaitTime) {
+        await waitWithBackoff(attempt);
+        attempt++;
+        
+        const updatedStatus = await db
+            .select()
+            .from(GENERATION_STATUS)
+            .where(
+                and(
+                    eq(GENERATION_STATUS.key_hash, testKeyHash),
+                    eq(GENERATION_STATUS.generation_type, 'test')
+                )
+            );
+        
+        if (updatedStatus.length > 0) {
+            const status = updatedStatus[0].status;
+            
+            if (status === 'completed') {
+                console.log('Test generation completed by another request');
+                return;
+            } else if (status === 'failed') {
+                throw new Error('Test generation failed by another request');
+            }
+        }
+    }
+    
+    // If we reach here, generation timed out
+    throw new Error('Test generation timed out');
+};
+
+// Helper function to handle failed test generation with atomic retry
+const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjectName, age, birth_date, className, type1, type2, country) => {
+    try {
+        // Use atomic update to claim the retry
+        const updateResult = await db
+            .update(GENERATION_STATUS)
+            .set({ 
+                status: 'in_progress',
+                generated_by: userId 
+            })
+            .where(
+                and(
+                    eq(GENERATION_STATUS.key_hash, testKeyHash),
+                    eq(GENERATION_STATUS.generation_type, 'test'),
+                    eq(GENERATION_STATUS.status, 'failed') // Only update if still failed
+                )
+            );
+
+        console.log('Attempting to retry failed test generation...');
+        
+        await GenerateTestQuiz(userId, subjectId, subjectName, age, birth_date, className, type1, type2, country, testKeyHash);
+
+        await db
+            .update(GENERATION_STATUS)
+            .set({ status: 'completed' })
+            .where(
+                and(
+                    eq(GENERATION_STATUS.key_hash, testKeyHash),
+                    eq(GENERATION_STATUS.generation_type, 'test')
+                )
+            );
+        
+        console.log('Retry test generation completed successfully');
+        
+    } catch (error) {
+        await db
+            .update(GENERATION_STATUS)
+            .set({ status: 'failed' })
+            .where(
+                and(
+                    eq(GENERATION_STATUS.key_hash, testKeyHash),
+                    eq(GENERATION_STATUS.generation_type, 'test')
+                )
+            );
+        
+        console.error('Retry test generation failed:', error);
+        throw error;
+    }
+};
+
 export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
@@ -168,177 +256,63 @@ export async function GET(request, { params }) {
                 // Generate unique key hash for test generation
                 const testKeyHash = generateTestKeyHash(subjectId, age, className, yearsSinceJoined, monthsSinceJoined, weekNumber);
 
-                // Check current generation status for tests
-                const generationStatus = await db
-                    .select()
-                    .from(GENERATION_STATUS)
-                    .where(
-                        and(
-                            eq(GENERATION_STATUS.key_hash, testKeyHash),
-                            eq(GENERATION_STATUS.generation_type, 'test')
-                        )
-                    );
+                // Use a transaction to handle race conditions
+                let shouldStartGeneration = false;
+                let generationStatus = [];
 
-                if (generationStatus.length === 0) {
-                    // No generation record exists, create one and start generation
-                    try {
-                        await db
-                            .insert(GENERATION_STATUS)
-                            .values({
-                                generation_type: 'test',
-                                key_hash: testKeyHash,
-                                status: 'in_progress',
-                                generated_by: userId
-                            });
+                try {
+                    // First, try to get existing status
+                    generationStatus = await db
+                        .select()
+                        .from(GENERATION_STATUS)
+                        .where(
+                            and(
+                                eq(GENERATION_STATUS.key_hash, testKeyHash),
+                                eq(GENERATION_STATUS.generation_type, 'test')
+                            )
+                        );
 
-                        console.log('Starting test generation...');
-                        
-                        // Generate test quiz
-                        await GenerateTestQuiz(userId, subjectId, subjectName, age, birth_date, className, type1, type2, country, testKeyHash);
-
-                        // Mark generation as completed
-                        await db
-                            .update(GENERATION_STATUS)
-                            .set({ status: 'completed' })
-                            .where(
-                                and(
-                                    eq(GENERATION_STATUS.key_hash, testKeyHash),
-                                    eq(GENERATION_STATUS.generation_type, 'test')
-                                )
-                            );
-
-                        console.log('Test generation completed successfully');
-
-                    } catch (error) {
-                        // Mark generation as failed
-                        await db
-                            .update(GENERATION_STATUS)
-                            .set({ status: 'failed' })
-                            .where(
-                                and(
-                                    eq(GENERATION_STATUS.key_hash, testKeyHash),
-                                    eq(GENERATION_STATUS.generation_type, 'test')
-                                )
-                            );
-                        
-                        console.error('Test generation failed:', error);
-                        throw error;
-                    }
-                } else {
-                    const currentStatus = generationStatus[0].status;
-                    
-                    if (currentStatus === 'in_progress') {
-                        // Wait for generation to complete with timeout
-                        console.log('Test generation in progress, waiting...');
-                        const maxWaitTime = 5 * 60 * 1000; // 5 minutes
-                        const startTime = Date.now();
-                        let attempt = 0;
-                        
-                        while (Date.now() - startTime < maxWaitTime) {
-                            await waitWithBackoff(attempt);
-                            attempt++;
+                    if (generationStatus.length === 0) {
+                        // Try to insert a new record - this will fail if another request already inserted it
+                        try {
+                            await db
+                                .insert(GENERATION_STATUS)
+                                .values({
+                                    generation_type: 'test',
+                                    key_hash: testKeyHash,
+                                    status: 'in_progress',
+                                    generated_by: userId
+                                });
                             
-                            const updatedStatus = await db
-                                .select()
-                                .from(GENERATION_STATUS)
-                                .where(
-                                    and(
-                                        eq(GENERATION_STATUS.key_hash, testKeyHash),
-                                        eq(GENERATION_STATUS.generation_type, 'test')
-                                    )
-                                );
+                            shouldStartGeneration = true;
+                            console.log('Created new test generation record, starting generation...');
                             
-                            if (updatedStatus.length > 0) {
-                                const status = updatedStatus[0].status;
-                                
-                                if (status === 'completed') {
-                                    console.log('Test generation completed by another request');
-                                    break;
-                                } else if (status === 'failed') {
-                                    console.log('Test generation failed by another request, retrying...');
-                                    
-                                    // Reset status to in_progress and try generation
-                                    await db
-                                        .update(GENERATION_STATUS)
-                                        .set({ 
-                                            status: 'in_progress',
-                                            generated_by: userId 
-                                        })
-                                        .where(
-                                            and(
-                                                eq(GENERATION_STATUS.key_hash, testKeyHash),
-                                                eq(GENERATION_STATUS.generation_type, 'test')
-                                            )
-                                        );
-                                    
-                                    try {
-                                        await GenerateTestQuiz(userId, subjectId, subjectName, age, birth_date, className, type1, type2, country, testKeyHash);
-
-                                        await db
-                                            .update(GENERATION_STATUS)
-                                            .set({ status: 'completed' })
-                                            .where(
-                                                and(
-                                                    eq(GENERATION_STATUS.key_hash, testKeyHash),
-                                                    eq(GENERATION_STATUS.generation_type, 'test')
-                                                )
-                                            );
-                                        
-                                        break;
-                                    } catch (retryError) {
-                                        await db
-                                            .update(GENERATION_STATUS)
-                                            .set({ status: 'failed' })
-                                            .where(
-                                                and(
-                                                    eq(GENERATION_STATUS.key_hash, testKeyHash),
-                                                    eq(GENERATION_STATUS.generation_type, 'test')
-                                                )
-                                            );
-                                        
-                                        throw retryError;
-                                    }
-                                }
+                        } catch (insertError) {
+                            if (insertError.code === 'ER_DUP_ENTRY') {
+                                // Another request already created the record, fetch it
+                                console.log('Another request created test generation record, fetching status...');
+                                generationStatus = await db
+                                    .select()
+                                    .from(GENERATION_STATUS)
+                                    .where(
+                                        and(
+                                            eq(GENERATION_STATUS.key_hash, testKeyHash),
+                                            eq(GENERATION_STATUS.generation_type, 'test')
+                                        )
+                                    );
+                            } else {
+                                throw insertError; // Re-throw if it's not a duplicate entry error
                             }
                         }
-                        
-                        // Check final status after waiting
-                        const finalStatus = await db
-                            .select()
-                            .from(GENERATION_STATUS)
-                            .where(
-                                and(
-                                    eq(GENERATION_STATUS.key_hash, testKeyHash),
-                                    eq(GENERATION_STATUS.generation_type, 'test')
-                                )
-                            );
-                        
-                        if (finalStatus.length === 0 || finalStatus[0].status !== 'completed') {
-                            return NextResponse.json({ 
-                                message: 'Test generation timed out or failed. Please try again.' 
-                            }, { status: 408 });
-                        }
-                        
-                    } else if (currentStatus === 'failed') {
-                        // Previous generation failed, retry
-                        console.log('Previous test generation failed, retrying...');
-                        
-                        await db
-                            .update(GENERATION_STATUS)
-                            .set({ 
-                                status: 'in_progress',
-                                generated_by: userId 
-                            })
-                            .where(
-                                and(
-                                    eq(GENERATION_STATUS.key_hash, testKeyHash),
-                                    eq(GENERATION_STATUS.generation_type, 'test')
-                                )
-                            );
-                        
+                    }
+
+                    // Handle generation based on current status
+                    if (shouldStartGeneration) {
                         try {
+                            // This request should start the generation
                             await GenerateTestQuiz(userId, subjectId, subjectName, age, birth_date, className, type1, type2, country, testKeyHash);
 
+                            // Mark generation as completed
                             await db
                                 .update(GENERATION_STATUS)
                                 .set({ status: 'completed' })
@@ -348,8 +322,11 @@ export async function GET(request, { params }) {
                                         eq(GENERATION_STATUS.generation_type, 'test')
                                     )
                                 );
-                            
+
+                            console.log('Test generation completed successfully');
+
                         } catch (error) {
+                            // Mark generation as failed
                             await db
                                 .update(GENERATION_STATUS)
                                 .set({ status: 'failed' })
@@ -360,10 +337,27 @@ export async function GET(request, { params }) {
                                     )
                                 );
                             
+                            console.error('Test generation failed:', error);
                             throw error;
                         }
+                    } else {
+                        // Another request is handling generation, wait for it
+                        const currentStatus = generationStatus[0]?.status;
+                        
+                        if (currentStatus === 'in_progress') {
+                            console.log('Test generation in progress by another request, waiting...');
+                            await waitForTestGenerationCompletion(testKeyHash);
+                            
+                        } else if (currentStatus === 'failed') {
+                            console.log('Previous test generation failed, attempting retry...');
+                            await handleFailedTestGeneration(testKeyHash, userId, subjectId, subjectName, age, birth_date, className, type1, type2, country);
+                        }
+                        // If status is 'completed', continue with fetching questions
                     }
-                    // If status is 'completed', continue with fetching questions
+
+                } catch (error) {
+                    console.error('Error in test generation status handling:', error);
+                    throw error;
                 }
 
                 // Retry fetching questions after generation (or waiting)

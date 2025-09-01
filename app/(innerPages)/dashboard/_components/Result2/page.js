@@ -115,7 +115,7 @@ export default function Results2({step, setStep}) {
 
   useEffect(() => {
     if (resultData) {
-      // console.log("Updated resultData:", resultData);
+      console.log("Updated resultData:", resultData);
     }
   }, [resultData]);
 
@@ -222,6 +222,7 @@ const getPrevCategory = () => {
       );
       if (response.status === 200) {
         const parsedResult = JSON.parse(response.data.result);
+        console.log("parsedResult fsdsd",parsedResult)
         setResultData(parsedResult);
         setDisplayResults(true);
         setStep(2);

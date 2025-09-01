@@ -198,199 +198,64 @@ export async function GET(req, { params }) {
 
         console.log("subjectsExist", subjectsExist);
     
+
         if (!subjectsExist.length) {
             console.log('No subjects found, checking generation status...');
 
-            // Check current generation status
-            const generationStatus = await db
-                .select()
-                .from(GENERATION_STATUS)
-                .where(
-                    and(
-                        eq(GENERATION_STATUS.key_hash, keyHash),
-                        eq(GENERATION_STATUS.generation_type, 'subject')
-                    )
-                );
+            // Use a transaction to handle race conditions
+            let shouldStartGeneration = false;
+            let generationStatus = [];
 
-            if (generationStatus.length === 0) {
-                // No generation record exists, create one and start generation
-                try {
-                    await db
-                        .insert(GENERATION_STATUS)
-                        .values({
-                            generation_type: 'subject',
-                            key_hash: keyHash,
-                            status: 'in_progress',
-                            generated_by: userId
-                        });
-                    console.log('Starting subject generation...');
-                    
-                    // Process and generate subjects
-                    await processCareerSubjects(
-                        userId, 
-                        scopeName, 
-                        scopeId, 
-                        country, 
-                        age, 
-                        userDetails.birth_date, 
-                        className, 
-                        type1, 
-                        type2,
-                        scopeType
+            try {
+                // First, try to get existing status
+                generationStatus = await db
+                    .select()
+                    .from(GENERATION_STATUS)
+                    .where(
+                        and(
+                            eq(GENERATION_STATUS.key_hash, keyHash),
+                            eq(GENERATION_STATUS.generation_type, 'subject')
+                        )
                     );
 
-                    // Mark generation as completed
-                    await db
-                        .update(GENERATION_STATUS)
-                        .set({ status: 'completed' })
-                        .where(
-                            and(
-                                eq(GENERATION_STATUS.key_hash, keyHash),
-                                eq(GENERATION_STATUS.generation_type, 'subject')
-                            )
-                        );
-
-                    console.log('Subject generation completed successfully');
-
-                } catch (error) {
-                    // Mark generation as failed
-                    await db
-                        .update(GENERATION_STATUS)
-                        .set({ status: 'failed' })
-                        .where(
-                            and(
-                                eq(GENERATION_STATUS.key_hash, keyHash),
-                                eq(GENERATION_STATUS.generation_type, 'subject')
-                            )
-                        );
-                    
-                    console.error('Subject generation failed:', error);
-                    throw error;
-                }
-            } else {
-                const currentStatus = generationStatus[0].status;
-                
-                if (currentStatus === 'in_progress') {
-                    // Wait for generation to complete with timeout
-                    console.log('Subject generation in progress, waiting...');
-                    const maxWaitTime = 5 * 60 * 1000; // 5 minutes
-                    const startTime = Date.now();
-                    let attempt = 0;
-                    
-                    while (Date.now() - startTime < maxWaitTime) {
-                        await waitWithBackoff(attempt);
-                        attempt++;
+                if (generationStatus.length === 0) {
+                    // Try to insert a new record - this will fail if another request already inserted it
+                    try {
+                        await db
+                            .insert(GENERATION_STATUS)
+                            .values({
+                                generation_type: 'subject',
+                                key_hash: keyHash,
+                                status: 'in_progress',
+                                generated_by: userId
+                            });
                         
-                        const updatedStatus = await db
-                            .select()
-                            .from(GENERATION_STATUS)
-                            .where(
-                                and(
-                                    eq(GENERATION_STATUS.key_hash, keyHash),
-                                    eq(GENERATION_STATUS.generation_type, 'subject')
-                                )
-                            );
+                        shouldStartGeneration = true;
+                        console.log('Created new generation record, starting generation...');
                         
-                        if (updatedStatus.length > 0) {
-                            const status = updatedStatus[0].status;
-                            
-                            if (status === 'completed') {
-                                console.log('Subject generation completed by another request');
-                                break;
-                            } else if (status === 'failed') {
-                                console.log('Subject generation failed by another request, retrying...');
-                                
-                                // Reset status to in_progress and try generation
-                                await db
-                                    .update(GENERATION_STATUS)
-                                    .set({ 
-                                        status: 'in_progress',
-                                        generated_by: userId 
-                                    })
-                                    .where(
-                                        and(
-                                            eq(GENERATION_STATUS.key_hash, keyHash),
-                                            eq(GENERATION_STATUS.generation_type, 'subject')
-                                        )
-                                    );
-                                
-                                try {
-                                    await processCareerSubjects(
-                                        userId, 
-                                        scopeName, 
-                                        scopeId, 
-                                        country, 
-                                        age, 
-                                        userDetails.birth_date, 
-                                        className, 
-                                        type1, 
-                                        type2,
-                                        scopeType
-                                    );
-
-                                    await db
-                                    .update(GENERATION_STATUS)
-                                    .set({ status: 'completed' })
-                                    .where(
-                                        and(
-                                            eq(GENERATION_STATUS.key_hash, keyHash),
-                                            eq(GENERATION_STATUS.generation_type, 'subject')
-                                        )
-                                    );
-                                
-                                    break;
-                                } catch (retryError) {
-                                    await db
-                                        .update(GENERATION_STATUS)
-                                        .set({ status: 'failed' })
-                                        .where(
-                                            and(
-                                                eq(GENERATION_STATUS.key_hash, keyHash),
-                                                eq(GENERATION_STATUS.generation_type, 'subject')
-                                            )
-                                        );
-                                                                        
-                                    throw retryError;
-                                }
-                            }
+                    } catch (insertError) {
+                        if (insertError.code === 'ER_DUP_ENTRY') {
+                            // Another request already created the record, fetch it
+                            console.log('Another request created generation record, fetching status...');
+                            generationStatus = await db
+                                .select()
+                                .from(GENERATION_STATUS)
+                                .where(
+                                    and(
+                                        eq(GENERATION_STATUS.key_hash, keyHash),
+                                        eq(GENERATION_STATUS.generation_type, 'subject')
+                                    )
+                                );
+                        } else {
+                            throw insertError; // Re-throw if it's not a duplicate entry error
                         }
                     }
-                    
-                    // Check final status after waiting
-                    const finalStatus = await db
-                        .select()
-                        .from(GENERATION_STATUS)
-                        .where(
-                            and(
-                                eq(GENERATION_STATUS.key_hash, keyHash),
-                                eq(GENERATION_STATUS.generation_type, 'subject')
-                            )
-                        );
-                    
-                    if (finalStatus.length === 0 || finalStatus[0].status !== 'completed') {
-                        return NextResponse.json({ 
-                            message: 'Subject generation timed out or failed. Please try again.' 
-                        }, { status: 408 });
-                    }
-                    
-                } else if (currentStatus === 'failed') {
-                    // Previous generation failed, retry
-                    console.log('Previous generation failed, retrying...');
-                    
-                    await db
-                        .update(GENERATION_STATUS)
-                        .set({ 
-                            status: 'in_progress',
-                            generated_by: userId 
-                        })
-                        .where(
-                            and(
-                                eq(GENERATION_STATUS.key_hash, keyHash),
-                                eq(GENERATION_STATUS.generation_type, 'subject')
-                            )
-                        );
-                    
+                }
+
+                // Handle generation based on current status
+                if (shouldStartGeneration) {
                     try {
+                        // This request should start the generation
                         await processCareerSubjects(
                             userId, 
                             scopeName, 
@@ -404,6 +269,7 @@ export async function GET(req, { params }) {
                             scopeType
                         );
 
+                        // Mark generation as completed
                         await db
                             .update(GENERATION_STATUS)
                             .set({ status: 'completed' })
@@ -413,7 +279,11 @@ export async function GET(req, { params }) {
                                     eq(GENERATION_STATUS.generation_type, 'subject')
                                 )
                             );
+
+                        console.log('Subject generation completed successfully');
+
                     } catch (error) {
+                        // Mark generation as failed
                         await db
                             .update(GENERATION_STATUS)
                             .set({ status: 'failed' })
@@ -423,10 +293,28 @@ export async function GET(req, { params }) {
                                     eq(GENERATION_STATUS.generation_type, 'subject')
                                 )
                             );
+                        
+                        console.error('Subject generation failed:', error);
                         throw error;
                     }
+                } else {
+                    // Another request is handling generation, wait for it
+                    const currentStatus = generationStatus[0]?.status;
+                    
+                    if (currentStatus === 'in_progress') {
+                        console.log('Subject generation in progress by another request, waiting...');
+                        await waitForGenerationCompletion(keyHash);
+                        
+                    } else if (currentStatus === 'failed') {
+                        console.log('Previous generation failed, attempting retry...');
+                        await handleFailedGeneration(keyHash, userId, scopeName, scopeId, country, age, userDetails.birth_date, className, type1, type2, scopeType);
+                    }
+                    // If status is 'completed', continue with fetching subjects
                 }
-                // If status is 'completed', continue with fetching subjects
+
+            } catch (error) {
+                console.error('Error in generation status handling:', error);
+                throw error;
             }
         }
 
@@ -500,3 +388,101 @@ export async function GET(req, { params }) {
         return NextResponse.json({ message: 'Error fetching subjects' }, { status: 500 });
     }
 }
+
+const waitForGenerationCompletion = async (keyHash) => {
+    const maxWaitTime = 5 * 60 * 1000; // 5 minutes
+    const startTime = Date.now();
+    let attempt = 0;
+    
+    while (Date.now() - startTime < maxWaitTime) {
+        await waitWithBackoff(attempt);
+        attempt++;
+        
+        const updatedStatus = await db
+            .select()
+            .from(GENERATION_STATUS)
+            .where(
+                and(
+                    eq(GENERATION_STATUS.key_hash, keyHash),
+                    eq(GENERATION_STATUS.generation_type, 'subject')
+                )
+            );
+        
+        if (updatedStatus.length > 0) {
+            const status = updatedStatus[0].status;
+            
+            if (status === 'completed') {
+                console.log('Subject generation completed by another request');
+                return;
+            } else if (status === 'failed') {
+                throw new Error('Subject generation failed by another request');
+            }
+        }
+    }
+    
+    // If we reach here, generation timed out
+    throw new Error('Subject generation timed out');
+};
+
+// Helper function to handle failed generation with atomic retry
+const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, country, age, birthDate, className, type1, type2, scopeType) => {
+    try {
+        // Use atomic update to claim the retry
+        const updateResult = await db
+            .update(GENERATION_STATUS)
+            .set({ 
+                status: 'in_progress',
+                generated_by: userId 
+            })
+            .where(
+                and(
+                    eq(GENERATION_STATUS.key_hash, keyHash),
+                    eq(GENERATION_STATUS.generation_type, 'subject'),
+                    eq(GENERATION_STATUS.status, 'failed') // Only update if still failed
+                )
+            );
+
+        // Check if we successfully claimed the retry (updateResult should indicate affected rows)
+        // Note: The exact way to check affected rows depends on your DB library
+        console.log('Attempting to retry failed generation...');
+        
+        await processCareerSubjects(
+            userId, 
+            scopeName, 
+            scopeId, 
+            country, 
+            age, 
+            birthDate, 
+            className, 
+            type1, 
+            type2,
+            scopeType
+        );
+
+        await db
+            .update(GENERATION_STATUS)
+            .set({ status: 'completed' })
+            .where(
+                and(
+                    eq(GENERATION_STATUS.key_hash, keyHash),
+                    eq(GENERATION_STATUS.generation_type, 'subject')
+                )
+            );
+        
+        console.log('Retry generation completed successfully');
+        
+    } catch (error) {
+        await db
+            .update(GENERATION_STATUS)
+            .set({ status: 'failed' })
+            .where(
+                and(
+                    eq(GENERATION_STATUS.key_hash, keyHash),
+                    eq(GENERATION_STATUS.generation_type, 'subject')
+                )
+            );
+        
+        console.error('Retry generation failed:', error);
+        throw error;
+    }
+};

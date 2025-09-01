@@ -81,6 +81,7 @@ function Page() {
 
   let i = 0;
   console.log(`main page loaded ${++i}`);
+  console.log('istest2 completed', isTest2Completed)
 
   useEffect(() => {
     const getQuizData = async () => {
@@ -125,9 +126,7 @@ function Page() {
     const PathChange = () => {
       if (pathname == "/dashboard/careers/career-guide") {
         setShowCareer(true);
-        setStep(
-          2
-        ); /* setting to step 2 beacuse only step 2 will show the career stripe, We ahve to implement do a better way for this , */
+        setStep(2); /* setting to step 2 beacuse only step 2 will show the career stripe, We ahve to implement do a better way for this , */
       } else {
         setShowCareer(false);
       }
