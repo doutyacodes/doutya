@@ -275,15 +275,19 @@ export async function GET(req) {
       .select()
       .from(CLUSTER);
 
+    console.log("sortingData",sortingData)
+
+    // Parse sortingData if it's a string (from DB), otherwise use as-is (fresh generation)
+    const parsedSortingData = typeof sortingData === 'string' ? JSON.parse(sortingData) : sortingData;
+
     // Merge sorting data with cluster details
-    const sortedClustersWithDetails = JSON.parse(sortingData).sorted_clusters.map(sortedCluster => {
+    const sortedClustersWithDetails = parsedSortingData.sorted_clusters.map(sortedCluster => {
       const clusterDetails = clusters.find(c => c.name === sortedCluster.cluster);
       return {
         ...sortedCluster,
         cluster_details: clusterDetails
       };
     });
-
     // Compile full user data
     const fullUserData = {
       ...userDetails[0],
@@ -301,8 +305,8 @@ export async function GET(req) {
         current_age_week: fullUserData.currentAgeWeek
       },
       sorted_clusters: sortedClustersWithDetails,
-      personality_summary: sortingData.personality_summary,
-      development_notes: sortingData.development_notes,
+      personality_summary: parsedSortingData.personality_summary,
+      development_notes: parsedSortingData.development_notes,
     }, { status: 200 });
 
   } catch (error) {

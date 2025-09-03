@@ -276,7 +276,7 @@ export async function GET(req) {
       .from(SECTOR);
 
     // Merge sorting data with sector details
-    const sortedSectorsWithDetails = sortingData.sorted_sectors.map(sortedSector => {
+    const sortedSectorsWithDetails = JSON.parse(sortingData).sorted_sectors.map(sortedSector => {
       const sectorDetails = sectors.find(s => s.name === sortedSector.sector);
       return {
         ...sortedSector,
