@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
 import { db } from "@/utils";
-import { 
-  SECTOR_MBTI_RIASEC_COMBINATIONS, 
-  SECTOR, 
-  USER_DETAILS, 
-  QUIZ_SEQUENCES 
+import {
+  SECTOR_MBTI_RIASEC_COMBINATIONS,
+  SECTOR,
+  USER_DETAILS,
+  QUIZ_SEQUENCES,
 } from "@/utils/schema";
 import { eq, and } from "drizzle-orm";
 import { authenticate } from "@/lib/jwtMiddleware";
-import { 
-  generateSectorSorting, 
-  validateMBTI, 
-  validateRIASEC, 
-  validateClassLevel 
+import {
+  generateSectorSorting,
+  validateMBTI,
+  validateRIASEC,
+  validateClassLevel,
 } from "@/app/api/utils/generateSectorSorting";
 
 export const maxDuration = 300;
@@ -23,7 +23,7 @@ const waitWithBackoff = (attempt) => {
   const baseDelay = 1000; // 1 second
   const maxDelay = 10000; // 10 seconds
   const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
-  return new Promise(resolve => setTimeout(resolve, delay));
+  return new Promise((resolve) => setTimeout(resolve, delay));
 };
 
 // Helper function to wait for generation completion
@@ -31,70 +31,80 @@ const waitForGenerationCompletion = async (combinationId) => {
   const maxWaitTime = 5 * 60 * 1000; // 5 minutes
   const startTime = Date.now();
   let attempt = 0;
-  
+
   while (Date.now() - startTime < maxWaitTime) {
     await waitWithBackoff(attempt);
     attempt++;
-    
+
     const [updatedStatus] = await db
       .select()
       .from(SECTOR_MBTI_RIASEC_COMBINATIONS)
       .where(eq(SECTOR_MBTI_RIASEC_COMBINATIONS.id, combinationId));
-    
+
     if (updatedStatus) {
       const status = updatedStatus.generation_status;
-      
-      if (status === 'completed') {
-        console.log('Sector sorting generation completed by another request');
+
+      if (status === "completed") {
+        console.log("Sector sorting generation completed by another request");
         return updatedStatus;
-      } else if (status === 'failed') {
-        throw new Error('Sector sorting generation failed by another request');
+      } else if (status === "failed") {
+        throw new Error("Sector sorting generation failed by another request");
       }
     }
   }
-  
-  throw new Error('Sector sorting generation timed out');
+
+  throw new Error("Sector sorting generation timed out");
 };
 
 // Helper function to handle failed generation with atomic retry
-const handleFailedGeneration = async (combinationId, mbtiType, riasecCode, classLevel, userId) => {
+const handleFailedGeneration = async (
+  combinationId,
+  mbtiType,
+  riasecCode,
+  classLevel,
+  userId
+) => {
   try {
     // Use atomic update to claim the retry
     await db
       .update(SECTOR_MBTI_RIASEC_COMBINATIONS)
-      .set({ 
-        generation_status: 'in_progress',
-        generated_by: userId 
+      .set({
+        generation_status: "in_progress",
+        generated_by: userId,
       })
       .where(
         and(
           eq(SECTOR_MBTI_RIASEC_COMBINATIONS.id, combinationId),
-          eq(SECTOR_MBTI_RIASEC_COMBINATIONS.generation_status, 'failed')
+          eq(SECTOR_MBTI_RIASEC_COMBINATIONS.generation_status, "failed")
         )
       );
 
-    console.log('Attempting to retry failed sector sorting generation...');
-    
-    const sortingData = await generateSectorSorting(mbtiType, riasecCode, classLevel);
+    console.log("Attempting to retry failed sector sorting generation...");
+
+    const sortingData = await generateSectorSorting(
+      mbtiType,
+      riasecCode,
+      classLevel
+    );
 
     await db
       .update(SECTOR_MBTI_RIASEC_COMBINATIONS)
-      .set({ 
-        generation_status: 'completed',
-        sorted_sectors: sortingData
+      .set({
+        generation_status: "completed",
+        sorted_sectors: sortingData,
       })
       .where(eq(SECTOR_MBTI_RIASEC_COMBINATIONS.id, combinationId));
-    
-    console.log('Retry sector sorting generation completed successfully');
-    
+
+    console.log("Retry sector sorting generation completed successfully");
+
     return sortingData;
   } catch (error) {
     await db
       .update(SECTOR_MBTI_RIASEC_COMBINATIONS)
-      .set({ generation_status: 'failed' })
+      .set({ generation_status: "failed" })
       .where(eq(SECTOR_MBTI_RIASEC_COMBINATIONS.id, combinationId));
-    
-    console.error('Retry sector sorting generation failed:', error);
+
+    console.error("Retry sector sorting generation failed:", error);
     throw error;
   }
 };
@@ -113,7 +123,7 @@ export async function GET(req) {
     const userDetails = await db
       .select({
         grade: USER_DETAILS.grade,
-        scope_type: USER_DETAILS.scope_type
+        scope_type: USER_DETAILS.scope_type,
       })
       .from(USER_DETAILS)
       .where(eq(USER_DETAILS.id, userId));
@@ -126,10 +136,14 @@ export async function GET(req) {
     const scopeType = userDetails[0].scope_type;
 
     // Check if user is in sector scope
-    if (scopeType !== 'sector') {
-      return NextResponse.json({ 
-        message: "Sorted sectors are only available for users in sector scope" 
-      }, { status: 400 });
+    if (scopeType !== "sector") {
+      return NextResponse.json(
+        {
+          message:
+            "Sorted sectors are only available for users in sector scope",
+        },
+        { status: 400 }
+      );
     }
 
     // Get MBTI type from quiz sequences
@@ -145,14 +159,17 @@ export async function GET(req) {
       );
 
     if (!mbtiQuiz.length || !mbtiQuiz[0].type_sequence) {
-      return NextResponse.json({ 
-        message: "Please complete your personality assessment first" 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          message: "Please complete your personality assessment first",
+        },
+        { status: 400 }
+      );
     }
 
     const mbtiType = mbtiQuiz[0].type_sequence;
 
-    // Get RIASEC code from quiz sequences  
+    // Get RIASEC code from quiz sequences
     const riasecQuiz = await db
       .select({ type_sequence: QUIZ_SEQUENCES.type_sequence })
       .from(QUIZ_SEQUENCES)
@@ -165,24 +182,36 @@ export async function GET(req) {
       );
 
     if (!riasecQuiz.length || !riasecQuiz[0].type_sequence) {
-      return NextResponse.json({ 
-        message: "Please complete your interest assessment first" 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          message: "Please complete your interest assessment first",
+        },
+        { status: 400 }
+      );
     }
 
     const riasecCode = riasecQuiz[0].type_sequence;
 
     // Validate inputs
     if (!validateMBTI(mbtiType)) {
-      return NextResponse.json({ message: "Invalid MBTI type" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid MBTI type" },
+        { status: 400 }
+      );
     }
 
     if (!validateRIASEC(riasecCode)) {
-      return NextResponse.json({ message: "Invalid RIASEC code" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid RIASEC code" },
+        { status: 400 }
+      );
     }
 
     if (!validateClassLevel(classLevel)) {
-      return NextResponse.json({ message: "Invalid class level" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid class level" },
+        { status: 400 }
+      );
     }
 
     // Check if combination already exists
@@ -209,30 +238,37 @@ export async function GET(req) {
             riasec_code: riasecCode,
             class_level: classLevel,
             sorted_sectors: {},
-            generation_status: 'in_progress',
-            generated_by: userId
+            generation_status: "in_progress",
+            generated_by: userId,
           });
 
-        console.log('Created new sector combination record, starting generation...');
-        
+        console.log(
+          "Created new sector combination record, starting generation..."
+        );
+
         // Generate sorting data
-        sortingData = await generateSectorSorting(mbtiType, riasecCode, classLevel);
+        sortingData = await generateSectorSorting(
+          mbtiType,
+          riasecCode,
+          classLevel
+        );
 
         // Update with completed data
         await db
           .update(SECTOR_MBTI_RIASEC_COMBINATIONS)
-          .set({ 
-            generation_status: 'completed',
-            sorted_sectors: sortingData
+          .set({
+            generation_status: "completed",
+            sorted_sectors: sortingData,
           })
           .where(eq(SECTOR_MBTI_RIASEC_COMBINATIONS.id, insertResult.insertId));
 
-        console.log('Sector sorting generation completed successfully');
-
+        console.log("Sector sorting generation completed successfully");
       } catch (insertError) {
-        if (insertError.code === 'ER_DUP_ENTRY') {
+        if (insertError.code === "ER_DUP_ENTRY") {
           // Another request created the record, fetch it
-          console.log('Another request created sector combination record, fetching status...');
+          console.log(
+            "Another request created sector combination record, fetching status..."
+          );
           const [existingRecord] = await db
             .select()
             .from(SECTOR_MBTI_RIASEC_COMBINATIONS)
@@ -244,13 +280,21 @@ export async function GET(req) {
               )
             );
 
-          if (existingRecord.generation_status === 'completed') {
+          if (existingRecord.generation_status === "completed") {
             sortingData = existingRecord.sorted_sectors;
-          } else if (existingRecord.generation_status === 'in_progress') {
-            const completedRecord = await waitForGenerationCompletion(existingRecord.id);
+          } else if (existingRecord.generation_status === "in_progress") {
+            const completedRecord = await waitForGenerationCompletion(
+              existingRecord.id
+            );
             sortingData = completedRecord.sorted_sectors;
-          } else if (existingRecord.generation_status === 'failed') {
-            sortingData = await handleFailedGeneration(existingRecord.id, mbtiType, riasecCode, classLevel, userId);
+          } else if (existingRecord.generation_status === "failed") {
+            sortingData = await handleFailedGeneration(
+              existingRecord.id,
+              mbtiType,
+              riasecCode,
+              classLevel,
+              userId
+            );
           }
         } else {
           throw insertError;
@@ -259,42 +303,71 @@ export async function GET(req) {
     } else {
       // Handle existing combination
       const combination = existingCombination[0];
-      
-      if (combination.generation_status === 'completed') {
+
+      if (combination.generation_status === "completed") {
         sortingData = combination.sorted_sectors;
-      } else if (combination.generation_status === 'in_progress') {
-        const completedRecord = await waitForGenerationCompletion(combination.id);
+      } else if (combination.generation_status === "in_progress") {
+        const completedRecord = await waitForGenerationCompletion(
+          combination.id
+        );
         sortingData = completedRecord.sorted_sectors;
-      } else if (combination.generation_status === 'failed') {
-        sortingData = await handleFailedGeneration(combination.id, mbtiType, riasecCode, classLevel, userId);
+      } else if (combination.generation_status === "failed") {
+        sortingData = await handleFailedGeneration(
+          combination.id,
+          mbtiType,
+          riasecCode,
+          classLevel,
+          userId
+        );
       }
     }
 
     // Get full sector data
-    const sectors = await db
-      .select()
-      .from(SECTOR);
+    const sectors = await db.select().from(SECTOR);
 
-    // Merge sorting data with sector details
-    const sortedSectorsWithDetails = JSON.parse(sortingData).sorted_sectors.map(sortedSector => {
-      const sectorDetails = sectors.find(s => s.name === sortedSector.sector);
+    // Replace this section in your code (around line 206-220):
+
+    let parsedSortingData;
+    try {
+      parsedSortingData =
+        typeof sortingData === "string" ? JSON.parse(sortingData) : sortingData;
+    } catch (error) {
+      console.error("Error parsing sortingData:", error);
+      parsedSortingData = sortingData;
+    }
+
+    // Extract the sorted sectors array
+    const sortedSectorsArray = Array.isArray(parsedSortingData)
+      ? parsedSortingData
+      : parsedSortingData?.sorted_sectors || [];
+
+    // Map with sector details
+    const sortedSectorsWithDetails = sortedSectorsArray.map((sortedSector) => {
+      const sectorDetails = sectors.find(
+        (s) =>
+          s.name.trim().toLowerCase() ===
+          String(sortedSector.sector).trim().toLowerCase()
+      );
+
       return {
         ...sortedSector,
-        sector_details: sectorDetails
+        sector_details: sectorDetails || null,
       };
     });
 
-    return NextResponse.json({
-      sorted_sectors: sortedSectorsWithDetails,
-      personality_summary: sortingData.personality_summary,
-      development_notes: sortingData.development_notes,
-      user_profile: {
-        mbti_type: mbtiType,
-        riasec_code: riasecCode,
-        class_level: classLevel
-      }
-    }, { status: 200 });
-
+    return NextResponse.json(
+      {
+        sorted_sectors: sortedSectorsWithDetails,
+        personality_summary: sortingData.personality_summary,
+        development_notes: sortingData.development_notes,
+        user_profile: {
+          mbti_type: mbtiType,
+          riasec_code: riasecCode,
+          class_level: classLevel,
+        },
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching sorted sectors:", error);
     return NextResponse.json(
