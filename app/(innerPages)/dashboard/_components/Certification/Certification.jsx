@@ -183,7 +183,7 @@ function Certification({ selectedCareer }) {
               {item.certificationCompletedStatus === 'yes' ? (
                 <button
                     onClick={() => router.push(`/certification-results/${item.certificationId}`)}
-                    className="w-full sm:w-[150px] px-3 px-4 py-1.5 py-2 font-semibold text-xs text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-green-500"
+                    className="w-full sm:w-[150px] px-3  py-2 font-semibold text-xs text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-green-500"
                 >
                     View Certification
                 </button>

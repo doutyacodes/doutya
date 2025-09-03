@@ -99,149 +99,190 @@ export const dynamic = 'force-dynamic';
     };
 
     // Roadmap prompt
-    export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1, type2, age, currentAgeWeek, language, languageOptions) => {
-        const educationData = await getUserEducationPromptData(userId);
-        
-        // const basePrompt = `Provide detailed information for the career named "${career}" based on the following criteria:
-        // - Personality Type: ${type1}
-        // - RIASEC Interest Types: ${type2}
-        
-        // For this career, include the following information:
-        // - career_name: A brief title of the career.
-        // - reason_for_recommendation: Why this career is suitable for someone with these interests.
-        // - present_trends: Current trends and opportunities in the field.
-        // - future_prospects: Predictions and potential growth in this career.
-        // - user_description: A narrative description of the personality traits, strengths, and preferences of the user that make this career a good fit, written in full-text format.
-        // - roadmap: Create a step-by-step roadmap containing academics, extracurricular activities, and other activities for a ${age}-year-old (currently in week ${currentAgeWeek} of this age) until the age of ${age + 1}-year-old aspiring to be a ${career} for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}'. 
-        
-        // The roadmap should be broken down into **intervals of every 2 months** (i.e., ${age}, ${age + 0.2}, ${age + 0.4}, ${age + 0.6}, ${age + 0.8}, ${age + 0.10}, ${age + 1}), and milestones must be provided for **each 2-month interval**. Ensure that each interval includes:
+    // export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1, type2, age, currentAgeWeek, language, languageOptions) => {
+    //     const educationData = await getUserEducationPromptData(userId);
+    //     const getLabel = (scopeType, careerLabel) => {
+    //         if (scopeType === "career") return `aspiring to be a ${careerLabel}`;
+    //         if (scopeType === "cluster") return `exploring the cluster "${careerLabel}"`;
+    //         if (scopeType === "sector") return `navigating the sector "${careerLabel}"`;
+    //       };
+          
+    //       const getTitle = (scopeType) => {
+    //         if (scopeType === "career") return "career";
+    //         if (scopeType === "cluster") return "cluster";
+    //         if (scopeType === "sector") return "sector";
+    //       };
+          
+    //       const basePrompt = `You are tasked with generating a personalized roadmap and guidance based on the user's current career exploration progress.
+          
+    //       The user's current exploration scope is: **${scopeType}**
+          
+    //       This scope refers to:
+    //       - **Sector**: A broad domain of related professional paths (e.g., health, technology, education) that includes various clusters and careers.
+    //       - **Cluster**: A group of closely related careers or disciplines within a sector.
+    //       - **Career**: A specific job or role a person can prepare for directly.
+          
+    //       Currently, we are generating the roadmap for the given **${getTitle(scopeType)}** named **"${scopeName}"**.
+          
+    //       The roadmap must consider:
+    //       - Personality Type: ${type1}
+    //       - RIASEC Interest Types: ${type2}
+          
+    //       For this ${getTitle(scopeType)}, include the following information:
+    //       - career_name: A brief title of the ${getTitle(scopeType)}.
+    //       - reason_for_recommendation: Why this ${getTitle(scopeType)} fits someone with these interests.
+    //       - present_trends: Current trends and opportunities in this ${getTitle(scopeType)}.
+    //       - future_prospects: Predictions and potential growth in this ${getTitle(scopeType)}.
+    //       - user_description: A narrative of the user's traits and how they align with this ${getTitle(scopeType)}.
+          
+    //       Now, create a step-by-step roadmap specifically tailored for ${getLabel(scopeType, scopeName)} until the age of ${age + 1}-year-old for an individual who has an interest in ${type2}, starting from age ${age} (currently in week ${currentAgeWeek}), broken down into **2-month intervals**:
+    //       (${age}, ${age + 0.2}, ${age + 0.4}, ${age + 0.6}, ${age + 0.8}, ${age + 1})
+          
+    //       Each interval must contain:
+    //       1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
+    //       2. **Physical Milestones**
+    //       3. **Mental Milestones**
+
+    //      Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
+
+    //      The **Educational Milestones** should include:
+    //     - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the selected ${scopeType === "career" ? "career" : scopeType === "cluster" ? "cluster" : "sector"}.
+    //     - **Certification Milestones**: These should be general certifications relevant to the selected ${scopeType === "career" ? "career named \"" + scopeName + "\"" : scopeType === "cluster" ? "cluster \"" + scopeName + "\"" : "sector \"" + scopeName + "\""}, and **must not be tied to private companies, organizations, or vendors like CompTIA, Microsoft, etc.** Only include the name of the course (do not include the platform or organization offering the course).
+          
+    //       Each milestone group must include exactly **three items** and follow this format:
+          
+    //     {
+    //         "age": <age>,
+    //         "milestones": {
+    //             "Educational Milestones": {
+    //             "Academic Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+    //             "Certification Milestones": [
+    //                 {
+    //                 "milestone_description": "<description1>",
+    //                 "certification_course_name": "<certification_name1>"
+    //                 },
+    //                 {
+    //                 "milestone_description": "<description2>",
+    //                 "certification_course_name": "<certification_name2>"
+    //                 },
+    //                 {
+    //                 "milestone_description": "<description3>",
+    //                 "certification_course_name": "<certification_name3>"
+    //                 }
+    //             ]
+    //             },
+    //             "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+    //             "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
+    //         }
+    //     }
+          
+    //       Guidelines:
+    //       - If the ${getTitle(scopeType)} is a **career**, give a full detailed roadmap as above.
+    //       - If it is a **cluster**, follow the exact same format but ensure milestones are **structured and versatile** (not limited to a single role).
+    //       - If it is a **sector**, follow the same format but make the milestones **simpler and more general** (broadly applicable to many paths).
+          
+    //       Ensure the final output is valid JSON and structured cleanly. Use the following language: ${languageOptions[language] || 'English'}.
+    //       `;
+          
+    //     return enhancePromptWithEducation(basePrompt, educationData);
+    // };
+
+    // Updated Roadmap prompt
+export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1, type2, classLevel, currentMonth, language, languageOptions, sectorDescription=null) => {
+    const educationData = await getUserEducationPromptData(userId);
+    const getLabel = (scopeType, careerLabel) => {
+        if (scopeType === "career") return `aspiring to be a ${careerLabel}`;
+        if (scopeType === "cluster") return `exploring the cluster "${careerLabel}"`;
+        if (scopeType === "sector") return `navigating the sector "${careerLabel}"`;
+    };
     
-        // 1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
-        // 2. Physical Milestones
-        // 3. Mental Milestones
+    const getTitle = (scopeType) => {
+        if (scopeType === "career") return "career";
+        if (scopeType === "cluster") return "cluster";
+        if (scopeType === "sector") return "sector";
+    };
     
-        // Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
+    const basePrompt = `You are tasked with generating a personalized roadmap and guidance based on the user's current career exploration progress.
     
-        // The **Educational Milestones** should include:
-        // - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the career (such as industry-standard certifications).
-        // - **Certification Milestones**: These should be general certifications relevant to the career named "${career}", and **must not be tied to private companies, organizations, or vendors like CompTIA, Microsoft, etc..**. Only include the name of the course (do not include the platform or organization offering the course).
+    The user's current exploration scope is: **${scopeType}**
     
-        // Each milestone should be structured as follows:
-        // {
-        // "age": <age>,
-        // "milestones": {
-        //     "Educational Milestones": {
-        //     "Academic Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-        //     "Certification Milestones": [
-        //         {
-        //         "milestone_description": "<description1>",
-        //         "certification_course_name": "<certification_name1>"
-        //         },
-        //         {
-        //         "milestone_description": "<description2>",
-        //         "certification_course_name": "<certification_name2>"
-        //         },
-        //         {
-        //         "milestone_description": "<description3>",
-        //         "certification_course_name": "<certification_name3>"
-        //         }
-        //     ]
-        //     },
-        //     "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-        //     "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
-        // }
-        // }
+    This scope refers to:
+    - **Sector**: A broad domain of related professional paths (e.g., health, technology, education) that includes various clusters and careers.
+    - **Cluster**: A group of closely related careers or disciplines within a sector.
+    - **Career**: A specific job or role a person can prepare for directly.
     
-        // Ensure that the response is valid JSON, using the specified field names. Provide the response ${languageOptions[language] || 'in English'}.`;
+    Currently, we are generating the roadmap for the given **${getTitle(scopeType)}** named **"${scopeName}"**.
+    
+    The roadmap must consider:
+    - Personality Type: ${type1}
+    ${type2 ? `- RIASEC Interest Types: ${type2}` : ''}
+    - Current Class Level: ${classLevel}
+    - Current Month: ${currentMonth}
+    ${sectorDescription ? `\n    **Sector Description:** ${sectorDescription}\n` : ''}
+    
+    For this ${getTitle(scopeType)}, include the following information:
+    - career_name: A brief title of the ${getTitle(scopeType)}.
+    - reason_for_recommendation: Why this ${getTitle(scopeType)} fits someone with these interests.
+    - present_trends: Current trends and opportunities in this ${getTitle(scopeType)}.
+    - future_prospects: Predictions and potential growth in this ${getTitle(scopeType)}.
+    - user_description: A narrative of the user's traits and how they align with this ${getTitle(scopeType)}.
+    
+    Now, create a step-by-step roadmap specifically tailored for ${getLabel(scopeType, scopeName)} for a Class ${classLevel} student, broken down into **2-month intervals** for one year:
+    (Interval 1, Interval 2, Interval 3, Interval 4, Interval 5, Interval 6)
+    
+    Each interval must contain:
+    1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
+    2. **Physical Milestones**
+    3. **Mental Milestones**
+
+    Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
+
+    The **Educational Milestones** should include:
+    - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the selected ${scopeType === "career" ? "career" : scopeType === "cluster" ? "cluster" : "sector"}.
+    - **Certification Milestones**: These should be general certifications relevant to the selected ${scopeType === "career" ? "career named \"" + scopeName + "\"" : scopeType === "cluster" ? "cluster \"" + scopeName + "\"" : "sector \"" + scopeName + "\""}, and **must not be tied to private companies, organizations, or vendors like CompTIA, Microsoft, etc.** Only include the name of the course (do not include the platform or organization offering the course).
       
-        const getLabel = (scopeType, careerLabel) => {
-            if (scopeType === "career") return `aspiring to be a ${careerLabel}`;
-            if (scopeType === "cluster") return `exploring the cluster "${careerLabel}"`;
-            if (scopeType === "sector") return `navigating the sector "${careerLabel}"`;
-          };
-          
-          const getTitle = (scopeType) => {
-            if (scopeType === "career") return "career";
-            if (scopeType === "cluster") return "cluster";
-            if (scopeType === "sector") return "sector";
-          };
-          
-          const basePrompt = `You are tasked with generating a personalized roadmap and guidance based on the user's current career exploration progress.
-          
-          The user's current exploration scope is: **${scopeType}**
-          
-          This scope refers to:
-          - **Sector**: A broad domain of related professional paths (e.g., health, technology, education) that includes various clusters and careers.
-          - **Cluster**: A group of closely related careers or disciplines within a sector.
-          - **Career**: A specific job or role a person can prepare for directly.
-          
-          Currently, we are generating the roadmap for the given **${getTitle(scopeType)}** named **"${scopeName}"**.
-          
-          The roadmap must consider:
-          - Personality Type: ${type1}
-          - RIASEC Interest Types: ${type2}
-          
-          For this ${getTitle(scopeType)}, include the following information:
-          - career_name: A brief title of the ${getTitle(scopeType)}.
-          - reason_for_recommendation: Why this ${getTitle(scopeType)} fits someone with these interests.
-          - present_trends: Current trends and opportunities in this ${getTitle(scopeType)}.
-          - future_prospects: Predictions and potential growth in this ${getTitle(scopeType)}.
-          - user_description: A narrative of the user's traits and how they align with this ${getTitle(scopeType)}.
-          
-          Now, create a step-by-step roadmap specifically tailored for ${getLabel(scopeType, scopeName)} until the age of ${age + 1}-year-old for an individual who has an interest in ${type2}, starting from age ${age} (currently in week ${currentAgeWeek}), broken down into **2-month intervals**:
-          (${age}, ${age + 0.2}, ${age + 0.4}, ${age + 0.6}, ${age + 0.8}, ${age + 1})
-          
-          Each interval must contain:
-          1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
-          2. **Physical Milestones**
-          3. **Mental Milestones**
-
-         Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
-
-         The **Educational Milestones** should include:
-        - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the selected ${scopeType === "career" ? "career" : scopeType === "cluster" ? "cluster" : "sector"}.
-        - **Certification Milestones**: These should be general certifications relevant to the selected ${scopeType === "career" ? "career named \"" + scopeName + "\"" : scopeType === "cluster" ? "cluster \"" + scopeName + "\"" : "sector \"" + scopeName + "\""}, and **must not be tied to private companies, organizations, or vendors like CompTIA, Microsoft, etc.** Only include the name of the course (do not include the platform or organization offering the course).
-          
-          Each milestone group must include exactly **three items** and follow this format:
-          
-        {
-            "age": <age>,
-            "milestones": {
-                "Educational Milestones": {
+    Each milestone group must include exactly **three items** and follow this format:
+      
+    {
+        "interval": <interval_number>,
+        "milestones": {
+            "Educational Milestones": {
                 "Academic Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
                 "Certification Milestones": [
                     {
-                    "milestone_description": "<description1>",
-                    "certification_course_name": "<certification_name1>"
+                        "milestone_description": "<description1>",
+                        "certification_course_name": "<certification_name1>"
                     },
                     {
-                    "milestone_description": "<description2>",
-                    "certification_course_name": "<certification_name2>"
+                        "milestone_description": "<description2>",
+                        "certification_course_name": "<certification_name2>"
                     },
                     {
-                    "milestone_description": "<description3>",
-                    "certification_course_name": "<certification_name3>"
+                        "milestone_description": "<description3>",
+                        "certification_course_name": "<certification_name3>"
                     }
                 ]
-                },
-                "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-                "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
-            }
+            },
+            "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+            "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
         }
-          
-          Guidelines:
-          - If the ${getTitle(scopeType)} is a **career**, give a full detailed roadmap as above.
-          - If it is a **cluster**, follow the exact same format but ensure milestones are **structured and versatile** (not limited to a single role).
-          - If it is a **sector**, follow the same format but make the milestones **simpler and more general** (broadly applicable to many paths).
-          
-          Ensure the final output is valid JSON and structured cleanly. Use the following language: ${languageOptions[language] || 'English'}.
-          `;
-          
-        return enhancePromptWithEducation(basePrompt, educationData);
-    };
+    }
+      
+    Guidelines:
+    - If the ${getTitle(scopeType)} is a **career**, give a full detailed roadmap as above.
+    - If it is a **cluster**, follow the exact same format but ensure milestones are **structured and versatile** (not limited to a single role).
+    - If it is a **sector**, follow the same format but make the milestones **simpler and more general** (broadly applicable to many paths).
+    - All milestones should be appropriate for a Class ${classLevel} student.
+    - Focus on progressive skill building and age-appropriate activities.
+    
+    Ensure the final output is valid JSON and structured cleanly. Use the following language: ${languageOptions[language] || 'English'}.
+    `;
+    
+    return enhancePromptWithEducation(basePrompt, educationData);
+};
 
 
-    export const  generateSubjectsPrompt = async (userId, age, scopeName, type1, type2, country, currentAgeWeek, scopeType, className) => {
+    export const  generateSubjectsPrompt = async (userId, age, scopeName, type1, type2, country, currentAgeWeek, scopeType, className,sectorDescription) => {
 
         const educationData = await getUserEducationPromptData(userId);
     
@@ -258,38 +299,40 @@ export const dynamic = 'force-dynamic';
           };
           
        
-                const basePrompt = `For an individual who has an ${type1} personality type and RIASEC interest types of ${type2}, aged ${age} (currently in week ${currentAgeWeek} of this age), and studying in class ${className}, ${getLabel(
-                    scopeType,
-                    scopeName
-                )}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(
-                    scopeType
-                )}.
+        const basePrompt = `For an individual who has an ${type1} personality type and RIASEC interest types of ${type2}, aged ${age} (currently in week ${currentAgeWeek} of this age), and studying in class ${className}, ${getLabel(
+            scopeType,
+            scopeName
+        )}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(
+            scopeType
+        )}.
 
-                Focus specifically on subjects directly related to the ${getTitle(
-                    scopeType
-                )} of "${scopeName}", considering the educational standards of ${country}. 
+        Focus specifically on subjects directly related to the ${getTitle(
+            scopeType
+        )} of "${scopeName}", considering the educational standards of ${country}. 
+        ${sectorDescription ? `\n    **Sector Description:** ${sectorDescription}\n` : ''}
 
-                ⚠️ Very Important: 
-                - Ensure subjects are appropriate for the student’s current class level (${className}). 
-                - If class is between 5–8, recommend age-appropriate, introductory or foundational subjects. 
-                - If class is 9–12, suggest more advanced subjects relevant to the field. 
-                - If class is "college", include specialized and university-level subjects. 
-                - Avoid recommending subjects that are too advanced for their level. 
 
-                The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
+        ⚠️ Very Important: 
+        - Ensure subjects are appropriate for the student’s current class level (${className}). 
+        - If class is between 5–8, recommend age-appropriate, introductory or foundational subjects. 
+        - If class is 9–12, suggest more advanced subjects relevant to the field. 
+        - If class is "college", include specialized and university-level subjects. 
+        - Avoid recommending subjects that are too advanced for their level. 
 
-                Provide at least 5 to 10 key subjects relevant for this age and class, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
+        The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
 
-                {
-                "subject-data": ["Subject1", "Subject2", "Subject3", ...]
-                }
+        Provide at least 5 to 10 key subjects relevant for this age and class, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
 
-                Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective age and class, considering the ${getTitle(
-                    scopeType
-                )}'s requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
+        {
+        "subject-data": ["Subject1", "Subject2", "Subject3", ...]
+        }
 
-                return enhancePromptWithEducation(basePrompt, educationData);
-                };
+        Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective age and class, considering the ${getTitle(
+            scopeType
+        )}'s requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
+
+        return enhancePromptWithEducation(basePrompt, educationData);
+        };
 
     export const generateSubjectsTestsPrompt = async (
     userId,

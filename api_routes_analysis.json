@@ -1,0 +1,811 @@
+{
+  "api_routes_analysis": {
+    "total_route_files": 114,
+    "authentication_routes": {
+      "category": "User Authentication & Management",
+      "base_path": "/api/(auth)",
+      "routes": {
+        "/api/(auth)/login": {
+          "method": "POST",
+          "purpose": "User login with username/password",
+          "description": "Authenticates users, generates JWT tokens, determines navigation URL based on user progress and education stage",
+          "key_features": [
+            "Encrypted password validation",
+            "JWT token generation with user metadata",
+            "Navigation routing based on quiz completion and education status",
+            "Sets httpOnly cookies for security"
+          ],
+          "tables_used": ["USER_DETAILS", "QUIZ_SEQUENCES", "USER_EDUCATION_STAGE", "USER_CAREER"]
+        },
+        "/api/(auth)/user": {
+          "method": "POST", 
+          "purpose": "User registration/signup",
+          "description": "Creates new user accounts with scope type determination based on class/age",
+          "key_features": [
+            "Duplicate username/mobile validation",
+            "Automatic scope type assignment (career/cluster/sector) based on class",
+            "Password encryption",
+            "JWT token generation"
+          ],
+          "tables_used": ["USER_DETAILS"]
+        },
+        "/api/(auth)/quick-signup": {
+          "method": "POST",
+          "purpose": "Quick user registration process",
+          "description": "Streamlined signup flow for faster user onboarding"
+        },
+        "/api/(auth)/logout": {
+          "method": "POST",
+          "purpose": "User logout",
+          "description": "Invalidates user session and clears authentication tokens"
+        },
+        "/api/(auth)/getAllInstitutes": {
+          "method": "GET",
+          "purpose": "Get all educational institutions",
+          "description": "Returns list of schools/colleges for user selection during registration"
+        },
+        "/api/(auth)/getClassesByInstitute/[institutionId]": {
+          "method": "GET",
+          "purpose": "Get classes by institution",
+          "description": "Returns available classes for a specific educational institution"
+        },
+        "/api/(auth)/getDivisionsByClass/[classId]": {
+          "method": "GET", 
+          "purpose": "Get divisions by class",
+          "description": "Returns available divisions/sections for a specific class"
+        },
+        "/api/(auth)/getSchoolsData": {
+          "method": "GET",
+          "purpose": "Get schools data",
+          "description": "Returns comprehensive school/institution information"
+        }
+      }
+    },
+    "user_management_routes": {
+      "category": "User Data Management",
+      "routes": {
+        "/api/getUserData": {
+          "method": "GET",
+          "purpose": "Get authenticated user's complete profile data",
+          "description": "Returns user profile with decrypted sensitive fields and generates unique user key if not exists",
+          "key_features": [
+            "Field decryption for sensitive data",
+            "Unique user key generation",
+            "Complete profile information"
+          ],
+          "tables_used": ["USER_DETAILS", "USER_KEYS"]
+        },
+        "/api/getUserId": {
+          "method": "GET",
+          "purpose": "Get user ID from authentication",
+          "description": "Returns the current authenticated user's ID"
+        },
+        "/api/getUserAge": {
+          "method": "GET", 
+          "purpose": "Calculate and return user's age",
+          "description": "Calculates user age from birth date for age-appropriate content"
+        },
+        "/api/updateUser": {
+          "method": "POST",
+          "purpose": "Update user profile information",
+          "description": "Updates user details and personal information"
+        },
+        "/api/user/details": {
+          "method": "GET/POST",
+          "purpose": "User details management",
+          "description": "Get or update detailed user information"
+        },
+        "/api/user/education-profile": {
+          "method": "GET/POST",
+          "purpose": "Education profile management", 
+          "description": "Manage user's educational background and academic details"
+        },
+        "/api/user/update-plan": {
+          "method": "POST",
+          "purpose": "Update user subscription plan",
+          "description": "Updates user's plan type (base/pro)"
+        },
+        "/api/setCountry": {
+          "method": "POST",
+          "purpose": "Set user's country",
+          "description": "Updates user's country information for localization"
+        },
+        "/api/education-details": {
+          "method": "POST",
+          "purpose": "Save education details",
+          "description": "Saves user's educational background and academic information"
+        }
+      }
+    },
+    "career_assessment_routes": {
+      "category": "Career Assessment & Recommendations",
+      "routes": {
+        "/api/getCareer": {
+          "method": "GET",
+          "purpose": "Get user's career recommendations",
+          "description": "Returns detailed career recommendations with personality analysis, milestones, and strengths/weaknesses",
+          "key_features": [
+            "Career recommendations with reasoning",
+            "MBTI personality analysis integration", 
+            "Age-appropriate milestone filtering",
+            "Strength/weakness analysis from RESULTS1 table"
+          ],
+          "tables_used": ["USER_CAREER", "CAREER_GROUP", "QUIZ_SEQUENCES", "MILESTONES", "RESULTS1", "USER_DETAILS"]
+        },
+        "/api/getCareers": {
+          "method": "GET",
+          "purpose": "Get user's scope-based data (career/cluster/sector)",
+          "description": "Returns user's data based on their scope type with comprehensive information",
+          "key_features": [
+            "Multi-scope support (career/cluster/sector)",
+            "Week-based progress tracking",
+            "Quiz completion status",
+            "Age and plan type information"
+          ],
+          "tables_used": ["USER_DETAILS", "USER_CAREER", "USER_SECTOR", "USER_CLUSTER", "CAREER_GROUP", "SECTOR", "CLUSTER"]
+        },
+        "/api/getCareerName/[careerGrpId]": {
+          "method": "GET",
+          "purpose": "Get career name by ID",
+          "description": "Returns career name for a specific career group ID"
+        },
+        "/api/getCareerPath/[userCareerId]": {
+          "method": "GET",
+          "purpose": "Get detailed career path information",
+          "description": "Returns comprehensive career path with education, skills, and progression details"
+        },
+        "/api/saveCareers": {
+          "method": "POST",
+          "purpose": "Save user's selected careers",
+          "description": "Saves user's career choices and preferences"
+        },
+        "/api/saveInterestedCareers": {
+          "method": "POST",
+          "purpose": "Save user's interested careers",
+          "description": "Saves careers user has expressed interest in"
+        },
+        "/api/CareerQuizResult": {
+          "method": "GET/POST",
+          "purpose": "Career quiz results management",
+          "description": "Handles career assessment quiz results and scoring"
+        },
+        "/api/getResult2Career": {
+          "method": "GET",
+          "purpose": "Get advanced career results",
+          "description": "Returns comprehensive career analysis and recommendations"
+        }
+      }
+    },
+    "quiz_assessment_routes": {
+      "category": "Quiz & Assessment System",
+      "routes": {
+        "/api/quizProgress": {
+          "method": "POST",
+          "purpose": "Save quiz progress",
+          "description": "Records user's progress in analytical quizzes with question responses",
+          "key_features": [
+            "Prevents duplicate responses",
+            "Creates quiz sequences",
+            "Tracks user progress through questions"
+          ],
+          "tables_used": ["QUIZ_SEQUENCES", "USER_PROGRESS"]
+        },
+        "/api/getPersonalityData/[quizId]": {
+          "method": "GET",
+          "purpose": "Get personality quiz questions",
+          "description": "Returns personality assessment questions for adults"
+        },
+        "/api/getPersonalityDataKids/[quizId]": {
+          "method": "GET", 
+          "purpose": "Get personality quiz questions for kids",
+          "description": "Returns age-appropriate personality assessment questions for children"
+        },
+        "/api/getQuizData/[quizId]": {
+          "method": "GET",
+          "purpose": "Get general quiz data",
+          "description": "Returns quiz questions and structure for analytical assessments"
+        },
+        "/api/getQuizDataKids/[quizId]": {
+          "method": "GET",
+          "purpose": "Get quiz data for kids",
+          "description": "Returns age-appropriate quiz questions for children"
+        },
+        "/api/getStrengthsQuizData/[quizId]": {
+          "method": "GET",
+          "purpose": "Get strengths assessment quiz",
+          "description": "Returns questions for strengths-based personality assessment"
+        },
+        "/api/quizResult": {
+          "method": "GET/POST",
+          "purpose": "Quiz results processing",
+          "description": "Processes and stores quiz results"
+        },
+        "/api/carrierQuizProgress": {
+          "method": "POST",
+          "purpose": "Career quiz progress tracking",
+          "description": "Tracks progress through career-specific quiz questions"
+        },
+        "/api/strengthQuizProgress": {
+          "method": "POST",
+          "purpose": "Strengths quiz progress tracking", 
+          "description": "Records progress through strengths assessment questions"
+        },
+        "/api/StrengthQuizResult": {
+          "method": "GET/POST",
+          "purpose": "Strengths quiz results",
+          "description": "Processes and returns strengths assessment results"
+        },
+        "/api/getresult2": {
+          "method": "GET",
+          "purpose": "Get assessment results level 2",
+          "description": "Returns advanced assessment results and analysis"
+        },
+        "/api/getresult3": {
+          "method": "GET",
+          "purpose": "Get assessment results level 3",
+          "description": "Returns comprehensive assessment results"
+        },
+        "/api/getKidsResult": {
+          "method": "GET", 
+          "purpose": "Get assessment results for kids",
+          "description": "Returns age-appropriate assessment results for children"
+        }
+      }
+    },
+    "testing_routes": {
+      "category": "Skills Testing & Subject Assessment",
+      "base_path": "/api/(tests)",
+      "routes": {
+        "/api/(tests)/getTestData/[subjectId]": {
+          "method": "GET",
+          "purpose": "Get skill test questions with dynamic generation",
+          "description": "Returns test questions for subjects with intelligent generation system for week 1 users",
+          "key_features": [
+            "Dynamic test generation using AI",
+            "Race condition prevention with generation status tracking",
+            "Week-based test availability logic",
+            "Age and class-based question filtering"
+          ],
+          "tables_used": ["SUBJECTS", "TESTS", "TEST_QUESTIONS", "TEST_ANSWERS", "USER_DETAILS", "GENERATION_STATUS"]
+        },
+        "/api/(tests)/getSubjects/[careerGrpId]": {
+          "method": "GET",
+          "purpose": "Get subjects for career",
+          "description": "Returns available subjects for testing based on career group"
+        },
+        "/api/(tests)/getTests/[careerGrpId]": {
+          "method": "GET",
+          "purpose": "Get available tests",
+          "description": "Returns tests available for a specific career group"
+        },
+        "/api/(tests)/saveTestProgress": {
+          "method": "POST",
+          "purpose": "Save test progress and scores",
+          "description": "Records user's test responses and calculates scores"
+        },
+        "/api/(tests)/getTestResults": {
+          "method": "GET",
+          "purpose": "Get test results",
+          "description": "Returns user's test performance and scores"
+        },
+        "/api/(tests)/getTestResultData": {
+          "method": "GET",
+          "purpose": "Get detailed test result data",
+          "description": "Returns comprehensive test performance analytics"
+        },
+        "/api/(tests)/getSkillTestData/[subjectId]": {
+          "method": "GET",
+          "purpose": "Get skill-specific test data", 
+          "description": "Returns skill assessment test questions"
+        },
+        "/api/(tests)/skillTestProgress": {
+          "method": "POST",
+          "purpose": "Save skill test progress",
+          "description": "Records progress in skill-based assessments"
+        },
+        "/api/(tests)/updateTestData": {
+          "method": "POST",
+          "purpose": "Update test information",
+          "description": "Updates test configurations and settings"
+        },
+        "/api/(tests)/updateSkillTestData": {
+          "method": "POST",
+          "purpose": "Update skill test data",
+          "description": "Updates skill assessment test configurations"
+        }
+      }
+    },
+    "certification_routes": {
+      "category": "Certification & Course Management",
+      "base_path": "/api/(certification)",
+      "routes": {
+        "/api/(certification)/getCertificationTest/[certificationId]": {
+          "method": "GET",
+          "purpose": "Get certification test questions with dynamic course generation",
+          "description": "Returns certification quiz questions with AI-powered course generation for new certifications",
+          "key_features": [
+            "Multi-scope certification support (career/cluster/sector)",
+            "Dynamic course generation using AI",
+            "Progress tracking and completion status",
+            "Level-based question difficulty (beginner/intermediate/advanced)"
+          ],
+          "tables_used": ["CERTIFICATIONS", "CERTIFICATION_QUIZ", "CERTIFICATION_QUIZ_OPTIONS", "USER_CERTIFICATION_COMPLETION", "TOPICS_COVERED"]
+        },
+        "/api/(certification)/saveCertificationTestProgress": {
+          "method": "POST",
+          "purpose": "Save certification test progress",
+          "description": "Records user's progress through certification quizzes"
+        },
+        "/api/(certification)/getCertificationResult/[certificationId]": {
+          "method": "GET",
+          "purpose": "Get certification results",
+          "description": "Returns certification completion results and scores"
+        },
+        "/api/(certification)/updateCertificationTest": {
+          "method": "POST",
+          "purpose": "Update certification test data", 
+          "description": "Updates certification test configurations"
+        },
+        "/api/(certification)/share": {
+          "method": "GET/POST",
+          "purpose": "Share certification",
+          "description": "Handles certification sharing functionality"
+        },
+        "/api/(certification-course)/get-course/[courseId]": {
+          "method": "GET",
+          "purpose": "Get course details",
+          "description": "Returns detailed course information and structure"
+        },
+        "/api/(certification-course)/get-course-data/[courseId]": {
+          "method": "GET",
+          "purpose": "Get comprehensive course data",
+          "description": "Returns complete course data including lessons and materials"
+        },
+        "/api/(certification-course)/updateCertificationStatus": {
+          "method": "POST",
+          "purpose": "Update certification status",
+          "description": "Updates user's certification progress and completion status"
+        }
+      }
+    },
+    "roadmap_routes": {
+      "category": "Career Roadmap & Milestones",
+      "base_path": "/api/(Career-Roadmap)",
+      "routes": {
+        "/api/(Career-Roadmap)/getRoadmapData/[userCareerID]": {
+          "method": "GET",
+          "purpose": "Get career roadmap with milestone generation",
+          "description": "Returns career roadmap data with intelligent milestone generation for different scope types",
+          "key_features": [
+            "Multi-scope roadmap support (career/cluster/sector)",
+            "Class and month-based milestone filtering",
+            "Dynamic roadmap generation for clusters/careers",
+            "Automatic user milestone linking for sectors"
+          ],
+          "tables_used": ["USER_MILESTONES", "MILESTONES", "MILESTONE_CATEGORIES", "CERTIFICATIONS", "USER_CERTIFICATION_COMPLETION"]
+        },
+        "/api/(Career-Roadmap)/updateMileStoneStatus": {
+          "method": "POST",
+          "purpose": "Update milestone completion status",
+          "description": "Updates user's progress on career milestones"
+        }
+      }
+    },
+    "mentorship_routes": {
+      "category": "Mentorship & Guidance System",
+      "base_path": "/api/mentors",
+      "routes": {
+        "/api/mentors/browse": {
+          "method": "GET/POST",
+          "purpose": "Browse and follow/unfollow mentors",
+          "description": "Comprehensive mentor discovery with search, filtering, and relationship management",
+          "key_features": [
+            "Advanced search and filtering",
+            "Popular professions tracking",
+            "Follow/unfollow functionality",
+            "Pagination support",
+            "Skills aggregation"
+          ],
+          "tables_used": ["MENTOR_PROFILES", "MENTOR_SKILLS", "USER_MENTOR_RELATIONSHIPS"]
+        },
+        "/api/mentors/profile/[mentorId]": {
+          "method": "GET",
+          "purpose": "Get mentor profile details",
+          "description": "Returns detailed mentor profile information"
+        },
+        "/api/mentors/mentor/[mentorId]/get-mentor": {
+          "method": "GET",
+          "purpose": "Get specific mentor information",
+          "description": "Returns mentor details and availability"
+        },
+        "/api/mentors/mentor/[mentorId]/availability-slots": {
+          "method": "GET",
+          "purpose": "Get mentor availability slots",
+          "description": "Returns available time slots for mentor sessions"
+        },
+        "/api/mentors/sessions/book-one-on-one": {
+          "method": "POST",
+          "purpose": "Book one-on-one mentor session",
+          "description": "Books individual mentoring sessions"
+        },
+        "/api/mentors/sessions/one-on-one/[mentorId]/messages": {
+          "method": "GET/POST",
+          "purpose": "Mentor session messaging",
+          "description": "Handles messaging in one-on-one sessions"
+        },
+        "/api/mentors/questions/sessions/[mentorId]/ask": {
+          "method": "POST",
+          "purpose": "Ask mentor questions",
+          "description": "Submits questions to mentors in Q&A format"
+        },
+        "/api/mentors/questions/daily-limit": {
+          "method": "GET",
+          "purpose": "Check daily question limits",
+          "description": "Returns user's daily question limits with mentors"
+        }
+      }
+    },
+    "community_routes": {
+      "category": "Community & Social Features", 
+      "base_path": "/api/(community)",
+      "routes": {
+        "/api/(community)/addPostToCommunity": {
+          "method": "POST",
+          "purpose": "Create community posts",
+          "description": "Handles creation of text, image, and video posts in communities",
+          "key_features": [
+            "Multi-media post support (text/image/video)",
+            "File upload integration",
+            "Community-specific posting"
+          ],
+          "tables_used": ["COMMUNITY_POST"]
+        },
+        "/api/(community)/getCommunityPosts/[communityId]": {
+          "method": "GET",
+          "purpose": "Get community posts",
+          "description": "Returns posts from a specific community"
+        },
+        "/api/(community)/addPostLike": {
+          "method": "POST",
+          "purpose": "Like community posts",
+          "description": "Handles post likes and engagement"
+        },
+        "/api/(community)/addPostComment": {
+          "method": "POST",
+          "purpose": "Comment on community posts", 
+          "description": "Handles commenting on community posts"
+        },
+        "/api/(community)/getAllCareerCommunity": {
+          "method": "GET",
+          "purpose": "Get all career communities",
+          "description": "Returns available career-based communities"
+        },
+        "/api/(community)/getUserCommunity": {
+          "method": "GET",
+          "purpose": "Get user's communities",
+          "description": "Returns communities user has joined"
+        }
+      }
+    },
+    "company_routes": {
+      "category": "Corporate Challenges & Partnerships",
+      "base_path": "/api/(companies)",
+      "routes": {
+        "/api/(companies)/fetchCompany": {
+          "method": "POST",
+          "purpose": "Get all companies",
+          "description": "Returns list of all registered companies for corporate challenges",
+          "tables_used": ["COMPANIES"]
+        },
+        "/api/(companies)/fetchCompany/fetchOneCompany": {
+          "method": "GET",
+          "purpose": "Get specific company details",
+          "description": "Returns detailed information about a specific company"
+        },
+        "/api/(companies)/fetchCompany/AddUserDepartment": {
+          "method": "POST",
+          "purpose": "Add user to company department",
+          "description": "Associates user with company department for challenges"
+        },
+        "/api/(companies)/fetchOneDepartment/fetchChallenges/challenges": {
+          "method": "GET",
+          "purpose": "Get department challenges",
+          "description": "Returns challenges available from company departments"
+        },
+        "/api/(companies)/fetchOneDepartment/fetchChallenges/submitQuizAnswer": {
+          "method": "POST",
+          "purpose": "Submit company challenge answers",
+          "description": "Handles submission of quiz answers for company challenges"
+        },
+        "/api/(companies)/challengeUpload": {
+          "method": "POST",
+          "purpose": "Upload challenge submissions",
+          "description": "Handles file uploads for company challenges"
+        }
+      }
+    },
+    "sectors_clusters_routes": {
+      "category": "Sectors & Clusters Management",
+      "routes": {
+        "/api/sectors": {
+          "method": "GET",
+          "purpose": "Get all available sectors",
+          "description": "Returns complete list of career sectors",
+          "tables_used": ["SECTOR"]
+        },
+        "/api/sectors/user-sectors": {
+          "method": "GET/POST",
+          "purpose": "Manage user sector preferences",
+          "description": "Gets or updates user's sector selections"
+        },
+        "/api/sectors/mbti-sectors/[type]": {
+          "method": "GET", 
+          "purpose": "Get sectors by MBTI type",
+          "description": "Returns sectors recommended for specific MBTI personality types"
+        },
+        "/api/sectors/career-data": {
+          "method": "GET",
+          "purpose": "Get sector career data",
+          "description": "Returns career information within sectors"
+        },
+        "/api/clusters/user-clusters": {
+          "method": "GET/POST",
+          "purpose": "Manage user cluster preferences",
+          "description": "Gets or updates user's cluster selections"
+        },
+        "/api/clusters/user-clusters/select": {
+          "method": "POST",
+          "purpose": "Select user clusters",
+          "description": "Finalizes user's cluster selections"
+        }
+      }
+    },
+    "contests_routes": {
+      "category": "Contests & Competitions",
+      "base_path": "/api/(contests)",
+      "routes": {
+        "/api/(contests)/getContests": {
+          "method": "GET",
+          "purpose": "Get available contests",
+          "description": "Returns list of available competitions and contests"
+        },
+        "/api/(contests)/getContestData/[contestId]": {
+          "method": "GET", 
+          "purpose": "Get specific contest details",
+          "description": "Returns detailed information about a contest"
+        },
+        "/api/(contests)/saveContestProgress": {
+          "method": "POST",
+          "purpose": "Save contest progress",
+          "description": "Records user progress in contests"
+        },
+        "/api/(contests)/getContestResultData": {
+          "method": "GET",
+          "purpose": "Get contest results",
+          "description": "Returns contest results and rankings"
+        },
+        "/api/(contests)/updateContestData": {
+          "method": "POST",
+          "purpose": "Update contest information",
+          "description": "Updates contest configurations"
+        }
+      }
+    },
+    "feedback_routes": {
+      "category": "Feedback & Analytics",
+      "base_path": "/api/(Feedbacks)",
+      "routes": {
+        "/api/feedback": {
+          "method": "POST",
+          "purpose": "Submit user feedback",
+          "description": "Handles general user feedback submission"
+        },
+        "/api/(Feedbacks)/getFeedBackData": {
+          "method": "GET",
+          "purpose": "Get feedback data",
+          "description": "Returns collected feedback data and analytics"
+        },
+        "/api/(Feedbacks)/getInitialFeedBack/[careerGrpId]": {
+          "method": "GET",
+          "purpose": "Get initial career feedback",
+          "description": "Returns initial feedback for career recommendations"
+        }
+      }
+    },
+    "activities_routes": {
+      "category": "Career Activities & Challenges",
+      "routes": {
+        "/api/getActivity/[careerGrpId]": {
+          "method": "GET",
+          "purpose": "Get career activities",
+          "description": "Returns activities and challenges for specific careers"
+        },
+        "/api/updateActivityStatus": {
+          "method": "POST",
+          "purpose": "Update activity progress",
+          "description": "Updates user's progress on career activities"
+        },
+        "/api/getChallenge/[careerGrpId]": {
+          "method": "GET",
+          "purpose": "Get career challenges",
+          "description": "Returns challenges specific to career groups"
+        },
+        "/api/submitChallenge": {
+          "method": "POST",
+          "purpose": "Submit challenge responses",
+          "description": "Handles submission of challenge completions"
+        },
+        "/api/getChallengesStatus": {
+          "method": "GET",
+          "purpose": "Get challenge completion status",
+          "description": "Returns user's progress on various challenges"
+        },
+        "/api/getLastSubmittedChallenge": {
+          "method": "GET",
+          "purpose": "Get last submitted challenge",
+          "description": "Returns user's most recent challenge submission"
+        }
+      }
+    },
+    "utility_routes": {
+      "category": "Utility & Support Services",
+      "routes": {
+        "/api/verify/verify-certificate": {
+          "method": "POST",
+          "purpose": "Verify certification authenticity",
+          "description": "Validates certification certificates using unique certificate IDs",
+          "key_features": [
+            "Certificate authenticity verification",
+            "Status validation (valid/invalid)",
+            "User details retrieval",
+            "Score and issue date verification"
+          ],
+          "tables_used": ["USER_CERTIFICATION_COMPLETION", "USER_DETAILS"]
+        },
+        "/api/career/news/[communityId]": {
+          "method": "GET",
+          "purpose": "Get career-related news",
+          "description": "Returns news and updates related to specific careers or communities"
+        },
+        "/api/cron/fetchNews": {
+          "method": "GET",
+          "purpose": "Automated news fetching (currently disabled)",
+          "description": "Cron job for fetching career-related news using AI (commented out in current implementation)"
+        },
+        "/api/getDashboardCheckData": {
+          "method": "GET",
+          "purpose": "Get dashboard validation data",
+          "description": "Returns data for dashboard access control and validation"
+        },
+        "/api/getIndustry": {
+          "method": "GET",
+          "purpose": "Get industry information",
+          "description": "Returns industry-related data and classifications"
+        },
+        "/api/test-types/check": {
+          "method": "GET",
+          "purpose": "Check test type availability",
+          "description": "Validates test type access and availability"
+        },
+        "/api/test-types/save": {
+          "method": "POST",
+          "purpose": "Save test type preferences",
+          "description": "Saves user's test type preferences and settings"
+        }
+      }
+    },
+    "institute_routes": {
+      "category": "Educational Institution Features",
+      "base_path": "/api/(Institute)",
+      "routes": {
+        "/api/(Institute)/createInstitutePost": {
+          "method": "POST",
+          "purpose": "Create institutional posts",
+          "description": "Allows educational institutions to create posts"
+        },
+        "/api/(Institute)/getAllInstitutePosts": {
+          "method": "GET",
+          "purpose": "Get all institutional posts", 
+          "description": "Returns posts from educational institutions"
+        }
+      }
+    },
+    "leaderboard_routes": {
+      "category": "Gamification & Leaderboards",
+      "base_path": "/api/(careerResults)",
+      "routes": {
+        "/api/(careerResults)/getLeaderboardData/[taskId]": {
+          "method": "GET",
+          "purpose": "Get leaderboard data",
+          "description": "Returns ranking and leaderboard information for specific tasks"
+        }
+      }
+    },
+    "key_system_features": {
+      "authentication_system": {
+        "jwt_based": true,
+        "features": [
+          "HTTP-only cookie storage",
+          "Scope-based access control",
+          "Encrypted password storage",
+          "Navigation routing based on user state"
+        ]
+      },
+      "ai_integration": {
+        "dynamic_content_generation": [
+          "Test question generation (GenerateTestQuiz)",
+          "Course content creation (GenerateCourse)", 
+          "Roadmap milestone generation (fetchAndSaveRoadmap)",
+          "News fetching (currently disabled)"
+        ],
+        "race_condition_prevention": true,
+        "generation_status_tracking": true
+      },
+      "scope_system": {
+        "types": ["career", "cluster", "sector"],
+        "age_based_assignment": {
+          "5-7_years": "sector",
+          "8-10_years": "cluster", 
+          "11+_years": "career"
+        },
+        "features": [
+          "Multi-scope data management",
+          "Scope-specific milestone generation",
+          "Age-appropriate content delivery"
+        ]
+      },
+      "assessment_system": {
+        "quiz_types": [
+          "Personality assessment (MBTI-based)",
+          "Strengths assessment", 
+          "Career aptitude tests",
+          "Subject skill tests",
+          "Certification quizzes"
+        ],
+        "progress_tracking": true,
+        "result_analysis": true,
+        "duplicate_prevention": true
+      },
+      "gamification_features": {
+        "elements": [
+          "Points and scoring system",
+          "Challenges and activities",
+          "Leaderboards",
+          "Certifications and badges",
+          "Progress milestones"
+        ]
+      },
+      "content_management": {
+        "dynamic_generation": true,
+        "multi_media_support": true,
+        "localization_ready": true,
+        "caching_mechanisms": true
+      }
+    },
+    "database_architecture": {
+      "primary_tables": 47,
+      "key_relationships": [
+        "USER_DETAILS as central user table",
+        "Scope-based data organization (career/cluster/sector)",
+        "Progressive assessment system",
+        "Milestone and certification tracking",
+        "Community and social features",
+        "Mentorship relationships"
+      ],
+      "data_security": [
+        "Field encryption for sensitive data",
+        "Unique user key generation",
+        "Certificate verification system",
+        "Authentication token management"
+      ]
+    },
+    "api_patterns": {
+      "authentication": "JWT-based with middleware",
+      "error_handling": "Standardized error responses",
+      "rate_limiting": "Built-in for AI generation",
+      "caching": "Generation status caching",
+      "validation": "Input validation and sanitization",
+      "pagination": "Supported in list endpoints"
+    }
+  }
+}

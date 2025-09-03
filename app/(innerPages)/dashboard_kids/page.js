@@ -18,6 +18,8 @@ export default function Dashboard() {
     const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] = useState(null);
     const [educationStageExists, setEducationStageExists] = useState(null);
     const [resultPageShown, setResultPageShown] = useState(null);
+    const [gradeData, setGradeData] = useState(null);
+    
 
   useEffect(() => {
     const authCheck = () => {
@@ -41,17 +43,34 @@ export default function Dashboard() {
       }, 1000);
 
       const timer = setTimeout(() => {
-        if (resultPageShown === false) {
-          router.replace("/user/results");
-        } else if (!educationStageExists) {
-            router.replace("/user/education-profile");
+        // if (resultPageShown === false) {
+        //   router.replace("/user/results");
+        // } else if (!educationStageExists) {
+        //     router.replace("/user/education-profile");
+        // } else if (!isInstitutionDetailsAdded) {
+        //     router.replace("/education-details");
+        // } else if (!isCountryAdded) {
+        //     console.log("else if");
+        //     router.replace("/country");
+        // } else {
+        //     router.replace("/dashboard_kids/sector-suggestion");
+        // }
+
+        if (!educationStageExists) {
+          router.replace("/user/education-profile");
         } else if (!isInstitutionDetailsAdded) {
             router.replace("/education-details");
-        } else if (!isCountryAdded) {
-            console.log("else if");
-            router.replace("/country");
-        } else {
-            router.replace("/dashboard_kids/sector-suggestion");
+        } 
+        // 2️⃣ Then go to kids/junior/career suggestion
+        else if (["8", "9", "10"].includes(gradeData)) {
+          router.replace("/dashboard_junior/cluster-suggestion");
+        } 
+        else if (["11", "12", "college"].includes(gradeData)) {
+          router.replace("/dashboard/careers/career-suggestions");
+        }
+        else {
+          // Default for younger kids
+          router.replace("/dashboard_kids/sector-suggestion");
         }
     }, 5000);
 
@@ -118,6 +137,7 @@ export default function Dashboard() {
             setIsInstitutionDetailsAdded={setIsInstitutionDetailsAdded}
             setEducationStageExists={setEducationStageExists}
             setResultPageShown={setResultPageShown}
+            setGradeData={setGradeData}
           />
           <style jsx>{`
             @keyframes bounce {

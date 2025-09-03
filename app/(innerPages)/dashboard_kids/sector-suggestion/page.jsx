@@ -1,7 +1,8 @@
 "use client"
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FaChevronRight, FaCheck, FaInfoCircle } from "react-icons/fa";
+import { FaChevronRight, FaCheck, FaInfoCircle, FaStar, FaMedal, FaTrophy } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import CareerStripe from "@/app/_components/CareerStripe";
 import ActionButtons from "@/app/_components/ActionButtons";
@@ -12,8 +13,10 @@ export default function SectorSelectionPage() {
     plan_type: "base"
   });
   const [sectors, setSectors] = useState([]);
-  const [matchingSectors, setMatchingSectors] = useState([]);
-  const [otherSectors, setOtherSectors] = useState([]);
+  const [sortedSectors, setSortedSectors] = useState([]);
+  const [personalitySummary, setPersonalitySummary] = useState("");
+  const [developmentNotes, setDevelopmentNotes] = useState("");
+  const [userProfile, setUserProfile] = useState(null);
   const [userSectors, setUserSectors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,7 +39,7 @@ export default function SectorSelectionPage() {
       try {
         setIsLoading(true);
         
-        // Fetch user data in a single call
+        // Fetch user data
         const userDataResponse = await fetch("/api/sectors/career-data", {
             method: "GET",
             headers: {
@@ -56,16 +59,8 @@ export default function SectorSelectionPage() {
           plan_type: userData.plan_type || "base"
         });
         
-        // Continue with sectors data fetching
-        const sectorsResponse = await fetch("/api/sectors", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        
-        const mbtiMappingResponse = await fetch(`/api/sectors/mbti-sectors/${userData.personality_type}`, {
+        // Fetch AI-powered sorted sectors
+        const sortedSectorsResponse = await fetch("/api/sectors/sorted-sectors", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -81,33 +76,24 @@ export default function SectorSelectionPage() {
             }
         });
         
-        if (!sectorsResponse.ok || !mbtiMappingResponse.ok || !userSectorsResponse.ok) {
-          throw new Error("Failed to fetch data");
+        if (!sortedSectorsResponse.ok || !userSectorsResponse.ok) {
+          throw new Error("Failed to fetch sectors data");
         }
         
-        const sectorsData = await sectorsResponse.json();
-        const mbtiMappingData = await mbtiMappingResponse.json();
+        const sortedSectorsData = await sortedSectorsResponse.json();
         const userSectorsData = await userSectorsResponse.json();
         
-        // Get matching sectors based on personality type
-        const matchingSectorIds = [
-          mbtiMappingData.sector_1_id,
-          mbtiMappingData.sector_2_id,
-          mbtiMappingData.sector_3_id
-        ];
-        
-        const matchingSectorsList = sectorsData.filter(sector => 
-          matchingSectorIds.includes(sector.id)
-        );
-        
-        const otherSectorsList = sectorsData.filter(sector => 
-          !matchingSectorIds.includes(sector.id)
-        );
-        
-        setSectors(sectorsData);
-        setMatchingSectors(matchingSectorsList);
-        setOtherSectors(otherSectorsList);
+        // Set sorted sectors data
+        setSortedSectors(sortedSectorsData.sorted_sectors || []);
+        setPersonalitySummary(sortedSectorsData.personality_summary || "");
+        setDevelopmentNotes(sortedSectorsData.development_notes || "");
+        setUserProfile(sortedSectorsData.user_profile || null);
         setUserSectors(userSectorsData);
+        
+        // Extract all sectors for reference
+        const allSectors = sortedSectorsData.sorted_sectors.map(s => s.sector_details).filter(Boolean);
+        setSectors(allSectors);
+        
       } catch (err) {
         console.error("Error fetching data:", err);
         setError("Failed to load sectors. Please try again later.");
@@ -121,8 +107,8 @@ export default function SectorSelectionPage() {
     }
   }, [token]);
 
-  const handleAddSector = (sector) => {
-    setConfirmingSector(sector);
+  const handleAddSector = (sortedSector) => {
+    setConfirmingSector(sortedSector);
   };
 
   const isSectorSelected = (sectorId) => {
@@ -143,9 +129,12 @@ export default function SectorSelectionPage() {
   const confirmAddSector = async () => {
     if (!confirmingSector) return;
   
+    const sectorDetails = confirmingSector.sector_details;
+    if (!sectorDetails) return;
+  
     // Check if sector is already added
-    if (userSectors.some(s => s.sector_id === confirmingSector.id)) {
-      toast.error(`${confirmingSector.name} is already in your selected sectors.`)
+    if (userSectors.some(s => s.sector_id === sectorDetails.id)) {
+      toast.error(`${sectorDetails.name} is already in your selected sectors.`)
       setConfirmingSector(null);
       return;
     }
@@ -168,8 +157,8 @@ export default function SectorSelectionPage() {
         },
         body: JSON.stringify({
           sectors: [{
-            sector_id: confirmingSector.id,
-            mbti_type: user.personality_type // Updated from mbti_type to personality_type
+            sector_id: sectorDetails.id,
+            mbti_type: user.personality_type
           }]
         }),
       });
@@ -181,16 +170,16 @@ export default function SectorSelectionPage() {
   
       // Update local state
       setUserSectors([...userSectors, {
-        sector_id: confirmingSector.id,
-        mbti_type: user.personality_type, // Updated from mbti_type to personality_type
-        name: confirmingSector.name
+        sector_id: sectorDetails.id,
+        mbti_type: user.personality_type,
+        name: sectorDetails.name
       }]);
 
-      toast.success(`${confirmingSector.name} has been added to your career sectors.`)
+      toast.success(`${sectorDetails.name} has been added to your career sectors.`)
   
       // If this is the first sector added, redirect to career guide page
       if (userSectors.length === 0) {
-        router.push("/dashboard/careers/career-guide");
+        router.push("/dashboard_kids");
       }
     } catch (err) {
       console.error("Error saving sector:", err);
@@ -228,9 +217,57 @@ export default function SectorSelectionPage() {
   return (
     <>
       <CareerStripe selectedItem={selectedCareer} setSelectedItem={setSelectedCareer}/>
-<div className="min-h-screen bg-[#1a1a24] text-gray-200 p-4 md:p-8">
-  <div className="max-w-7xl mx-auto">
-    <div className="mb-8">
+<div className="min-h-screen bg-gradient-to-br from-[#1a1a24] via-[#1e1e2e] to-[#1a1a24] text-gray-200 p-4 md:p-8 relative overflow-hidden">
+  {/* Animated background elements */}
+  <div className="fixed inset-0 pointer-events-none">
+    <motion.div
+      className="absolute top-20 left-10 w-72 h-72 bg-[#7824f6]/5 rounded-full blur-3xl"
+      animate={{
+        x: [0, 100, 0],
+        y: [0, 50, 0],
+        scale: [1, 1.2, 1]
+      }}
+      transition={{
+        duration: 8,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    />
+    <motion.div
+      className="absolute bottom-20 right-10 w-96 h-96 bg-[#06ffa5]/5 rounded-full blur-3xl"
+      animate={{
+        x: [0, -80, 0],
+        y: [0, -60, 0],
+        scale: [1.2, 1, 1.2]
+      }}
+      transition={{
+        duration: 10,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    />
+    <motion.div
+      className="absolute top-1/2 left-1/2 w-64 h-64 bg-[#ff6b6b]/5 rounded-full blur-3xl"
+      animate={{
+        x: [-50, 50, -50],
+        y: [-30, 30, -30],
+        scale: [1, 1.1, 1]
+      }}
+      transition={{
+        duration: 12,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    />
+  </div>
+  
+  <div className="max-w-7xl mx-auto relative z-10">
+    <motion.div 
+      className="mb-8"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
       {/* Title and Buttons on Same Line */}
       <div className="relative flex items-center mb-4">
         {/* Left spacer for balance */}
@@ -238,97 +275,262 @@ export default function SectorSelectionPage() {
         
         {/* Centered Title */}
         <div className="flex-1 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">Career Sector Selection</h1>
+          <motion.h1 
+            className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-300"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            AI-Powered Career Sector Selection
+          </motion.h1>
         </div>
         
         {/* Right side buttons */}
-        <div className="flex-1 flex justify-center sm:justify-end">
+        <motion.div 
+          className="flex-1 flex justify-center sm:justify-end"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
           <ActionButtons
             onViewReportClick={handleViewReportClick}
             onCertificateClick={handleCertificateClick}
           />
-        </div>
+        </motion.div>
       </div>
       
       {/* Subtitle and Description - Centered */}
-      <div className="text-center">
-        <p className="text-lg text-gray-300 mb-2">
-          Based on your personality assessment results
-        </p>
-        <p className="text-gray-400">
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+      >
+        <motion.p 
+          className="text-lg text-gray-300 mb-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          Intelligently sorted based on your personality assessment results
+        </motion.p>
+        {userProfile && (
+          <motion.div 
+            className="mb-2 text-sm text-gray-400"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <span className="text-[#7824f6] font-bold">Personality Assessment Completed</span> • 
+            <span className="text-[#7824f6] font-bold ml-1">Interest Assessment Completed</span> • 
+            Class <span className="text-[#7824f6] font-bold">{userProfile.class_level}</span>
+          </motion.div>
+        )}
+        <motion.p 
+          className="text-gray-400"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+        >
           Select sectors that interest you 
           {user.plan_type === "base" && (
             <span className="text-sm ml-1 text-yellow-400">
               (Base plan: up to 2 sectors | Pro plan: up to 5 sectors)
             </span>
           )}
-        </p>
-        <div className="mt-4 bg-[#292931] py-2 px-4 rounded-lg inline-block">
+        </motion.p>
+        <motion.div 
+          className="mt-4 bg-gradient-to-r from-[#292931] to-[#2d2d3a] py-2 px-4 rounded-xl inline-block border border-gray-800"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
+          whileHover={{ scale: 1.05 }}
+        >
           <p className="text-sm">
             Selected: <span className="font-bold text-[#7824f6]">{userSectors.length}</span> / 
             <span className="font-bold">{maxSelections}</span>
           </p>
-        </div>
-      </div>
-    </div>
-
-          {/* Matching Sectors Section - Updated title */}
-          <div className="mb-10">
-              <div className="flex items-center mb-6">
-                  <div className="h-px flex-1 bg-[#7824f6]"></div>
-                  <h2 className="text-2xl font-bold mx-4 text-[#7824f6]">Recommended Sectors For You</h2>
-                  <div className="h-px flex-1 bg-[#7824f6]"></div>
+        </motion.div>
+        
+        {/* Personality Summary */}
+        {personalitySummary && (
+          <motion.div 
+            className="mt-6 bg-gradient-to-r from-[#292931] to-[#2d2d3a] p-4 rounded-xl max-w-2xl mx-auto border border-gray-800 backdrop-blur-sm"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.9 }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <motion.h3 
+              className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#7824f6] to-[#9d4edd] mb-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.0 }}
+            >
+              Your Personality Profile
+            </motion.h3>
+            <motion.p 
+              className="text-sm text-gray-300"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1 }}
+            >
+              {personalitySummary}
+            </motion.p>
+          </motion.div>
+        )}
+        
+        {/* Development Notes */}
+        {developmentNotes && (
+          <motion.div 
+            className="mt-4 bg-gradient-to-r from-blue-900/30 to-indigo-900/30 border border-blue-700/50 p-4 rounded-xl max-w-2xl mx-auto backdrop-blur-sm"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1.0 }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="flex items-start">
+              <motion.div
+                animate={{ rotate: [0, 10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <FaInfoCircle className="text-blue-400 mr-2 mt-1 flex-shrink-0" />
+              </motion.div>
+              <div>
+                <motion.h4 
+                  className="text-blue-400 font-bold text-sm mb-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.1 }}
+                >
+                  Age-Appropriate Guidance
+                </motion.h4>
+                <motion.p 
+                  className="text-xs text-blue-300"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.2 }}
+                >
+                  {developmentNotes}
+                </motion.p>
               </div>
-          
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {matchingSectors.map((sector) => (
-                  <SectorCard 
-                      key={sector.id} 
-                      sector={sector} 
-                      isSelected={isSectorSelected(sector.id)}
-                      onAddClick={() => handleAddSector(sector)}
-                      recommended={true}
-                      accentColor="#7824f6"
-                  />
-                  ))}
-              </div>
-          </div>
+            </div>
+          </motion.div>
+        )}
+      </motion.div>
+    </motion.div>
 
-          {/* Other Sectors Section - With added explanation */}
-          <div className="mb-10">
-          <div className="flex items-center mb-6">
-              <div className="h-px flex-1 bg-gray-700"></div>
-              <h2 className="text-2xl font-bold mx-4 text-gray-400">Other Available Sectors</h2>
-              <div className="h-px flex-1 bg-gray-700"></div>
-          </div>
+          {/* AI-Sorted Sectors Section */}
+          <motion.div 
+            className="mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+              <motion.div 
+                className="text-center mb-8"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                  <div className="relative inline-block">
+                      <motion.h2 
+                        className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#7824f6] via-[#9d4edd] to-[#c77dff] mb-2"
+                        animate={{ 
+                          backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+                        }}
+                        transition={{ 
+                          duration: 3, 
+                          repeat: Infinity,
+                          ease: "linear"
+                        }}
+                        style={{
+                          backgroundSize: "200% 200%"
+                        }}
+                      >
+                        Top 3 Recommended Sectors
+                      </motion.h2>
+                      <motion.div
+                        className="absolute -inset-4 bg-gradient-to-r from-[#7824f6]/20 to-[#c77dff]/20 rounded-lg blur-xl"
+                        animate={{ 
+                          opacity: [0.3, 0.6, 0.3],
+                          scale: [1, 1.05, 1]
+                        }}
+                        transition={{ 
+                          duration: 2, 
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      />
+                  </div>
+                  <motion.p 
+                    className="text-gray-300 text-lg mt-4 max-w-2xl mx-auto"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                  >
+                      Your personalized career sectors, ranked by compatibility with your unique personality profile
+                  </motion.p>
+              </motion.div>
           
-          <p className="text-gray-400 text-center mb-6">
-              These sectors may not directly align with your personality assessment results, but you can still explore and add them if they interest you.
-          </p>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {otherSectors.map((sector) => (
-              <SectorCard 
-                  key={sector.id} 
-                  sector={sector} 
-                  isSelected={isSectorSelected(sector.id)}
-                  onAddClick={() => handleAddSector(sector)}
-                  recommended={false}
-                  accentColor="#4a4a57"
-              />
-              ))}
-          </div>
-          </div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                  <AnimatePresence>
+                      {sortedSectors.slice(0, 3).map((sortedSector, index) => (
+                      <motion.div
+                        key={sortedSector.sector_details?.id || index}
+                        initial={{ opacity: 0, y: 50, rotateY: 10 }}
+                        animate={{ opacity: 1, y: 0, rotateY: 0 }}
+                        exit={{ opacity: 0, y: -50, rotateY: -10 }}
+                        transition={{ 
+                          duration: 0.7, 
+                          delay: index * 0.2,
+                          type: "spring",
+                          stiffness: 100
+                        }}
+                        whileHover={{ 
+                          y: -10,
+                          transition: { duration: 0.2 }
+                        }}
+                      >
+                          <ModernSectorCard 
+                              sortedSector={sortedSector}
+                              sector={sortedSector.sector_details} 
+                              isSelected={isSectorSelected(sortedSector.sector_details?.id)}
+                              onAddClick={() => handleAddSector(sortedSector)}
+                              rank={sortedSector.rank}
+                              suitabilityScore={sortedSector.suitability_score}
+                              reasoning={sortedSector.reasoning}
+                              index={index}
+                          />
+                      </motion.div>
+                      ))}
+                  </AnimatePresence>
+              </div>
+          </motion.div>
         </div>
 
           {/* Confirmation Modal */}
-          {confirmingSector && (
+          {confirmingSector && confirmingSector.sector_details && (
           <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-              <div className="bg-[#292931] rounded-xl p-6 max-w-md w-full">
+              <div className="bg-[#292931] rounded-xl p-6 max-w-lg w-full">
               <h3 className="text-xl font-bold text-white mb-4">Add Sector</h3>
-              <p className="text-gray-300 mb-6">
-                  Are you sure you want to add <span className="font-bold text-[#7824f6]">{confirmingSector.name}</span> to your selected sectors?
-              </p>
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-[#7824f6] text-white text-xs font-bold px-2 py-1 rounded">
+                    Rank #{confirmingSector.rank}
+                  </span>
+                  <span className="bg-green-900 bg-opacity-50 text-green-400 text-xs font-bold px-2 py-1 rounded">
+                    {confirmingSector.suitability_score}% Match
+                  </span>
+                </div>
+                <p className="text-gray-300 mb-3">
+                    Are you sure you want to add <span className="font-bold text-[#7824f6]">{confirmingSector.sector_details.name}</span> to your selected sectors?
+                </p>
+                <div className="bg-[#1a1a24] p-3 rounded-lg">
+                  <h4 className="text-sm font-bold text-[#7824f6] mb-1">Why this fits you:</h4>
+                  <p className="text-xs text-gray-400">{confirmingSector.reasoning}</p>
+                </div>
+              </div>
               {user.plan_type === 'base' && userSectors.length >= 2 && (
                   <div className="mb-4 p-3 bg-yellow-900 bg-opacity-30 border border-yellow-700 rounded-lg">
                   <p className="text-yellow-400 text-sm flex items-start">
@@ -360,15 +562,26 @@ export default function SectorSelectionPage() {
   );
 }
 
-function SectorCard({ sector, isSelected, onAddClick, recommended, accentColor }) {
+function SectorCard({ 
+  sector, 
+  sortedSector,
+  isSelected, 
+  onAddClick, 
+  recommended, 
+  accentColor,
+  rank,
+  suitabilityScore,
+  reasoning 
+}) {
     const [isExpanded, setIsExpanded] = useState(false);
     
-    // Truncate description for compact view
-    const shortDescription = sector.description 
-      ? (sector.description.length > 60 
-          ? sector.description.substring(0, 60) + "..." 
-          : sector.description)
-      : "Discover career opportunities, growth outlook, and required skills in this sector...";
+    if (!sector) return null;
+    
+    // Use comprehensive description from new data
+    const fullDescription = sector.description || sector.brief_overview || "Discover career opportunities, growth outlook, and required skills in this sector...";
+    const shortDescription = fullDescription.length > 80 
+      ? fullDescription.substring(0, 80) + "..." 
+      : fullDescription;
     
     return (
       <div 
@@ -380,23 +593,33 @@ function SectorCard({ sector, isSelected, onAddClick, recommended, accentColor }
         style={{ borderColor: isSelected ? "#10b981" : accentColor }}
       >
         <div 
-          className="h-20 flex items-center justify-center p-4 relative"
+          className="h-24 flex items-center justify-center p-4 relative"
           style={{ backgroundColor: isSelected ? "#2a3a31" : "#35354a" }}
         >
-          {recommended && !isSelected && (
-            <div className="absolute top-0 right-0">
+          {/* Rank Badge */}
+          {rank && (
+            <div className="absolute top-0 left-0">
               <div 
-                className="text-xs font-bold px-2 py-1 text-white"
-                style={{ backgroundColor: accentColor }}
+                className="text-xs font-bold px-2 py-1 text-white rounded-br"
+                style={{ backgroundColor: recommended ? "#7824f6" : "#4a4a57" }}
               >
-                Recommended
+                #{rank}
+              </div>
+            </div>
+          )}
+          
+          {/* Suitability Score */}
+          {suitabilityScore && !isSelected && (
+            <div className="absolute top-0 right-0">
+              <div className="bg-green-900 bg-opacity-70 text-green-400 text-xs font-bold px-2 py-1 text-white rounded-bl">
+                {suitabilityScore}% Match
               </div>
             </div>
           )}
           
           {isSelected && (
             <div className="absolute top-0 right-0">
-              <div className="bg-green-500 text-xs font-bold px-2 py-1 text-white flex items-center gap-1">
+              <div className="bg-green-500 text-xs font-bold px-2 py-1 text-white flex items-center gap-1 rounded-bl">
                 <FaCheck size={10} />
                 <span>Selected</span>
               </div>
@@ -408,16 +631,23 @@ function SectorCard({ sector, isSelected, onAddClick, recommended, accentColor }
           </h4>
         </div>
         
-        <div className="p-5 flex flex-col justify-between min-h-[140px] bg-gradient-to-b from-[#292931] to-[#232329]">
-          <div className={`mb-3 ${isExpanded ? "h-auto" : "h-16"}`}>
+        <div className="p-5 flex flex-col justify-between min-h-[180px] bg-gradient-to-b from-[#292931] to-[#232329]">
+          <div className={`mb-3 ${isExpanded ? "h-auto" : "h-20"}`}>
             <p className="text-gray-300 text-sm mb-2">
-              {isExpanded ? sector.description : shortDescription}
+              {isExpanded ? fullDescription : shortDescription}
             </p>
             
-            {sector.description && sector.description.length > 60 && (
+            {reasoning && isExpanded && (
+              <div className="mt-3 p-2 bg-[#1a1a24] rounded text-xs">
+                <span className="font-bold text-[#7824f6]">Why this fits you: </span>
+                <span className="text-gray-400">{reasoning}</span>
+              </div>
+            )}
+            
+            {fullDescription.length > 80 && (
               <button 
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="text-xs text-[#7824f6] hover:underline flex items-center"
+                className="text-xs text-[#7824f6] hover:underline flex items-center mt-1"
               >
                 {isExpanded ? (
                   <>
@@ -428,7 +658,7 @@ function SectorCard({ sector, isSelected, onAddClick, recommended, accentColor }
                   </>
                 ) : (
                   <>
-                    <span>Read more</span>
+                    <span>Learn more</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -442,7 +672,7 @@ function SectorCard({ sector, isSelected, onAddClick, recommended, accentColor }
             {!isSelected ? (
               <button
                 onClick={onAddClick}
-                className="bg-[#7824f6] hover:bg-[#6620d0] rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
+                className="hover:bg-opacity-80 rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
                 style={{ backgroundColor: recommended ? "#7824f6" : "#4a4a57" }}
               >
                 <p className="text-sm text-white font-medium">
@@ -461,5 +691,254 @@ function SectorCard({ sector, isSelected, onAddClick, recommended, accentColor }
           </div>
         </div>
       </div>
+    );
+  }
+
+function ModernSectorCard({ 
+  sector, 
+  sortedSector,
+  isSelected, 
+  onAddClick, 
+  rank,
+  suitabilityScore,
+  reasoning,
+  index
+}) {
+    if (!sector) return null;
+    
+    // Define unique colors and icons for each position
+    const cardConfigs = [
+        {
+            gradient: "from-[#7824f6] to-[#9d4edd]",
+            bgGradient: "from-[#7824f6]/10 to-[#9d4edd]/10",
+            borderGlow: "shadow-[0_0_30px_rgba(120,36,246,0.3)]",
+            icon: FaTrophy,
+            badge: "BEST MATCH",
+            badgeColor: "bg-gradient-to-r from-[#7824f6] to-[#9d4edd]"
+        },
+        {
+            gradient: "from-[#06ffa5] to-[#00d4aa]",
+            bgGradient: "from-[#06ffa5]/10 to-[#00d4aa]/10",
+            borderGlow: "shadow-[0_0_30px_rgba(6,255,165,0.3)]",
+            icon: FaMedal,
+            badge: "EXCELLENT",
+            badgeColor: "bg-gradient-to-r from-[#06ffa5] to-[#00d4aa]"
+        },
+        {
+            gradient: "from-[#ff6b6b] to-[#ffa726]",
+            bgGradient: "from-[#ff6b6b]/10 to-[#ffa726]/10",
+            borderGlow: "shadow-[0_0_30px_rgba(255,107,107,0.3)]",
+            icon: FaStar,
+            badge: "GREAT FIT",
+            badgeColor: "bg-gradient-to-r from-[#ff6b6b] to-[#ffa726]"
+        }
+    ];
+    
+    const config = cardConfigs[index] || cardConfigs[0];
+    const IconComponent = config.icon;
+    
+    const fullDescription = sector.description || sector.brief_overview || "Discover career opportunities, growth outlook, and required skills in this sector...";
+    
+    return (
+      <motion.div 
+        className={`relative group cursor-pointer ${config.borderGlow}`}
+        whileHover={{ 
+          scale: 1.02,
+          transition: { duration: 0.2 }
+        }}
+        whileTap={{ scale: 0.98 }}
+      >
+        {/* Animated border */}
+        <motion.div
+          className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${config.gradient} p-[2px] opacity-0 group-hover:opacity-100`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isSelected ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="w-full h-full rounded-2xl bg-[#1a1a24]" />
+        </motion.div>
+        
+        {/* Main card */}
+        <div className={`relative rounded-2xl overflow-hidden bg-gradient-to-br ${config.bgGradient} backdrop-blur-sm border border-gray-800 group-hover:border-gray-700 transition-all duration-300`}>
+          {/* Header with rank and icon */}
+          <div className="relative h-32 flex items-center justify-center overflow-hidden">
+            {/* Background pattern */}
+            <motion.div
+              className={`absolute inset-0 bg-gradient-to-br ${config.gradient} opacity-10`}
+              animate={{
+                backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"]
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              style={{ backgroundSize: "200% 200%" }}
+            />
+            
+            {/* Rank badge */}
+            <motion.div 
+              className={`absolute top-4 left-4 ${config.badgeColor} text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1`}
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ 
+                delay: index * 0.1 + 0.5,
+                type: "spring",
+                stiffness: 200
+              }}
+            >
+              <IconComponent size={10} />
+              <span>{config.badge}</span>
+            </motion.div>
+            
+            {/* Match percentage */}
+            {suitabilityScore && (
+              <motion.div 
+                className="absolute top-4 right-4 bg-black/40 backdrop-blur-sm text-white text-sm font-bold px-3 py-1 rounded-full"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: index * 0.1 + 0.7 }}
+              >
+                {suitabilityScore}%
+              </motion.div>
+            )}
+            
+            {/* Sector name */}
+            <motion.h3 
+              className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${config.gradient} text-center px-4`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 + 0.3 }}
+            >
+              {sector.name}
+            </motion.h3>
+          </div>
+          
+          {/* Content */}
+          <div className="p-6 space-y-4">
+            {/* Complete Sector Information */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: index * 0.1 + 0.9 }}
+              className="space-y-4"
+            >
+              {/* About This Sector */}
+              <div>
+                <h4 className={`text-sm font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r ${config.gradient}`}>
+                  About This Sector:
+                </h4>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  {fullDescription}
+                </p>
+              </div>
+
+              {/* Additional sector details if available */}
+              {sector.overview && sector.overview !== fullDescription && (
+                <div>
+                  <h4 className={`text-sm font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r ${config.gradient}`}>
+                    Overview:
+                  </h4>
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    {sector.overview}
+                  </p>
+                </div>
+              )}
+
+              {/* Key areas or specializations */}
+              {sector.key_areas && (
+                <div>
+                  <h4 className={`text-sm font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r ${config.gradient}`}>
+                    Key Areas:
+                  </h4>
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    {Array.isArray(sector.key_areas) ? sector.key_areas.join(', ') : sector.key_areas}
+                  </p>
+                </div>
+              )}
+
+              {/* Career opportunities */}
+              {sector.career_opportunities && (
+                <div>
+                  <h4 className={`text-sm font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r ${config.gradient}`}>
+                    Career Opportunities:
+                  </h4>
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    {sector.career_opportunities}
+                  </p>
+                </div>
+              )}
+
+              {/* Growth outlook */}
+              {sector.growth_outlook && (
+                <div>
+                  <h4 className={`text-sm font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r ${config.gradient}`}>
+                    Growth Outlook:
+                  </h4>
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    {sector.growth_outlook}
+                  </p>
+                </div>
+              )}
+            </motion.div>
+            
+            {/* Why this fits section */}
+            {reasoning && (
+              <motion.div 
+                className="bg-black/20 backdrop-blur-sm rounded-lg p-4 border border-gray-800"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 + 1.1 }}
+              >
+                <h4 className={`text-sm font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r ${config.gradient}`}>
+                  Why this fits you perfectly:
+                </h4>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  {reasoning}
+                </p>
+              </motion.div>
+            )}
+            
+            {/* Action button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 + 1.3 }}
+            >
+              {!isSelected ? (
+                <motion.button
+                  onClick={onAddClick}
+                  className={`w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r ${config.gradient} hover:shadow-lg hover:shadow-${config.gradient}/25 transition-all duration-300 flex items-center justify-center gap-2 group`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span>Add to My Sectors</span>
+                  <motion.div
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ 
+                      duration: 1.5, 
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <FaChevronRight size={14} />
+                  </motion.div>
+                </motion.button>
+              ) : (
+                <div className="w-full py-3 px-4 rounded-xl font-semibold text-green-400 bg-green-500/10 border border-green-500/30 flex items-center justify-center gap-2">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                  >
+                    <FaCheck size={14} />
+                  </motion.div>
+                  <span>Added to Your Sectors</span>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
     );
   }

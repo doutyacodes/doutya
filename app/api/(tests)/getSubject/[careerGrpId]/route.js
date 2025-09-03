@@ -87,6 +87,7 @@ export async function GET(req, { params }) {
         let country = '';
         let type1 = '';
         let type2 = '';
+        let sectorDescription = null;
         
         if (scopeType === 'career') {
             const careerData = await db
@@ -149,7 +150,8 @@ export async function GET(req, { params }) {
                     sectorId: USER_SECTOR.sector_id,
                     mbtiType: USER_SECTOR.mbti_type,
                     sectorName: SECTOR.name,
-                    description: SECTOR.brief_overview
+                    description: SECTOR.brief_overview,
+                    sectorDescription: SECTOR.description
                 })
                 .from(USER_SECTOR)
                 .innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id))
@@ -167,6 +169,7 @@ export async function GET(req, { params }) {
             scopeInfo = sectorData[0];
             scopeName = scopeInfo.sectorName;
             type1 = scopeInfo.mbtiType || '';
+            sectorDescription = sectorData.sectorDescription || null;
         }
 
         // Get country from USER_DETAILS if not already set
@@ -266,7 +269,8 @@ export async function GET(req, { params }) {
                             className, 
                             type1, 
                             type2,
-                            scopeType
+                            scopeType,
+                            sectorDescription
                         );
 
                         // Mark generation as completed
@@ -456,7 +460,8 @@ const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, count
             className, 
             type1, 
             type2,
-            scopeType
+            scopeType,
+            sectorDescription
         );
 
         await db

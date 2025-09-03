@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] = useState(null);
   const [educationStageExists, setEducationStageExists] = useState(null);
   const [resultPageShown, setResultPageShown] = useState(null);
+  const [gradeData, setGradeData] = useState(null);
 
 
   useEffect(() => {
@@ -146,6 +147,7 @@ export default function Dashboard() {
             setIsInstitutionDetailsAdded={setIsInstitutionDetailsAdded}
             setEducationStageExists={setEducationStageExists}
             setResultPageShown={setResultPageShown}
+            setGradeData={setGradeData}
           />
 
           {/* Animated Image for Kids */}

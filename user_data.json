@@ -1,0 +1,751 @@
+{
+  "user_data_tables": {
+    "primary_user_table": {
+      "table_name": "USER_DETAILS",
+      "description": "Main user information table containing personal, educational, and account details",
+      "fields": {
+        "id": "Primary key, auto-increment",
+        "name": "User's full name (required)",
+        "gender": "User's gender",
+        "mobile": "Mobile phone number",
+        "birth_date": "Date of birth",
+        "password": "User password",
+        "username": "Unique username",
+        "education": "Educational background",
+        "student": "Whether user is a student (yes/no)",
+        "college": "College/institution name",
+        "university": "University name",
+        "yearOfPassing": "Year of graduation/completion",
+        "monthOfPassing": "Month of graduation/completion",
+        "country": "User's country",
+        "language": "Preferred language (default: English)",
+        "education_country": "Country where education was obtained",
+        "education_level": "Level of education (default: Other)",
+        "experience": "Years of work experience",
+        "education_qualification": "Specific educational qualification",
+        "current_job": "Current job title/position",
+        "plan_type": "Subscription plan (base/pro)",
+        "joined_date": "Account creation timestamp",
+        "account_status": "Account status (linked/separated)",
+        "academicYearStart": "Academic year start (YYYY-MM format)",
+        "academicYearEnd": "Academic year end (YYYY-MM format)",
+        "grade": "Academic grade/class",
+        "institution_id": "Reference to institution table",
+        "class_id": "Reference to class table",
+        "division_id": "Reference to division table",
+        "institute_name": "Institution name for unlinked users",
+        "class_name": "Class name",
+        "user_role": "Individual or Institutional user",
+        "is_verified": "Account verification status",
+        "scope_type": "User's scope preference (career/cluster/sector)"
+      }
+    },
+    "user_authentication": {
+      "table_name": "USER_KEYS",
+      "description": "User authentication keys and tokens",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "unique_key": "Unique authentication key"
+      }
+    },
+    "user_education_stage": {
+      "table_name": "USER_EDUCATION_STAGE",
+      "description": "Current educational stage of the user",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id (unique)",
+        "stage": "Educational stage (school/college/completed_education)"
+      }
+    },
+    "school_education": {
+      "table_name": "SCHOOL_EDUCATION",
+      "description": "School-level education details",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id (unique)",
+        "is_higher_secondary": "Whether user completed higher secondary",
+        "main_subject": "Primary subject of study",
+        "description": "Additional education description"
+      }
+    },
+    "college_education": {
+      "table_name": "COLLEGE_EDUCATION",
+      "description": "College-level education details",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "degree": "Degree name",
+        "field": "Field of study",
+        "year_of_study": "Current year of study (1-10)",
+        "is_completed": "Whether degree is completed",
+        "description": "Additional education description"
+      }
+    },
+    "completed_education": {
+      "table_name": "COMPLETED_EDUCATION",
+      "description": "Completed education details",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USERS.id",
+        "degree": "Completed degree",
+        "field": "Field of study",
+        "description": "Education description"
+      }
+    },
+    "work_experience": {
+      "table_name": "WORK_EXPERIENCE",
+      "description": "User's work experience information",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USERS.id",
+        "job_title": "Job title/position",
+        "years_of_experience": "Years of experience in this role"
+      }
+    },
+    "user_skills": {
+      "table_name": "USER_SKILLS",
+      "description": "User's skills and competencies",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USERS.id",
+        "skill_name": "Name of the skill"
+      }
+    },
+    "career_preferences": {
+      "table_name": "CAREER_PREFERENCES",
+      "description": "User's career assessment preferences based on education stage",
+      "fields": {
+        "id": "Primary key",
+        "userId": "Reference to users.id (unique)",
+        "schoolPref": "School-level preference (subject_based/personality_based/mixed)",
+        "collegePref": "College-level preference (education_based/personality_based/mixed)",
+        "completedPref": "Post-education preference (education_based/job_based/personality_based/mixed_all)",
+        "noJobPref": "No job experience preference (education_based/personality_based/mixed)"
+      }
+    },
+    "user_feature_flags": {
+      "table_name": "USER_FEATURE_FLAGS",
+      "description": "Feature flags and user interface states",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "key": "Feature flag key (e.g., 'result_page_shown')",
+        "seen": "Whether user has seen this feature",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "user_assessment_reports": {
+      "table_name": "USER_ASSESSMENT_REPORTS",
+      "description": "User personality and career assessment reports",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "assessment_date": "When assessment was taken",
+        "is_kid": "Whether assessment is for a child (1) or adult (0)",
+        "report_data": "Complete assessment report in JSON format",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "user_results": {
+      "table_name": "USER_RESULTS",
+      "description": "User assessment results and quiz outcomes",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id (primary key)",
+        "result2": "Assessment result data",
+        "quiz_id": "Reference to quiz",
+        "type": "Result type (basic/advance)",
+        "country": "Country for localized results"
+      }
+    },
+    "user_career": {
+      "table_name": "USER_CAREER",
+      "description": "User's career recommendations and details",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "User identifier",
+        "career_group_id": "Reference to CAREER_GROUP.id",
+        "reason_for_recommendation": "Why this career was recommended",
+        "present_trends": "Current industry trends",
+        "future_prospects": "Future career prospects",
+        "user_description": "User-specific career description",
+        "created_at": "Creation timestamp",
+        "type2": "Career type classification",
+        "type1": "Primary career type",
+        "country": "Country context",
+        "schooling_location": "Where user studied/is studying (school level)",
+        "graduation_location": "Where user studied/is studying (graduation level)",
+        "post_graduation_location": "Where user studied/is studying (post-grad level)",
+        "feedback": "User feedback on career recommendation"
+      }
+    },
+    "user_career_status": {
+      "table_name": "USER_CAREER_STATUS",
+      "description": "Status tracking for user's career roadmap progress",
+      "fields": {
+        "id": "Primary key",
+        "user_career_id": "Reference to USER_CAREER.id",
+        "roadmap_status": "Status (not_started/in_progress/completed)",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "user_sector": {
+      "table_name": "USER_SECTOR",
+      "description": "User's sector recommendations based on MBTI",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "sector_id": "Reference to SECTOR.id",
+        "mbti_type": "User's MBTI personality type",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "user_cluster": {
+      "table_name": "USER_CLUSTER",
+      "description": "User's cluster recommendations",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "cluster_id": "Reference to CLUSTER.id",
+        "mbti_type": "User's MBTI personality type",
+        "riasec_code": "RIASEC interest code",
+        "selected": "Whether user selected this cluster",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "user_feedback": {
+      "table_name": "USER_FEEDBACK",
+      "description": "User feedback on system recommendations",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "feedback": "User's feedback text",
+        "feedback_type": "Type of feedback (career/sector/cluster)",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "feedback": {
+      "table_name": "FEEDBACK",
+      "description": "General user feedback and ratings",
+      "fields": {
+        "user_id": "Reference to USER_DETAILS.id (primary key)",
+        "rating": "Numerical rating given by user",
+        "description": "Feedback description"
+      }
+    },
+    "content_scope": {
+      "table_name": "CONTENT_SCOPE",
+      "description": "User's content scope preferences",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "type": "Content type (career/cluster/sector)",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "user_points": {
+      "table_name": "USER_POINTS",
+      "description": "User's accumulated points/rewards",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "User identifier",
+        "points": "Points earned by user",
+        "created_at": "Creation timestamp"
+      }
+    }
+  },
+  "user_activity_tables": {
+    "quiz_sequences": {
+      "table_name": "QUIZ_SEQUENCES",
+      "description": "User's quiz progress and completion status",
+      "fields": {
+        "id": "Primary key",
+        "type_sequence": "Quiz type sequence",
+        "user_id": "User identifier",
+        "quiz_id": "Quiz identifier",
+        "createddate": "Creation timestamp",
+        "isCompleted": "Whether quiz is completed",
+        "isStarted": "Whether quiz was started"
+      }
+    },
+    "user_progress": {
+      "table_name": "USER_PROGRESS",
+      "description": "User's progress in analytics questions",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "User identifier",
+        "question_id": "Question identifier",
+        "option_id": "Selected option",
+        "analytic_id": "Analytics identifier",
+        "created_at": "Response timestamp"
+      }
+    },
+    "user_career_progress": {
+      "table_name": "USER_CAREER_PROGRESS",
+      "description": "User's progress in career assessment questions",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "User identifier",
+        "question_id": "Question identifier",
+        "option_id": "Selected option",
+        "personality_type_id": "Personality type identifier",
+        "created_at": "Response timestamp"
+      }
+    },
+    "quiz_progress": {
+      "table_name": "QUIZ_PROGRESS",
+      "description": "User's quiz progress and scoring",
+      "fields": {
+        "id": "Primary key",
+        "question_id": "Question identifier",
+        "answer_id": "Answer identifier",
+        "user_id": "User identifier",
+        "marks": "Marks obtained",
+        "created_at": "Creation timestamp",
+        "challenge_id": "Challenge identifier",
+        "task_id": "Task identifier"
+      }
+    },
+    "subject_user_progress": {
+      "table_name": "SUBJECT_USER_PROGRESS",
+      "description": "User's progress in subject-based quizzes",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "quiz_id": "Reference to SUBJECT_QUIZ.id",
+        "subject_id": "Reference to SUBJECTS.subject_id",
+        "option_id": "Selected option",
+        "is_answer": "Whether selection was correct",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "user_subject_completion": {
+      "table_name": "USER_SUBJECT_COMPLETION",
+      "description": "User's completion status for subject tests",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "skilled_age": "Age when skill was acquired",
+        "test_id": "Reference to TESTS.test_id",
+        "isStarted": "Whether test was started",
+        "completed": "Whether test is completed (yes/no)",
+        "score": "Test score",
+        "stars_awarded": "Stars earned",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "certification_user_progress": {
+      "table_name": "CERTIFICATION_USER_PROGRESS",
+      "description": "User's progress in certification quizzes",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "quiz_id": "Reference to CERTIFICATION_QUIZ.id",
+        "certification_id": "Reference to CERTIFICATIONS.id",
+        "option_id": "Selected option",
+        "is_answer": "Whether selection was correct",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "user_certification_completion": {
+      "table_name": "USER_CERTIFICATION_COMPLETION",
+      "description": "User's certification completion and achievements",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "certification_id": "Reference to CERTIFICATIONS.id",
+        "certificate_id": "Unique certificate identifier",
+        "certification_name": "Name of certification earned",
+        "issued_at": "Certificate issue date",
+        "status": "Certificate status (valid/invalid)",
+        "level": "Certification level (beginner/intermediate/advanced)",
+        "isStarted": "Whether certification was started",
+        "completed": "Whether certification is completed (yes/no)",
+        "score_percentage": "Percentage score achieved",
+        "rating_stars": "Star rating earned",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "test_progress": {
+      "table_name": "TEST_PROGRESS",
+      "description": "User's progress in subject tests",
+      "fields": {
+        "id": "Primary key",
+        "test_questionId": "Reference to TEST_QUESTIONS.id",
+        "test_answerId": "Test answer identifier",
+        "user_id": "Reference to USER_DETAILS.id",
+        "created_at": "Creation timestamp",
+        "test_id": "Reference to TESTS.test_id",
+        "marks": "Marks obtained",
+        "is_answer": "Whether answer was correct"
+      }
+    },
+    "challenge_progress": {
+      "table_name": "CHALLENGE_PROGRESS",
+      "description": "User's progress in challenges",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "challenge_id": "Reference to CHALLENGES.id",
+        "image": "Submitted image",
+        "status": "Progress status (pending/approved/rejected)",
+        "created_at": "Creation timestamp",
+        "age": "User's age when challenge was taken",
+        "school_id": "School identifier",
+        "week": "Challenge week"
+      }
+    },
+    "strength_quiz_progress": {
+      "table_name": "STRENGTH_QUIZ_PROGRESS",
+      "description": "User's progress in strength assessment quizzes",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "User identifier",
+        "question_id": "Question identifier",
+        "option_id": "Selected option",
+        "strength_type_id": "Strength type identifier",
+        "created_at": "Response timestamp"
+      }
+    }
+  },
+  "user_institutional_tables": {
+    "user_community": {
+      "table_name": "USER_COMMUNITY",
+      "description": "User's community memberships",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "community_id": "Reference to COMMUNITY.id",
+        "country": "User's country",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "community_post": {
+      "table_name": "COMMUNITY_POST",
+      "description": "Posts created by users in communities",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "community_id": "Reference to COMMUNITY.id",
+        "file_url": "Attached file URL/path",
+        "caption": "Post caption/content",
+        "type": "Post type (image/video/text)",
+        "post_category": "Category (certification/milestone/post)",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "community_post_likes": {
+      "table_name": "COMMUNITY_POST_LIKES",
+      "description": "User likes on community posts",
+      "fields": {
+        "id": "Primary key",
+        "post_id": "Reference to COMMUNITY_POST.id",
+        "user_id": "Reference to USER_DETAILS.id",
+        "created_at": "Like timestamp"
+      }
+    },
+    "community_comments": {
+      "table_name": "COMMUNITY_COMMENTS",
+      "description": "User comments on community posts",
+      "fields": {
+        "id": "Primary key",
+        "post_id": "Reference to COMMUNITY_POST.id",
+        "user_id": "Reference to USER_DETAILS.id",
+        "comment": "Comment text",
+        "created_at": "Comment timestamp"
+      }
+    }
+  },
+  "user_mentorship_tables": {
+    "user_mentor_relationships": {
+      "table_name": "USER_MENTOR_RELATIONSHIPS",
+      "description": "User relationships with mentors",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "mentor_id": "Reference to MENTOR_PROFILES.mentor_id",
+        "relationship_type": "Type of relationship (followed/added)",
+        "career_group_id": "Reference to CAREER_GROUP.id",
+        "added_at": "Relationship creation timestamp"
+      }
+    },
+    "one_on_one_sessions": {
+      "table_name": "ONE_ON_ONE_SESSIONS",
+      "description": "User's one-on-one sessions with mentors",
+      "fields": {
+        "session_id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "mentor_id": "Reference to MENTOR_PROFILES.mentor_id",
+        "career_group_id": "Reference to CAREER_GROUP.id",
+        "availability_slot_id": "Reference to MENTOR_AVAILABILITY_SLOTS.slot_id",
+        "session_status": "Status (scheduled/in_progress/completed/cancelled)",
+        "start_time": "Session start time",
+        "end_time": "Session end time",
+        "total_price": "Session cost",
+        "payment_status": "Payment status (pending/paid/refunded)",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "one_on_one_chat_messages": {
+      "table_name": "ONE_ON_ONE_CHAT_MESSAGES",
+      "description": "Chat messages in one-on-one sessions",
+      "fields": {
+        "message_id": "Primary key",
+        "session_id": "Reference to ONE_ON_ONE_SESSIONS.session_id",
+        "sender_type": "Message sender type (user/mentor)",
+        "sender_id": "ID of message sender",
+        "message_text": "Message content",
+        "sent_at": "Message timestamp",
+        "is_read": "Whether message was read"
+      }
+    },
+    "question_sessions": {
+      "table_name": "QUESTION_SESSIONS",
+      "description": "User's question-based sessions with mentors",
+      "fields": {
+        "question_session_id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "mentor_id": "Reference to MENTOR_PROFILES.mentor_id",
+        "career_group_id": "Reference to CAREER_GROUP.id",
+        "session_status": "Status (active/completed)",
+        "total_price": "Session cost",
+        "payment_status": "Payment status (pending/paid)",
+        "created_at": "Creation timestamp",
+        "last_interaction_at": "Last interaction timestamp"
+      }
+    },
+    "session_questions": {
+      "table_name": "SESSION_QUESTIONS",
+      "description": "Questions asked by users in question sessions",
+      "fields": {
+        "question_id": "Primary key",
+        "question_session_id": "Reference to QUESTION_SESSIONS.question_session_id",
+        "user_id": "Reference to USER_DETAILS.id",
+        "question_text": "Question content",
+        "created_at": "Question timestamp"
+      }
+    },
+    "session_answers": {
+      "table_name": "SESSION_ANSWERS",
+      "description": "Answers provided by mentors to user questions",
+      "fields": {
+        "answer_id": "Primary key",
+        "question_id": "Reference to SESSION_QUESTIONS.question_id",
+        "mentor_id": "Reference to MENTOR_PROFILES.mentor_id",
+        "answer_text": "Answer content",
+        "created_at": "Answer timestamp",
+        "is_read": "Whether answer was read by user"
+      }
+    },
+    "user_daily_question_limit": {
+      "table_name": "USER_DAILY_QUESTION_LIMIT",
+      "description": "Daily question limits per user per mentor",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "mentor_id": "Reference to MENTOR_PROFILES.mentor_id",
+        "question_count": "Number of questions asked today",
+        "last_reset_date": "Last reset timestamp"
+      }
+    }
+  },
+  "user_company_tables": {
+    "company_challenge_progress": {
+      "table_name": "COMPANY_CHALLENGE_PROGRESS",
+      "description": "User progress in company challenges",
+      "fields": {
+        "id": "Primary key",
+        "challenge_id": "Reference to COMPANY_CHALLENGES.id",
+        "user_id": "Reference to USER_DETAILS.id",
+        "company_id": "Reference to COMPANIES.id",
+        "department_id": "Reference to DEPARTMENT.id",
+        "challenge_type": "Type (upload/quiz/location/pedometer)",
+        "image": "Submitted image (for upload challenges)",
+        "is_started": "Whether challenge was started",
+        "is_completed": "Whether challenge is completed",
+        "marks": "Marks obtained",
+        "total_points": "Total points possible",
+        "submission_status": "Status (pending/approved/rejected)",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "company_challenge_user_quiz": {
+      "table_name": "COMPANY_CHALLENGE_USER_QUIZ",
+      "description": "User responses in company challenge quizzes",
+      "fields": {
+        "id": "Primary key",
+        "challenge_id": "Reference to COMPANY_CHALLENGES.id",
+        "user_id": "Reference to USER_DETAILS.id",
+        "company_id": "Reference to COMPANIES.id",
+        "question_id": "Reference to COMPANY_CHALLENGE_QUESTIONS.id",
+        "option_id": "Reference to COMPANY_CHALLENGE_OPTIONS.id",
+        "marks": "Marks for this question",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "company_user_challenge_points": {
+      "table_name": "COMPANY_USER_CHALLENGE_POINTS",
+      "description": "Points earned by users in company challenges",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "User identifier",
+        "company_id": "Reference to COMPANIES.id",
+        "challenge_id": "Challenge identifier",
+        "points": "Points earned",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "user_departments": {
+      "table_name": "USER_DEPARTMENTS",
+      "description": "User affiliations with company departments",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "User identifier",
+        "company_id": "Company identifier",
+        "department_id": "Department identifier",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "quiz_score": {
+      "table_name": "QUIZ_SCORE",
+      "description": "User scores in various quizzes",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "User identifier",
+        "challenge_id": "Challenge identifier",
+        "score": "Quiz score",
+        "created_at": "Creation timestamp",
+        "updated_at": "Last update timestamp"
+      }
+    }
+  },
+  "user_academic_tables": {
+    "user_tests": {
+      "table_name": "USER_TESTS",
+      "description": "User participation in academic tests (note: appears to have typo in schema)",
+      "fields": {
+        "user_test_id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "test_id": "Reference to TESTS.test_id",
+        "score": "Test score",
+        "stars_awarded": "Stars earned",
+        "completed": "Whether test is completed (yes/no)"
+      }
+    },
+    "user_tasks": {
+      "table_name": "USER_TASKS",
+      "description": "User participation in tasks and challenges",
+      "fields": {
+        "id": "Primary key",
+        "task_id": "Task identifier",
+        "user_id": "User identifier",
+        "reward_points": "Points rewarded",
+        "approved": "Approval status (nill/yes/no)",
+        "entry_points": "Entry points required",
+        "rejected": "Rejection status (no/yes)",
+        "start_date": "Task start date",
+        "start_time": "Task start time",
+        "end_date": "Task end date",
+        "end_time": "Task end time",
+        "steps": "Steps completed",
+        "approved_by": "Who approved the task",
+        "completed": "Whether task is completed (no/yes)",
+        "arena": "Whether task is arena-based (no/yes)",
+        "challenge_id": "Challenge identifier",
+        "image": "Submitted image",
+        "video": "Submitted video",
+        "day": "Task day",
+        "started": "Whether task was started (no/yes)"
+      }
+    },
+    "activities": {
+      "table_name": "ACTIVITIES",
+      "description": "Career-related activities for users",
+      "fields": {
+        "id": "Primary key",
+        "activity_id": "Activity identifier",
+        "user_id": "Reference to USER_DETAILS.id",
+        "career_id": "Reference to CAREER_GROUP.id",
+        "step": "Activity step number",
+        "activity_text": "Activity description",
+        "created_at": "Creation timestamp"
+      }
+    },
+    "user_activities": {
+      "table_name": "USER_ACTIVITIES",
+      "description": "User progress in career activities",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "User identifier",
+        "activity_id": "Activity identifier",
+        "status": "Activity status (active/completed/skipped)",
+        "updated_at": "Last update timestamp"
+      }
+    },
+    "user_milestones": {
+      "table_name": "USER_MILESTONES",
+      "description": "User's career milestones and achievements",
+      "fields": {
+        "id": "Primary key",
+        "scope_id": "Scope identifier (replaces user_career_id)",
+        "scope_type": "Scope type (career/cluster/sector)",
+        "milestone_id": "Reference to MILESTONES.id"
+      }
+    },
+    "user_course_progress": {
+      "table_name": "USER_COURSE_PROGRESS",
+      "description": "User progress in certification courses",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "certification_id": "Reference to CERTIFICATIONS.id",
+        "status": "Course status (in_progress/completed)",
+        "enrolled_date": "Course enrollment date",
+        "completion_date": "Course completion date"
+      }
+    },
+    "user_result_career": {
+      "table_name": "USER_RESULT_CAREER",
+      "description": "User's career assessment results",
+      "fields": {
+        "id": "Primary key",
+        "user_id": "Reference to USER_DETAILS.id",
+        "career_name": "Recommended career name",
+        "description": "Career description"
+      }
+    }
+  },
+  "summary": {
+    "total_user_related_tables": 47,
+    "primary_user_table": "USER_DETAILS",
+    "main_categories": [
+      "Personal Information & Authentication",
+      "Educational Background",
+      "Career Assessment & Recommendations",
+      "Quiz & Test Progress",
+      "Community & Social Features",
+      "Mentorship & Guidance",
+      "Company & Corporate Challenges",
+      "Academic Activities & Milestones",
+      "Feedback & User Experience"
+    ],
+    "key_relationships": {
+      "USER_DETAILS": "Central table that most other user tables reference via user_id",
+      "USER_CAREER": "Links users to career recommendations and tracks career-related data",
+      "USER_SECTOR/USER_CLUSTER": "Links users to sector and cluster recommendations",
+      "Quiz/Assessment Tables": "Track user progress and results in various assessments",
+      "Community Tables": "Handle user social interactions and community participation",
+      "Mentorship Tables": "Manage user-mentor relationships and interactions"
+    }
+  }
+}

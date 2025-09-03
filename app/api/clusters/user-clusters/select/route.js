@@ -70,94 +70,111 @@ export async function POST(req) {
   }
 
   const body = await req.json();
-  const { cluster_id } = body;
+  const { cluster_id, mbti_type, riasec_code } = body; // Added mbti_type and riasec_code from request
 
   if (!cluster_id) {
     return NextResponse.json({ message: "Cluster ID is required" }, { status: 400 });
   }
 
   try {
-    // Set selected = true for the specific cluster for the user
-    const updateResult = await db
-      .update(USER_CLUSTER)
-      .set({ selected: true })
+    // Check if the user-cluster combination already exists
+    const existingUserCluster = await db
+      .select()
+      .from(USER_CLUSTER)
       .where(and(
         eq(USER_CLUSTER.user_id, userId),
         eq(USER_CLUSTER.cluster_id, cluster_id)
       ))
       .execute();
 
+    let insertResult;
+    
+    // Insert new record if it doesn't exist
+    insertResult = await db
+      .insert(USER_CLUSTER)
+      .values({
+        user_id: userId,
+        cluster_id: cluster_id,
+        mbti_type: mbti_type || null,
+        riasec_code: riasec_code || null,
+        selected: true,
+        created_at: new Date()
+      })
+      .execute();
 
-      // Get details of the added sector for response
-      const addedCluster = await db
-        .select({
-          name: CLUSTER.name,
-        })
-        .from(USER_CLUSTER)
-        .innerJoin(CLUSTER, eq(USER_CLUSTER.cluster_id, CLUSTER.id))
-        .where(and(
-          eq(USER_CLUSTER.user_id, userId),
-          eq(USER_CLUSTER.cluster_id, cluster_id)
-        ))
+    // Get details of the added cluster for response
+    const addedCluster = await db
+      .select({
+        name: CLUSTER.name,
+      })
+      .from(USER_CLUSTER)
+      .innerJoin(CLUSTER, eq(USER_CLUSTER.cluster_id, CLUSTER.id))
+      .where(and(
+        eq(USER_CLUSTER.user_id, userId),
+        eq(USER_CLUSTER.cluster_id, cluster_id)
+      ))
+      .execute();
+
+    /* Community */
+    const userDetails = await db
+      .select()
+      .from(USER_DETAILS)
+      .where(eq(USER_DETAILS.id, userId))
+      .execute();
+
+    if (userDetails.length === 0) {
+      return NextResponse.json(
+        { message: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    const { country } = userDetails[0];
+
+    console.log("addedCluster", addedCluster, addedCluster[0].name);
+
+    // Find or create global and country-specific communities
+    const globalCommunity = await findOrCreateCommunity(true, addedCluster[0].name, country);
+    const countryCommunity = await findOrCreateCommunity(false, addedCluster[0].name, country);
+
+    // Helper function to add user to community
+    const addUserToCommunity = async (communityId, communityCountry) => {
+      const existingUserCommunity = await db
+        .select()
+        .from(USER_COMMUNITY)
+        .where(
+          and(
+            eq(USER_COMMUNITY.user_id, userId),
+            eq(USER_COMMUNITY.community_id, communityId)
+          )
+        )
         .execute();
 
-
-      /* Community */
-        const userDetails = await db
-          .select()
-          .from(USER_DETAILS)
-          .where(eq(USER_DETAILS.id, userId))
+      if (existingUserCommunity.length === 0) {
+        await db
+          .insert(USER_COMMUNITY)
+          .values({
+            user_id: userId,
+            community_id: communityId,
+            country: communityCountry,
+          })
           .execute();
+      }
+    };
+
+    // Add user to global and country-specific communities
+    await addUserToCommunity(globalCommunity.id, null);
+    await addUserToCommunity(countryCommunity.id, country);
+
+    return NextResponse.json({ 
+      message: existingUserCluster.length === 0 ? "Cluster added and marked as selected" : "Cluster marked as selected", 
+      insertResult 
+    }, { status: 200 });
     
-        if (userDetails.length === 0) {
-          return NextResponse.json(
-            { message: "User not found" },
-            { status: 404 }
-          );
-        }
-
-        const { country } = userDetails[0];
-
-        console.log("addedCluster", addedCluster, addedCluster[0].name)
-
-        // Find or create global and country-specific communities
-        const globalCommunity = await findOrCreateCommunity(true, addedCluster[0].name, country);
-        const countryCommunity = await findOrCreateCommunity(false, addedCluster[0].name, country);
-  
-        // Helper function to add user to community
-        const addUserToCommunity = async (communityId, communityCountry) => {
-          const existingUserCommunity = await db
-            .select()
-            .from(USER_COMMUNITY)
-            .where(
-              and(
-                eq(USER_COMMUNITY.user_id, userId),
-                eq(USER_COMMUNITY.community_id, communityId)
-              )
-            )
-            .execute();
-  
-          if (existingUserCommunity.length === 0) {
-            await db
-              .insert(USER_COMMUNITY)
-              .values({
-                user_id: userId,
-                community_id: communityId,
-                country: communityCountry,
-              })
-              .execute();
-          }
-        };
-  
-        // Add user to global and country-specific communities
-        await addUserToCommunity(globalCommunity.id, null);
-        await addUserToCommunity(countryCommunity.id, country);
-
-    return NextResponse.json({ message: "Cluster marked as selected", updateResult }, { status: 200 });
   } catch (error) {
-    console.error("Error updating user cluster selection:", error);
+    console.error("Error inserting/updating user cluster:", error);
     return NextResponse.json(
-      { message: "Failed to update cluster selection" },
+      { message: "Failed to add/update cluster selection" },
       { status: 500 }
     );
   }

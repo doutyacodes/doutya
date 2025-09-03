@@ -64,7 +64,7 @@ export default function ClusterSelectionPage() {
         });
         
         // Set clusters and user clusters
-        setClusters(data.clusters || []);
+        setClusters(data.sorted_clusters || []);
         setUserClusters(data.userClusters || []);
       } catch (err) {
         console.error("Error fetching clusters data:", err);
@@ -117,7 +117,7 @@ export default function ClusterSelectionPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          cluster_id: confirmingCluster.id
+          cluster_id: confirmingCluster.cluster_details.id
         }),
       });
   
@@ -136,7 +136,7 @@ export default function ClusterSelectionPage() {
         return cluster;
       }));
 
-      toast.success(`${confirmingCluster.name} has been added to your selected clusters.`);
+      toast.success(`${confirmingCluster.cluster} has been added to your selected clusters.`);
   
     } catch (err) {
       console.error("Error saving cluster:", err);
@@ -231,11 +231,11 @@ export default function ClusterSelectionPage() {
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {clusters.map((cluster) => (
+              {clusters.map((cluster, index) => (
                 <ClusterCard 
-                  key={cluster.id} 
+                  key={index}
                   cluster={cluster} 
-                  isSelected={isClusterSelected(cluster.id)}
+                  isSelected={isClusterSelected(cluster?.id)}
                   onAddClick={() => handleAddCluster(cluster)}
                   accentColor="#7824f6"
                 />
@@ -293,11 +293,11 @@ function ClusterCard({ cluster, isSelected, onAddClick, accentColor }) {
     : cluster.related_jobs || [];
   
   // Truncate description for compact view
-  const shortDescription = cluster.description 
-    ? (cluster.description.length > 80 
-        ? cluster.description.substring(0, 80) + "..." 
-        : cluster.description)
-    : "Explore this career cluster and its related job opportunities...";
+  // const shortDescription = cluster.reasoning 
+  //   ? (cluster.description.length > 80 
+  //       ? cluster.reasoning.substring(0, 80) + "..." 
+  //       : cluster.reasoning)
+  //   : "Explore this career cluster and its related job opportunities...";
   
   return (
     <div 
@@ -322,14 +322,15 @@ function ClusterCard({ cluster, isSelected, onAddClick, accentColor }) {
         )}
         
         <h4 className="text-white text-lg font-bold text-center">
-          {cluster.name}
+          {cluster.cluster}
         </h4>
       </div>
       
       <div className="p-5 flex flex-col justify-between bg-gradient-to-b from-[#292931] to-[#232329]">
         <div className={`mb-3 ${isExpanded ? "h-auto" : "h-20"}`}>
             <p className="text-gray-300 text-sm mb-2">
-            {isExpanded ? cluster.description : shortDescription}
+            {/* {isExpanded ? cluster.reasoning : ""} */}
+            {cluster.reasoning}
             </p>
             
             {/* Related Jobs Section - now integrated into the expanded view */}

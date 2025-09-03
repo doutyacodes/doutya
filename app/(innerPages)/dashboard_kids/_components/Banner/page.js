@@ -22,7 +22,8 @@ function Bannerkids({
    setIsCountryAdded,
    setIsInstitutionDetailsAdded,
    setEducationStageExists,
-   setResultPageShown
+   setResultPageShown,
+   setGradeData
   }) {
   const [loading, setLoading] = useState(false);
   const [dashboardData, setDashboardData] = useState([]);
@@ -45,6 +46,7 @@ function Bannerkids({
         setIsInstitutionDetailsAdded(resp.data.institutionDetailsAdded);  // Set country added state
         setEducationStageExists(resp.data.educationStageExists);  // Set country added state
         setResultPageShown(resp.data.resultPageShown)
+        setGradeData(resp.data.grade)
 
         // Check if Test 1 is completed
         const test1 = resp.data.data.find(q => q.quiz_id === 1);

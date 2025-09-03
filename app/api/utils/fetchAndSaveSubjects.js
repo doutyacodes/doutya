@@ -16,12 +16,12 @@ const generateKeyHash = (scopeId, scopeType, age, className, country, type1, typ
 };
 
 // Function to fetch subjects from OpenAI with scope type support
-const fetchSubjectsFromOpenAI = async (userId, scopeName, country, age, birthDate, type1, type2, scopeType, className) => {
+const fetchSubjectsFromOpenAI = async (userId, scopeName, country, age, birthDate, type1, type2, scopeType, className,sectorDescription) => {
   console.log(`${scopeType}: ${scopeName}, country: ${country}, age: ${age}, scopeType: ${scopeType} , className:${className}`);
 
   const currentAgeWeek = getCurrentWeekOfAge(birthDate);
   const prompt = await generateSubjectsPrompt(
-    userId, age, scopeName, type1, type2, country, currentAgeWeek, scopeType, className
+    userId, age, scopeName, type1, type2, country, currentAgeWeek, scopeType, className,sectorDescription
   );
 
   console.log("prompt", prompt);
@@ -176,6 +176,7 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
     type1, 
     type2,
     scopeType = "career",
+    sectorDescription = null,
     keyHash = null // Optional parameter to pass keyHash from calling function
   ) => {
   try {
@@ -195,7 +196,8 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
       type1,
       type2,
       scopeType,
-      className
+      className,
+      sectorDescription
     );
     
     const subjects = subjectsByAge["subject-data"];

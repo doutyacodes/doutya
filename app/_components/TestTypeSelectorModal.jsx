@@ -103,12 +103,12 @@ const TestTypeSelectorModal = ({ isOpen, onClose }) => {
 
   const handleSave = async () => {
     if (activeTab === 'mbti' && !mbtiType) {
-      setError('Please select an MBTI type');
+      setError('Please select a personality type');
       return;
     }
     
     if (activeTab === 'riasec' && riasecTypes.length < 3) {
-      setError('Please select at least 3 RIASEC types');
+      setError('Please select at least 3 interest types');
       return;
     }
 
@@ -162,7 +162,7 @@ const TestTypeSelectorModal = ({ isOpen, onClose }) => {
       <div className="bg-gray-800 text-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
-          <h2 className="text-xl font-semibold">Test Type Selector</h2>
+          <h2 className="text-xl font-semibold">Personality Assessment Selector</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-700 rounded-full transition-colors"
@@ -181,7 +181,7 @@ const TestTypeSelectorModal = ({ isOpen, onClose }) => {
             }`}
             onClick={() => setActiveTab('mbti')}
           >
-            MBTI Types
+Personality Types
           </button>
           <button
             className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
@@ -191,7 +191,7 @@ const TestTypeSelectorModal = ({ isOpen, onClose }) => {
             }`}
             onClick={() => setActiveTab('riasec')}
           >
-            RIASEC Types
+Interest Types
           </button>
         </div>
 
@@ -208,7 +208,7 @@ const TestTypeSelectorModal = ({ isOpen, onClose }) => {
                   {isReadOnly('mbti') && (
                     <div className="mb-4 p-3 bg-yellow-900 border border-yellow-700 rounded flex items-center gap-2">
                       <AlertCircle size={16} />
-                      <span className="text-sm">MBTI type already set and cannot be changed</span>
+                      <span className="text-sm">Personality type already set and cannot be changed</span>
                     </div>
                   )}
                   
@@ -256,7 +256,7 @@ const TestTypeSelectorModal = ({ isOpen, onClose }) => {
                   {isReadOnly('riasec') && (
                     <div className="mb-4 p-3 bg-yellow-900 border border-yellow-700 rounded flex items-center gap-2">
                       <AlertCircle size={16} />
-                      <span className="text-sm">RIASEC type already set and cannot be changed</span>
+                      <span className="text-sm">Interest type already set and cannot be changed</span>
                     </div>
                   )}
                   

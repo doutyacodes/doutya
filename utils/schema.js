@@ -5,6 +5,7 @@ import {
   datetime,
   decimal,
   float,
+  index,
   int,
   json,
   mysqlEnum,
@@ -995,31 +996,44 @@ export const MILESTONE_SUBCATEGORIES = mysqlTable("milestone_subcategories", {
   name: varchar("name", { length: 255 }).notNull(), // Subcategory names like 'Academic', 'Certification'
 });
 
+// export const MILESTONES = mysqlTable("milestones", {
+//   id: int("id").notNull().autoincrement().primaryKey(),
+//   category_id: int("category_id")
+//     .notNull()
+//     .references(() => MILESTONE_CATEGORIES.id), // Category reference
+//   subcategory_id: int("subcategory_id")
+//     .default(null)
+//     .references(() => MILESTONE_SUBCATEGORIES.id), // New subcategory reference
+//   description: text("description").default(null),
+//   completion_status: boolean("completion_status").default(false),
+//   date_achieved: timestamp("date_achieved").default(null),
+//   milestone_age: decimal("milestone_age", { precision: 3, scale: 1 }).default(
+//     null
+//   ),
+// });
+
 export const MILESTONES = mysqlTable("milestones", {
   id: int("id").notNull().autoincrement().primaryKey(),
   category_id: int("category_id")
     .notNull()
-    .references(() => MILESTONE_CATEGORIES.id), // Category reference
+    .references(() => MILESTONE_CATEGORIES.id),
   subcategory_id: int("subcategory_id")
     .default(null)
-    .references(() => MILESTONE_SUBCATEGORIES.id), // New subcategory reference
+    .references(() => MILESTONE_SUBCATEGORIES.id),
   description: text("description").default(null),
   completion_status: boolean("completion_status").default(false),
   date_achieved: timestamp("date_achieved").default(null),
-  milestone_age: decimal("milestone_age", { precision: 3, scale: 1 }).default(
-    null
-  ),
+
+  // For class-based roadmaps (5–7)
+  class_level: int("class_level").default(null),       // 5, 6, 7
+  sector_id: int("sector_id").default(null).references(() => SECTOR.id),
+  mbti_type: varchar("mbti_type", { length: 5 }).default(null), // e.g. "INTJ"
+  milestone_interval: int("milestone_interval").default(null), // 1–2 (2-month chunks)
+
+  // For age-based roadmaps (8+)
+  milestone_age: decimal("milestone_age", { precision: 3, scale: 1 }).default(null), // e.g. 14.2 years
 });
 
-// export const USER_MILESTONES = mysqlTable("user_milestones", {
-//   id: int("id").notNull().autoincrement().primaryKey(),
-//   user_career_id: int("user_career_id")
-//     .notNull()
-//     .references(() => USER_CAREER.id),
-//   milestone_id: int("milestone_id")
-//     .notNull()
-//     .references(() => MILESTONES.id),
-// });
 
 export const USER_MILESTONES = mysqlTable("user_milestones", {
   id: int("id").notNull().autoincrement().primaryKey(),
@@ -1311,18 +1325,19 @@ export const COMMUNITY_POST_POINTS = mysqlTable(
 // });
 
 export const CERTIFICATIONS = mysqlTable("certifications", {
-  id: int("id").primaryKey().autoincrement(),
+  id: int("id").notNull().autoincrement().primaryKey(),
   certification_name: varchar("certification_name", { length: 255 }).notNull(),
-  age: decimal("age", 3, 1).notNull(),
+  
+  // Remove age field and add class-based fields
+  class_level: int("class_level").default(null), // 5, 6, 7, 8, 9, etc.
+  milestone_interval: int("milestone_interval").default(null), // 1-6 (2-month intervals)
+  
   scope_id: int("scope_id").notNull(),
-  scope_type: mysqlEnum("scope_type", [
-    "career",
-    "cluster",
-    "sector",
-  ]).notNull(),
-  milestone_id: int("milestone_id")
-    .notNull()
-    .references(() => MILESTONES.id),
+  scope_type: varchar("scope_type", { length: 20 }).notNull(), // "career", "cluster", "sector"
+  milestone_id: int("milestone_id").notNull().references(() => MILESTONES.id),
+  
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
 
 export const CERTIFICATION_QUIZ = mysqlTable("certification_quiz", {
@@ -1916,6 +1931,7 @@ export const MBTI_SECTOR_MAP = mysqlTable("mbti_sector_map", {
 export const SECTOR = mysqlTable("sector", {
   id: int("id").notNull().autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull().unique(),
+  description: text("description"),
 
   // New fields
   brief_overview: text("brief_overview").notNull(),
@@ -1965,6 +1981,63 @@ export const USER_CLUSTER = mysqlTable("user_cluster", {
   selected: boolean("selected").notNull().default(false),
   created_at: timestamp("created_at").defaultNow(),
 });
+
+export const SECTOR_MBTI_RIASEC_COMBINATIONS = mysqlTable("sector_mbti_riasec_combinations", {
+  id: int("id").notNull().autoincrement().primaryKey(),
+  mbti_type: varchar("mbti_type", { length: 4 }).notNull(),
+  riasec_code: varchar("riasec_code", { length: 10 }).notNull(),
+  class_level: int("class_level").notNull(),
+  sorted_sectors: json("sorted_sectors").notNull(),
+  generation_status: mysqlEnum("generation_status", ["pending", "in_progress", "completed", "failed"]).notNull().default("pending"),
+  generated_by: int("generated_by"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+}, (table) => ({
+  unique_combination: unique("unique_combination").on(table.mbti_type, table.riasec_code, table.class_level),
+  idx_mbti: index("idx_sector_combinations_mbti").on(table.mbti_type),
+  idx_riasec: index("idx_sector_combinations_riasec").on(table.riasec_code),
+  idx_class: index("idx_sector_combinations_class").on(table.class_level),
+  idx_status: index("idx_sector_combinations_status").on(table.generation_status),
+}));
+
+export const CLUSTER_MBTI_RIASEC_COMBINATIONS = mysqlTable("cluster_mbti_riasec_combinations", {
+  id: int("id").notNull().autoincrement().primaryKey(),
+  mbti_type: varchar("mbti_type", { length: 4 }).notNull(),
+  riasec_code: varchar("riasec_code", { length: 10 }).notNull(),
+  class_level: int("class_level").notNull(),
+  sorted_clusters: json("sorted_clusters").notNull(),
+  generation_status: mysqlEnum("generation_status", ["pending", "in_progress", "completed", "failed"]).notNull().default("pending"),
+  generated_by: int("generated_by"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+}, (table) => ({
+  unique_combination: unique("unique_combination").on(table.mbti_type, table.riasec_code, table.class_level),
+  idx_mbti: index("idx_cluster_combinations_mbti").on(table.mbti_type),
+  idx_riasec: index("idx_cluster_combinations_riasec").on(table.riasec_code),
+  idx_class: index("idx_cluster_combinations_class").on(table.class_level),
+  idx_status: index("idx_cluster_combinations_status").on(table.generation_status),
+}));
+
+// CREATE TABLE `cluster_mbti_riasec_combinations` (
+//   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+//   `mbti_type` VARCHAR(4) NOT NULL,
+//   `riasec_code` VARCHAR(10) NOT NULL,
+//   `class_level` INT NOT NULL,
+//   `sorted_clusters` JSON NOT NULL,
+//   `generation_status` ENUM('pending', 'in_progress', 'completed', 'failed') NOT NULL DEFAULT 'pending',
+//   `generated_by` INT,
+//   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  
+//   -- Unique constraint
+//   UNIQUE KEY `unique_combination` (`mbti_type`, `riasec_code`, `class_level`),
+  
+//   -- Indexes
+//   INDEX `idx_cluster_combinations_mbti` (`mbti_type`),
+//   INDEX `idx_cluster_combinations_riasec` (`riasec_code`),
+//   INDEX `idx_cluster_combinations_class` (`class_level`),
+//   INDEX `idx_cluster_combinations_status` (`generation_status`)
+// );
 
 export const CONTENT_SCOPE = mysqlTable("content_scope", {
   id: int("id").notNull().autoincrement().primaryKey(),
