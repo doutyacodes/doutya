@@ -269,7 +269,7 @@
 // }
 
 import axios from "axios";
-import { db } from "@/utils"; // Ensure this path is correct
+import { db } from "@/utils";
 import {
   MILESTONES,
   USER_MILESTONES,
@@ -277,7 +277,7 @@ import {
   USER_CAREER_STATUS,
   CERTIFICATIONS,
   MILESTONE_SUBCATEGORIES,
-} from "@/utils/schema"; // Ensure this path is correct
+} from "@/utils/schema";
 import { and, eq } from "drizzle-orm";
 import {
   generateCareerDetailsPrompt,
@@ -419,19 +419,27 @@ export async function fetchAndSaveRoadmap(
                       .filter((desc) => desc && desc !== "-" && desc !== "N/A");
 
                     for (const desc of milestoneEntries) {
+                      // Create milestone values object with dynamic fields based on scope type
+                      const milestoneValues = {
+                        category_id: categoryId,
+                        subcategory_id: subcategoryId,
+                        description: desc,
+                        completion_status: false,
+                        date_achieved: null,
+                        class_level: classLevel,
+                        milestone_interval: milestoneInterval,
+                      };
+
+                      // Add scope-specific fields
+                      if (scopeType === "sector") {
+                        milestoneValues.sector_id = scopeId;
+                      } else if (scopeType === "cluster") {
+                        milestoneValues.cluster_id = scopeId;
+                      }
+
                       const insertMilestone = await db
                         .insert(MILESTONES)
-                        .values({
-                            category_id: categoryId,
-                            subcategory_id: subcategoryId,
-                            description: desc,
-                            completion_status: false,
-                            date_achieved: null,
-                            class_level: classLevel,
-                            milestone_interval: milestoneInterval,
-                            ...(scopeType === "sector" ? { sector_id: scopeId } : {}),
-                            ...(scopeType === "cluster" ? { cluster_id: scopeId } : {}),
-                          })
+                        .values(milestoneValues)
                         .execute();
 
                       const milestoneId = insertMilestone[0].insertId;
@@ -440,7 +448,7 @@ export async function fetchAndSaveRoadmap(
                       await db
                         .insert(USER_MILESTONES)
                         .values({
-                          scope_id: scopeId,
+                          scope_id: parentScopeId,
                           scope_type: scopeType,
                           milestone_id: milestoneId,
                         })
@@ -466,19 +474,28 @@ export async function fetchAndSaveRoadmap(
                         certification_course_name,
                       } = certification;
 
+                      // Create milestone values object with dynamic fields based on scope type
+                      const milestoneValues = {
+                        category_id: categoryId,
+                        subcategory_id: subcategoryId,
+                        description: milestone_description,
+                        completion_status: false,
+                        date_achieved: null,
+                        class_level: classLevel,
+                        milestone_interval: milestoneInterval,
+                      };
+
+                      // Add scope-specific fields
+                      if (scopeType === "sector") {
+                        milestoneValues.sector_id = scopeId;
+                      } else if (scopeType === "cluster") {
+                        milestoneValues.cluster_id = scopeId;
+                      }
+
                       // Insert the certification milestone into MILESTONES table
                       const insertMilestone = await db
                         .insert(MILESTONES)
-                        .values({
-                          category_id: categoryId,
-                          subcategory_id: subcategoryId,
-                          description: milestone_description,
-                          completion_status: false,
-                          date_achieved: null,
-                          class_level: classLevel,
-                          milestone_interval: milestoneInterval,
-                          sector_id: scopeId,
-                        })
+                        .values(milestoneValues)
                         .execute();
 
                       const milestoneId = insertMilestone[0].insertId;
@@ -523,7 +540,7 @@ export async function fetchAndSaveRoadmap(
                       await db
                         .insert(USER_MILESTONES)
                         .values({
-                          scope_id: scopeId,
+                          scope_id: parentScopeId,
                           scope_type: scopeType,
                           milestone_id: milestoneId,
                         })
@@ -552,17 +569,26 @@ export async function fetchAndSaveRoadmap(
                   .filter((desc) => desc && desc !== "-" && desc !== "N/A");
 
                 for (const desc of milestoneEntries) {
+                  // Create milestone values object with dynamic fields based on scope type
+                  const milestoneValues = {
+                    category_id: categoryId,
+                    description: desc,
+                    completion_status: false,
+                    date_achieved: null,
+                    class_level: classLevel,
+                    milestone_interval: milestoneInterval,
+                  };
+
+                  // Add scope-specific fields
+                  if (scopeType === "sector") {
+                    milestoneValues.sector_id = scopeId;
+                  } else if (scopeType === "cluster") {
+                    milestoneValues.cluster_id = scopeId;
+                  }
+
                   const insertMilestone = await db
                     .insert(MILESTONES)
-                    .values({
-                      category_id: categoryId,
-                      description: desc,
-                      completion_status: false,
-                      date_achieved: null,
-                      class_level: classLevel,
-                      milestone_interval: milestoneInterval,
-                      sector_id: scopeId,
-                    })
+                    .values(milestoneValues)
                     .execute();
 
                   const milestoneId = insertMilestone[0].insertId;
@@ -571,7 +597,7 @@ export async function fetchAndSaveRoadmap(
                   await db
                     .insert(USER_MILESTONES)
                     .values({
-                      scope_id: scopeId,
+                      scope_id: parentScopeId,
                       scope_type: scopeType,
                       milestone_id: milestoneId,
                     })

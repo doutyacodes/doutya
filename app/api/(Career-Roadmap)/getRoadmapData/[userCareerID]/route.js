@@ -228,8 +228,9 @@
 
 import { calculateWeekFromTimestamp } from "@/app/api/utils/calculateWeekFromTimestamp";
 import { fetchAndSaveRoadmap } from "@/app/api/utils/fetchAndSaveRoadmap";
-import { authenticate } from "@/lib/jwtMiddleware"; // Ensure this path is correct
-import { db } from "@/utils"; // Ensure this path is correct
+import { authenticate } from "@/lib/jwtMiddleware";
+import { db } from "@/utils";
+import crypto from "crypto";
 import {
   CAREER_GROUP,
   CERTIFICATIONS,
@@ -245,12 +246,139 @@ import {
   USER_DETAILS,
   USER_MILESTONES,
   USER_SECTOR,
-} from "@/utils/schema"; // Ensure this path is correct
+  GENERATION_STATUS,
+} from "@/utils/schema";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export const maxDuration = 300;
 export const dynamic = "force-dynamic";
+
+// Helper function to generate unique key hash for milestone generation
+const generateMilestoneKeyHash = (scopeId, classLevel, currentMonth, scopeType) => {
+  const keyString = `milestone-${scopeType}-${scopeId}-${classLevel}-${currentMonth}`;
+  return crypto.createHash('sha256').update(keyString).digest('hex');
+};
+
+// Helper function to wait with exponential backoff
+const waitWithBackoff = (attempt) => {
+  const baseDelay = 1000; // 1 second
+  const maxDelay = 10000; // 10 seconds
+  const delay = Math.min(baseDelay * Math.pow(1.5, attempt), maxDelay);
+  return new Promise(resolve => setTimeout(resolve, delay));
+};
+
+// Helper function to wait for milestone generation completion
+const waitForMilestoneGenerationCompletion = async (milestoneKeyHash) => {
+  const maxWaitTime = 5 * 60 * 1000; // 5 minutes
+  const startTime = Date.now();
+  let attempt = 0;
+  
+  while (Date.now() - startTime < maxWaitTime) {
+    await waitWithBackoff(attempt);
+    attempt++;
+    
+    const updatedStatus = await db
+      .select()
+      .from(GENERATION_STATUS)
+      .where(
+        and(
+          eq(GENERATION_STATUS.key_hash, milestoneKeyHash),
+          eq(GENERATION_STATUS.generation_type, 'milestone')
+        )
+      );
+    
+    if (updatedStatus.length > 0) {
+      const status = updatedStatus[0].status;
+      
+      if (status === 'completed') {
+        console.log('Milestone generation completed by another request');
+        return;
+      } else if (status === 'failed') {
+        throw new Error('Milestone generation failed by another request');
+      }
+    }
+  }
+  
+  // If we reach here, generation timed out
+  throw new Error('Milestone generation timed out');
+};
+
+// Helper function to handle failed milestone generation with atomic retry
+const handleFailedMilestoneGeneration = async (
+  milestoneKeyHash, 
+  userId,
+  scopeId,
+  classLevel,
+  currentMonth,
+  userCareerID,
+  scopeName,
+  type1,
+  type2,
+  language,
+  scopeType,
+  sectorDescription
+) => {
+  try {
+    // Use atomic update to claim the retry
+    const updateResult = await db
+      .update(GENERATION_STATUS)
+      .set({ 
+        status: 'in_progress',
+        generated_by: userId 
+      })
+      .where(
+        and(
+          eq(GENERATION_STATUS.key_hash, milestoneKeyHash),
+          eq(GENERATION_STATUS.generation_type, 'milestone'),
+          eq(GENERATION_STATUS.status, 'failed') // Only update if still failed
+        )
+      );
+
+    console.log('Attempting to retry failed milestone generation...');
+    
+    const savedMilestones = await fetchAndSaveRoadmap(
+      userId,
+      scopeId,
+      classLevel,
+      currentMonth,
+      userCareerID,
+      scopeName,
+      type1,
+      type2,
+      language,
+      scopeType,
+      sectorDescription
+    );
+
+    await db
+      .update(GENERATION_STATUS)
+      .set({ status: 'completed' })
+      .where(
+        and(
+          eq(GENERATION_STATUS.key_hash, milestoneKeyHash),
+          eq(GENERATION_STATUS.generation_type, 'milestone')
+        )
+      );
+    
+    console.log('Retry milestone generation completed successfully');
+    return savedMilestones;
+    
+  } catch (error) {
+    await db
+      .update(GENERATION_STATUS)
+      .set({ status: 'failed' })
+      .where(
+        and(
+          eq(GENERATION_STATUS.key_hash, milestoneKeyHash),
+          eq(GENERATION_STATUS.generation_type, 'milestone')
+        )
+      );
+    
+    console.error('Retry milestone generation failed:', error);
+    throw error;
+  }
+};
 
 export async function GET(req, { params }) {
   // Authenticate the request
@@ -279,14 +407,14 @@ export async function GET(req, { params }) {
         academicYearEnd: USER_DETAILS.academicYearEnd,
         className: USER_DETAILS.grade,
         scopeType: USER_DETAILS.scope_type,
-        joinedDate: USER_DETAILS.joined_date, // Get joined date
+        joinedDate: USER_DETAILS.joined_date,
       })
       .from(USER_DETAILS)
       .where(eq(USER_DETAILS.id, userId));
 
     const birth_date = user_data[0].birth_date;
     const joinedDate = user_data[0].joinedDate;
-    const classLevel = parseInt(user_data[0].className); // Get class level
+    const classLevel = parseInt(user_data[0].className);
 
     // Calculate current month from joined date
     const timeData = calculateWeekFromTimestamp(joinedDate);
@@ -296,7 +424,7 @@ export async function GET(req, { params }) {
     console.log("currentMonth", currentMonth);
 
     // Get the scope type for this user
-    const scopeType = user_data[0].scopeType || "career"; // Default to career if not specified
+    const scopeType = user_data[0].scopeType || "career";
     console.log("scopeType", scopeType);
 
     let scopeId;
@@ -348,7 +476,7 @@ export async function GET(req, { params }) {
           })
           .from(USER_CLUSTER)
           .innerJoin(CLUSTER, eq(USER_CLUSTER.cluster_id, CLUSTER.id))
-          .where(eq(USER_CLUSTER.id, userCareerID)) // Using userCareerID as userClusterID
+          .where(eq(USER_CLUSTER.id, userCareerID))
           .execute();
 
         if (!userClusterData.length) {
@@ -375,7 +503,7 @@ export async function GET(req, { params }) {
           })
           .from(USER_SECTOR)
           .innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id))
-          .where(eq(USER_SECTOR.id, userCareerID)) // Using userCareerID as userSectorID
+          .where(eq(USER_SECTOR.id, userCareerID))
           .execute();
 
         if (!userSectorData.length) {
@@ -389,7 +517,7 @@ export async function GET(req, { params }) {
         scopeName = userSectorData[0].sectorName;
         sectorDescription = userSectorData[0].sectorDescription;
         type1 = userSectorData[0].mbtiType;
-        type2 = null; // No type2 for sector
+        type2 = null;
         break;
 
       default:
@@ -402,8 +530,11 @@ export async function GET(req, { params }) {
     // Fetch milestones based on scope type
     let userMilestones;
 
-   if (scopeType === "sector" || scopeType === "cluster") {
-      // For sectors and clusters, first check if milestones exist for this class level and month
+    if (scopeType === "sector" || scopeType === "cluster") {
+      // Generate unique key hash for milestone generation (only for sectors and clusters)
+      const milestoneKeyHash = generateMilestoneKeyHash(scopeId, classLevel, currentMonth, scopeType);
+      
+      // First check if milestones exist for this class level and month
       const existingMilestones = await db
         .select({
           milestoneId: MILESTONES.id,
@@ -456,64 +587,276 @@ export async function GET(req, { params }) {
             eq(MILESTONES.class_level, classLevel),
             scopeType === "sector" 
               ? eq(MILESTONES.sector_id, scopeId)
-              : eq(MILESTONES.cluster_id, scopeId), // Add cluster_id field
+              : eq(MILESTONES.cluster_id, scopeId),
             eq(MILESTONES.milestone_interval, currentMonth)
           )
         )
         .execute();
 
-      // If no milestones exist for this specific combination, generate them using AI
+      // If no milestones exist, handle generation with duplicate prevention
       if (existingMilestones.length === 0) {
         console.log(
-          `No existing milestones found for sector ${scopeName}, generating new ones with AI...`
+          `No existing milestones found for ${scopeType} ${scopeName}, checking generation status...`
         );
 
-      // Generate AI roadmap data
-      const savedMilestones = await fetchAndSaveRoadmap(
-        userId,
-        scopeId,
-        classLevel,
-        currentMonth,
-        userCareerID,
-        scopeName,
-        type1,
-        type2,
-        language,
-        scopeType,
-        scopeType === "sector" ? sectorDescription : null
-      );
-      return NextResponse.json(savedMilestones, { status: 200 });
-    }
+        // Check if generation is already in progress or completed
+        const existingGenerationStatus = await db
+          .select()
+          .from(GENERATION_STATUS)
+          .where(
+            and(
+              eq(GENERATION_STATUS.key_hash, milestoneKeyHash),
+              eq(GENERATION_STATUS.generation_type, 'milestone')
+            )
+          );
 
-    // Check if user milestones exist for this scope
-    const userMilestonesExist = await db
-      .select()
-      .from(USER_MILESTONES)
-      .where(
-        and(
-          eq(USER_MILESTONES.scope_id, userCareerID),
-          eq(USER_MILESTONES.scope_type, scopeType)
-        )
-      )
-      .execute();
+        if (existingGenerationStatus.length > 0) {
+          const currentStatus = existingGenerationStatus[0].status;
+          console.log(`Generation status: ${currentStatus}`);
 
-    if (userMilestonesExist.length === 0 && existingMilestones.length > 0) {
-      // Link existing milestones to user
-      for (const milestone of existingMilestones) {
-        await db
-          .insert(USER_MILESTONES)
-          .values({
-            scope_id: userCareerID,
-            scope_type: scopeType,
-            milestone_id: milestone.milestoneId,
-          })
+          switch (currentStatus) {
+            case 'completed':
+              // Generation already completed, fetch the milestones
+              console.log('Generation already completed, fetching milestones...');
+              const completedMilestones = await db
+                .select({
+                  milestoneId: MILESTONES.id,
+                  milestoneDescription: MILESTONES.description,
+                  milestoneCategoryName: MILESTONE_CATEGORIES.name,
+                  milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
+                  milestoneCompletionStatus: MILESTONES.completion_status,
+                  milestoneDateAchieved: MILESTONES.date_achieved,
+                  certificationId: CERTIFICATIONS.id,
+                  certificationName: CERTIFICATIONS.certification_name,
+                  certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
+                  courseStatus: USER_COURSE_PROGRESS.status,
+                })
+                .from(MILESTONES)
+                .innerJoin(
+                  MILESTONE_CATEGORIES,
+                  eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
+                )
+                .leftJoin(
+                  MILESTONE_SUBCATEGORIES,
+                  eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+                )
+                .leftJoin(
+                  CERTIFICATIONS,
+                  and(
+                    eq(CERTIFICATIONS.milestone_id, MILESTONES.id),
+                    eq(CERTIFICATIONS.scope_id, scopeId),
+                    eq(CERTIFICATIONS.scope_type, scopeType)
+                  )
+                )
+                .leftJoin(
+                  USER_CERTIFICATION_COMPLETION,
+                  and(
+                    eq(
+                      USER_CERTIFICATION_COMPLETION.certification_id,
+                      CERTIFICATIONS.id
+                    ),
+                    eq(USER_CERTIFICATION_COMPLETION.user_id, userId)
+                  )
+                )
+                .leftJoin(
+                  USER_COURSE_PROGRESS,
+                  and(
+                    eq(USER_COURSE_PROGRESS.certification_id, CERTIFICATIONS.id),
+                    eq(USER_COURSE_PROGRESS.user_id, userId)
+                  )
+                )
+                .where(
+                  and(
+                    eq(MILESTONES.class_level, classLevel),
+                    scopeType === "sector" 
+                      ? eq(MILESTONES.sector_id, scopeId)
+                      : eq(MILESTONES.cluster_id, scopeId),
+                    eq(MILESTONES.milestone_interval, currentMonth)
+                  )
+                )
+                .execute();
+              
+              userMilestones = completedMilestones;
+              break;
+
+            case 'in_progress':
+              // Another request is generating, wait for completion
+              console.log('Another request is generating milestones, waiting...');
+              await waitForMilestoneGenerationCompletion(milestoneKeyHash);
+              
+              // Fetch the generated milestones
+              const generatedMilestones = await db
+                .select({
+                  milestoneId: MILESTONES.id,
+                  milestoneDescription: MILESTONES.description,
+                  milestoneCategoryName: MILESTONE_CATEGORIES.name,
+                  milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
+                  milestoneCompletionStatus: MILESTONES.completion_status,
+                  milestoneDateAchieved: MILESTONES.date_achieved,
+                  certificationId: CERTIFICATIONS.id,
+                  certificationName: CERTIFICATIONS.certification_name,
+                  certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
+                  courseStatus: USER_COURSE_PROGRESS.status,
+                })
+                .from(MILESTONES)
+                .innerJoin(
+                  MILESTONE_CATEGORIES,
+                  eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
+                )
+                .leftJoin(
+                  MILESTONE_SUBCATEGORIES,
+                  eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+                )
+                .leftJoin(
+                  CERTIFICATIONS,
+                  and(
+                    eq(CERTIFICATIONS.milestone_id, MILESTONES.id),
+                    eq(CERTIFICATIONS.scope_id, scopeId),
+                    eq(CERTIFICATIONS.scope_type, scopeType)
+                  )
+                )
+                .leftJoin(
+                  USER_CERTIFICATION_COMPLETION,
+                  and(
+                    eq(
+                      USER_CERTIFICATION_COMPLETION.certification_id,
+                      CERTIFICATIONS.id
+                    ),
+                    eq(USER_CERTIFICATION_COMPLETION.user_id, userId)
+                  )
+                )
+                .leftJoin(
+                  USER_COURSE_PROGRESS,
+                  and(
+                    eq(USER_COURSE_PROGRESS.certification_id, CERTIFICATIONS.id),
+                    eq(USER_COURSE_PROGRESS.user_id, userId)
+                  )
+                )
+                .where(
+                  and(
+                    eq(MILESTONES.class_level, classLevel),
+                    scopeType === "sector" 
+                      ? eq(MILESTONES.sector_id, scopeId)
+                      : eq(MILESTONES.cluster_id, scopeId),
+                    eq(MILESTONES.milestone_interval, currentMonth)
+                  )
+                )
+                .execute();
+              
+              userMilestones = generatedMilestones;
+              break;
+
+            case 'failed':
+              // Previous generation failed, attempt retry
+              console.log('Previous generation failed, attempting retry...');
+              const retriedMilestones = await handleFailedMilestoneGeneration(
+                milestoneKeyHash,
+                userId,
+                scopeId,
+                classLevel,
+                currentMonth,
+                userCareerID,
+                scopeName,
+                type1,
+                type2,
+                language,
+                scopeType,
+                sectorDescription
+              );
+              return NextResponse.json(retriedMilestones, { status: 200 });
+
+            default:
+              // Should not reach here, but handle gracefully
+              throw new Error(`Unknown generation status: ${currentStatus}`);
+          }
+        } else {
+          // No existing generation status, start new generation
+          console.log('Starting new milestone generation...');
+          
+          try {
+            // Insert generation status record
+            await db
+              .insert(GENERATION_STATUS)
+              .values({
+                generation_type: 'milestone',
+                key_hash: milestoneKeyHash,
+                status: 'in_progress',
+                generated_by: userId,
+              })
+              .execute();
+
+            // Generate AI roadmap data
+            const savedMilestones = await fetchAndSaveRoadmap(
+              userId,
+              scopeId,
+              classLevel,
+              currentMonth,
+              userCareerID,
+              scopeName,
+              type1,
+              type2,
+              language,
+              scopeType,
+              sectorDescription
+            );
+
+            // Update status to completed
+            await db
+              .update(GENERATION_STATUS)
+              .set({ status: 'completed' })
+              .where(
+                and(
+                  eq(GENERATION_STATUS.key_hash, milestoneKeyHash),
+                  eq(GENERATION_STATUS.generation_type, 'milestone')
+                )
+              );
+
+            return NextResponse.json(savedMilestones, { status: 200 });
+          } catch (error) {
+            // Update status to failed
+            await db
+              .update(GENERATION_STATUS)
+              .set({ status: 'failed' })
+              .where(
+                and(
+                  eq(GENERATION_STATUS.key_hash, milestoneKeyHash),
+                  eq(GENERATION_STATUS.generation_type, 'milestone')
+                )
+              );
+            throw error;
+          }
+        }
+      } else {
+        // Milestones exist, check if user milestones are linked
+        const userMilestonesExist = await db
+          .select()
+          .from(USER_MILESTONES)
+          .where(
+            and(
+              eq(USER_MILESTONES.scope_id, userCareerID),
+              eq(USER_MILESTONES.scope_type, scopeType)
+            )
+          )
           .execute();
-      }
-    }
 
-    userMilestones = existingMilestones;
-  } else {
-      // For clusters and careers, fetch user milestones as before
+        if (userMilestonesExist.length === 0 && existingMilestones.length > 0) {
+          // Link existing milestones to user
+          for (const milestone of existingMilestones) {
+            await db
+              .insert(USER_MILESTONES)
+              .values({
+                scope_id: userCareerID,
+                scope_type: scopeType,
+                milestone_id: milestone.milestoneId,
+              })
+              .execute();
+          }
+        }
+
+        userMilestones = existingMilestones;
+      }
+    } else {
+      // For careers, fetch user milestones as before (no duplicate prevention needed)
       userMilestones = await db
         .select({
           milestoneId: USER_MILESTONES.milestone_id,
@@ -533,9 +876,9 @@ export async function GET(req, { params }) {
           MILESTONE_CATEGORIES,
           eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
         )
-          .leftJoin(
-            MILESTONE_SUBCATEGORIES,
-            eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+        .leftJoin(
+          MILESTONE_SUBCATEGORIES,
+          eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
         )
         .leftJoin(
           CERTIFICATIONS,
@@ -571,24 +914,23 @@ export async function GET(req, { params }) {
           )
         )
         .execute();
-    }
 
-    // If no milestones are found for careers, generate them
-  if (userMilestones.length === 0 && scopeType === "career") {
-      // Call fetchAndSaveRoadmap with updated parameters
-      const savedMilestones = await fetchAndSaveRoadmap(
-        userId,
-        userCareerID,
-        classLevel, // Pass class level instead of birth_date
-        currentMonth, // Pass current month instead of age
-        scopeId,
-        scopeName,
-        type1,
-        type2,
-        language,
-        scopeType
-      );
-      return NextResponse.json(savedMilestones, { status: 200 });
+      // If no milestones are found for careers, generate them (no duplicate prevention)
+      if (userMilestones.length === 0) {
+        const savedMilestones = await fetchAndSaveRoadmap(
+          userId,
+          userCareerID,
+          classLevel,
+          currentMonth,
+          scopeId,
+          scopeName,
+          type1,
+          type2,
+          language,
+          scopeType
+        );
+        return NextResponse.json(savedMilestones, { status: 200 });
+      }
     }
 
     // Respond with fetched milestones data
