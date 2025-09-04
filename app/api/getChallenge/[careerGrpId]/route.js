@@ -27,13 +27,13 @@ export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
 // Helper function to create a unique key hash for generation
-function createKeyHash(age, scopeId, scopeType, className, country) {
-    const keyString = `${age}_${scopeId}_${scopeType}_${className}_${country}`;
+function createKeyHash(scopeId, scopeType, className, country) {
+    const keyString = `${scopeId}_${scopeType}_${className}_${country}`;
     return crypto.createHash('sha256').update(keyString).digest('hex');
 }
 
 // Helper function to wait for generation completion
-async function waitForGeneration(keyHash, maxWaitTime = 50000) {
+async function waitForGeneration(keyHash, maxWaitTime = 60000) {
     const startTime = Date.now();
     
     while (Date.now() - startTime < maxWaitTime) {
@@ -82,7 +82,7 @@ export async function GET(req, { params }) {
             educationLevel: USER_DETAILS.education_level,
             academicYearStart: USER_DETAILS.academicYearStart,
             academicYearEnd: USER_DETAILS.academicYearEnd,
-            className: USER_DETAILS.class_name,
+            className: USER_DETAILS.grade,
             scope_type: USER_DETAILS.scope_type
         })
         .from(USER_DETAILS)
@@ -96,7 +96,7 @@ export async function GET(req, { params }) {
     const scope_type = user_data[0].scope_type;
     
     // Create unique key hash for this generation request
-    const keyHash = createKeyHash(age, scopeId, scope_type, className, country);
+    const keyHash = createKeyHash(scopeId, scope_type, className, country);
     
     // Get the scope name based on the scope type
     let scope_name = '';
@@ -150,7 +150,6 @@ export async function GET(req, { params }) {
         ))
         .where(
             and(
-                eq(CHALLENGES.age, age),
                 eq(CHALLENGES.scope_id, scopeId),
                 eq(CHALLENGES.scope_type, scope_type),
                 eq(CHALLENGES.class_name, className),
@@ -195,7 +194,6 @@ export async function GET(req, { params }) {
                     ))
                     .where(
                         and(
-                            eq(CHALLENGES.age, age),
                             eq(CHALLENGES.scope_id, scopeId),
                             eq(CHALLENGES.scope_type, scope_type),
                             eq(CHALLENGES.class_name, className),
@@ -223,7 +221,6 @@ export async function GET(req, { params }) {
                 ))
                 .where(
                     and(
-                        eq(CHALLENGES.age, age),
                         eq(CHALLENGES.scope_id, scopeId),
                         eq(CHALLENGES.scope_type, scope_type),
                         eq(CHALLENGES.class_name, className),
@@ -237,113 +234,163 @@ export async function GET(req, { params }) {
 
     // Start generation process
     try {
-        // Insert generation status as "in_progress"
-        await db.insert(GENERATION_STATUS).values({
-            generation_type: 'challenge',
-            key_hash: keyHash,
-            status: 'in_progress',
-            generated_by: userId,
-            created_at: new Date(),
-            updated_at: new Date()
-        });
+        let shouldGenerate = true;
+        
+        // Try to insert generation status as "in_progress"
+        try {
+            await db.insert(GENERATION_STATUS).values({
+                generation_type: 'challenge',
+                key_hash: keyHash,
+                status: 'in_progress',
+                generated_by: userId,
+                created_at: new Date(),
+                updated_at: new Date()
+            });
+            console.log('Successfully inserted generation status, proceeding with generation...');
+        } catch (insertError) {
+            // If duplicate key error, another request is already handling this generation
+            if (insertError.code === 'ER_DUP_ENTRY') {
+                console.log('Generation already in progress by another request, waiting...');
+                shouldGenerate = false;
+                
+                const waitResult = await waitForGeneration(keyHash);
+                
+                if (waitResult.success) {
+                    // Fetch the generated challenges
+                    const generatedChallenges = await db
+                        .select({
+                            week: CHALLENGES.week,
+                            challenge: CHALLENGES.challenge,
+                            verification: CHALLENGES.verification,
+                            id: CHALLENGES.id
+                        })
+                        .from(CHALLENGES)
+                        .leftJoin(CHALLENGE_PROGRESS, and(
+                            eq(CHALLENGE_PROGRESS.challenge_id, CHALLENGES.id),
+                            eq(CHALLENGE_PROGRESS.user_id, userId)
+                        ))
+                        .where(
+                            and(
+                                eq(CHALLENGES.scope_id, scopeId),
+                                eq(CHALLENGES.scope_type, scope_type),
+                                eq(CHALLENGES.class_name, className),
+                                isNull(CHALLENGE_PROGRESS.id),
+                            )
+                        );
+
+                    return NextResponse.json({ challenges: generatedChallenges }, { status: 200 });
+                } else {
+                    return NextResponse.json({ error: waitResult.error }, { status: 500 });
+                }
+            } else {
+                // Re-throw if it's a different error
+                throw insertError;
+            }
+        }
+        
+        // If we shouldn't generate (another request is handling it), return early
+        if (!shouldGenerate) {
+            return;
+        }
+        
+        // If we reach here, this request is responsible for generation
+        console.log('Starting challenge generation...');
 
         const prompt = `
-        give a list of AGE APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like - (Verification: Take a picture of the completed poster.) like week1, week2, till week52, for a ${age} year old (currently in week ${currentAgeWeek} of this age), aspiring to be in the ${scope_type.toUpperCase()} titled "${scope_name}" in ${country}, and the challenges should be random. 
+                give a list of CLASS APPROPRIATE, LOW EFFORT, VERIFIABLE THROUGH PICTURES, 52 WEEKLY CHALLENGES LIST with verification text like - (Verification: Take a picture of the completed poster.) like week1, week2, till week52, for a student in class "${className}" (currently in week ${currentAgeWeek} of this academic year), aspiring to be in the ${scope_type.toUpperCase()} titled "${scope_name}" in ${country}, and the challenges should be random. 
 
-        ${sectorDescription ? `\n    **Sector Description:** ${sectorDescription}\n` : ''}
+            ${sectorDescription ? `\n    **Sector Description:** ${sectorDescription}\n` : ''}
 
-        
-        Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${age} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in English only. Provide single data per week. Give it as a single JSON data without any wrapping other than [].`;
-        
-        const response = await axios.post(
-            "https://api.openai.com/v1/chat/completions",
-            {
-                model: "gpt-4o-mini",
-                messages: [{ role: "user", content: prompt }],
-                max_tokens: 3000,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-                    "Content-Type": "application/json",
+            Ensure that the response is valid JSON, using the specified field names, but do not include the terms ${className} or ${country} in the data. Provide the response ${languageOptions[language] || 'in English'} keeping the keys in English only. Provide single data per week. Give it as a single JSON data without any wrapping other than [].`;
+
+            const response = await axios.post(
+                "https://api.openai.com/v1/chat/completions",
+                {
+                    model: "gpt-4o-mini",
+                    messages: [{ role: "user", content: prompt }],
+                    max_tokens: 3000,
                 },
-            }
-        );
-
-        console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-        console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
-        console.log(`Total tokens Challenges: ${response.data.usage.total_tokens}`);
-
-        let responseText = response.data.choices[0].message.content.trim();
-        responseText = responseText.replace(/```json|```/g, "").trim();
-
-        const challengesList = JSON.parse(responseText);
-
-        // Insert the generated challenges into the database
-        for (const challenge of challengesList) {
-            await db.insert(CHALLENGES).values({
-                age: age,
-                country: country,
-                scope_id: scopeId,
-                scope_type: scope_type,
-                week: challenge.week,
-                class_name: className,
-                challenge: challenge.challenge,
-                verification: challenge.verification,
-                created_at: new Date(),
-            });
-        }
-
-        // Update generation status to "completed"
-        await db.update(GENERATION_STATUS)
-            .set({
-                status: 'completed',
-                updated_at: new Date()
-            })
-            .where(and(
-                eq(GENERATION_STATUS.generation_type, 'challenge'),
-                eq(GENERATION_STATUS.key_hash, keyHash)
-            ));
-
-        // Fetch the newly inserted challenges
-        const insertedChallenges = await db
-            .select({
-                week: CHALLENGES.week,
-                challenge: CHALLENGES.challenge,
-                verification: CHALLENGES.verification,
-                id: CHALLENGES.id
-            })
-            .from(CHALLENGES)
-            .leftJoin(CHALLENGE_PROGRESS, and(
-                eq(CHALLENGE_PROGRESS.challenge_id, CHALLENGES.id),
-                eq(CHALLENGE_PROGRESS.user_id, userId)
-            ))
-            .where(
-                and(
-                    eq(CHALLENGES.age, age),
-                    eq(CHALLENGES.scope_id, scopeId),
-                    eq(CHALLENGES.scope_type, scope_type),
-                    eq(CHALLENGES.class_name, className),
-                    isNull(CHALLENGE_PROGRESS.id),
-                )
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                        "Content-Type": "application/json",
+                    },
+                }
             );
 
-        return NextResponse.json({ challenges: insertedChallenges }, { status: 200 });
+            console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
+            console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+            console.log(`Total tokens Challenges: ${response.data.usage.total_tokens}`);
 
-    } catch (error) {
-        console.error('Error fetching or parsing data from OpenAI API:', error);
-        
-        // Update generation status to "failed"
-        await db.update(GENERATION_STATUS)
-            .set({
-                status: 'failed',
-                updated_at: new Date()
-            })
-            .where(and(
-                eq(GENERATION_STATUS.generation_type, 'challenge'),
-                eq(GENERATION_STATUS.key_hash, keyHash)
-            ));
+            let responseText = response.data.choices[0].message.content.trim();
+            responseText = responseText.replace(/```json|```/g, "").trim();
+
+            const challengesList = JSON.parse(responseText);
+            console.log(responseText)
+
+            // Insert the generated challenges into the database
+            for (const challenge of challengesList) {
+                await db.insert(CHALLENGES).values({
+                    country: country,
+                    scope_id: scopeId,
+                    scope_type: scope_type,
+                    week: challenge.week,
+                    class_name: className,
+                    challenge: challenge.challenge,
+                    verification: challenge.verification,
+                    created_at: new Date(),
+                });
+            }
+
+            // Update generation status to "completed"
+            await db.update(GENERATION_STATUS)
+                .set({
+                    status: 'completed',
+                    updated_at: new Date()
+                })
+                .where(and(
+                    eq(GENERATION_STATUS.generation_type, 'challenge'),
+                    eq(GENERATION_STATUS.key_hash, keyHash)
+                ));
+
+            // Fetch the newly inserted challenges
+            const insertedChallenges = await db
+                .select({
+                    week: CHALLENGES.week,
+                    challenge: CHALLENGES.challenge,
+                    verification: CHALLENGES.verification,
+                    id: CHALLENGES.id
+                })
+                .from(CHALLENGES)
+                .leftJoin(CHALLENGE_PROGRESS, and(
+                    eq(CHALLENGE_PROGRESS.challenge_id, CHALLENGES.id),
+                    eq(CHALLENGE_PROGRESS.user_id, userId)
+                ))
+                .where(
+                    and(
+                        eq(CHALLENGES.scope_id, scopeId),
+                        eq(CHALLENGES.scope_type, scope_type),
+                        eq(CHALLENGES.class_name, className),
+                        isNull(CHALLENGE_PROGRESS.id),
+                    )
+                );
+
+            return NextResponse.json({ challenges: insertedChallenges }, { status: 200 });
+
+        } catch (error) {
+            console.error('Error fetching or parsing data from OpenAI API:', error);
             
-        return NextResponse.json({ error: 'Failed to generate challenges' }, { status: 500 });
-    }
+            // Update generation status to "failed"
+            await db.update(GENERATION_STATUS)
+                .set({
+                    status: 'failed',
+                    updated_at: new Date()
+                })
+                .where(and(
+                    eq(GENERATION_STATUS.generation_type, 'challenge'),
+                    eq(GENERATION_STATUS.key_hash, keyHash)
+                ));
+                
+            return NextResponse.json({ error: 'Failed to generate challenges' }, { status: 500 });
+        }
 }

@@ -402,68 +402,8 @@ export async function GET(req, { params }) {
     // Fetch milestones based on scope type
     let userMilestones;
 
-    if (scopeType === "sector") {
-      const query = db
-        .select({
-          milestoneId: MILESTONES.id,
-          milestoneDescription: MILESTONES.description,
-          milestoneCategoryName: MILESTONE_CATEGORIES.name,
-          milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
-          milestoneCompletionStatus: MILESTONES.completion_status,
-          milestoneDateAchieved: MILESTONES.date_achieved,
-          certificationId: CERTIFICATIONS.id,
-          certificationName: CERTIFICATIONS.certification_name,
-          certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
-          courseStatus: USER_COURSE_PROGRESS.status,
-        })
-        .from(MILESTONES)
-        .innerJoin(
-          MILESTONE_CATEGORIES,
-          eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
-        )
-        .leftJoin(
-          MILESTONE_SUBCATEGORIES,
-          eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
-        )
-        .leftJoin(
-          CERTIFICATIONS,
-          and(
-            eq(CERTIFICATIONS.milestone_id, MILESTONES.id),
-            eq(CERTIFICATIONS.scope_id, scopeId),
-            eq(CERTIFICATIONS.scope_type, scopeType)
-          )
-        )
-        .leftJoin(
-          USER_CERTIFICATION_COMPLETION,
-          and(
-            eq(
-              USER_CERTIFICATION_COMPLETION.certification_id,
-              CERTIFICATIONS.id
-            ),
-            eq(USER_CERTIFICATION_COMPLETION.user_id, userId)
-          )
-        )
-        .leftJoin(
-          USER_COURSE_PROGRESS,
-          and(
-            eq(USER_COURSE_PROGRESS.certification_id, CERTIFICATIONS.id),
-            eq(USER_COURSE_PROGRESS.user_id, userId)
-          )
-        )
-        .where(
-          and(
-            eq(MILESTONES.class_level, classLevel),
-            eq(MILESTONES.sector_id, scopeId),
-            // eq(MILESTONES.mbti_type, type1),
-            eq(MILESTONES.milestone_interval, currentMonth)
-          )
-        );
-
-      // Log the SQL and parameters
-      const { sql, params } = query.toSQL();
-      console.log("SQL Query:", sql);
-      console.log("Parameters:", params);
-      // For sectors, first check if milestones exist for this class level, MBTI type, and month
+   if (scopeType === "sector" || scopeType === "cluster") {
+      // For sectors and clusters, first check if milestones exist for this class level and month
       const existingMilestones = await db
         .select({
           milestoneId: MILESTONES.id,
@@ -514,8 +454,9 @@ export async function GET(req, { params }) {
         .where(
           and(
             eq(MILESTONES.class_level, classLevel),
-            eq(MILESTONES.sector_id, scopeId),
-            // eq(MILESTONES.mbti_type, type1),
+            scopeType === "sector" 
+              ? eq(MILESTONES.sector_id, scopeId)
+              : eq(MILESTONES.cluster_id, scopeId), // Add cluster_id field
             eq(MILESTONES.milestone_interval, currentMonth)
           )
         )
@@ -527,51 +468,51 @@ export async function GET(req, { params }) {
           `No existing milestones found for sector ${scopeName}, generating new ones with AI...`
         );
 
-        // Generate AI roadmap data for sector with description
-        const savedMilestones = await fetchAndSaveRoadmap(
-          userId,
-          scopeId,
-          classLevel, // Pass class level instead of birth_date
-          currentMonth, // Pass current month instead of age
-          userCareerID,
-          scopeName,
-          type1,
-          type2,
-          language,
-          scopeType,
-          sectorDescription // Pass sector description
-        );
-        return NextResponse.json(savedMilestones, { status: 200 });
-      }
+      // Generate AI roadmap data
+      const savedMilestones = await fetchAndSaveRoadmap(
+        userId,
+        scopeId,
+        classLevel,
+        currentMonth,
+        userCareerID,
+        scopeName,
+        type1,
+        type2,
+        language,
+        scopeType,
+        scopeType === "sector" ? sectorDescription : null
+      );
+      return NextResponse.json(savedMilestones, { status: 200 });
+    }
 
-      // Check if user milestones exist for this sector
-      const userMilestonesExist = await db
-        .select()
-        .from(USER_MILESTONES)
-        .where(
-          and(
-            eq(USER_MILESTONES.scope_id, userCareerID),
-            eq(USER_MILESTONES.scope_type, scopeType)
-          )
+    // Check if user milestones exist for this scope
+    const userMilestonesExist = await db
+      .select()
+      .from(USER_MILESTONES)
+      .where(
+        and(
+          eq(USER_MILESTONES.scope_id, userCareerID),
+          eq(USER_MILESTONES.scope_type, scopeType)
         )
-        .execute();
+      )
+      .execute();
 
-      if (userMilestonesExist.length === 0 && existingMilestones.length > 0) {
-        // Link existing milestones to user
-        for (const milestone of existingMilestones) {
-          await db
-            .insert(USER_MILESTONES)
-            .values({
-              scope_id: userCareerID,
-              scope_type: scopeType,
-              milestone_id: milestone.milestoneId,
-            })
-            .execute();
-        }
+    if (userMilestonesExist.length === 0 && existingMilestones.length > 0) {
+      // Link existing milestones to user
+      for (const milestone of existingMilestones) {
+        await db
+          .insert(USER_MILESTONES)
+          .values({
+            scope_id: userCareerID,
+            scope_type: scopeType,
+            milestone_id: milestone.milestoneId,
+          })
+          .execute();
       }
+    }
 
-      userMilestones = existingMilestones;
-    } else {
+    userMilestones = existingMilestones;
+  } else {
       // For clusters and careers, fetch user milestones as before
       userMilestones = await db
         .select({
@@ -632,8 +573,8 @@ export async function GET(req, { params }) {
         .execute();
     }
 
-    // If no milestones are found for clusters/careers, generate them
-    if (userMilestones.length === 0 && scopeType !== "sector") {
+    // If no milestones are found for careers, generate them
+  if (userMilestones.length === 0 && scopeType === "career") {
       // Call fetchAndSaveRoadmap with updated parameters
       const savedMilestones = await fetchAndSaveRoadmap(
         userId,

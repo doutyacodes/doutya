@@ -37,7 +37,6 @@ export async function POST(req) {
         .from(USER_DETAILS)
         .where(eq(USER_DETAILS.id, userId))
     const birth_date = user_data[0].birth_date
-    const age = calculateAge(birth_date)
 
     const challengeProgress = await db
         .insert(CHALLENGE_PROGRESS)
@@ -47,7 +46,6 @@ export async function POST(req) {
             image: file_name, 
             status: 'pending',
             created_at: new Date(),
-            age: age,
             school_id: 1, 
             week: week
         });

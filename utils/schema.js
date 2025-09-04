@@ -946,7 +946,7 @@ export const USER_ACTIVITIES = mysqlTable("user_activities", {
 
 export const CHALLENGES = mysqlTable("challenges", {
   id: int("id").notNull().primaryKey().autoincrement(),
-  age: int("age").notNull(),
+  // age: int("age").notNull(),
   country: varchar("country", 255).notNull(),
   scope_id: int("scope_id").notNull(), // replaces career_id
   scope_type: mysqlEnum("scope_type", [
@@ -1027,6 +1027,7 @@ export const MILESTONES = mysqlTable("milestones", {
   // For class-based roadmaps (5–7)
   class_level: int("class_level").default(null),       // 5, 6, 7
   sector_id: int("sector_id").default(null).references(() => SECTOR.id),
+  cluster_id: int("cluster_id").default(null).references(() => CLUSTER.id),
   mbti_type: varchar("mbti_type", { length: 5 }).default(null), // e.g. "INTJ"
   milestone_interval: int("milestone_interval").default(null), // 1–2 (2-month chunks)
 

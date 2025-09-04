@@ -422,15 +422,16 @@ export async function fetchAndSaveRoadmap(
                       const insertMilestone = await db
                         .insert(MILESTONES)
                         .values({
-                          category_id: categoryId,
-                          subcategory_id: subcategoryId,
-                          description: desc,
-                          completion_status: false,
-                          date_achieved: null,
-                          class_level: classLevel,
-                          milestone_interval: milestoneInterval,
-                          sector_id: scopeId,
-                        })
+                            category_id: categoryId,
+                            subcategory_id: subcategoryId,
+                            description: desc,
+                            completion_status: false,
+                            date_achieved: null,
+                            class_level: classLevel,
+                            milestone_interval: milestoneInterval,
+                            ...(scopeType === "sector" ? { sector_id: scopeId } : {}),
+                            ...(scopeType === "cluster" ? { cluster_id: scopeId } : {}),
+                          })
                         .execute();
 
                       const milestoneId = insertMilestone[0].insertId;
