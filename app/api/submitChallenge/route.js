@@ -36,7 +36,6 @@ export async function POST(req) {
         })
         .from(USER_DETAILS)
         .where(eq(USER_DETAILS.id, userId))
-    const birth_date = user_data[0].birth_date
 
     const challengeProgress = await db
         .insert(CHALLENGE_PROGRESS)

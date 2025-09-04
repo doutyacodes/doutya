@@ -979,7 +979,7 @@ export const CHALLENGE_PROGRESS = mysqlTable("challenge_progress", {
   image: varchar("image", 255).notNull(),
   status: mysqlEnum("status", ["pending", "approved", "rejected"]).notNull(),
   created_at: timestamp("created_at").defaultNow(),
-  age: int("age").notNull(),
+  // age: int("age").notNull(),
   school_id: int("school_id").notNull(),
   week: int("week").notNull(),
 });
