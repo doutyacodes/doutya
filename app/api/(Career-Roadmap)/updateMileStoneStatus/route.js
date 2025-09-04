@@ -16,6 +16,8 @@ export async function PUT(req) {
   try {
     const data = await req.json();
     const { milestoneId, completed, milestoneText, careerName, selectedCommunities } = data;
+
+    console.log("careerName", careerName)
  
     const { global, countrySpecific } = selectedCommunities;
       

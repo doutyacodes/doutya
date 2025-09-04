@@ -26,6 +26,11 @@ function RoadMap({ selectedCareer }) {
   const router = useRouter();
   const [selectedMilestoneData, setSelectedMilestoneData] = useState(null);
 
+    console.log("selectedCareer",selectedCareer)
+
+
+  console.log("selectedMilestoneData",selectedMilestoneData)
+
   const language = localStorage.getItem('language') || 'en';
   const requestIdRef = useRef(0);
 
@@ -286,7 +291,7 @@ useEffect(() => {
                                   </h3>
                                 </div>
                                 <button
-                                  onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
+                                  onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.name)}
                                   className={`w-full px-3 py-2 font-semibold text-xs text-white rounded-xl flex items-center justify-center gap-2 transition-all duration-200 shadow-lg ${
                                     item.milestoneCompletionStatus 
                                       ? 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700' 
@@ -328,7 +333,7 @@ useEffect(() => {
                                 </div>
 
                                 <button
-                                  onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
+                                  onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.name)}
                                   className={`flex-shrink-0 px-4 py-2.5 font-semibold text-sm text-white rounded-xl flex items-center gap-2 transition-all duration-200 shadow-lg hover:scale-105 ${
                                     item.milestoneCompletionStatus 
                                       ? 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 hover:shadow-emerald-500/30' 
@@ -391,7 +396,7 @@ useEffect(() => {
                                   </h3>
                                 </div>
                                 <button
-                                  onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
+                                  onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.name)}
                                   className={`w-full px-3 py-2 font-semibold text-xs text-white rounded-xl flex items-center justify-center gap-2 transition-all duration-200 shadow-lg ${
                                     item.milestoneCompletionStatus 
                                       ? 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700' 
@@ -433,7 +438,7 @@ useEffect(() => {
                                 </div>
 
                                 <button
-                                  onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.career_name)}
+                                  onClick={() => handleComplete(activeTab, item.milestoneId, item.milestoneDescription, selectedCareer.name)}
                                   className={`flex-shrink-0 px-4 py-2.5 font-semibold text-sm text-white rounded-xl flex items-center gap-2 transition-all duration-200 shadow-lg hover:scale-105 ${
                                     item.milestoneCompletionStatus 
                                       ? 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 hover:shadow-emerald-500/30' 
