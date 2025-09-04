@@ -414,7 +414,7 @@ export async function GET(req, { params }) {
 
     const birth_date = user_data[0].birth_date;
     const joinedDate = user_data[0].joinedDate;
-    const classLevel = parseInt(user_data[0].className);
+    const classLevel = user_data[0].className;
 
     // Calculate current month from joined date
     const timeData = calculateWeekFromTimestamp(joinedDate);

@@ -11,7 +11,7 @@ export default function Overview({ selectedCareer }) {
             setLoading(true);
             try {
                 // Fetch career name asynchronously
-                const careerName = await GlobalApi.getCareerName(selectedCareer.career_group_id);
+                const careerName = await GlobalApi.getCareerName(selectedCareer.scope_grp_id);
 
                 const career_name = careerName.data.career;
                 
@@ -47,10 +47,10 @@ export default function Overview({ selectedCareer }) {
             }
         };
 
-        if (selectedCareer.career_group_id) {
+        if (selectedCareer.scope_grp_id) {
             fetchCareer();  // Invoke the function
         }
-    }, [selectedCareer.career_group_id]);  // Add selectedCareer as dependency
+    }, [selectedCareer.scope_grp_id]);  // Add selectedCareer as dependency
 
     return (
         <div className="p-6 bg-[#1f1f1f] min-h-screen"> {/* Dark background */}

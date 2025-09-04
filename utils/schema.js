@@ -1025,7 +1025,7 @@ export const MILESTONES = mysqlTable("milestones", {
   date_achieved: timestamp("date_achieved").default(null),
 
   // For class-based roadmaps (5–7)
-  class_level: int("class_level").default(null),       // 5, 6, 7
+  class_level: varchar("class_level", { length: 20 }).default(null),
   sector_id: int("sector_id").default(null).references(() => SECTOR.id),
   cluster_id: int("cluster_id").default(null).references(() => CLUSTER.id),
   mbti_type: varchar("mbti_type", { length: 5 }).default(null), // e.g. "INTJ"
@@ -1330,7 +1330,7 @@ export const CERTIFICATIONS = mysqlTable("certifications", {
   certification_name: varchar("certification_name", { length: 255 }).notNull(),
   
   // Remove age field and add class-based fields
-  class_level: int("class_level").default(null), // 5, 6, 7, 8, 9, etc.
+  class_level: varchar("class_level", { length: 20 }).default(null), // e.g., "5", "6", "7", "8", "9", etc.
   milestone_interval: int("milestone_interval").default(null), // 1-6 (2-month intervals)
   
   scope_id: int("scope_id").notNull(),
