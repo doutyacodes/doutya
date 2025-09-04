@@ -32,7 +32,8 @@ export const dynamic = 'force-dynamic';
         industry === "any" ? "" : `in the ${industry}`
     } ${
         country ? "in " + country : ""
-    } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}. Include 3 traditional careers, 3 trending careers, 3 AI-proof career 3 entrepreneurial careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Additionally, provide ${
+    } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}. Include eactly 3 traditional careers, 3 trending careers, 3 AI-proof career 3 entrepreneurial careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Include exactly 3 unique careers for each category (no more, no less).
+. Additionally, provide ${
         finalAge >= 18
         ? "3 futuristic careers for individual aged " +
             finalAge +
