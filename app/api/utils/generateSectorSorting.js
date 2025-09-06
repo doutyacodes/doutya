@@ -12,10 +12,10 @@ You are an expert career counselor specializing in personality-based career guid
 
 **Available Sectors:**
 1. **Nature** - Earth systems, agriculture, environmental conservation, renewable resources 
-2. **Making** - Engineering, technology, manufacturing, building systems and infrastructure  `${*}`
-3. **Life** - Healthcare, medicine, human wellbeing, biological sciences `${*}`
-4. **Knowledge** - Research, education, discovery, academic  `${*}`
-5. **Society** - Governance, business, law, economic systems, human organization `${*}`
+2. **Making** - Engineering, technology, manufacturing, building systems and infrastructure
+3. **Life** - Healthcare, medicine, human wellbeing, biological sciences
+4. **Knowledge** - Research, education, discovery, academic 
+5. **Society** - Governance, business, law, economic systems, human organization
 6. **Culture** - Arts, entertainment, creativity, sports, cultural expression
 
 **Analysis Guidelines:**
