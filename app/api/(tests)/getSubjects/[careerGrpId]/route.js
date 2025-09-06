@@ -60,7 +60,6 @@ export async function GET(req, { params }) {
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId))
         const age = calculateAge(birth_date[0].birth_date)
-        console.log(age)
 
         // Step 3: Fetch subjects for the career and filter by user age
         const subjectsForCareer = await db
@@ -76,11 +75,7 @@ export async function GET(req, { params }) {
             .leftJoin(TESTS, and(eq(TESTS.subject_id, SUBJECTS.subject_id), lte(TESTS.age_group, age)))
             .leftJoin(USER_TESTS, and(eq(USER_TESTS.user_id, userId), eq(USER_TESTS.test_id, TESTS.test_id)))
             .where(
-                and(
                     eq(CAREER_SUBJECTS.career_id, careerGrpId),
-                    lte(SUBJECTS.min_age, age),
-                    gte(SUBJECTS.max_age, age)
-                )
             );
 
         if (!subjectsForCareer.length) {

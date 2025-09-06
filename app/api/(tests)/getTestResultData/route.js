@@ -23,7 +23,6 @@ export async function GET(request) {
             testId: USER_TESTS.test_id,
             subjectName: SUBJECTS.subject_name,
             testDate: TESTS.test_date,
-            ageGroup: TESTS.age_group,
             score: USER_TESTS.score,
             starsAwarded: USER_TESTS.stars_awarded
         })

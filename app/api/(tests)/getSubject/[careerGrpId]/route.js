@@ -26,8 +26,8 @@ export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 // Helper function to generate unique key hash for subject generation
-const generateKeyHash = (scopeId, scopeType, age, className, country, type1, type2) => {
-    const keyString = `${scopeId}-${scopeType}-${age}-${className}-${country}-${type1 || ''}-${type2 || ''}`;
+const generateKeyHash = (scopeId, scopeType, className, country, type1, type2) => {
+    const keyString = `${scopeId}-${scopeType}-${className}-${country}-${type1 || ''}-${type2 || ''}`;
     return crypto.createHash('sha256').update(keyString).digest('hex');
 };
 
@@ -73,13 +73,11 @@ export async function GET(req, { params }) {
         }
 
         const userDetails = userDetailsResult[0];
-        const age = calculateAge(userDetails.birth_date);
-        const effectiveAge = age;
         const className = userDetails.className || 'completed';
         const joinedAt = userDetails.joined_date;
         const scopeType = userDetails.scope_type || 'career';
         
-        console.log(`User age: ${age}, Effective age: ${effectiveAge}, Scope type: ${scopeType}`);
+        console.log(`User , Scope type: ${scopeType}`);
 
         // Get scope information first to generate key hash
         let scopeInfo = null;
@@ -183,7 +181,7 @@ export async function GET(req, { params }) {
         }
 
         // Generate unique key hash for this subject generation request
-        const keyHash = generateKeyHash(scopeId, scopeType, age, className, country, type1, type2);
+        const keyHash = generateKeyHash(scopeId, scopeType, className, country, type1, type2);
 
         // Check if subjects exist for this scope
         const subjectsExist = await db
@@ -194,7 +192,6 @@ export async function GET(req, { params }) {
                 and(
                     eq(CAREER_SUBJECTS.scope_id, scopeId),
                     eq(CAREER_SUBJECTS.scope_type, scopeType),
-                    eq(SUBJECTS.min_age, age),
                     eq(SUBJECTS.class_name, className)
                 )
             );
@@ -264,7 +261,6 @@ export async function GET(req, { params }) {
                             scopeName, 
                             scopeId, 
                             country, 
-                            age, 
                             userDetails.birth_date, 
                             className, 
                             type1, 
@@ -311,7 +307,7 @@ export async function GET(req, { params }) {
                         
                     } else if (currentStatus === 'failed') {
                         console.log('Previous generation failed, attempting retry...');
-                        await handleFailedGeneration(keyHash, userId, scopeName, scopeId, country, age, userDetails.birth_date, className, type1, type2, scopeType);
+                        await handleFailedGeneration(keyHash, userId, scopeName, scopeId, country, userDetails.birth_date, className, type1, type2, scopeType);
                     }
                     // If status is 'completed', continue with fetching subjects
                 }
@@ -344,7 +340,6 @@ export async function GET(req, { params }) {
                 TESTS,
                 and(
                     eq(TESTS.subject_id, SUBJECTS.subject_id),
-                    eq(TESTS.age_group, effectiveAge),
                     eq(TESTS.year, yearsSinceJoined),
                     eq(TESTS.month, monthsSinceJoined),
                     eq(TESTS.week_number, weekNumber)
@@ -361,14 +356,13 @@ export async function GET(req, { params }) {
                 and(
                     eq(CAREER_SUBJECTS.scope_id, scopeId),
                     eq(CAREER_SUBJECTS.scope_type, scopeType),
-                    eq(SUBJECTS.min_age, effectiveAge),
                     eq(SUBJECTS.class_name, className)
                 )
             );
 
         if (!subjectsForScope.length) {
             return NextResponse.json({ 
-                message: `No subjects found for this ${scopeType} and user age.` 
+                message: `No subjects found for this ${scopeType}.` 
             }, { status: 400 });
         }
 
@@ -429,7 +423,7 @@ const waitForGenerationCompletion = async (keyHash) => {
 };
 
 // Helper function to handle failed generation with atomic retry
-const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, country, age, birthDate, className, type1, type2, scopeType) => {
+const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, country, birthDate, className, type1, type2, scopeType) => {
     try {
         // Use atomic update to claim the retry
         const updateResult = await db
@@ -455,7 +449,6 @@ const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, count
             scopeName, 
             scopeId, 
             country, 
-            age, 
             birthDate, 
             className, 
             type1, 

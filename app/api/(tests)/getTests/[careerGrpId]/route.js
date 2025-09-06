@@ -88,11 +88,7 @@ export async function GET(req, { params }) {
             .from(CAREER_SUBJECTS)
             .innerJoin(SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id))
             .where(
-                and(
                     eq(CAREER_SUBJECTS.career_id, careerGrpId),
-                    lte(SUBJECTS.min_age, age),
-                    gte(SUBJECTS.max_age, age)
-                )
             );
 
         if (!subjectsForCareer.length) {

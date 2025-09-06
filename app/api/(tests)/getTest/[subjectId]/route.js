@@ -73,8 +73,6 @@ export async function GET(req, { params }) {
             .where(
                 and(
                     eq(CAREER_SUBJECTS.career_id, careerGrpId),
-                    lte(SUBJECTS.min_age, age),
-                    gte(SUBJECTS.max_age, age)
                 )
             );
 

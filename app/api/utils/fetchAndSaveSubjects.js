@@ -10,20 +10,19 @@ export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 // Helper function to generate unique key hash for subject generation
-const generateKeyHash = (scopeId, scopeType, age, className, country, type1, type2) => {
-    const keyString = `${scopeId}-${scopeType}-${age}-${className}-${country}-${type1 || ''}-${type2 || ''}`;
+const generateKeyHash = (scopeId, scopeType, className, country, type1, type2) => {
+    const keyString = `${scopeId}-${scopeType}-${className}-${country}-${type1 || ''}-${type2 || ''}`;
     return crypto.createHash('sha256').update(keyString).digest('hex');
 };
 
 // Function to fetch subjects from OpenAI with scope type support
-const fetchSubjectsFromOpenAI = async (userId, scopeName, country, age, birthDate, type1, type2, scopeType, className,sectorDescription) => {
-  console.log(`${scopeType}: ${scopeName}, country: ${country}, age: ${age}, scopeType: ${scopeType} , className:${className}`);
+const fetchSubjectsFromOpenAI = async (userId, scopeName, country, birthDate, type1, type2, scopeType, className,sectorDescription) => {
+  console.log(`${scopeType}: ${scopeName}, country: ${country}, scopeType: ${scopeType} , className:${className}`);
 
   const currentAgeWeek = getCurrentWeekOfAge(birthDate);
   const prompt = await generateSubjectsPrompt(
-    userId, age, scopeName, type1, type2, country, currentAgeWeek, scopeType, className,sectorDescription
+    userId, scopeName, country, currentAgeWeek, scopeType, className,sectorDescription
   );
-
   console.log("prompt", prompt);
   
   try {
@@ -60,14 +59,12 @@ const fetchSubjectsFromOpenAI = async (userId, scopeName, country, age, birthDat
   }
 };
 
-const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, scopeType) => {
+const saveSubjectsToDatabase = async (scopeId, subjectsByAge, className, scopeType) => {
     try {
-      console.log("in try", scopeId, subjectsByAge, age, className, scopeType);
+      console.log("in try", scopeId, subjectsByAge, className, scopeType);
       const subjectIds = new Map();
   
       for (const [ageGroup, subjects] of Object.entries(subjectsByAge)) {
-        const minAge = age; 
-        const maxAge = age;
   
         const subjectList = Array.isArray(subjects) ? subjects : [subjects];
   
@@ -81,8 +78,6 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
           .where(
             and(
               inArray(SUBJECTS.subject_name, subjectList),
-              eq(SUBJECTS.min_age, minAge),
-              eq(SUBJECTS.max_age, maxAge),
               eq(SUBJECTS.class_name, className),
             )
           );
@@ -110,8 +105,6 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
             .values(
               newSubjects.map((subject) => ({
                 subject_name: subject,
-                min_age: minAge,
-                max_age: maxAge,
                 class_name: className
               }))
             )
@@ -130,8 +123,6 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
           .where(
             and(
               inArray(SUBJECTS.subject_name, allSubjectNames),
-              eq(SUBJECTS.min_age, minAge),
-              eq(SUBJECTS.max_age, maxAge),
               eq(SUBJECTS.class_name, className),
             )
           )
@@ -170,7 +161,6 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
     scopeName,
     scopeId,
     country,
-    age,
     birthDate,
     className,
     type1, 
@@ -182,7 +172,7 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
   try {
     // Generate keyHash if not provided
     if (!keyHash) {
-      keyHash = generateKeyHash(scopeId, scopeType, age, className, country, type1, type2);
+      keyHash = generateKeyHash(scopeId, scopeType, className, country, type1, type2);
     }
 
     console.log(`Starting subject generation for keyHash: ${keyHash}`);
@@ -191,7 +181,6 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
       userId,
       scopeName,
       country,
-      age,
       birthDate,
       type1,
       type2,
@@ -201,7 +190,7 @@ const saveSubjectsToDatabase = async (scopeId, subjectsByAge, age, className, sc
     );
     
     const subjects = subjectsByAge["subject-data"];
-    await saveSubjectsToDatabase(scopeId, subjects, age, className, scopeType);
+    await saveSubjectsToDatabase(scopeId, subjects, className, scopeType);
     
     console.log(`Subject generation completed successfully for keyHash: ${keyHash}`);
     

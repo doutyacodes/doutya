@@ -719,8 +719,6 @@ export const TEMP_LEADER = mysqlTable("temp_leader", {
 export const SUBJECTS = mysqlTable("subjects", {
   subject_id: int("subject_id").primaryKey().autoincrement(),
   subject_name: varchar("subject_name", { length: 255 }).notNull().unique(),
-  min_age: int("min_age").notNull(),
-  max_age: int("max_age").notNull(),
   class_name: varchar("class_name", { length: 255 }).notNull(),
 });
 
@@ -767,7 +765,6 @@ export const TESTS = mysqlTable("tests", {
     .notNull()
     .references(() => SUBJECTS.subject_id),
   test_date: date("test_date").notNull(),
-  age_group: int("age_group").notNull(),
   year: int("year").notNull(),
   month: int("month").notNull(),
   week_number: int("week_number").notNull(),

@@ -283,24 +283,23 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
 };
 
 
-    export const  generateSubjectsPrompt = async (userId, age, scopeName, type1, type2, country, currentAgeWeek, scopeType, className,sectorDescription) => {
+    export const generateSubjectsPrompt = async (userId,scopeName,country,currentAgeWeek,scopeType,className,sectorDescription) => {
 
         const educationData = await getUserEducationPromptData(userId);
-    
+
         const getLabel = (scopeType, scopeName) => {
             if (scopeType === "career") return `pursuing a career in ${scopeName}`;
             if (scopeType === "cluster") return `exploring the cluster "${scopeName}"`;
             if (scopeType === "sector") return `navigating the sector "${scopeName}"`;
-          };
-          
-          const getTitle = (scopeType) => {
+        };
+
+        const getTitle = (scopeType) => {
             if (scopeType === "career") return "career";
             if (scopeType === "cluster") return "cluster";
             if (scopeType === "sector") return "sector";
-          };
-          
-       
-        const basePrompt = `For an individual who has an ${type1} personality type and RIASEC interest types of ${type2}, aged ${age} (currently in week ${currentAgeWeek} of this age), and studying in class ${className}, ${getLabel(
+        };
+
+        const basePrompt = `For a student studying in class ${className}, ${getLabel(
             scopeType,
             scopeName
         )}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(
@@ -312,7 +311,6 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
         )} of "${scopeName}", considering the educational standards of ${country}. 
         ${sectorDescription ? `\n    **Sector Description:** ${sectorDescription}\n` : ''}
 
-
         ⚠️ Very Important: 
         - Ensure subjects are appropriate for the student’s current class level (${className}). 
         - If class is between 5–8, recommend age-appropriate, introductory or foundational subjects. 
@@ -322,71 +320,70 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
 
         The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
 
-        Provide at least 5 to 10 key subjects relevant for this age and class, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
+        Provide at least 5 to 10 key subjects relevant for this class, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
 
         {
         "subject-data": ["Subject1", "Subject2", "Subject3", ...]
         }
 
-        Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective age and class, considering the ${getTitle(
+        Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective class, considering the ${getTitle(
             scopeType
         )}'s requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
 
         return enhancePromptWithEducation(basePrompt, educationData);
-        };
+    };
+
 
     export const generateSubjectsTestsPrompt = async (
     userId,
-    age,
     subjectName,
-    type1,
-    type2,
-    currentAgeWeek,
     className,
     country
     ) => {
     const educationData = await getUserEducationPromptData(userId);
+
     const basePrompt = `
-        Create 10 multiple-choice questions in ${subjectName} for a ${age} year old (currently in week ${currentAgeWeek} of this age) studying in class ${className} in ${country}, for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}.
-        
-        The questions must align with the education system and curriculum standards of ${country} and match the understanding level of a student in class ${className} within that country's educational framework.
-        - Consider the specific educational standards, terminology, and learning objectives used in ${country}'s education system
-        - Ensure questions reflect the teaching methodology and assessment style common in ${country}
-        - Use appropriate units of measurement, currency, historical references, and cultural context relevant to ${country}
-        - If class is between 5–8, keep questions simpler and introductory according to ${country}'s elementary/primary education standards
-        - If class is 9–12, create moderately advanced questions suitable for ${country}'s secondary/high school level
-        - If class is "college", create university-level advanced questions appropriate for ${country}'s higher education system
-        
-        Avoid generating questions that are too advanced or too basic for this class level within ${country}'s education system.
-        Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
-        Make sure no questions or options are repeated, and the questions must be apt for the age ${age} and class ${className} in the context of ${country}'s educational system. 
-        The questions should be unique and difficulty level should be challenging but appropriate for the student's class within ${country}'s curriculum framework.   
-        
-        Ensure that the quiz questions are appropriately designed:
-        1. The incorrect options (distractors) should be plausible and related to the course content as taught in ${country}
-        2. Avoid making the correct answer obviously different from the distractors in format, length, or category
-        3. All options should be of similar difficulty level and domain
-        4. Ensure distractors represent common misconceptions or partial understandings rather than clearly incorrect statements
-        5. All options must be in the same conceptual category - avoid having one option that clearly stands out from others
-        6. All options should have similar phrasing styles, terminology levels, and length
-        7. For numerical questions, wrong answers should reflect common calculation errors or plausible alternative values
-        8. Avoid instances where the correct answer is the only complete, grammatically correct, or specific option
-        9. Use educational terminology, examples, and references that are familiar and relevant to students in ${country}
-        
-        Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
-        {
-            "question": "Question text here",
-            "options": [
-                { "text": "Option 1", "is_answer": "no" },
-                { "text": "Option 2", "is_answer": "yes" },
-                { "text": "Option 3", "is_answer": "no" },
-                { "text": "Option 4", "is_answer": "no" }
-            ]
-        }
-        Only return the array of 10 questions, nothing else.
-        `;
+            Create 10 multiple-choice questions in ${subjectName} for a student studying in class ${className} in ${country}.
+            
+            The questions must align with the education system and curriculum standards of ${country} and match the understanding level of a student in class ${className} within that country's educational framework.
+            - Consider the specific educational standards, terminology, and learning objectives used in ${country}'s education system
+            - Ensure questions reflect the teaching methodology and assessment style common in ${country}
+            - Use appropriate units of measurement, currency, historical references, and cultural context relevant to ${country}
+            - If class is between 5–8, keep questions simpler and introductory according to ${country}'s elementary/primary education standards
+            - If class is 9–12, create moderately advanced questions suitable for ${country}'s secondary/high school level
+            - If class is "college", create university-level advanced questions appropriate for ${country}'s higher education system
+            
+            Avoid generating questions that are too advanced or too basic for this class level within ${country}'s education system.
+            Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
+            Make sure no questions or options are repeated. The questions should be unique and difficulty level should be challenging but appropriate for the student's class within ${country}'s curriculum framework.   
+            
+            Ensure that the quiz questions are appropriately designed:
+            1. The incorrect options (distractors) should be plausible and related to the course content as taught in ${country}
+            2. Avoid making the correct answer obviously different from the distractors in format, length, or category
+            3. All options should be of similar difficulty level and domain
+            4. Ensure distractors represent common misconceptions or partial understandings rather than clearly incorrect statements
+            5. All options must be in the same conceptual category - avoid having one option that clearly stands out from others
+            6. All options should have similar phrasing styles, terminology levels, and length
+            7. For numerical questions, wrong answers should reflect common calculation errors or plausible alternative values
+            8. Avoid instances where the correct answer is the only complete, grammatically correct, or specific option
+            9. Use educational terminology, examples, and references that are familiar and relevant to students in ${country}
+            
+            Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
+            {
+                "question": "Question text here",
+                "options": [
+                    { "text": "Option 1", "is_answer": "no" },
+                    { "text": "Option 2", "is_answer": "yes" },
+                    { "text": "Option 3", "is_answer": "no" },
+                    { "text": "Option 4", "is_answer": "no" }
+                ]
+            }
+            Only return the array of 10 questions, nothing else.
+            `;
+
     return enhancePromptWithEducation(basePrompt, educationData);
     };
+
 
     export const generateCourseTestPrompt = async (userId, scopeName, course, type1, type2, age, level, currentAgeWeek, scopeType) =>{
 

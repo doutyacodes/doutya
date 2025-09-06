@@ -5,14 +5,12 @@ import { eq, and } from "drizzle-orm";
 import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 import { generateSubjectsTestsPrompt } from '../services/promptService';
 
-export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birthDate, className, type1, type2, country, testKeyHash = null) {
+export async function GenerateTestQuiz(userId, subjectId, subjectName, birthDate, className, type1, type2, country, testKeyHash = null) {
     try {
         console.log(`Starting test generation for subject: ${subjectName}, keyHash: ${testKeyHash}`);
 
-        const currentAgeWeek = getCurrentWeekOfAge(birthDate);
-
         const prompt = await generateSubjectsTestsPrompt(
-            userId, age, subjectName, type1, type2, currentAgeWeek, className, country
+            userId, subjectName, className, country
         );
 
         console.log("prompt", prompt);
@@ -49,7 +47,6 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, age, birt
         const [testResult] = await db.insert(TESTS).values({
             subject_id: subjectId,
             test_date: new Date(),
-            age_group: age,
             year: currentYear,
             month: currentMonth,
             week_number: currentWeekNumber,

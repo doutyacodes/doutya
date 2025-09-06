@@ -26,8 +26,8 @@ function getWeekOfMonth(date) {
 }
 
 // Helper function to generate unique key hash for test generation
-const generateTestKeyHash = (subjectId, age, className, yearsSinceJoined, monthsSinceJoined, weekNumber) => {
-    const keyString = `test-${subjectId}-${age}-${className}-${yearsSinceJoined}-${monthsSinceJoined}-${weekNumber}`;
+const generateTestKeyHash = (subjectId, className, yearsSinceJoined, monthsSinceJoined, weekNumber) => {
+    const keyString = `test-${subjectId}-${className}-${yearsSinceJoined}-${monthsSinceJoined}-${weekNumber}`;
     return crypto.createHash('sha256').update(keyString).digest('hex');
 };
 
@@ -78,7 +78,7 @@ const waitForTestGenerationCompletion = async (testKeyHash) => {
 };
 
 // Helper function to handle failed test generation with atomic retry
-const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjectName, age, birth_date, className, type1, type2, country) => {
+const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjectName, birth_date, className, type1, type2, country) => {
     try {
         // Use atomic update to claim the retry
         const updateResult = await db
@@ -97,7 +97,7 @@ const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjec
 
         console.log('Attempting to retry failed test generation...');
         
-        await GenerateTestQuiz(userId, subjectId, subjectName, age, birth_date, className, type1, type2, country, testKeyHash);
+        await GenerateTestQuiz(userId, subjectId, subjectName, birth_date, className, type1, type2, country, testKeyHash);
 
         await db
             .update(GENERATION_STATUS)
@@ -146,7 +146,7 @@ export async function GET(request, { params }) {
     }
 
     try {
-        // Fetch user's birth date and calculate age
+        // Fetch user's birth date and calculat
         const { birth_date, joined_date, class_Name, country } = await db
             .select({
                 birth_date: USER_DETAILS.birth_date,
@@ -163,7 +163,6 @@ export async function GET(request, { params }) {
 
         console.log("joined_date 2", joined_date);   
 
-        const age = calculateAge(birth_date);
         const userJoinWeek = getWeekOfMonth(new Date(joined_date));
         const user_days = calculateWeekFromTimestamp(joined_date);
 
@@ -235,7 +234,6 @@ export async function GET(request, { params }) {
                         eq(TESTS.year, yearsSinceJoined),
                         eq(TESTS.month, monthsSinceJoined),
                         eq(TESTS.week_number, weekNumber),
-                        eq(TESTS.age_group, age),
                         eq(TESTS.class_name, className),
                     )
                 )
@@ -254,7 +252,7 @@ export async function GET(request, { params }) {
                 console.log("log generate");
 
                 // Generate unique key hash for test generation
-                const testKeyHash = generateTestKeyHash(subjectId, age, className, yearsSinceJoined, monthsSinceJoined, weekNumber);
+                const testKeyHash = generateTestKeyHash(subjectId, className, yearsSinceJoined, monthsSinceJoined, weekNumber);
 
                 // Use a transaction to handle race conditions
                 let shouldStartGeneration = false;
@@ -310,7 +308,7 @@ export async function GET(request, { params }) {
                     if (shouldStartGeneration) {
                         try {
                             // This request should start the generation
-                            await GenerateTestQuiz(userId, subjectId, subjectName, age, birth_date, className, type1, type2, country, testKeyHash);
+                            await GenerateTestQuiz(userId, subjectId, subjectName, birth_date, className, type1, type2, country, testKeyHash);
 
                             // Mark generation as completed
                             await db
@@ -350,7 +348,7 @@ export async function GET(request, { params }) {
                             
                         } else if (currentStatus === 'failed') {
                             console.log('Previous test generation failed, attempting retry...');
-                            await handleFailedTestGeneration(testKeyHash, userId, subjectId, subjectName, age, birth_date, className, type1, type2, country);
+                            await handleFailedTestGeneration(testKeyHash, userId, subjectId, subjectName, birth_date, className, type1, type2, country);
                         }
                         // If status is 'completed', continue with fetching questions
                     }

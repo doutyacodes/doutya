@@ -26,7 +26,6 @@ export async function GET(request) {
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId));
 
-        const age = calculateAge(birthDateResult[0].birth_date);
 
         // Fetch initial subjects for career
         const subjectsForCareer = await db
@@ -36,12 +35,7 @@ export async function GET(request) {
                                     })
                                     .from(CAREER_SUBJECTS)
                                     .innerJoin(SUBJECTS, eq(CAREER_SUBJECTS.subject_id, SUBJECTS.subject_id))
-                                    .where(
-                                        and(
-                                            eq(CAREER_SUBJECTS.scope_id, careerGrpId),
-                                            eq(SUBJECTS.min_age, age)
-                                        )
-                                    )
+                                    .where(eq(CAREER_SUBJECTS.scope_id, careerGrpId),)
                                     .execute();
 
         const completedTests = await db
