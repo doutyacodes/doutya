@@ -19,7 +19,7 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, className
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4o-mini",
+                model: "gpt-4.1-mini",
                 messages: [{ role: "user", content: prompt }],
                 max_tokens: 2500,
             },
