@@ -147,7 +147,7 @@ export async function GET(request, { params }) {
 
     try {
         // Fetch user's birth date and calculat
-        const { birth_date, joined_date, class_Name, country } = await db
+        const { birth_date, joined_date, class_Name, country, scopeType } = await db
             .select({
                 birth_date: USER_DETAILS.birth_date,
                 joined_date: USER_DETAILS.joined_date,
@@ -155,7 +155,8 @@ export async function GET(request, { params }) {
                 academicYearStart : USER_DETAILS.academicYearStart,
                 academicYearEnd : USER_DETAILS.academicYearEnd,
                 class_Name: USER_DETAILS.grade,
-                country: USER_DETAILS.country
+                country: USER_DETAILS.country,
+                scopeType: USER_DETAILS.scope_type,
             })
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId))
@@ -308,7 +309,7 @@ export async function GET(request, { params }) {
                     if (shouldStartGeneration) {
                         try {
                             // This request should start the generation
-                            await GenerateTestQuiz(userId, subjectId, subjectName, birth_date, className, type1, type2, country, testKeyHash);
+                            await GenerateTestQuiz(userId, subjectId, subjectName, className, country, testKeyHash, scopeType);
 
                             // Mark generation as completed
                             await db

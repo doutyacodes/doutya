@@ -5,12 +5,13 @@ import { eq, and } from "drizzle-orm";
 import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 import { generateSubjectsTestsPrompt } from '../services/promptService';
 
-export async function GenerateTestQuiz(userId, subjectId, subjectName, birthDate, className, type1, type2, country, testKeyHash = null) {
+export async function GenerateTestQuiz(userId, subjectId, subjectName, className, country, testKeyHash = null, scopeType) {
+                                    //    userId, subjectId, subjectName, className, country, testKeyHash, scopeType
     try {
         console.log(`Starting test generation for subject: ${subjectName}, keyHash: ${testKeyHash}`);
 
         const prompt = await generateSubjectsTestsPrompt(
-            userId, subjectName, className, country
+            userId, subjectName, className, country, scopeType
         );
 
         console.log("prompt", prompt);

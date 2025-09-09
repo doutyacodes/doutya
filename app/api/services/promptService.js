@@ -346,7 +346,8 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
     userId,
     subjectName,
     className,
-    country
+    country,
+    scopeType
     ) => {
     const educationData = await getUserEducationPromptData(userId);
 
@@ -360,6 +361,15 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
             - If class is between 5–8, keep questions simpler and introductory according to ${country}'s elementary/primary education standards
             - If class is 9–12, create moderately advanced questions suitable for ${country}'s secondary/high school level
             - If class is "college", create university-level advanced questions appropriate for ${country}'s higher education system
+            ${
+            scopeType === "cluster" || scopeType === "sector"
+                ? `\n### NCERT Restriction:\n- Base all topics and questions strictly on the NCERT CBSE Class ${className} syllabus.\n- The academic year is assumed to run from June to March.\n- Since the current month is 
+                ${new Date().toLocaleString(
+                    "en-US",
+                    { month: "long" }
+                )} assume that only the proportionate portion of the syllabus has been taught up to this point.\n- Do not include topics that would normally be scheduled for later months.\n`
+                : ""
+            }
             
             Avoid generating questions that are too advanced or too basic for this class level within ${country}'s education system.
             Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
