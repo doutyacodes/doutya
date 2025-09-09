@@ -317,10 +317,18 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
         - If class is 9–12, suggest more advanced subjects relevant to the field. 
         - If class is "college", include specialized and university-level subjects. 
         - Avoid recommending subjects that are too advanced for their level. 
+        ${
+            scopeType === "cluster" || scopeType === "sector"
+            ? "- Only include subjects that are directly related to this career path. Use strictly the NCERT syllabus subjects for Class " +
+                className +
+                " as defined by CBSE. Do not assume or add elective/optional subjects. Provide exactly 5 subjects — no more, no less."
+            : ""
+        }
+
 
         The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
 
-        Provide at least 5 to 10 key subjects relevant for this class, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
+        Provide  ${scopeType=="career" ? "at least 5 to 10 key":" exactly 5 "} subjects relevant for this class, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
 
         {
         "subject-data": ["Subject1", "Subject2", "Subject3", ...]
