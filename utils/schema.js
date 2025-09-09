@@ -722,23 +722,6 @@ export const SUBJECTS = mysqlTable("subjects", {
   class_name: varchar("class_name", { length: 255 }).notNull(),
 });
 
-// export const CAREER_SUBJECTS = mysqlTable(
-//   "career_subjects",
-//   {
-//     career_id: int("career_id")
-//       .notNull()
-//       .references(() => CAREER_GROUP.id /* { onDelete: 'cascade' } */), // Reference to CAREER_GROUP now
-//     subject_id: int("subject_id")
-//       .notNull()
-//       .references(() => SUBJECTS.subject_id /* { onDelete: 'cascade' } */), // Foreign key to Subjects table
-//   },
-//   (table) => {
-//     return {
-//       pk: primaryKey(table.career_id, table.subject_id), // Composite primary key
-//     };
-//   }
-// );
-
 export const CAREER_SUBJECTS = mysqlTable(
   "career_subjects",
   {

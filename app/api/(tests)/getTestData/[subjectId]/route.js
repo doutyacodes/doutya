@@ -1,6 +1,5 @@
 import { db } from '@/utils';
 import { 
-    CAREER_SUBJECTS, 
     QUIZ_SEQUENCES, 
     SUBJECTS, 
     TESTS, 
@@ -8,7 +7,13 @@ import {
     TEST_QUESTIONS, 
     USER_CAREER, 
     USER_DETAILS,
-    GENERATION_STATUS
+    GENERATION_STATUS,
+    CAREER_SUBJECTS, 
+    USER_CLUSTER, 
+    USER_SECTOR,
+    CAREER_GROUP,
+    CLUSTER,
+    SECTOR
 } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { eq, and, gte, lte, inArray } from 'drizzle-orm';
@@ -78,7 +83,7 @@ const waitForTestGenerationCompletion = async (testKeyHash) => {
 };
 
 // Helper function to handle failed test generation with atomic retry
-const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjectName, birth_date, className, type1, type2, country) => {
+const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjectName, className, country, scopeType, scopeName, sectorDescription) => {
     try {
         // Use atomic update to claim the retry
         const updateResult = await db
@@ -97,7 +102,7 @@ const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjec
 
         console.log('Attempting to retry failed test generation...');
         
-        await GenerateTestQuiz(userId, subjectId, subjectName, birth_date, className, type1, type2, country, testKeyHash);
+        await GenerateTestQuiz(userId, subjectId, subjectName, className, country, testKeyHash, scopeType, scopeName, sectorDescription);
 
         await db
             .update(GENERATION_STATUS)
@@ -189,6 +194,80 @@ export async function GET(request, { params }) {
             .execute();
         
         const subjectName = subjectData[0].subjectName;
+
+        // First get the scope_id from CAREER_SUBJECTS
+        const careerSubjectData = await db
+            .select({ scope_id: CAREER_SUBJECTS.scope_id })
+            .from(CAREER_SUBJECTS)
+            .where(
+                and(
+                    eq(CAREER_SUBJECTS.subject_id, subjectId),
+                    eq(CAREER_SUBJECTS.scope_type, scopeType)
+                )
+            );
+
+        if (!careerSubjectData.length) {
+            return NextResponse.json({ message: 'No scope information found for this subject.' }, { status: 404 });
+        }
+
+        const scopeId = careerSubjectData[0].scope_id;
+
+        // Get scope information based on scopeType
+        let scopeName = '';
+        let sectorDescription = null;
+
+        if (scopeType === 'career') {
+            const careerData = await db
+                .select({ careerName: CAREER_GROUP.career_name })
+                .from(USER_CAREER)
+                .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id))
+                .where(
+                    and(
+                        eq(USER_CAREER.user_id, userId),
+                        eq(USER_CAREER.career_group_id, scopeId)
+                    )
+                );
+            
+            if (careerData.length) {
+                scopeName = careerData[0].careerName;
+            }
+        } 
+        else if (scopeType === 'cluster') {
+            const clusterData = await db
+                .select({ clusterName: CLUSTER.name })
+                .from(USER_CLUSTER)
+                .innerJoin(CLUSTER, eq(USER_CLUSTER.cluster_id, CLUSTER.id))
+                .where(
+                    and(
+                        eq(USER_CLUSTER.user_id, userId),
+                        eq(USER_CLUSTER.cluster_id, scopeId)
+                    )
+                );
+            
+            if (clusterData.length) {
+                scopeName = clusterData[0].clusterName;
+            }
+        } 
+        else if (scopeType === 'sector') {
+            const sectorData = await db
+                .select({ 
+                    sectorName: SECTOR.name,
+                    sectorDescription: SECTOR.description 
+                })
+                .from(USER_SECTOR)
+                .innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id))
+                .where(
+                    and(
+                        eq(USER_SECTOR.user_id, userId),
+                        eq(USER_SECTOR.sector_id, scopeId)
+                    )
+                );
+            
+            if (sectorData.length) {
+                scopeName = sectorData[0].sectorName;
+                sectorDescription = sectorData[0].sectorDescription;
+            }
+        }
 
         const personalities = await db
             .select({
@@ -309,7 +388,7 @@ export async function GET(request, { params }) {
                     if (shouldStartGeneration) {
                         try {
                             // This request should start the generation
-                            await GenerateTestQuiz(userId, subjectId, subjectName, className, country, testKeyHash, scopeType);
+                            await GenerateTestQuiz(userId, subjectId, subjectName, className, country, testKeyHash, scopeType, scopeName, sectorDescription);
 
                             // Mark generation as completed
                             await db
@@ -349,7 +428,7 @@ export async function GET(request, { params }) {
                             
                         } else if (currentStatus === 'failed') {
                             console.log('Previous test generation failed, attempting retry...');
-                            await handleFailedTestGeneration(testKeyHash, userId, subjectId, subjectName, birth_date, className, type1, type2, country);
+                            await handleFailedTestGeneration(testKeyHash, userId, subjectId, subjectName, className, country, scopeType, scopeName, sectorDescription);
                         }
                         // If status is 'completed', continue with fetching questions
                     }
