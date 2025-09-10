@@ -97,9 +97,9 @@ export default function Dashboard() {
           router.replace("/user/education-profile");
         } else if (!isInstitutionDetailsAdded) {
           router.replace("/education-details");
-        } else if (!isCountryAdded) {
-          // 1️⃣ Check if country is added first
-          router.replace("/country");
+        // } else if (!isCountryAdded) {
+        //   // 1️⃣ Check if country is added first
+        //   router.replace("/country");
         }
         // 2️⃣ Then check grade-based suggestions
         else if (["8", "9", "10"].includes(gradeData)) {

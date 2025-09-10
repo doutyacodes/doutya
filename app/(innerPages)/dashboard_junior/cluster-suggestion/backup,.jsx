@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { FaChevronRight, FaCheck, FaInfoCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import CareerStripe from "@/app/_components/CareerStripe";
-import ActionButtons from "@/app/_components/ActionButtons";
 
 export default function ClusterSelectionPage() {
   const [user, setUser] = useState({
@@ -20,7 +19,6 @@ export default function ClusterSelectionPage() {
   const [error, setError] = useState(null);
   const [confirmingCluster, setConfirmingCluster] = useState(null);
   const [selectedCareer, setSelectedCareer] = useState(null);
-  const [isConfirming, setIsConfirming] = useState(false);
   const router = useRouter();
   
   // Get token from localStorage when component mounts
@@ -65,7 +63,7 @@ export default function ClusterSelectionPage() {
         });
         
         // Set clusters and user clusters
-        setClusters(data.sorted_clusters || []);
+        setClusters(data.clusters || []);
         setUserClusters(data.userClusters || []);
       } catch (err) {
         console.error("Error fetching clusters data:", err);
@@ -81,34 +79,16 @@ export default function ClusterSelectionPage() {
   }, [token]);
 
   const handleAddCluster = (cluster) => {
-    // Check if adding would exceed plan limits
-    const selectedClusters = userClusters.filter(c => c.selected === true);
-    if (selectedClusters.length >= maxSelections) {
-      toast.error(user.plan_type === "base" 
-        ? "Base plan users can only select up to 2 clusters. Upgrade to Pro to select up to 5 clusters."
-        : "You can select up to 5 clusters maximum.");
-      return;
-    }
-    
     setConfirmingCluster(cluster);
   };
 
-  const handleViewReportClick = () => {
-    router.push('/user/results');
+  const isClusterSelected = (clusterId) => {
+    return userClusters.some(c => c.cluster_id === clusterId && c.selected === true);
   };
-
-  const handleCertificateClick = () => {
-    // Add certificate logic later
-    console.log('Get Certificate clicked');
-  };
-
-const isClusterSelected = (clusterId) => {
-  return userClusters.some(c => c.cluster_id === clusterId && c.selected === true);
-};
 
   const confirmAddCluster = async () => {
-    if (!confirmingCluster || isConfirming) return;
-
+    if (!confirmingCluster) return;
+  
     // Check if adding would exceed plan limits
     const selectedClusters = userClusters.filter(c => c.selected === true);
     if (selectedClusters.length >= maxSelections) {
@@ -118,10 +98,8 @@ const isClusterSelected = (clusterId) => {
       setConfirmingCluster(null);
       return;
     }
-
+  
     try {
-      setIsConfirming(true);
-      
       const response = await fetch("/api/clusters/user-clusters/select", {
         method: "POST",
         headers: {
@@ -129,27 +107,31 @@ const isClusterSelected = (clusterId) => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          cluster_id: confirmingCluster.cluster_details.id
+          cluster_id: confirmingCluster.id
         }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to save cluster");
       }
 
       const responseData = await response.json();
+  
+      // Update local state
+      setUserClusters(userClusters.map(cluster => {
+        if (cluster.cluster_id === confirmingCluster.id) {
+          return { ...cluster, selected: true };
+        }
+        return cluster;
+      }));
 
-      toast.success(`${confirmingCluster.cluster} has been added to your selected clusters.`);
-      
-      // Reload the page after successful addition
-      window.location.reload();
-
+      toast.success(`${confirmingCluster.name} has been added to your selected clusters.`);
+  
     } catch (err) {
       console.error("Error saving cluster:", err);
       toast.error(err.message || "Failed to save cluster. Please try again.");
     } finally {
-      setIsConfirming(false);
       setConfirmingCluster(null);
     }
   };
@@ -183,73 +165,55 @@ const isClusterSelected = (clusterId) => {
 
   return (
     <>
-      <CareerStripe selectedItem={selectedCareer}  setSelectedItem={setSelectedCareer}/>
-      <div className="min-h-screen bg-[#1a1a24] text-gray-200 p-4 md:p-8">
+        <CareerStripe selectedItem={selectedCareer}  setSelectedItem={setSelectedCareer}/>
+        <div className="min-h-screen bg-[#1a1a24] text-gray-200 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
-          {/* Header Section with Action Buttons */}
-          <div className="mb-8">
-            {/* Top Section with Buttons */}
-              <div className="mb-6">
-                {/* Title Section - Always Centered */}
-                <div className="text-center mb-4">
-                  <h1 className="text-3xl md:text-4xl font-bold text-white">Career Cluster Suggestion</h1>
-                </div>
-                
-                {/* Action Buttons - Top Right */}
-                <div className="flex justify-center sm:justify-end">
-                  <ActionButtons
-                    onViewReportClick={handleViewReportClick}
-                    onCertificateClick={handleCertificateClick}
-                  />
-                </div>
-              </div>
-            
-            {/* Subtitle and Description */}
-            <div className="text-center">
-              <p className="text-lg text-gray-300 mb-2">
+            <div className="mb-8 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Career Cluster Selection</h1>
+            <p className="text-lg text-gray-300 mb-2">
                 Based on your personality assessment and interest profile
-              </p>
-              <p className="text-gray-400">
+            </p>
+            <p className="text-gray-400">
                 Select clusters that interest you 
                 {user.plan_type === "base" && (
-                  <span className="text-sm ml-1 text-yellow-400">
+                <span className="text-sm ml-1 text-yellow-400">
                     (Base plan: up to 2 clusters | Pro plan: up to 5 clusters)
-                  </span>
+                </span>
                 )}
-              </p>
-              <div className="mt-4 bg-[#292931] py-2 px-4 rounded-lg inline-block">
+            </p>
+            <div className="mt-4 bg-[#292931] py-2 px-4 rounded-lg inline-block">
                 <p className="text-sm">
-                  Selected: <span className="font-bold text-[#7824f6]">{selectedClusters.length}</span> / 
-                  <span className="font-bold">{maxSelections}</span>
+                Selected: <span className="font-bold text-[#7824f6]">{selectedClusters.length}</span> / 
+                <span className="font-bold">{maxSelections}</span>
                 </p>
-              </div>
             </div>
-          </div>
+            </div>
 
-          {/* Clusters Grid */}
-          <div className="mb-10">
+            {/* Clusters Grid */}
+            <div className="mb-10">
             <div className="flex items-center mb-6">
-              <div className="h-px flex-1 bg-[#7824f6]"></div>
-              <h2 className="text-2xl font-bold mx-4 text-[#7824f6]">Career Clusters For You</h2>
-              <div className="h-px flex-1 bg-[#7824f6]"></div>
+                <div className="h-px flex-1 bg-[#7824f6]"></div>
+                <h2 className="text-2xl font-bold mx-4 text-[#7824f6]">Career Clusters For You</h2>
+                <div className="h-px flex-1 bg-[#7824f6]"></div>
             </div>
             
             <p className="text-gray-400 text-center mb-6">
-              These clusters are generated specifically for you based on your Personality and Career interests
+                These clusters are generated specifically for you based on your MBTI type ({user.personality_type}) 
+                and RIASEC interests ({user.riasec_code})
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {clusters.map((cluster, index) => (
+                {clusters.map((cluster) => (
                 <ClusterCard 
-                  key={index}
-                  cluster={cluster} 
-                  isSelected={isClusterSelected(cluster?.cluster_details.id)}
-                  onAddClick={() => handleAddCluster(cluster)}
-                  accentColor="#7824f6"
+                    key={cluster.id} 
+                    cluster={cluster} 
+                    isSelected={isClusterSelected(cluster.id)}
+                    onAddClick={() => handleAddCluster(cluster)}
+                    accentColor="#7824f6"
                 />
-              ))}
+                ))}
             </div>
-          </div>
+            </div>
         </div>
 
         {/* Confirmation Modal */}
@@ -269,28 +233,24 @@ const isClusterSelected = (clusterId) => {
                 </div>
                 )}
                 <div className="flex gap-3 justify-end">
-                  <button
+                <button
+                    onClick={() => setConfirmingCluster(null)}
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors"
+                >
+                    Cancel
+                </button>
+                <button
                     onClick={confirmAddCluster}
-                    disabled={isConfirming}
-                    className="px-4 py-2 bg-[#7824f6] hover:bg-[#6620d0] disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-md transition-colors flex items-center gap-2"
-                  >
-                    {isConfirming ? (
-                      <>
-                        <div className="animate-spin rounded-full h-3 w-3 border-t border-b border-white"></div>
-                        <span>Adding...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Confirm</span>
-                        <FaCheck size={12} />
-                      </>
-                    )}
-                  </button>
+                    className="px-4 py-2 bg-[#7824f6] hover:bg-[#6620d0] text-white rounded-md transition-colors flex items-center gap-2"
+                >
+                    <span>Confirm</span>
+                    <FaCheck size={12} />
+                </button>
                 </div>
             </div>
             </div>
         )}
-      </div>
+        </div>
     </>
   );
 }
@@ -305,11 +265,11 @@ function ClusterCard({ cluster, isSelected, onAddClick, accentColor }) {
     : cluster.related_jobs || [];
   
   // Truncate description for compact view
-  // const shortDescription = cluster.reasoning 
-  //   ? (cluster.description.length > 80 
-  //       ? cluster.reasoning.substring(0, 80) + "..." 
-  //       : cluster.reasoning)
-  //   : "Explore this career cluster and its related job opportunities...";
+  const shortDescription = cluster.description 
+    ? (cluster.description.length > 80 
+        ? cluster.description.substring(0, 80) + "..." 
+        : cluster.description)
+    : "Explore this career cluster and its related job opportunities...";
   
   return (
     <div 
@@ -334,79 +294,98 @@ function ClusterCard({ cluster, isSelected, onAddClick, accentColor }) {
         )}
         
         <h4 className="text-white text-lg font-bold text-center">
-          {cluster.cluster}
+          {cluster.name}
         </h4>
       </div>
       
       <div className="p-5 flex flex-col justify-between bg-gradient-to-b from-[#292931] to-[#232329]">
         <div className={`mb-3 ${isExpanded ? "h-auto" : "h-20"}`}>
-            <p className="text-gray-300 text-sm mb-2">
-            {/* {isExpanded ? cluster.reasoning : ""} */}
-            {cluster.reasoning}
-            </p>
-            
-            {/* Related Jobs Section - now integrated into the expanded view */}
-            {isExpanded && (
-            <div className="mt-4">
-                <h5 className="text-sm font-medium text-gray-300 mb-2">Related Career Paths:</h5>
-                <div className="flex flex-wrap gap-2">
-                {relatedJobs.slice(0, 10).map((job, idx) => (
-                    <span 
-                    key={idx} 
-                    className="text-xs text-gray-300 bg-[#2a2a36] px-3 py-1.5 rounded-full"
-                    >
-                    {job}
-                    </span>
-                ))}
-                </div>
-            </div>
-            )}
-            
-            {cluster.description && cluster.description.length > 80 && (
+          <p className="text-gray-300 text-sm mb-2">
+            {isExpanded ? cluster.description : shortDescription}
+          </p>
+          
+          {cluster.description && cluster.description.length > 80 && (
             <button 
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="text-xs text-[#7824f6] hover:underline flex items-center mt-2"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-xs text-[#7824f6] hover:underline flex items-center"
             >
-                {isExpanded ? (
+              {isExpanded ? (
                 <>
-                    <span>Show less</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span>Show less</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                    </svg>
+                  </svg>
                 </>
-                ) : (
+              ) : (
                 <>
-                    <span>Read more</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span>Read more</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                  </svg>
                 </>
-                )}
+              )}
             </button>
+          )}
+        </div>
+        
+        {/* Related Jobs Section */}
+        <div className="mb-4">
+          <button 
+            onClick={() => setShowJobs(!showJobs)}
+            className="text-sm font-medium text-[#7824f6] hover:underline flex items-center mb-2"
+          >
+            {showJobs ? (
+              <>
+                <span>Hide related jobs</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </>
+            ) : (
+              <>
+                <span>View related jobs</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </>
             )}
+          </button>
+          
+          {showJobs && (
+            <div className="bg-[#1d1d26] p-3 rounded-md mb-3">
+              <h5 className="text-sm font-medium text-gray-300 mb-2">Related Career Paths:</h5>
+              <div className="grid grid-cols-2 gap-2">
+                {relatedJobs.slice(0, 10).map((job, idx) => (
+                  <div key={idx} className="text-xs text-gray-400 bg-[#2a2a36] p-1.5 rounded">
+                    {job}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         
         <div className="w-full flex justify-end mt-auto">
-            {!isSelected ? (
+          {!isSelected ? (
             <button
-                onClick={onAddClick}
-                className="bg-[#7824f6] hover:bg-[#6620d0] rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
+              onClick={onAddClick}
+              className="bg-[#7824f6] hover:bg-[#6620d0] rounded-md px-4 py-2 flex gap-2 items-center transition-all duration-200 shadow-md"
             >
-                <p className="text-sm text-white font-medium">
+              <p className="text-sm text-white font-medium">
                 Add to My Clusters
-                </p>
-                <FaChevronRight size={12} color="white" />
+              </p>
+              <FaChevronRight size={12} color="white" />
             </button>
-            ) : (
+          ) : (
             <div className="px-4 py-2 bg-green-900 bg-opacity-30 rounded-md flex gap-2 items-center">
-                <p className="text-sm text-green-400 font-medium">
+              <p className="text-sm text-green-400 font-medium">
                 Added to Your Clusters
-                </p>
-                <FaCheck size={12} color="#10b981" />
+              </p>
+              <FaCheck size={12} color="#10b981" />
             </div>
-            )}
+          )}
         </div>
-        </div>
+      </div>
     </div>
   );
 }

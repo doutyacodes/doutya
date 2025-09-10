@@ -74,9 +74,9 @@ export default function EducationProfileForm() {
           // Check if the user has completed education
           if (resp.data.isEducationCompleted) {
             // If completed education, skip institution details check
-            if (!resp.data.countryAdded) {
-              router.replace("/country");
-            } else {
+            // if (!resp.data.countryAdded) {
+            //   router.replace("/country");
+            // } else {
               if (scopeType === "career") {
                 router.replace("/dashboard/careers/career-suggestions");
               } else if (scopeType === "sector") {
@@ -84,13 +84,13 @@ export default function EducationProfileForm() {
               } else if (scopeType === "cluster") {
                 router.replace("/dashboard_junior/cluster-suggestion");
               }
-            }
+            // }
           } else {
             // For school/college users, check institution details
             if (!resp.data.institutionDetailsAdded) {
               router.replace("/education-details");
-            } else if (!resp.data.countryAdded) {
-              router.replace("/country");
+            // } else if (!resp.data.countryAdded) {
+            //   router.replace("/country");
             } else {
               if (scopeType === "career") {
                 router.replace("/dashboard/careers/career-suggestions");

@@ -63,10 +63,10 @@ export default function Dashboard() {
             router.replace("/user/education-profile");
         } else if (!isInstitutionDetailsAdded) {
               router.replace("/education-details");
-        } else if (!isCountryAdded) {
+        // } else if (!isCountryAdded) {
         // 1️⃣ Check if country is added
-          console.log("Country not added");
-          router.replace("/country");
+          // console.log("Country not added");
+          // router.replace("/country");
         } 
         // 2️⃣ Then go to kids/junior/career suggestion
         else if (["8", "9", "10"].includes(gradeData)) {

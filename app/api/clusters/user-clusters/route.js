@@ -4,7 +4,8 @@ import {
   CLUSTER_MBTI_RIASEC_COMBINATIONS, 
   CLUSTER, 
   USER_DETAILS, 
-  QUIZ_SEQUENCES 
+  QUIZ_SEQUENCES,
+  USER_CLUSTER  // Add this import
 } from "@/utils/schema";
 import { eq, and } from "drizzle-orm";
 import { authenticate } from "@/lib/jwtMiddleware";
@@ -275,6 +276,20 @@ export async function GET(req) {
       .select()
       .from(CLUSTER);
 
+    // Get user's cluster associations
+    const userClusters = await db
+      .select({
+        id: USER_CLUSTER.id,
+        user_id: USER_CLUSTER.user_id,
+        cluster_id: USER_CLUSTER.cluster_id,
+        mbti_type: USER_CLUSTER.mbti_type,
+        riasec_code: USER_CLUSTER.riasec_code,
+        selected: USER_CLUSTER.selected,
+        created_at: USER_CLUSTER.created_at
+      })
+      .from(USER_CLUSTER)
+      .where(eq(USER_CLUSTER.user_id, userId));
+
     console.log("sortingData",sortingData)
 
     // Parse sortingData if it's a string (from DB), otherwise use as-is (fresh generation)
@@ -288,6 +303,7 @@ export async function GET(req) {
         cluster_details: clusterDetails
       };
     });
+    
     // Compile full user data
     const fullUserData = {
       ...userDetails[0],
@@ -305,6 +321,7 @@ export async function GET(req) {
         current_age_week: fullUserData.currentAgeWeek
       },
       sorted_clusters: sortedClustersWithDetails,
+      userClusters: userClusters, // Added userClusters data
       personality_summary: parsedSortingData.personality_summary,
       development_notes: parsedSortingData.development_notes,
     }, { status: 200 });
