@@ -83,7 +83,7 @@ const waitForTestGenerationCompletion = async (testKeyHash) => {
 };
 
 // Helper function to handle failed test generation with atomic retry
-const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjectName, className, country, scopeType, scopeName, sectorDescription) => {
+const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjectName, className, country, scopeType, scopeName, sectorDescription, userStream) => {
     try {
         // Use atomic update to claim the retry
         const updateResult = await db
@@ -102,7 +102,7 @@ const handleFailedTestGeneration = async (testKeyHash, userId, subjectId, subjec
 
         console.log('Attempting to retry failed test generation...');
         
-        await GenerateTestQuiz(userId, subjectId, subjectName, className, country, testKeyHash, scopeType, scopeName, sectorDescription);
+        await GenerateTestQuiz(userId, subjectId, subjectName, className, country, testKeyHash, scopeType, scopeName, sectorDescription, userStream);
 
         await db
             .update(GENERATION_STATUS)
@@ -152,7 +152,7 @@ export async function GET(request, { params }) {
 
     try {
         // Fetch user's birth date and calculat
-        const { birth_date, joined_date, class_Name, country, scopeType } = await db
+        const { birth_date, joined_date, class_Name, country, scopeType, user_stream } = await db
             .select({
                 birth_date: USER_DETAILS.birth_date,
                 joined_date: USER_DETAILS.joined_date,
@@ -162,6 +162,7 @@ export async function GET(request, { params }) {
                 class_Name: USER_DETAILS.grade,
                 country: USER_DETAILS.country,
                 scopeType: USER_DETAILS.scope_type,
+                user_stream: USER_DETAILS.user_stream 
             })
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId))
@@ -182,6 +183,7 @@ export async function GET(request, { params }) {
         console.log("Start of Week:", user_days.startOfWeek);
 
         const className = class_Name || 'completed';
+        const userStream = user_stream || ''
         console.log("userJoin week", userJoinWeek);
         
         console.log("log 1");
@@ -388,7 +390,7 @@ export async function GET(request, { params }) {
                     if (shouldStartGeneration) {
                         try {
                             // This request should start the generation
-                            await GenerateTestQuiz(userId, subjectId, subjectName, className, country, testKeyHash, scopeType, scopeName, sectorDescription);
+                            await GenerateTestQuiz(userId, subjectId, subjectName, className, country, testKeyHash, scopeType, scopeName, sectorDescription, userStream);
 
                             // Mark generation as completed
                             await db
@@ -428,7 +430,7 @@ export async function GET(request, { params }) {
                             
                         } else if (currentStatus === 'failed') {
                             console.log('Previous test generation failed, attempting retry...');
-                            await handleFailedTestGeneration(testKeyHash, userId, subjectId, subjectName, className, country, scopeType, scopeName, sectorDescription);
+                            await handleFailedTestGeneration(testKeyHash, userId, subjectId, subjectName, className, country, scopeType, scopeName, sectorDescription, userStream);
                         }
                         // If status is 'completed', continue with fetching questions
                     }

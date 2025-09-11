@@ -81,6 +81,8 @@ export async function POST(req) {
       account_status: 'separated',
       scope_type: scope_type,
       grade: data?.class,
+      user_stream: data?.stream || null,
+
     });
 
     if (!result) {

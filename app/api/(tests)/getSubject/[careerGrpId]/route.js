@@ -76,6 +76,7 @@ export async function GET(req, { params }) {
         const className = userDetails.className || 'completed';
         const joinedAt = userDetails.joined_date;
         const scopeType = userDetails.scope_type || 'career';
+        const userStream = userDetails.user_stream || ''
         
         console.log(`User , Scope type: ${scopeType}`);
 
@@ -266,7 +267,8 @@ export async function GET(req, { params }) {
                             type1, 
                             type2,
                             scopeType,
-                            sectorDescription
+                            sectorDescription,
+                            userStream,
                         );
 
                         // Mark generation as completed
@@ -307,7 +309,7 @@ export async function GET(req, { params }) {
                         
                     } else if (currentStatus === 'failed') {
                         console.log('Previous generation failed, attempting retry...');
-                        await handleFailedGeneration(keyHash, userId, scopeName, scopeId, country, userDetails.birth_date, className, type1, type2, scopeType);
+                        await handleFailedGeneration(keyHash, userId, scopeName, scopeId, country, userDetails.birth_date, className, type1, type2, scopeType, sectorDescription, userStream);
                     }
                     // If status is 'completed', continue with fetching subjects
                 }
@@ -423,7 +425,7 @@ const waitForGenerationCompletion = async (keyHash) => {
 };
 
 // Helper function to handle failed generation with atomic retry
-const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, country, birthDate, className, type1, type2, scopeType) => {
+const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, country, birthDate, className, type1, type2, scopeType, sectorDescription, userStream,) => {
     try {
         // Use atomic update to claim the retry
         const updateResult = await db
@@ -454,7 +456,8 @@ const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, count
             type1, 
             type2,
             scopeType,
-            sectorDescription
+            sectorDescription,
+            userStream,
         );
 
         await db

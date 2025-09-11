@@ -56,7 +56,8 @@
     "eligibilityTitle": "Welcome to Xortcut",
     "eligibilityInfo": "Xortcut is designed for college students and working professionals.",
     "eligibilityDetails": "By continuing, you confirm that you are a college student or a working professional.",
-    "continue": "Continue"
+    "continue": "Continue",
+    "class": "Class/Grade"
   },
   "Banner": {
     "title": "Personality",

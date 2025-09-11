@@ -18,6 +18,8 @@ function QuickSignUp() {
   const [selectedClass, setSelectedClass] = useState("9");
   const [dobError, setDobError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedStream, setSelectedStream] = useState("");
+  const [showStreamInput, setShowStreamInput] = useState(false);
 
   const router = useRouter();
 
@@ -27,6 +29,18 @@ function QuickSignUp() {
     formState: { errors },
     setError,
   } = useForm();
+
+  const streamOptions = [
+    "Science",
+    "Commerce", 
+    "Arts/Humanities",
+    "Biology",
+    "Mathematics",
+    "Computer Science",
+    "Economics",
+    "Literature",
+    "Other"
+  ];
 
   const handleDOBChange = (e) => {
     const selectedDate = new Date(e.target.value);
@@ -57,6 +71,12 @@ function QuickSignUp() {
       return;
     }
 
+    // Add this after the class validation check:
+  if (["11", "12"].includes(selectedClass) && !selectedStream) {
+    toast.error("Please select your stream");
+    return;
+  }
+
     setIsLoading(true);
 
     // Prepare quick signup data
@@ -64,6 +84,7 @@ function QuickSignUp() {
       username: data.username,
       dob: selectedDOB,
       class: selectedClass,
+      ...(["11", "12"].includes(selectedClass) && { stream: selectedStream })
     };
 
     try {
@@ -198,6 +219,63 @@ function QuickSignUp() {
                 <option value="college">College</option>
               </select>
             </div>
+
+            {["11", "12"].includes(selectedClass) && (
+            <div>
+              <label
+                htmlFor="stream"
+                className="block text-sm font-medium text-gray-200 mb-2"
+              >
+                Stream
+              </label>
+              {!showStreamInput ? (
+                <div className="space-y-2">
+                  <select
+                    id="stream"
+                    value={selectedStream}
+                    onChange={(e) => {
+                      if (e.target.value === "Other") {
+                        setShowStreamInput(true);
+                        setSelectedStream("");
+                      } else {
+                        setSelectedStream(e.target.value);
+                      }
+                    }}
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                    required
+                  >
+                    <option value="">Select Stream</option>
+                    {streamOptions.map((stream) => (
+                      <option key={stream} value={stream}>
+                        {stream}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={selectedStream}
+                    onChange={(e) => setSelectedStream(e.target.value)}
+                    placeholder="Enter your stream"
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowStreamInput(false);
+                      setSelectedStream("");
+                    }}
+                    className="text-sm text-gray-400 hover:text-gray-300 transition-colors duration-200"
+                  >
+                    ← Back to dropdown
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
             <button
               type="submit"

@@ -6,7 +6,7 @@ import { authenticate } from "@/lib/jwtMiddleware";
 import { USER_CLUSTER, USER_DETAILS, CLUSTER, QUIZ_SEQUENCES } from "@/utils/schema";
 import axios from "axios";
 
-export const maxDuration = 60; // Increased for OpenAI API calls
+export const maxDuration = 300; // Increased for OpenAI API calls
 export const dynamic = "force-dynamic";
 
 // Helper function to get age information

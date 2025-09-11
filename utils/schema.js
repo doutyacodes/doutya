@@ -71,6 +71,7 @@ export const USER_DETAILS = mysqlTable("user_details", {
   scope_type: mysqlEnum("scope_type", ["career", "cluster", "sector"])
     .notNull()
     .default("career"),
+  user_stream: varchar("user_stream", { length: 150 }).default(null),
 });
 
 export const USER_KEYS = mysqlTable("user_keys", {
