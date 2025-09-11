@@ -70,6 +70,7 @@ export async function POST(req) {
       account_status: 'separated',
       scope_type: scope_type,
       grade: data?.class,
+      user_stream: data?.stream || null,
       // institution_id: data?.instituteId,
       // class_id: data?.classId,
       // division_id: data?.divisionId, /* moved to speratee section

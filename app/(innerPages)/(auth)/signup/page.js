@@ -43,6 +43,9 @@ function SignUp() {
   const [ageCategory, setAgeCategory] = useState(""); // New state for age category
   const [selectedClass, setSelectedClass] = useState("");
 
+  const [selectedStream, setSelectedStream] = useState("");
+  const [showStreamInput, setShowStreamInput] = useState(false);
+
   // const [institutions, setInstitutions] = useState([]);
   // const [childClassOptions, setChildClassOptions] = useState([]);
   // const [childDivisionOptions, setChildDivisionOptions] = useState([]);
@@ -93,6 +96,18 @@ function SignUp() {
     0: "New Job",
     1: "Career Change",
   };
+
+  const streamOptions = [
+    "Science",
+    "Commerce", 
+    "Arts/Humanities",
+    "Biology",
+    "Mathematics",
+    "Computer Science",
+    "Economics",
+    "Literature",
+    "Other"
+  ];
 
   // useEffect(() => {
   //   router.push("/login");
@@ -247,12 +262,22 @@ function SignUp() {
       toast.error("Please select your class/grade");
       return;
     }
+    if (["11", "12"].includes(selectedClass) && !selectedStream) {
+      toast.error("Please select your stream");
+      return;
+    }
+
     const encryptedPassword = encryptText(data.password);
     data.password = encryptedPassword;
 
     data.dob = selectedDOB;
 
     data.language = languageMapping[selectedLanguage] || selectedLanguage;
+
+    // ✅ Add stream only if class is 11 or 12
+    if (["11", "12"].includes(selectedClass) && selectedStream) {
+      data.stream = selectedStream;
+    }
 
     if (isCollegeStudent && data.college && data.university) {
       data.college = encryptText(data.college);
@@ -851,6 +876,63 @@ function SignUp() {
               <option value="college">College</option>
             </select>
           </div>
+
+          {["11", "12"].includes(selectedClass) && (
+          <div>
+            <label
+              htmlFor="stream"
+              className="block text-sm font-medium text-gray-200 mb-2"
+            >
+              Stream
+            </label>
+            {!showStreamInput ? (
+              <div className="space-y-2">
+                <select
+                  id="stream"
+                  value={selectedStream}
+                  onChange={(e) => {
+                    if (e.target.value === "Other") {
+                      setShowStreamInput(true);
+                      setSelectedStream("");
+                    } else {
+                      setSelectedStream(e.target.value);
+                    }
+                  }}
+                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                  required
+                >
+                  <option value="">Select Stream</option>
+                  {streamOptions.map((stream) => (
+                    <option key={stream} value={stream}>
+                      {stream}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={selectedStream}
+                  onChange={(e) => setSelectedStream(e.target.value)}
+                  placeholder="Enter your stream"
+                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowStreamInput(false);
+                    setSelectedStream("");
+                  }}
+                  className="text-sm text-gray-400 hover:text-gray-300 transition-colors duration-200"
+                >
+                  ← Back to dropdown
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
           {/* <div className="mb-4">
             <label className="block text-sm font-medium text-gray-300">Institute</label>
