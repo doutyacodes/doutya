@@ -315,7 +315,7 @@ function QuickSignUp() {
               </div>
             )}
 
-            {["11", "12"].includes(selectedClass) && (
+            {["11", "12","college"].includes(selectedClass) && (
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-sm font-medium text-gray-200">
