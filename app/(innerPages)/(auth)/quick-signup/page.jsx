@@ -1,11 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import GlobalApi from "@/app/_services/GlobalApi";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { calculateAge } from "@/lib/ageCalculate";
-import GlobalApi from "@/app/_services/GlobalApi";
 
 function QuickSignUp() {
   const [selectedDOB, setSelectedDOB] = useState(() => {
@@ -21,6 +20,8 @@ function QuickSignUp() {
   const [selectedStream, setSelectedStream] = useState("");
   const [showStreamInput, setShowStreamInput] = useState(false);
   const [subjects, setSubjects] = useState([""]);
+  const [collegeCourse, setCollegeCourse] = useState("");
+  const [collegeUniversity, setCollegeUniversity] = useState("");
 
   const router = useRouter();
 
@@ -65,9 +66,19 @@ function QuickSignUp() {
     const newClass = e.target.value;
     setSelectedClass(newClass);
 
-    // Reset subjects when class changes
-    if (!["11", "12"].includes(newClass)) {
+    // Reset subjects and college fields when class changes
+    if (!["11", "12", "college"].includes(newClass)) {
       setSubjects([""]);
+    }
+    
+    if (newClass !== "college") {
+      setCollegeCourse("");
+      setCollegeUniversity("");
+    }
+    
+    if (!["11", "12"].includes(newClass)) {
+      setSelectedStream("");
+      setShowStreamInput(false);
     }
   };
 
@@ -99,14 +110,26 @@ function QuickSignUp() {
       return;
     }
 
-    // Add this after the class validation check:
+    // Validate stream for classes 11 and 12
     if (["11", "12"].includes(selectedClass) && !selectedStream) {
       toast.error("Please select your stream");
       return;
     }
 
-    // Validate subjects for class 11 and 12
-    if (["11", "12"].includes(selectedClass)) {
+    // Validate college fields
+    if (selectedClass === "college") {
+      if (!collegeCourse.trim()) {
+        toast.error("Please enter your course");
+        return;
+      }
+      if (!collegeUniversity.trim()) {
+        toast.error("Please enter your university/college");
+        return;
+      }
+    }
+
+    // Validate subjects for class 11, 12, and college
+    if (["11", "12", "college"].includes(selectedClass)) {
       const validSubjects = subjects.filter((subject) => subject.trim() !== "");
       if (validSubjects.length === 0) {
         toast.error("Please add at least one subject");
@@ -123,6 +146,11 @@ function QuickSignUp() {
       class: selectedClass,
       ...(["11", "12"].includes(selectedClass) && {
         stream: selectedStream,
+        subjects: subjects.filter((subject) => subject.trim() !== ""),
+      }),
+      ...(selectedClass === "college" && {
+        course: collegeCourse.trim(),
+        university: collegeUniversity.trim(),
         subjects: subjects.filter((subject) => subject.trim() !== ""),
       }),
     };
@@ -315,7 +343,45 @@ function QuickSignUp() {
               </div>
             )}
 
-            {["11", "12","college"].includes(selectedClass) && (
+            {selectedClass === "college" && (
+              <>
+                <div>
+                  <label
+                    htmlFor="course"
+                    className="block text-sm font-medium text-gray-200 mb-2"
+                  >
+                    Course
+                  </label>
+                  <input
+                    type="text"
+                    value={collegeCourse}
+                    onChange={(e) => setCollegeCourse(e.target.value)}
+                    placeholder="Enter your course (e.g., B.Tech, B.Com, BA)"
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="university"
+                    className="block text-sm font-medium text-gray-200 mb-2"
+                  >
+                    University/College
+                  </label>
+                  <input
+                    type="text"
+                    value={collegeUniversity}
+                    onChange={(e) => setCollegeUniversity(e.target.value)}
+                    placeholder="Enter your university/college name"
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                    required
+                  />
+                </div>
+              </>
+            )}
+
+            {["11", "12", "college"].includes(selectedClass) && (
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-sm font-medium text-gray-200">

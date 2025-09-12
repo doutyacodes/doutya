@@ -45,12 +45,6 @@ export async function POST(req) {
     const defaultCountry = "India";
     
     // Determine education level
-    const educationLevelMapping = {
-      0: "School",
-      1: "College", 
-      2: "Completed Education",
-    };
-    
     let educationLevel = "School";
     if (data?.class === "college") {
       educationLevel = "College";
@@ -68,8 +62,8 @@ export async function POST(req) {
       username: data?.username,
       education: null,
       student: "yes",
-      college: null,
-      university: null,
+      college: data?.course || null, // Use course for college field
+      university: data?.university || null, // Use university field
       yearOfPassing: null,
       monthOfPassing: null,
       country: defaultCountry,
@@ -104,7 +98,7 @@ export async function POST(req) {
       );
     }
 
-    // Insert subjects if provided (for classes 11 and 12)
+    // Insert subjects if provided (for classes 11, 12, and college)
     if (data?.subjects && Array.isArray(data.subjects) && data.subjects.length > 0) {
       try {
         const subjectPromises = data.subjects
@@ -117,7 +111,7 @@ export async function POST(req) {
           );
         
         await Promise.all(subjectPromises);
-        console.log(`Inserted ${subjectPromises.length} subjects for user ${user.id}`);
+        console.log(`Inserted ${subjectPromises.length} subjects for user ${user.id} in ${data.class}`);
       } catch (subjectError) {
         console.error("Error inserting subjects:", subjectError);
         // Don't fail the entire signup if subject insertion fails

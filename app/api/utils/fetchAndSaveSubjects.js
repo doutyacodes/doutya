@@ -36,7 +36,9 @@ const fetchSubjectsFromOpenAI = async (
   className,
   sectorDescription,
   userStream,
-  userSchoolSubjects
+  userSchoolSubjects,
+  userCourse = null,
+  userUniversity = null
 ) => {
   console.log(
     `${scopeType}: ${scopeName}, country: ${country}, scopeType: ${scopeType} , className:${className}`
@@ -52,7 +54,9 @@ const fetchSubjectsFromOpenAI = async (
     className,
     sectorDescription,
     userStream,
-    userSchoolSubjects
+    userSchoolSubjects,
+    userCourse,
+    userUniversity
   );
   console.log("prompt", prompt);
 
@@ -206,6 +210,8 @@ export const processCareerSubjects = async (
   sectorDescription = null,
   userStream,
   userSchoolSubjects = null,
+  userCourse = null,
+  userUniversity = null,
   keyHash = null // Optional parameter to pass keyHash from calling function
 ) => {
   try {
@@ -234,7 +240,9 @@ export const processCareerSubjects = async (
       className,
       sectorDescription,
       userStream,
-      userSchoolSubjects
+      userSchoolSubjects,
+      userCourse,
+      userUniversity
     );
 
     const subjects = subjectsByAge["subject-data"];

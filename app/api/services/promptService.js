@@ -293,7 +293,9 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
         className,
         sectorDescription,
         userStream,
-        userSchoolSubjects
+        userSchoolSubjects,
+        userCourse = null,
+        userUniversity = null
     ) => {
         const educationData = await getUserEducationPromptData(userId);
 
@@ -315,7 +317,7 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
                 : ""
         }, ${getLabel(scopeType, scopeName)}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(
             scopeType
-        )}.${userSchoolSubjects ? `. This is user's subjects: ${userSchoolSubjects}. Choose relevant subjects only from this and no outside subjects needed to be included here even though the subject is relevant for the ${scopeName}` : ""}
+        )}.${userSchoolSubjects ? `. This is user's subjects: ${userSchoolSubjects}. Choose relevant subjects only from this and no outside subjects needed to be included here even though the subject is relevant for the ${scopeName}` : ""}.${userCourse ? ` This is user's course: ${userCourse}.` : ""}${userUniversity ? ` This is user's university: ${userUniversity}.` : ""}
 
             Focus specifically on subjects directly related to the ${getTitle(
                 scopeType
