@@ -2030,3 +2030,12 @@ export const CONTENT_SCOPE = mysqlTable("content_scope", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
+
+
+export const USER_SCHOOL_SUBJECTS = mysqlTable("user_school_subjects", {
+  id: int("id").autoincrement().notNull().primaryKey(),
+  user_id: int("user_id").notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
+});

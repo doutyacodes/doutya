@@ -1,6 +1,7 @@
 // src/services/promptService.js
 
 import { enhancePromptWithEducation, getUserEducationPromptData } from "@/utils/promptUtils";
+import { use } from "react";
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
@@ -291,7 +292,8 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
         scopeType,
         className,
         sectorDescription,
-        userStream
+        userStream,
+        userSchoolSubjects
     ) => {
         const educationData = await getUserEducationPromptData(userId);
 
@@ -313,7 +315,7 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
                 : ""
         }, ${getLabel(scopeType, scopeName)}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(
             scopeType
-        )}.
+        )}.${userSchoolSubjects ? `. This is user's subjects: ${userSchoolSubjects}. Choose relevant subjects only from this and no outside subjects needed to be included here even though the subject is relevant for the ${scopeName}` : ""}
 
             Focus specifically on subjects directly related to the ${getTitle(
                 scopeType

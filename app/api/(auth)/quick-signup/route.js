@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/utils";
-import { USER_DETAILS } from "@/utils/schema";
+import { USER_DETAILS, USER_SCHOOL_SUBJECTS } from "@/utils/schema";
 import jwt from "jsonwebtoken";
 import { eq } from "drizzle-orm/expressions";
 import { encryptText } from "@/utils/encryption";
@@ -82,7 +82,6 @@ export async function POST(req) {
       scope_type: scope_type,
       grade: data?.class,
       user_stream: data?.stream || null,
-
     });
 
     if (!result) {
@@ -103,6 +102,27 @@ export async function POST(req) {
         { message: "User not found after quick signup" },
         { status: 404 }
       );
+    }
+
+    // Insert subjects if provided (for classes 11 and 12)
+    if (data?.subjects && Array.isArray(data.subjects) && data.subjects.length > 0) {
+      try {
+        const subjectPromises = data.subjects
+          .filter(subject => subject && subject.trim() !== "") // Filter out empty subjects
+          .map(subject => 
+            db.insert(USER_SCHOOL_SUBJECTS).values({
+              user_id: user.id,
+              subject: subject.trim(),
+            })
+          );
+        
+        await Promise.all(subjectPromises);
+        console.log(`Inserted ${subjectPromises.length} subjects for user ${user.id}`);
+      } catch (subjectError) {
+        console.error("Error inserting subjects:", subjectError);
+        // Don't fail the entire signup if subject insertion fails
+        // Just log the error and continue
+      }
     }
 
     // Generate JWT token

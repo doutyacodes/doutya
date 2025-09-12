@@ -12,7 +12,8 @@ import {
   CLUSTER,
   USER_SECTOR,
   USER_CLUSTER,
-  GENERATION_STATUS  // Add this import
+  GENERATION_STATUS,
+  USER_SCHOOL_SUBJECTS  // Add this import
 } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq, gte, inArray, lte } from 'drizzle-orm';
@@ -79,6 +80,20 @@ export async function GET(req, { params }) {
         const userStream = userDetails.user_stream || ''
         
         console.log(`User , Scope type: ${scopeType}`);
+
+        // Get user's school subjects if they exist (for classes 11 and 12)
+        let userSchoolSubjects = '';
+        if (['11', '12'].includes(className)) {
+            const schoolSubjects = await db
+                .select({ subject: USER_SCHOOL_SUBJECTS.subject })
+                .from(USER_SCHOOL_SUBJECTS)
+                .where(eq(USER_SCHOOL_SUBJECTS.user_id, userId));
+            
+            if (schoolSubjects.length > 0) {
+                userSchoolSubjects = schoolSubjects.map(s => s.subject).join(',');
+                console.log('User school subjects:', userSchoolSubjects);
+            }
+        }
 
         // Get scope information first to generate key hash
         let scopeInfo = null;
@@ -269,6 +284,7 @@ export async function GET(req, { params }) {
                             scopeType,
                             sectorDescription,
                             userStream,
+                            userSchoolSubjects,
                         );
 
                         // Mark generation as completed
@@ -309,7 +325,7 @@ export async function GET(req, { params }) {
                         
                     } else if (currentStatus === 'failed') {
                         console.log('Previous generation failed, attempting retry...');
-                        await handleFailedGeneration(keyHash, userId, scopeName, scopeId, country, userDetails.birth_date, className, type1, type2, scopeType, sectorDescription, userStream);
+                        await handleFailedGeneration(keyHash, userId, scopeName, scopeId, country, userDetails.birth_date, className, type1, type2, scopeType, sectorDescription, userStream, userSchoolSubjects);
                     }
                     // If status is 'completed', continue with fetching subjects
                 }
@@ -425,7 +441,7 @@ const waitForGenerationCompletion = async (keyHash) => {
 };
 
 // Helper function to handle failed generation with atomic retry
-const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, country, birthDate, className, type1, type2, scopeType, sectorDescription, userStream,) => {
+const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, country, birthDate, className, type1, type2, scopeType, sectorDescription, userStream, userSchoolSubjects) => {
     try {
         // Use atomic update to claim the retry
         const updateResult = await db
@@ -458,6 +474,7 @@ const handleFailedGeneration = async (keyHash, userId, scopeName, scopeId, count
             scopeType,
             sectorDescription,
             userStream,
+            userSchoolSubjects,
         );
 
         await db
