@@ -93,9 +93,9 @@ export async function GET(req)
       }
     );
 
-    console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-    console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
-    console.log(`Total tokens % best careers: ${response.data.usage.total_tokens}`);
+    console.log(`Input tokens best careers:: ${response.data.usage.prompt_tokens}`);
+    console.log(`Output tokens best careers:: ${response.data.usage.completion_tokens}`);
+    console.log(`Total tokens best careers: ${response.data.usage.total_tokens}`);
 
     let responseText = response.data.choices[0].message.content.trim();
     responseText = responseText.replace(/```json|```/g, "").trim();

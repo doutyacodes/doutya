@@ -109,9 +109,9 @@ export async function GET(req, { params }) {
             }
         );
 
-        console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-        console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
-        console.log(`Total tokens Activity: ${response.data.usage.total_tokens}`);
+        console.log(`Input tokens - Activity: ${response.data.usage.prompt_tokens}`);
+        console.log(`Output tokens - Activity: ${response.data.usage.completion_tokens}`);
+        console.log(`Total tokens - Activity: ${response.data.usage.total_tokens}`);
 
         let responseText = response.data.choices[0].message.content.trim();
         responseText = responseText.replace(/```json|```/g, "").trim();

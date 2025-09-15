@@ -410,7 +410,7 @@ export const QUIZZES = mysqlTable("quizzes", {
   description: text("description").notNull(),
 });
 
-export const PERSONALITY_PROFILES = mysqlTable("PERSONALITY_PROFILES", {
+export const PERSONALITY_PROFILES = mysqlTable("personality_profiles", {
   id: int("id").autoincrement().primaryKey(),
   code: varchar("code", { length: 10 }).notNull(),  // e.g. INTJ (for internal use only)
   data: json("data").notNull(), // stores the whole JSON personality_analysis

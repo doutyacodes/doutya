@@ -43,9 +43,9 @@ export async function validateCareer(career) {
             }
         );
 
-        console.log(`Input tokens: ${validationResponse.data.usage.prompt_tokens}`);
-        console.log(`Output tokens: ${validationResponse.data.usage.completion_tokens}`);
-        console.log(`Total tokens: ${validationResponse.data.usage.total_tokens}`);
+        console.log(`Input tokens careername validation: ${validationResponse.data.usage.prompt_tokens}`);
+        console.log(`Output tokens careername validation: ${validationResponse.data.usage.completion_tokens}`);
+        console.log(`Total tokens careername validation: ${validationResponse.data.usage.total_tokens}`);
 
         validationResponseText = validationResponse.data.choices[0].message.content.trim();
         validationResponseText = validationResponseText.replace(/```json|```/g, "").trim();

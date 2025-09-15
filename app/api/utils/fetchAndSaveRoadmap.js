@@ -349,8 +349,8 @@ export async function fetchAndSaveRoadmap(
       }
     );
 
-    console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-    console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+    console.log(`Input tokens Roadmap: ${response.data.usage.prompt_tokens}`);
+    console.log(`Output tokens Roadmap: ${response.data.usage.completion_tokens}`);
     console.log(`Total tokens Roadmap: ${response.data.usage.total_tokens}`);
 
     let responseText = response.data.choices[0].message.content.trim();

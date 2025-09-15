@@ -170,8 +170,8 @@ export async function GET(req) {
         },
       }
     );
-    console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-    console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+    console.log(`Input tokens single carrer detail: ${response.data.usage.prompt_tokens}`);
+    console.log(`Output tokens single carrer detail: ${response.data.usage.completion_tokens}`);
     console.log(`Total tokens single carrer detail: ${response.data.usage.total_tokens}`);
     // console.log("OpenAI response:", response.data); // Log the response data
 

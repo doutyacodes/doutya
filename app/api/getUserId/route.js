@@ -830,7 +830,9 @@ export async function GET(req) {
       }
     );
 
-    console.log(`API Usage - Input: ${aiResponse.data.usage.prompt_tokens}, Output: ${aiResponse.data.usage.completion_tokens}`);
+    console.log(`Input tokens career_analysis: ${aiResponse.data.usage.prompt_tokens}`);
+    console.log(`Output tokens career_analysis: ${aiResponse.data.usage.completion_tokens}`);
+    console.log(`Total tokens career_analysis: ${aiResponse.data.usage.total_tokens}`);
 
     let aiResponseText = aiResponse.data.choices[0].message.content.trim();
     aiResponseText = aiResponseText.replace(/```json|```/g, "").trim();

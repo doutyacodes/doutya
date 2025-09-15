@@ -115,8 +115,8 @@ export async function generateClusterSorting(mbtiType, riasecCode, classLevel) {
       }
     );
 
-    console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-    console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+    console.log(`Input tokens cluster sorting: ${response.data.usage.prompt_tokens}`);
+    console.log(`Output tokens cluster sorting: ${response.data.usage.completion_tokens}`);
     console.log(`Total tokens for cluster sorting: ${response.data.usage.total_tokens}`);
 
     let responseText = response.data.choices[0].message.content.trim();

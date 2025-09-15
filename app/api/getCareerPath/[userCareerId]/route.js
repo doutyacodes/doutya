@@ -120,8 +120,8 @@ export async function GET(req, { params }) {
               );
               console.log("API request completed.");
 
-              console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-              console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+              console.log(`Input tokens Career Path: ${response.data.usage.prompt_tokens}`);
+              console.log(`Output tokens Career Path: ${response.data.usage.completion_tokens}`);
               console.log(`Total tokens Career Path: ${response.data.usage.total_tokens}`);
 
               let responseText = response.data.choices[0].message.content.trim();

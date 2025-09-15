@@ -318,8 +318,8 @@ export async function GET(req, { params }) {
                 }
             );
 
-            console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-            console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+            console.log(`Input tokens Challenges: ${response.data.usage.prompt_tokens}`);
+            console.log(`Output tokens Challenges: ${response.data.usage.completion_tokens}`);
             console.log(`Total tokens Challenges: ${response.data.usage.total_tokens}`);
 
             let responseText = response.data.choices[0].message.content.trim();

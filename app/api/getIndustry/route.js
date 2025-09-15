@@ -103,8 +103,8 @@ export async function GET(req) {
     }
   );
 
-  console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-  console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+  console.log(`Input tokens Industry: ${response.data.usage.prompt_tokens}`);
+  console.log(`Output tokens Industry: ${response.data.usage.completion_tokens}`);
   console.log(`Total tokens Industry: ${response.data.usage.total_tokens}`);
 
   let responseText = response.data.choices[0].message.content.trim();

@@ -434,9 +434,9 @@ export async function GET(req, { params }) {
             }
         );
         
-        console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-        console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
-        console.log(`Total tokens: ${response.data.usage.total_tokens}`);
+        console.log(`Input tokens of Initaial Feedback: ${response.data.usage.prompt_tokens}`);
+        console.log(`Output tokens Initaial Feedback: ${response.data.usage.completion_tokens}`);
+        console.log(`Total tokens Initaial Feedback: ${response.data.usage.total_tokens}`);
         console.log("API request completed.");
 
         let responseText = response.data.choices[0].message.content.trim();
