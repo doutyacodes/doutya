@@ -1,4 +1,6 @@
 "use client";
+
+import { Suspense } from "react";
 import CareerGuideExplanation from "@/app/_components/CareerGuideExplanation";
 import CommunityList from "@/app/_components/CommunityList";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
@@ -56,6 +58,8 @@ function Page() {
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const t = useTranslations("CareerPage");
 
   const { refreshTopbar } = useTopbar();
@@ -69,8 +73,23 @@ function Page() {
     ); /* taken this formthe result 2  component we need theis state to show
    the career adding stripe or not based on the step  */
 
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  // Function to update URL with career and tab selection
+  const updateURL = (careerId, tabKey) => {
+    const params = new URLSearchParams(searchParams);
+    if (careerId) {
+      params.set('careerId', careerId.toString());
+    } else {
+      params.delete('careerId');
+    }
+    if (tabKey && tabKey !== 'roadmap') { // Only add tab if it's not the default
+      params.set('tab', tabKey);
+    } else {
+      params.delete('tab');
+    }
+    
+    const newURL = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    window.history.replaceState({}, '', newURL);
+  };
 
   useEffect(() => {
     // Only refresh if refreshTopbar changes and initial load is complete
@@ -117,8 +136,11 @@ function Page() {
       setShowCompletionModal(true);
 
       // Clean up the URL to prevent the modal from showing on refresh
-      // Create a new URL without the query parameters
-      window.history.replaceState({}, document.title, pathname);
+      const params = new URLSearchParams(searchParams);
+      params.delete("testCompleted");
+      params.delete("subjectName");
+      const newURL = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      window.history.replaceState({}, document.title, newURL);
     }
   }, [searchParams, pathname]);
 
@@ -160,15 +182,31 @@ function Page() {
     authCheck();
   }, [router]);
 
+  // Updated useEffect to handle career selection from URL parameters
   useEffect(() => {
-    if (
-      pathname == "/dashboard/careers/career-guide" &&
-      careerData.length > 0 &&
-      !selectedCareer
-    ) {
-      setSelectedCareer(careerData[0]);
+    if (pathname == "/dashboard/careers/career-guide" && careerData.length > 0) {
+      const urlCareerId = searchParams.get('careerId');
+      const urlTab = searchParams.get('tab') || 'roadmap';
+      
+      if (urlCareerId) {
+        // Try to find the career from URL parameter
+        const careerFromURL = careerData.find(career => career.id.toString() === urlCareerId);
+        if (careerFromURL && (!selectedCareer || selectedCareer.id.toString() !== urlCareerId)) {
+          setSelectedCareer(careerFromURL);
+          setActiveTab(urlTab);
+          return;
+        }
+      }
+      
+      // Fallback: if no URL career found or no URL parameter, select first career
+      if (!selectedCareer && careerData.length > 0) {
+        setSelectedCareer(careerData[0]);
+        setActiveTab('roadmap');
+        // Update URL with the default selection
+        updateURL(careerData[0].id, 'roadmap');
+      }
     }
-  }, [careerData, pathname]);
+  }, [careerData, pathname, searchParams]);
 
   const getCareers = async (showLoader = true) => {
     if (showLoader) setIsLoading(true);
@@ -243,22 +281,40 @@ function Page() {
     }
   };
 
+  // Updated handleCareerClick to update URL parameters
   const handleCareerClick = (career) => {
     setSelectedCareer(career);
-    setActiveTab("roadmap");
+    const newActiveTab = "roadmap"; // Reset to roadmap when switching careers
+    setActiveTab(newActiveTab);
+    
+    // Update URL with new selection
+    updateURL(career.id, newActiveTab);
+    
     if (pathname !== "/dashboard/careers/career-guide") {
       router.push("/dashboard/careers/career-guide");
     }
   };
 
+  // Updated handleTabClick to update URL parameters
   const handleTabClick = (tab) => {
     setActiveTab(tab);
+    
+    // Update URL with current career and new tab
+    if (selectedCareer) {
+      updateURL(selectedCareer.id, tab);
+    }
   };
 
   const handleViewResults = () => {
     setShowCompletionModal(false);
     // Navigate to the results page
-    setActiveTab("assessment");
+    const newTab = "assessment";
+    setActiveTab(newTab);
+    
+    // Update URL with current career and assessment tab
+    if (selectedCareer) {
+      updateURL(selectedCareer.id, newTab);
+    }
   };
 
   const handleClose = () => {
@@ -365,7 +421,10 @@ function Page() {
       {step === 2 && (
         <CareerStripe
           selectedItem={selectedCareer}
-          setSelectedItem={setSelectedCareer}
+          setSelectedItem={(career) => {
+            setSelectedCareer(career);
+            updateURL(career?.id, activeTab);
+          }}
         />
       )}
 
@@ -476,7 +535,7 @@ function Page() {
                               ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30 border border-orange-400/50"
                               : "bg-gray-700/50 text-gray-300 hover:bg-gray-600/60 hover:text-white border border-gray-600/30 hover:border-gray-500/50"
                           }`}
-                          onClick={() => setActiveTab(tab.key)}
+                          onClick={() => handleTabClick(tab.key)}
                         >
                           <span className="relative z-10">
                             {tab.label.toUpperCase()}
@@ -549,4 +608,12 @@ function Page() {
   );
 }
 
-export default Page;
+function PageWrapper() {
+  return (
+    <Suspense fallback={<div className="h-screen flex items-center justify-center text-white">Loading...</div>}>
+      <Page />
+    </Suspense>
+  );
+}
+
+export default PageWrapper;
