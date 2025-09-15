@@ -334,7 +334,8 @@ export async function GET(request, { params }) {
                 console.log("log generate");
 
                 // Generate unique key hash for test generation
-                const testKeyHash = generateTestKeyHash(249, 12, yearsSinceJoined, monthsSinceJoined, weekNumber);
+                const testKeyHash = generateTestKeyHash(subjectId, className, yearsSinceJoined, monthsSinceJoined, weekNumber);
+
                 console.log("testKeyHash", testKeyHash);
 
                 // Use a transaction to handle race conditions

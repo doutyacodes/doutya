@@ -30,7 +30,8 @@ export default function SectorSelectionPage() {
     setToken(localStorage.getItem("token") || "");
   }, []);
   
-  const maxSelections = user.plan_type === "base" ? 2 : 5;
+  // const maxSelections = user.plan_type === "base" ? 2 : 5;
+  const maxSelections = 6;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -140,13 +141,13 @@ export default function SectorSelectionPage() {
     }
   
     // Check if adding would exceed plan limits
-    if (userSectors.length >= maxSelections) {
-      toast.error(user.plan_type === "base" 
-        ? "Base plan users can only select up to 2 sectors. Upgrade to Pro to select up to 5 sectors."
-        : "You can select up to 5 sectors maximum.")
-      setConfirmingSector(null);
-      return;
-    }
+    // if (userSectors.length >= maxSelections) {
+    //   toast.error(user.plan_type === "base" 
+    //     ? "Base plan users can only select up to 2 sectors. Upgrade to Pro to select up to 5 sectors."
+    //     : "You can select up to 5 sectors maximum.")
+    //   setConfirmingSector(null);
+    //   return;
+    // }
   
     try {
       const response = await fetch("/api/sectors/user-sectors", {
@@ -473,9 +474,9 @@ export default function SectorSelectionPage() {
                   </motion.p>
               </motion.div>
           
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-7xl mx-auto">
                   <AnimatePresence>
-                      {sortedSectors.slice(0, 3).map((sortedSector, index) => (
+                      {sortedSectors.slice(0, 6).map((sortedSector, index) => (
                       <motion.div
                         key={sortedSector.sector_details?.id || index}
                         initial={{ opacity: 0, y: 50, rotateY: 10 }}
@@ -708,31 +709,56 @@ function ModernSectorCard({
     
     // Define unique colors and icons for each position
     const cardConfigs = [
-        {
-            gradient: "from-[#7824f6] to-[#9d4edd]",
-            bgGradient: "from-[#7824f6]/10 to-[#9d4edd]/10",
-            borderGlow: "shadow-[0_0_30px_rgba(120,36,246,0.3)]",
-            icon: FaTrophy,
-            badge: "BEST MATCH",
-            badgeColor: "bg-gradient-to-r from-[#7824f6] to-[#9d4edd]"
-        },
-        {
-            gradient: "from-[#06ffa5] to-[#00d4aa]",
-            bgGradient: "from-[#06ffa5]/10 to-[#00d4aa]/10",
-            borderGlow: "shadow-[0_0_30px_rgba(6,255,165,0.3)]",
-            icon: FaMedal,
-            badge: "EXCELLENT",
-            badgeColor: "bg-gradient-to-r from-[#06ffa5] to-[#00d4aa]"
-        },
-        {
-            gradient: "from-[#ff6b6b] to-[#ffa726]",
-            bgGradient: "from-[#ff6b6b]/10 to-[#ffa726]/10",
-            borderGlow: "shadow-[0_0_30px_rgba(255,107,107,0.3)]",
-            icon: FaStar,
-            badge: "GREAT FIT",
-            badgeColor: "bg-gradient-to-r from-[#ff6b6b] to-[#ffa726]"
-        }
-    ];
+    {
+        gradient: "from-[#7824f6] to-[#9d4edd]",
+        bgGradient: "from-[#7824f6]/10 to-[#9d4edd]/10",
+        borderGlow: "shadow-[0_0_30px_rgba(120,36,246,0.3)]",
+        icon: FaTrophy,
+        badge: "BEST MATCH",
+        badgeColor: "bg-gradient-to-r from-[#7824f6] to-[#9d4edd]"
+    },
+    {
+        gradient: "from-[#06ffa5] to-[#00d4aa]",
+        bgGradient: "from-[#06ffa5]/10 to-[#00d4aa]/10",
+        borderGlow: "shadow-[0_0_30px_rgba(6,255,165,0.3)]",
+        icon: FaMedal,
+        badge: "EXCELLENT",
+        badgeColor: "bg-gradient-to-r from-[#06ffa5] to-[#00d4aa]"
+    },
+    {
+        gradient: "from-[#ff6b6b] to-[#ffa726]",
+        bgGradient: "from-[#ff6b6b]/10 to-[#ffa726]/10",
+        borderGlow: "shadow-[0_0_30px_rgba(255,107,107,0.3)]",
+        icon: FaStar,
+        badge: "GREAT FIT",
+        badgeColor: "bg-gradient-to-r from-[#ff6b6b] to-[#ffa726]"
+    },
+    // Add these for positions 4-6
+    {
+        gradient: "from-[#ffd93d] to-[#ff8c42]",
+        bgGradient: "from-[#ffd93d]/10 to-[#ff8c42]/10",
+        borderGlow: "shadow-[0_0_30px_rgba(255,217,61,0.3)]",
+        icon: FaStar,
+        badge: "GOOD MATCH",
+        badgeColor: "bg-gradient-to-r from-[#ffd93d] to-[#ff8c42]"
+    },
+    {
+        gradient: "from-[#a8edea] to-[#fed6e3]",
+        bgGradient: "from-[#a8edea]/10 to-[#fed6e3]/10",
+        borderGlow: "shadow-[0_0_30px_rgba(168,237,234,0.3)]",
+        icon: FaStar,
+        badge: "POTENTIAL",
+        badgeColor: "bg-gradient-to-r from-[#a8edea] to-[#fed6e3]"
+    },
+    {
+        gradient: "from-[#667eea] to-[#764ba2]",
+        bgGradient: "from-[#667eea]/10 to-[#764ba2]/10",
+        borderGlow: "shadow-[0_0_30px_rgba(102,126,234,0.3)]",
+        icon: FaStar,
+        badge: "EXPLORE",
+        badgeColor: "bg-gradient-to-r from-[#667eea] to-[#764ba2]"
+    }
+];
     
     const config = cardConfigs[index] || cardConfigs[0];
     const IconComponent = config.icon;
