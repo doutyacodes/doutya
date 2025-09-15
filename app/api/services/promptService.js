@@ -358,6 +358,113 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
     };
 
 
+    // export const generateSubjectsTestsPrompt = async (
+    //     userId,
+    //     subjectName,
+    //     className,
+    //     country,
+    //     scopeType,
+    //     scopeName,
+    //     sectorDescription,
+    //     userStream
+    // ) => {
+    //     const educationData = await getUserEducationPromptData(userId);
+
+    //     const getLabel = (scopeType, scopeName) => {
+    //         if (scopeType === "career") return `pursuing a career in ${scopeName}`;
+    //         if (scopeType === "cluster") return `exploring the cluster "${scopeName}"`;
+    //         if (scopeType === "sector") return `navigating the sector "${scopeName}"`;
+    //     };
+
+    //     const getTitle = (scopeType) => {
+    //         if (scopeType === "career") return "career";
+    //         if (scopeType === "cluster") return "cluster";
+    //         if (scopeType === "sector") return "sector";
+    //     };
+
+    //     const basePrompt = `
+    //                 Create 10 multiple-choice questions in ${subjectName} for a student studying in class ${className}${
+    //                 (className === "11" || className === "12") && userStream
+    //                         ? ` with a focus on the ${userStream} stream`
+    //                         : ""
+    //                 } in ${country}, ${getLabel(scopeType, scopeName)}.
+                    
+    //                 The questions must align with the education system and curriculum standards of ${country} and match the understanding level of a student in class ${className} within that country's educational framework.
+    //                 - Consider the specific educational standards, terminology, and learning objectives used in ${country}'s education system
+    //                 - Ensure questions reflect the teaching methodology and assessment style common in ${country}
+    //                 - Use appropriate units of measurement, currency, historical references, and cultural context relevant to ${country}
+    //                 - If class is between 5–8, keep questions simpler and introductory according to ${country}'s elementary/primary education standards
+    //                 - If class is 9–12, create moderately advanced questions suitable for ${country}'s secondary/high school level
+    //                 - If class is "college", create university-level advanced questions appropriate for ${country}'s higher education system
+
+    //                 ### Context and Relevance:
+    //                 Focus on ${subjectName} topics that are directly relevant to the ${getTitle(scopeType)} of "${scopeName}". 
+    //                 ${
+    //                     sectorDescription
+    //                         ? `\n**${
+    //                             getTitle(scopeType).charAt(0).toUpperCase() +
+    //                             getTitle(scopeType).slice(1)
+    //                         } Description:** ${sectorDescription}\n`
+    //                         : ""
+    //                 }
+    //                 - For subjects like English, focus on ${subjectName} curriculum topics (grammar, literature, comprehension, writing skills, etc..) rather than general knowledge questions
+    //                 - For subjects like Mathematics, ensure all calculations are mathematically accurate and verify that exactly one option is correct
+    //                 - For subjects like Science, focus on theoretical concepts, principles, and applications relevant to the ${getTitle(scopeType)}
+    //                 - Questions should test understanding of ${subjectName} concepts that build foundation for the ${getTitle(scopeType)} path
+
+    //                 ${
+    //                     `\n### NCERT Restriction:\n- Base all topics and questions strictly on the NCERT CBSE Class ${className} ${subjectName} syllabus.\n- The academic year is assumed to run from June to March.\n- Since the current month is 
+    //                     ${new Date().toLocaleString("en-US", {
+    //                         month: "long",
+    //                     })} assume that only the proportionate portion of the syllabus has been taught up to this point.\n- Do not include topics that would normally be scheduled for later months.\n`
+    //                 }
+                    
+    //                 ### Critical Requirements:
+    //                 **For Mathematical/Numerical Questions:**
+    //                 - Double-check all calculations before finalizing options
+    //                 - Ensure exactly ONE option is mathematically correct
+    //                 - Verify that incorrect options represent common calculation errors or plausible alternatives
+    //                 - Never include multiple correct answers or zero correct answers
+                    
+    //                 **For Subject-Specific Questions:**
+    //                 - Focus strictly on ${subjectName} curriculum content appropriate for class ${className}
+    //                 - Avoid general knowledge or trivia questions
+    //                 - Base questions on specific topics taught in ${subjectName} classes in ${country}
+    //                 - Focus on core curriculum concepts, terminology, and applications as per syllabus
+                    
+    //                 Avoid generating questions that are too advanced or too basic for this class level within ${country}'s education system.
+    //                 Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
+    //                 Make sure no questions or options are repeated. The questions should be unique and difficulty level should be challenging but appropriate for the student's class within ${country}'s curriculum framework.   
+                    
+    //                 Ensure that the quiz questions are appropriately designed:
+    //                 1. The incorrect options (distractors) should be plausible and related to the course content as taught in ${country}
+    //                 2. Avoid making the correct answer obviously different from the distractors in format, length, or category
+    //                 3. All options should be of similar difficulty level and domain
+    //                 4. Ensure distractors represent common misconceptions or partial understandings rather than clearly incorrect statements
+    //                 5. All options must be in the same conceptual category - avoid having one option that clearly stands out from others
+    //                 6. All options should have similar phrasing styles, terminology levels, and length
+    //                 7. For numerical questions, wrong answers should reflect common calculation errors or plausible alternative values
+    //                 8. Avoid instances where the correct answer is the only complete, grammatically correct, or specific option
+    //                 9. Use educational terminology, examples, and references that are familiar and relevant to students in ${country}
+    //                 10. The questions and answers must be based strictly on the NCERT CBSE Class ${className} syllabus. The questions and answers given in the MCQ must be correct and questions must be precise.
+    //                 11. **MANDATORY: Verify that exactly one option per question is correct - never zero correct answers, never multiple correct answers**
+
+    //                 Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
+    //                 {
+    //                     "question": "Question text here",
+    //                     "options": [
+    //                         { "text": "Option 1", "is_answer": "no" },
+    //                         { "text": "Option 2", "is_answer": "yes" },
+    //                         { "text": "Option 3", "is_answer": "no" },
+    //                         { "text": "Option 4", "is_answer": "no" }
+    //                     ]
+    //                 }
+    //                 Only return the array of 10 questions, nothing else.
+    //                 `;
+
+    //     return enhancePromptWithEducation(basePrompt, educationData);
+    // };
+
     export const generateSubjectsTestsPrompt = async (
         userId,
         subjectName,
@@ -382,85 +489,150 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
             if (scopeType === "sector") return "sector";
         };
 
+        // Enhanced mathematical instructions
+        const mathematicalInstructions = subjectName.toLowerCase().includes('math') || 
+                                    subjectName.toLowerCase().includes('physics') || 
+                                    subjectName.toLowerCase().includes('chemistry') ? `
+            
+            ### CRITICAL MATHEMATICAL REQUIREMENTS:
+            **MANDATORY CALCULATION VERIFICATION PROCESS:**
+            For EVERY mathematical question, you MUST:
+            1. **Calculate the correct answer step-by-step BEFORE creating options**
+            2. **Set the correct answer as one of the four options**
+            3. **Create three plausible wrong answers that represent common errors**
+            4. **Double-check your calculation at least twice**
+            5. **Verify that only ONE option matches your verified correct answer**
+            
+            **MATHEMATICAL QUESTION CREATION PROCESS:**
+            Step 1: Create the mathematical problem
+            Step 2: Solve it completely and verify your solution
+            Step 3: Note the correct numerical answer
+            Step 4: Create option A with the correct answer
+            Step 5: Create options B, C, D with common mistake patterns:
+            - Calculation errors (wrong signs, missed steps)
+            - Conceptual errors (wrong formulas)
+            - Unit conversion errors
+            - Rounding errors
+            Step 6: Final verification - confirm only option A is mathematically correct
+            
+            **MATHEMATICAL VALIDATION CHECKLIST:**
+            ✓ I have solved the problem completely
+            ✓ I have verified my calculation is correct
+            ✓ Exactly one option contains the correct answer
+            ✓ The three wrong options are mathematically incorrect but plausible
+            ✓ No two options have the same value
+            ✓ All options use the same units and format
+            
+            **EXAMPLES OF PROPER MATHEMATICAL OPTIONS:**
+            ❌ WRONG: All options are 25, 25, 25, 25
+            ❌ WRONG: Options are 25, 30, "not enough information", "none of the above"
+            ✅ CORRECT: Options are 25, 23, 27, 24 (where 25 is the verified correct answer)
+            
+            ` : '';
+                        // ${mathematicalInstructions}
+
         const basePrompt = `
-                    Create 10 multiple-choice questions in ${subjectName} for a student studying in class ${className}${
-                    (className === "11" || className === "12") && userStream
-                            ? ` with a focus on the ${userStream} stream`
-                            : ""
-                    } in ${country}, ${getLabel(scopeType, scopeName)}.
-                    
-                    The questions must align with the education system and curriculum standards of ${country} and match the understanding level of a student in class ${className} within that country's educational framework.
-                    - Consider the specific educational standards, terminology, and learning objectives used in ${country}'s education system
-                    - Ensure questions reflect the teaching methodology and assessment style common in ${country}
-                    - Use appropriate units of measurement, currency, historical references, and cultural context relevant to ${country}
-                    - If class is between 5–8, keep questions simpler and introductory according to ${country}'s elementary/primary education standards
-                    - If class is 9–12, create moderately advanced questions suitable for ${country}'s secondary/high school level
-                    - If class is "college", create university-level advanced questions appropriate for ${country}'s higher education system
+            Create 10 multiple-choice questions in ${subjectName} for a student studying in class ${className}${
+                (className === "11" || className === "12") && userStream
+                    ? ` with a focus on the ${userStream} stream`
+                    : ""
+            } in ${country}, ${getLabel(scopeType, scopeName)}.
+            
+            The questions must align with the education system and curriculum standards of ${country} and match the understanding level of a student in class ${className} within that country's educational framework.
+            - Consider the specific educational standards, terminology, and learning objectives used in ${country}'s education system
+            - Ensure questions reflect the teaching methodology and assessment style common in ${country}
+            - Use appropriate units of measurement, currency, historical references, and cultural context relevant to ${country}
+            - If class is between 5–8, keep questions simpler and introductory according to ${country}'s elementary/primary education standards
+            - If class is 9–12, create moderately advanced questions suitable for ${country}'s secondary/high school level
+            - If class is "college", create university-level advanced questions appropriate for ${country}'s higher education system
 
-                    ### Context and Relevance:
-                    Focus on ${subjectName} topics that are directly relevant to the ${getTitle(scopeType)} of "${scopeName}". 
-                    ${
-                        sectorDescription
-                            ? `\n**${
-                                getTitle(scopeType).charAt(0).toUpperCase() +
-                                getTitle(scopeType).slice(1)
-                            } Description:** ${sectorDescription}\n`
-                            : ""
-                    }
-                    - For subjects like English, focus on ${subjectName} curriculum topics (grammar, literature, comprehension, writing skills, etc..) rather than general knowledge questions
-                    - For subjects like Mathematics, ensure all calculations are mathematically accurate and verify that exactly one option is correct
-                    - For subjects like Science, focus on theoretical concepts, principles, and applications relevant to the ${getTitle(scopeType)}
-                    - Questions should test understanding of ${subjectName} concepts that build foundation for the ${getTitle(scopeType)} path
+            ### Context and Relevance:
+            Focus on ${subjectName} topics that are directly relevant to the ${getTitle(scopeType)} of "${scopeName}". 
+            ${
+                sectorDescription
+                    ? `\n**${
+                        getTitle(scopeType).charAt(0).toUpperCase() +
+                        getTitle(scopeType).slice(1)
+                    } Description:** ${sectorDescription}\n`
+                    : ""
+            }
+            - For subjects like English, focus on ${subjectName} curriculum topics (grammar, literature, comprehension, writing skills, etc..) rather than general knowledge questions
+            - For subjects like Mathematics, ensure all calculations are mathematically accurate and verify that exactly one option is correct
+            - For subjects like Science, focus on theoretical concepts, principles, and applications relevant to the ${getTitle(scopeType)}
+            - Questions should test understanding of ${subjectName} concepts that build foundation for the ${getTitle(scopeType)} path
 
-                    ${
-                        `\n### NCERT Restriction:\n- Base all topics and questions strictly on the NCERT CBSE Class ${className} ${subjectName} syllabus.\n- The academic year is assumed to run from June to March.\n- Since the current month is 
-                        ${new Date().toLocaleString("en-US", {
-                            month: "long",
-                        })} assume that only the proportionate portion of the syllabus has been taught up to this point.\n- Do not include topics that would normally be scheduled for later months.\n`
-                    }
-                    
-                    ### Critical Requirements:
-                    **For Mathematical/Numerical Questions:**
-                    - Double-check all calculations before finalizing options
-                    - Ensure exactly ONE option is mathematically correct
-                    - Verify that incorrect options represent common calculation errors or plausible alternatives
-                    - Never include multiple correct answers or zero correct answers
-                    
-                    **For Subject-Specific Questions:**
-                    - Focus strictly on ${subjectName} curriculum content appropriate for class ${className}
-                    - Avoid general knowledge or trivia questions
-                    - Base questions on specific topics taught in ${subjectName} classes in ${country}
-                    - Focus on core curriculum concepts, terminology, and applications as per syllabus
-                    
-                    Avoid generating questions that are too advanced or too basic for this class level within ${country}'s education system.
-                    Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
-                    Make sure no questions or options are repeated. The questions should be unique and difficulty level should be challenging but appropriate for the student's class within ${country}'s curriculum framework.   
-                    
-                    Ensure that the quiz questions are appropriately designed:
-                    1. The incorrect options (distractors) should be plausible and related to the course content as taught in ${country}
-                    2. Avoid making the correct answer obviously different from the distractors in format, length, or category
-                    3. All options should be of similar difficulty level and domain
-                    4. Ensure distractors represent common misconceptions or partial understandings rather than clearly incorrect statements
-                    5. All options must be in the same conceptual category - avoid having one option that clearly stands out from others
-                    6. All options should have similar phrasing styles, terminology levels, and length
-                    7. For numerical questions, wrong answers should reflect common calculation errors or plausible alternative values
-                    8. Avoid instances where the correct answer is the only complete, grammatically correct, or specific option
-                    9. Use educational terminology, examples, and references that are familiar and relevant to students in ${country}
-                    10. The questions and answers must be based strictly on the NCERT CBSE Class ${className} syllabus. The questions and answers given in the MCQ must be correct and questions must be precise.
-                    11. **MANDATORY: Verify that exactly one option per question is correct - never zero correct answers, never multiple correct answers**
+            ${
+                `\n### NCERT Restriction:\n- Base all topics and questions strictly on the NCERT CBSE Class ${className} ${subjectName} syllabus.\n- The academic year is assumed to run from June to March.\n- Since the current month is 
+                ${new Date().toLocaleString("en-US", {
+                    month: "long",
+                })} assume that only the proportionate portion of the syllabus has been taught up to this point.\n- Do not include topics that would normally be scheduled for later months.\n`
+            }
+            
+            ### Critical Requirements:
+            **ABSOLUTE REQUIREMENTS FOR ALL QUESTIONS:**
+            - Each question MUST have exactly 4 different options
+            - Each question MUST have exactly 1 correct answer marked with "is_answer": "yes"
+            - Each question MUST have exactly 3 incorrect answers marked with "is_answer": "no"
+            - NO duplicate options within the same question
+            - NO questions with zero correct answers
+            - NO questions with multiple correct answers
+            
+            **For Mathematical/Numerical Questions - MANDATORY:**
+            - BEFORE creating options, solve the problem completely and note the correct answer
+            - Include the mathematically correct answer as one of the four options
+            - Create three mathematically incorrect but plausible alternatives
+            - Verify calculations multiple times before finalizing
+            - Use consistent units and number formatting across all options
+            - Wrong options should reflect common student errors (sign mistakes, formula errors, etc.)
+            
+            **For Subject-Specific Questions:**
+            - Focus strictly on ${subjectName} curriculum content appropriate for class ${className}
+            - Avoid general knowledge or trivia questions
+            - Base questions on specific topics taught in ${subjectName} classes in ${country}
+            - Focus on core curriculum concepts, terminology, and applications as per syllabus
+            
+            ### Quality Assurance Checklist:
+            Before finalizing each question, verify:
+            1. ✓ Problem is solvable and has a definitive correct answer
+            2. ✓ Correct answer is included in the four options
+            3. ✓ Exactly one option is marked as correct ("is_answer": "yes")
+            4. ✓ Three options are marked as incorrect ("is_answer": "no")
+            5. ✓ All four options are unique and different
+            6. ✓ Wrong options are plausible but definitely incorrect
+            7. ✓ All options follow the same format and style
+            
+            Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
+            Make sure no questions or options are repeated. The questions should be unique and difficulty level should be challenging but appropriate for the student's class within ${country}'s curriculum framework.   
+            
+            Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
+            Make sure no questions or options are repeated. The questions should be unique and difficulty level should be challenging but appropriate for the student's class within ${country}'s curriculum framework.   
+            
+            Ensure that the quiz questions are appropriately designed:
+            1. The incorrect options (distractors) should be plausible and related to the course content as taught in ${country}
+            2. Avoid making the correct answer obviously different from the distractors in format, length, or category
+            3. All options should be of similar difficulty level and domain
+            4. Ensure distractors represent common misconceptions or partial understandings rather than clearly incorrect statements
+            5. All options must be in the same conceptual category - avoid having one option that clearly stands out from others
+            6. All options should have similar phrasing styles, terminology levels, and length
+            7. For numerical questions, wrong answers should reflect common calculation errors or plausible alternative values
+            8. Avoid instances where the correct answer is the only complete, grammatically correct, or specific option
+            9. Use educational terminology, examples, and references that are familiar and relevant to students in ${country}
+            10. The questions and answers must be based strictly on the NCERT CBSE Class ${className} syllabus. The questions and answers given in the MCQ must be correct and questions must be precise.
+            11. **MANDATORY: Verify that exactly one option per question is correct - never zero correct answers, never multiple correct answers**
 
-                    Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
-                    {
-                        "question": "Question text here",
-                        "options": [
-                            { "text": "Option 1", "is_answer": "no" },
-                            { "text": "Option 2", "is_answer": "yes" },
-                            { "text": "Option 3", "is_answer": "no" },
-                            { "text": "Option 4", "is_answer": "no" }
-                        ]
-                    }
-                    Only return the array of 10 questions, nothing else.
-                    `;
+            Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
+            {
+                "question": "Question text here",
+                "options": [
+                    { "text": "Option 1", "is_answer": "no" },
+                    { "text": "Option 2", "is_answer": "yes" },
+                    { "text": "Option 3", "is_answer": "no" },
+                    { "text": "Option 4", "is_answer": "no" }
+                ]
+            }
+            
+            IMPORTANT: Return ONLY the JSON array of 10 questions, nothing else. No explanations, no additional text.
+            `;
 
         return enhancePromptWithEducation(basePrompt, educationData);
     };
