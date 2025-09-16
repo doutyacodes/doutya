@@ -1,9 +1,588 @@
+// "use client"
+// import React, { useContext, useEffect, useState } from "react";
+// import AddCareer from '../(innerPages)/dashboard/_components/AddCareer/AddCareer'
+// import LoadingOverlay from "@/app/_components/LoadingOverlay";
+// import GlobalApi from "@/app/_services/GlobalApi";
+// import { PlusIcon, LockIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+// import { usePathname, useRouter } from "next/navigation";
+// import toast, { Toaster } from "react-hot-toast";
+
+// import { useTranslations } from "next-intl";
+// import FeatureRestrictionModal from "../(innerPages)/dashboard/_components/FeatureRestrictionModal/FeatureRestrictionModal";
+// import PricingCard from "./PricingCard";
+// import TestsNotCompltedWarning from "../(innerPages)/dashboard/_components/TestsNotCompltedWarning/TestsNotCompltedWarning";
+// import { useTopbar } from "../context/TopbarContext";
+// import LocationDetailsModal from "./LocationDetailsModal";
+
+
+// const CareerStripe = ({selectedItem, setSelectedItem}) => {
+//     const [scopeData, setScopeData] = useState([]);
+//     const [scopeType, setScopeType] = useState("career");
+//     const [isLoading, setIsLoading] = useState(false);
+//     const [showCareer, setShowCareer] = useState(false);
+//     const [isAuthenticated, setIsAuthenticated] = useState(true);
+//     // const [selectedItem, setSelectedItem] = useState(null);
+//     const [showDialogue, setShowDialogue] = useState(false);
+//     const [careerName, setCareerName] = useState("");
+//     const [roadMapLoading, setRoadMapLoading] = useState(false);
+//     const [activeTab, setActiveTab] = useState("roadmap");
+//     const [age, setAge] = useState("");
+//     const [isTestCompleted, setIsTestCompleted] = useState("");
+//     const [country, setCountry] = useState("");
+//     const [isRestricted, setIsRestricted] = useState(false);
+//     const [showTestWarningModal, setShowTestWarningModal] = useState(false);
+//     const [showFeatureModal, setShowFeatureModal] = useState(false);
+//     const [showPricingModal, setShowPricingModal] = useState(false);
+
+//     const [showLocationModal, setShowLocationModal] = useState(false);
+//     const [pendingCareerData, setPendingCareerData] = useState(null);
+    
+//     // Scroll state for horizontal navigation
+//     const [scrollPosition, setScrollPosition] = useState(0);
+//     const [canScrollLeft, setCanScrollLeft] = useState(false);
+//     const [canScrollRight, setCanScrollRight] = useState(false);
+//     const [scrollContainerRef, setScrollContainerRef] = useState(null);
+    
+//     const router = useRouter();
+//     const t = useTranslations("CareerPage");
+  
+//     const { refreshTopbar } = useTopbar();
+
+//     // FOR TESTING - Support for unlimited items (remove 5-item limit for testing)
+//     const totalBoxes = scopeData.length > 0 ? scopeData.length + 1 : 6; // Dynamic based on data + 1 for add button
+//     const maxItems = 100; // For testing - allow up to 100 items
+
+//     const pathname = usePathname();
+
+//     // Handle scroll functionality
+//     const updateScrollButtons = () => {
+//       if (scrollContainerRef) {
+//         const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef;
+//         setCanScrollLeft(scrollLeft > 0);
+//         setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+//         setScrollPosition(scrollLeft);
+//       }
+//     };
+
+//     const scrollLeft = () => {
+//       if (scrollContainerRef) {
+//         const scrollAmount = 200; // Adjust scroll distance
+//         scrollContainerRef.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+//       }
+//     };
+
+//     const scrollRight = () => {
+//       if (scrollContainerRef) {
+//         const scrollAmount = 200; // Adjust scroll distance
+//         scrollContainerRef.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+//       }
+//     };
+
+//     // Update scroll buttons when container changes
+//     useEffect(() => {
+//       if (scrollContainerRef) {
+//         updateScrollButtons();
+//         scrollContainerRef.addEventListener('scroll', updateScrollButtons);
+//         window.addEventListener('resize', updateScrollButtons);
+        
+//         return () => {
+//           scrollContainerRef.removeEventListener('scroll', updateScrollButtons);
+//           window.removeEventListener('resize', updateScrollButtons);
+//         };
+//       }
+//     }, [scrollContainerRef, scopeData]);
+  
+//     useEffect(() => {
+//       const PathChange = () => {
+//         if (pathname == "/dashboard/careers/career-guide") {
+//           setShowCareer(true);
+//         } else {
+//           setShowCareer(false);
+//         }
+//       };
+//       PathChange();
+//     }, [pathname]);
+    
+//     useEffect(() => {
+//         const authCheck = () => {
+//           if (typeof window !== "undefined") {
+//             const token = localStorage.getItem("token");
+//             if (!token) {
+//               router.push("/login");
+//               setIsAuthenticated(false);
+//             } else {
+//               setIsAuthenticated(true);
+//             }
+//           }
+//         };
+//         authCheck();
+//       }, [router]);
+      
+//       useEffect(() => {
+//         if (scopeData.length > 0) {
+//           setSelectedItem(scopeData[0]);
+//         }
+//       }, [scopeData]);
+    
+//       const getScopeData = async () => {
+//         setIsLoading(true);
+//         try {
+//           const token =
+//             typeof window !== "undefined" ? localStorage.getItem("token") : null;
+//           if (!token) {
+//             setIsLoading(false);
+//             return;
+//           }
+    
+//           const response = await GlobalApi.GetCarrerData(token);
+
+//           if (response.status === 201 && response.data) {
+//             if(response.data.scopeData && response.data.scopeData.length > 0){
+//               setScopeData(response.data.scopeData);
+//             }
+//             setScopeType(response.data.type || "career");
+//             setAge(response.data.age);
+//             setIsTestCompleted(response.data.quizStatus)
+//             if (response.data.age <= "9" || response.data.planType === "base"){
+//               setIsRestricted(true)
+//             }
+//           }
+//         } catch (err) {
+//           toast.error(`Failed to fetch ${getScopeName()} data. Please try again later.`);
+//         } finally {
+//           setIsLoading(false);
+//         }
+//       };
+    
+//       useEffect(() => {
+//         getScopeData();
+//       }, []);
+
+//       useEffect(() => {
+//         // Refresh data here
+//         getScopeData();
+//       }, [refreshTopbar]);
+
+//       // Helper function to get proper display name based on scope type
+//       const getScopeName = () => {
+//         switch(scopeType) {
+//           case "sector":
+//             return "Sectors";
+//           case "cluster":
+//             return "Clusters";
+//           case "career":
+//           default:
+//             return "Careers";
+//         }
+//       };
+    
+//       const handleAddItemClick = () => {
+//         if (isTestCompleted == "not_completed") {
+//           setShowTestWarningModal(true);
+//         }
+//         else if (isRestricted) {
+//           setShowFeatureModal(true);
+//         } else {
+//           // FOR TESTING - Remove the 5-item limit
+//           // if (scopeData.length >= 5) {
+//           //   toast.error(`You can only add up to 5 ${getScopeName().toLowerCase()}.`);
+//           //   return;
+//           // }
+          
+//           if (scopeData.length >= maxItems) {
+//             toast.error(`You can only add up to ${maxItems} ${getScopeName().toLowerCase()}.`);
+//             return;
+//           }
+          
+//           // Navigate based on scopeType
+//           if (scopeType === "career") {
+//             setShowDialogue(true);
+//           } else if (scopeType === "sector") {
+//             router.push("/dashboard_kids/sector-suggestion");
+//           } else if (scopeType === "cluster") {
+//             router.push("/dashboard_junior/cluster-suggestion");
+//           }
+//         }
+//       };
+      
+//       const handleItemClick = (item) => {
+//         setSelectedItem(item);
+//         setActiveTab("roadmap");
+//         if (pathname !== "/dashboard/careers/career-guide") {
+//           router.push("/dashboard/careers/career-guide");
+//         }
+//       };
+
+//       const handleSubmit = async () => {
+//       // Validate career name first
+//       if (!careerName.trim()) {
+//         toast.error("Please enter a career name");
+//         return;
+//       }
+
+//       // Store the career data temporarily and show location modal
+//       setPendingCareerData({
+//         careerName: careerName.trim()
+//       });
+      
+//       // Close the AddCareer dialog and show location modal
+//       setShowDialogue(false);
+//       setShowLocationModal(true);
+//     };
+
+//     const handleSaveWithLocationData = async (locationData) => {
+//       if (!pendingCareerData) return;
+
+//       setRoadMapLoading(true);
+      
+//       try {
+//         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        
+//         // Prepare the payload with both career name and location data
+//         const payload = {
+//           careerName: pendingCareerData.careerName,
+//           locationData: locationData
+//         };
+
+//         const response = await GlobalApi.SaveInterestedCareer(token, payload);
+        
+//         if (response && response.status === 200) {
+//           toast.success("Career saved successfully!");
+//           setCareerName("");
+//           setShowLocationModal(false);
+//           setPendingCareerData(null);
+//           getScopeData();
+//         } else if (response && response.status === 201) {
+//           toast.error(response.data.message);
+//         }
+//       } catch (error) {
+//         console.error("Error saving career:", error);
+//         toast.error(`Failed to save ${getScopeName().toLowerCase()} data. Please try again later.`);
+//       } finally {
+//         setRoadMapLoading(false);
+//       }
+//     };
+
+//     // Add this function to handle modal close
+//     const handleLocationModalClose = () => {
+//       setShowLocationModal(false);
+//       setPendingCareerData(null);
+//       setRoadMapLoading(false);
+//       // Optionally reopen the AddCareer dialog if user cancels
+//       // setShowDialogue(true);
+//     };
+
+//         // Enhanced item rendering with dynamic width based on content
+//         const renderItemBox = (item, index) => {
+//           if (isRestricted && index >= 2) {
+//             // Disabled boxes for restricted users
+//             return (
+//               <div
+//                 key={`restricted-${index}`}
+//                 className="group relative flex-shrink-0 w-40 h-20 lg:w-44 lg:h-24 cursor-not-allowed"
+//               >
+//                 <div className="absolute inset-0 bg-gradient-to-br from-gray-600/40 to-gray-800/40 rounded-xl backdrop-blur-sm border border-gray-600/30"></div>
+//                 <div className="relative h-full flex flex-col items-center justify-center text-center space-y-1 opacity-50">
+//                   <div className="p-2 bg-gray-700/50 rounded-lg">
+//                     <LockIcon className="text-gray-400 h-4 w-4 lg:h-5 lg:w-5" />
+//                   </div>
+//                   <p className="text-xs font-semibold text-gray-400 leading-tight px-1">
+//                     Pro Users Only
+//                   </p>
+//                 </div>
+//               </div>
+//             );
+//           }
+          
+//           // Regular boxes for selected items
+//           if (item) {
+//             const isSelected = selectedItem?.id === item.id;
+//             const displayName = item.career_name || item.name;
+            
+//             // Calculate dynamic width based on text length
+//             const getItemWidth = (text) => {
+//               const baseWidth = 140; // Minimum width
+//               const charWidth = 8; // Approximate character width
+//               const padding = 32; // Padding
+//               const calculatedWidth = Math.max(baseWidth, text.length * charWidth + padding);
+//               return Math.min(calculatedWidth, 300); // Maximum width to prevent overly wide boxes
+//             };
+
+//             const itemWidth = getItemWidth(displayName);
+            
+//             return (
+//               <div
+//                 key={item.id}
+//                 onClick={() => handleItemClick(item)}
+//                 className="group relative flex-shrink-0 h-20 lg:h-24 cursor-pointer"
+//                 style={{ width: `${itemWidth}px` }}
+//               >
+//                 <div className={`absolute inset-0 rounded-xl transition-all duration-300 ${
+//                   isSelected 
+//                     ? 'bg-gradient-to-br from-blue-500/30 to-purple-500/30 border-2 border-blue-400/60 shadow-lg shadow-blue-500/20' 
+//                     : 'bg-gradient-to-br from-gray-700/60 to-gray-800/60 border border-gray-600/40 group-hover:from-gray-600/60 group-hover:to-gray-700/60 group-hover:border-gray-500/60 group-hover:shadow-lg'
+//                 }`}></div>
+                
+//                 <div className="relative h-full flex items-center justify-center p-3 transition-all duration-300 group-hover:scale-105">
+//                   <p className={`text-center text-xs lg:text-sm font-bold transition-colors duration-300 leading-tight ${
+//                     isSelected 
+//                       ? 'text-blue-200' 
+//                       : 'text-gray-200 group-hover:text-white'
+//                   }`}
+//                   style={{
+//                     wordBreak: 'break-word',
+//                     hyphens: 'auto',
+//                     lineHeight: '1.2'
+//                   }}>
+//                     {displayName}
+//                   </p>
+//                 </div>
+                
+//                 {isSelected && (
+//                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+//                     <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+//                   </div>
+//                 )}
+                
+//                 {/* Subtle gradient overlay on hover */}
+//                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+//               </div>
+//             );
+//           }
+          
+//           // Plus button for adding new items
+//           return (
+//             <div
+//               key={`plus-${index}`}
+//               className="group relative flex-shrink-0 w-32 h-20 lg:w-36 lg:h-24 cursor-pointer"
+//               onClick={handleAddItemClick}
+//             >
+//               <div className="absolute inset-0 bg-gradient-to-br from-gray-700/60 to-gray-800/60 border border-gray-600/40 rounded-xl transition-all duration-300 group-hover:from-green-600/20 group-hover:to-emerald-600/20 group-hover:border-green-500/50 group-hover:shadow-lg group-hover:shadow-green-500/20"></div>
+              
+//               <div className="relative h-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+//                 <div className="p-2.5 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-lg group-hover:from-green-500/30 group-hover:to-emerald-500/30 transition-all duration-300">
+//                   <PlusIcon className="text-green-400 h-5 w-5 lg:h-6 lg:w-6 group-hover:text-green-300 transition-colors duration-300" />
+//                 </div>
+//               </div>
+              
+//               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+//                 <div className="bg-gray-800/90 backdrop-blur-sm px-2 py-1 rounded-md whitespace-nowrap">
+//                   <p className="text-xs text-gray-300">Add {getScopeName().slice(0, -1)}</p>
+//                 </div>
+//               </div>
+//             </div>
+//           );
+//         };
+    
+//       if (isLoading || !isAuthenticated) {
+//         return (
+//           <div className="h-screen flex items-center justify-center text-white">
+//             <LoadingOverlay loadText={"Loading..."} />
+//           </div>
+//         );
+//       }
+//   return (
+//     <div className="w-full relative">
+//       <Toaster />
+
+//       {!isRestricted && (
+//         <AddCareer
+//           isOpen={showDialogue}
+//           onClose={() => setShowDialogue(false)}
+//           getCareers={getScopeData}
+//           setCareerName={setCareerName}
+//           careerName={careerName}
+//           handleSubmit={handleSubmit}
+//           roadMapLoading={roadMapLoading}
+//           scopeType={scopeType}
+//         />
+//       )}
+
+//       <LocationDetailsModal
+//         isOpen={showLocationModal}
+//         onClose={handleLocationModalClose}
+//         onSave={handleSaveWithLocationData}
+//         selectedCareers={pendingCareerData ? [pendingCareerData.careerName] : []}
+//         loading={roadMapLoading}
+//       />
+
+//       {/* Feature Restriction Modal */}
+//       <FeatureRestrictionModal
+//         isOpen={showFeatureModal}
+//         onClose={() => setShowFeatureModal(false)}
+//         onViewPlans={() => {
+//           setShowFeatureModal(false);
+//           setShowPricingModal(true);
+//         }}
+//       />
+
+//       {/* Feature Restriction Modal */}
+//       <TestsNotCompltedWarning
+//         isOpen={showTestWarningModal}
+//         onClose={() => setShowTestWarningModal(false)}
+//       />
+
+//       {/* Pricing Modal */}
+//       {showPricingModal && (
+//         <PricingCard onClose={() => setShowPricingModal(false)} />
+//       )}
+
+//       {/* Modern Career Stripe Container */}
+//       <div className="relative overflow-hidden">
+//         {/* Background gradient */}
+//         <div className="absolute inset-0 bg-gradient-to-r from-gray-800/50 via-gray-700/30 to-gray-800/50"></div>
+        
+//         {/* Main container */}
+//         <div className="relative backdrop-blur-sm bg-gray-800/60 border-y border-gray-700/30 shadow-2xl">
+//           <div className="px-3 py-4 lg:px-6 lg:py-5">
+            
+//             {/* Header Section */}
+//             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-2">
+//               <div className="text-center lg:text-left">
+//                 <h2 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+//                   My {getScopeName()}
+//                   {/* FOR TESTING - Show testing mode indicator */}
+//                   {scopeData.length > 5 && (
+//                     <span className="ml-2 text-xs text-yellow-400 font-normal">
+//                       (Testing Mode)
+//                     </span>
+//                   )}
+//                 </h2>
+//                 <p className="text-xs lg:text-sm text-gray-400 mt-1">
+//                   Select or add your {getScopeName().toLowerCase()} to get started
+//                   {/* FOR TESTING - Updated description */}
+//                   {scopeData.length > 5 && (
+//                     <span className="ml-1 text-yellow-400">
+//                       - Testing: {maxItems} max items
+//                     </span>
+//                   )}
+//                 </p>
+//               </div>
+              
+//               {/* Enhanced progress indicator */}
+//               <div className="flex items-center gap-3 max-lg:hidden">
+//                 <div className="text-right">
+//                   <div className="text-sm font-semibold text-white">
+//                     {scopeData.length} {getScopeName()}
+//                   </div>
+//                   <div className="text-xs text-gray-400">
+//                     {maxItems - scopeData.length} remaining
+//                   </div>
+//                 </div>
+                
+//                 {/* Dynamic progress bar for large numbers */}
+//                 <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
+//                   <div 
+//                     className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+//                     style={{ width: `${Math.min((scopeData.length / maxItems) * 100, 100)}%` }}
+//                   />
+//                 </div>
+                
+//                 <span className="text-xs text-gray-400">
+//                   {Math.round((scopeData.length / maxItems) * 100)}%
+//                 </span>
+//               </div>
+//             </div>
+
+//             {/* Mobile progress indicator */}
+//             <div className="flex items-center gap-3 lg:hidden justify-center mb-2">
+//               <div className="text-center">
+//                 <div className="text-sm font-semibold text-white">
+//                   {scopeData.length} {getScopeName()}
+//                 </div>
+//                 <div className="text-xs text-gray-400">
+//                   {maxItems - scopeData.length} remaining
+//                 </div>
+//               </div>
+              
+//               <div className="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
+//                 <div 
+//                   className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+//                   style={{ width: `${Math.min((scopeData.length / maxItems) * 100, 100)}%` }}
+//                 />
+//               </div>
+              
+//               <span className="text-xs text-gray-400">
+//                 {Math.round((scopeData.length / maxItems) * 100)}%
+//               </span>
+//             </div>
+
+//             {/* Enhanced Career Items Container with Navigation */}
+//             <div className="relative">
+//               {/* Left scroll button */}
+//               {canScrollLeft && (
+//                 <button
+//                   onClick={scrollLeft}
+//                   className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 hover:bg-gray-700/90 text-white p-2 rounded-full shadow-lg transition-all duration-200 backdrop-blur-sm"
+//                 >
+//                   <ChevronLeftIcon className="h-5 w-5" />
+//                 </button>
+//               )}
+
+//               {/* Right scroll button */}
+//               {canScrollRight && (
+//                 <button
+//                   onClick={scrollRight}
+//                   className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 hover:bg-gray-700/90 text-white p-2 rounded-full shadow-lg transition-all duration-200 backdrop-blur-sm"
+//                 >
+//                   <ChevronRightIcon className="h-5 w-5" />
+//                 </button>
+//               )}
+
+//               {/* Scrollable container */}
+//               <div 
+//                 ref={setScrollContainerRef}
+//                 className="flex gap-3 lg:gap-4 overflow-x-auto scrollbar-hide pb-2 scroll-smooth"
+//                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+//               >
+//                 {/* Render all items dynamically */}
+//                 {scopeData.map((item, index) => renderItemBox(item, index))}
+                
+//                 {/* Add button (always last) */}
+//                 {renderItemBox(null, scopeData.length)}
+//               </div>
+              
+//               {/* Gradient overlays for scroll indication */}
+//               {canScrollLeft && (
+//                 <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-gray-800/80 to-transparent pointer-events-none z-5"></div>
+//               )}
+//               {canScrollRight && (
+//                 <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-800/80 to-transparent pointer-events-none z-5"></div>
+//               )}
+//             </div>
+
+//             {/* Scroll position indicator for many items */}
+//             {scopeData.length > 5 && (
+//               <div className="flex justify-center mt-3">
+//                 <div className="flex gap-1">
+//                   {Array(Math.ceil(scopeData.length / 5)).fill(null).map((_, index) => (
+//                     <div
+//                       key={index}
+//                       className={`w-2 h-1 rounded-full transition-all duration-300 ${
+//                         Math.floor(scrollPosition / 200) === index
+//                           ? 'bg-blue-500' 
+//                           : 'bg-gray-600'
+//                       }`}
+//                     />
+//                   ))}
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   )
+// }
+
+// export default CareerStripe
+
 "use client"
 import React, { useContext, useEffect, useState } from "react";
 import AddCareer from '../(innerPages)/dashboard/_components/AddCareer/AddCareer'
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import GlobalApi from "@/app/_services/GlobalApi";
-import { PlusIcon, LockIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { PlusIcon, LockIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -37,60 +616,15 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
     const [showLocationModal, setShowLocationModal] = useState(false);
     const [pendingCareerData, setPendingCareerData] = useState(null);
     
-    // Scroll state for horizontal navigation
-    const [scrollPosition, setScrollPosition] = useState(0);
-    const [canScrollLeft, setCanScrollLeft] = useState(false);
-    const [canScrollRight, setCanScrollRight] = useState(false);
-    const [scrollContainerRef, setScrollContainerRef] = useState(null);
-    
     const router = useRouter();
     const t = useTranslations("CareerPage");
   
     const { refreshTopbar } = useTopbar();
 
-    // FOR TESTING - Support for unlimited items (remove 5-item limit for testing)
-    const totalBoxes = scopeData.length > 0 ? scopeData.length + 1 : 6; // Dynamic based on data + 1 for add button
-    const maxItems = 100; // For testing - allow up to 100 items
+    // Total number of boxes will be 5
+    const totalBoxes = 5;
 
     const pathname = usePathname();
-
-    // Handle scroll functionality
-    const updateScrollButtons = () => {
-      if (scrollContainerRef) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef;
-        setCanScrollLeft(scrollLeft > 0);
-        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-        setScrollPosition(scrollLeft);
-      }
-    };
-
-    const scrollLeft = () => {
-      if (scrollContainerRef) {
-        const scrollAmount = 200; // Adjust scroll distance
-        scrollContainerRef.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-      }
-    };
-
-    const scrollRight = () => {
-      if (scrollContainerRef) {
-        const scrollAmount = 200; // Adjust scroll distance
-        scrollContainerRef.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-      }
-    };
-
-    // Update scroll buttons when container changes
-    useEffect(() => {
-      if (scrollContainerRef) {
-        updateScrollButtons();
-        scrollContainerRef.addEventListener('scroll', updateScrollButtons);
-        window.addEventListener('resize', updateScrollButtons);
-        
-        return () => {
-          scrollContainerRef.removeEventListener('scroll', updateScrollButtons);
-          window.removeEventListener('resize', updateScrollButtons);
-        };
-      }
-    }, [scrollContainerRef, scopeData]);
   
     useEffect(() => {
       const PathChange = () => {
@@ -175,6 +709,21 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
             return "Careers";
         }
       };
+
+      // const handleAddItemClick = () => {
+      //   if (isTestCompleted == "not_completed") {
+      //     setShowTestWarningModal(true);
+      //   }
+      //   else if (isRestricted) {
+      //     setShowFeatureModal(true);
+      //   } else {
+      //     if (scopeData.length >= 5) {
+      //       toast.error(`You can only add up to 5 ${getScopeName().toLowerCase()}.`);
+      //       return;
+      //     }
+      //     setShowDialogue(true);
+      //   }
+      // };
     
       const handleAddItemClick = () => {
         if (isTestCompleted == "not_completed") {
@@ -183,14 +732,8 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
         else if (isRestricted) {
           setShowFeatureModal(true);
         } else {
-          // FOR TESTING - Remove the 5-item limit
-          // if (scopeData.length >= 5) {
-          //   toast.error(`You can only add up to 5 ${getScopeName().toLowerCase()}.`);
-          //   return;
-          // }
-          
-          if (scopeData.length >= maxItems) {
-            toast.error(`You can only add up to ${maxItems} ${getScopeName().toLowerCase()}.`);
+          if (scopeData.length >= 5) {
+            toast.error(`You can only add up to 5 ${getScopeName().toLowerCase()}.`);
             return;
           }
           
@@ -272,14 +815,14 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
       // setShowDialogue(true);
     };
 
-        // Enhanced item rendering with dynamic width based on content
+        // Render item or disabled box based on restriction
         const renderItemBox = (item, index) => {
           if (isRestricted && index >= 2) {
             // Disabled boxes for restricted users
             return (
               <div
                 key={`restricted-${index}`}
-                className="group relative flex-shrink-0 w-40 h-20 lg:w-44 lg:h-24 cursor-not-allowed"
+                className="group relative w-32 h-20 lg:w-36 lg:h-24 cursor-not-allowed"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-600/40 to-gray-800/40 rounded-xl backdrop-blur-sm border border-gray-600/30"></div>
                 <div className="relative h-full flex flex-col items-center justify-center text-center space-y-1 opacity-50">
@@ -297,25 +840,11 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
           // Regular boxes for selected items
           if (item) {
             const isSelected = selectedItem?.id === item.id;
-            const displayName = item.career_name || item.name;
-            
-            // Calculate dynamic width based on text length
-            const getItemWidth = (text) => {
-              const baseWidth = 140; // Minimum width
-              const charWidth = 8; // Approximate character width
-              const padding = 32; // Padding
-              const calculatedWidth = Math.max(baseWidth, text.length * charWidth + padding);
-              return Math.min(calculatedWidth, 300); // Maximum width to prevent overly wide boxes
-            };
-
-            const itemWidth = getItemWidth(displayName);
-            
             return (
               <div
                 key={item.id}
                 onClick={() => handleItemClick(item)}
-                className="group relative flex-shrink-0 h-20 lg:h-24 cursor-pointer"
-                style={{ width: `${itemWidth}px` }}
+                className="group relative w-32 h-20 lg:w-36 lg:h-24 cursor-pointer"
               >
                 <div className={`absolute inset-0 rounded-xl transition-all duration-300 ${
                   isSelected 
@@ -323,18 +852,13 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
                     : 'bg-gradient-to-br from-gray-700/60 to-gray-800/60 border border-gray-600/40 group-hover:from-gray-600/60 group-hover:to-gray-700/60 group-hover:border-gray-500/60 group-hover:shadow-lg'
                 }`}></div>
                 
-                <div className="relative h-full flex items-center justify-center p-3 transition-all duration-300 group-hover:scale-105">
-                  <p className={`text-center text-xs lg:text-sm font-bold transition-colors duration-300 leading-tight ${
+                <div className="relative h-full flex items-center justify-center p-2 transition-all duration-300 group-hover:scale-105 overflow-hidden">
+                  <p className={`text-center text-xs lg:text-sm font-bold whitespace-nowrap transition-colors duration-300 px-1 overflow-x-auto scrollbar-hide max-w-full ${
                     isSelected 
                       ? 'text-blue-200' 
                       : 'text-gray-200 group-hover:text-white'
-                  }`}
-                  style={{
-                    wordBreak: 'break-word',
-                    hyphens: 'auto',
-                    lineHeight: '1.2'
-                  }}>
-                    {displayName}
+                  }`}>
+                    {item.career_name || item.name}
                   </p>
                 </div>
                 
@@ -354,7 +878,7 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
           return (
             <div
               key={`plus-${index}`}
-              className="group relative flex-shrink-0 w-32 h-20 lg:w-36 lg:h-24 cursor-pointer"
+              className="group relative w-32 h-20 lg:w-36 lg:h-24 cursor-pointer"
               onClick={handleAddItemClick}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-gray-700/60 to-gray-800/60 border border-gray-600/40 rounded-xl transition-all duration-300 group-hover:from-green-600/20 group-hover:to-emerald-600/20 group-hover:border-green-500/50 group-hover:shadow-lg group-hover:shadow-green-500/20"></div>
@@ -441,133 +965,62 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
               <div className="text-center lg:text-left">
                 <h2 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                   My {getScopeName()}
-                  {/* FOR TESTING - Show testing mode indicator */}
-                  {scopeData.length > 5 && (
-                    <span className="ml-2 text-xs text-yellow-400 font-normal">
-                      (Testing Mode)
-                    </span>
-                  )}
                 </h2>
                 <p className="text-xs lg:text-sm text-gray-400 mt-1">
                   Select or add your {getScopeName().toLowerCase()} to get started
-                  {/* FOR TESTING - Updated description */}
-                  {scopeData.length > 5 && (
-                    <span className="ml-1 text-yellow-400">
-                      - Testing: {maxItems} max items
-                    </span>
-                  )}
                 </p>
               </div>
               
-              {/* Enhanced progress indicator */}
-              <div className="flex items-center gap-3 max-lg:hidden">
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-white">
-                    {scopeData.length} {getScopeName()}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    {maxItems - scopeData.length} remaining
-                  </div>
-                </div>
-                
-                {/* Dynamic progress bar for large numbers */}
-                <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
-                    style={{ width: `${Math.min((scopeData.length / maxItems) * 100, 100)}%` }}
-                  />
-                </div>
-                
-                <span className="text-xs text-gray-400">
-                  {Math.round((scopeData.length / maxItems) * 100)}%
-                </span>
-              </div>
-            </div>
-
-            {/* Mobile progress indicator */}
-            <div className="flex items-center gap-3 lg:hidden justify-center mb-2">
-              <div className="text-center">
-                <div className="text-sm font-semibold text-white">
-                  {scopeData.length} {getScopeName()}
-                </div>
-                <div className="text-xs text-gray-400">
-                  {maxItems - scopeData.length} remaining
-                </div>
-              </div>
-              
-              <div className="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
-                  style={{ width: `${Math.min((scopeData.length / maxItems) * 100, 100)}%` }}
-                />
-              </div>
-              
-              <span className="text-xs text-gray-400">
-                {Math.round((scopeData.length / maxItems) * 100)}%
-              </span>
-            </div>
-
-            {/* Enhanced Career Items Container with Navigation */}
-            <div className="relative">
-              {/* Left scroll button */}
-              {canScrollLeft && (
-                <button
-                  onClick={scrollLeft}
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 hover:bg-gray-700/90 text-white p-2 rounded-full shadow-lg transition-all duration-200 backdrop-blur-sm"
-                >
-                  <ChevronLeftIcon className="h-5 w-5" />
-                </button>
-              )}
-
-              {/* Right scroll button */}
-              {canScrollRight && (
-                <button
-                  onClick={scrollRight}
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 hover:bg-gray-700/90 text-white p-2 rounded-full shadow-lg transition-all duration-200 backdrop-blur-sm"
-                >
-                  <ChevronRightIcon className="h-5 w-5" />
-                </button>
-              )}
-
-              {/* Scrollable container */}
-              <div 
-                ref={setScrollContainerRef}
-                className="flex gap-3 lg:gap-4 overflow-x-auto scrollbar-hide pb-2 scroll-smooth"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              >
-                {/* Render all items dynamically */}
-                {scopeData.map((item, index) => renderItemBox(item, index))}
-                
-                {/* Add button (always last) */}
-                {renderItemBox(null, scopeData.length)}
-              </div>
-              
-              {/* Gradient overlays for scroll indication */}
-              {canScrollLeft && (
-                <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-gray-800/80 to-transparent pointer-events-none z-5"></div>
-              )}
-              {canScrollRight && (
-                <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-800/80 to-transparent pointer-events-none z-5"></div>
-              )}
-            </div>
-
-            {/* Scroll position indicator for many items */}
-            {scopeData.length > 5 && (
-              <div className="flex justify-center mt-3">
+              {/* Progress indicator */}
+              <div className="flex items-center gap-2 max-lg:hidden">
                 <div className="flex gap-1">
-                  {Array(Math.ceil(scopeData.length / 5)).fill(null).map((_, index) => (
+                  {Array(totalBoxes).fill(null).map((_, index) => (
                     <div
                       key={index}
-                      className={`w-2 h-1 rounded-full transition-all duration-300 ${
-                        Math.floor(scrollPosition / 200) === index
-                          ? 'bg-blue-500' 
-                          : 'bg-gray-600'
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index < scopeData.length 
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-500' 
+                          : 'bg-gray-600/50'
                       }`}
                     />
                   ))}
                 </div>
+                <span className="text-xs text-gray-400 ml-2">
+                  {scopeData.length}/{totalBoxes}
+                </span>
               </div>
-            )}
+            </div>
+            <div className="flex items-center gap-2 lg:hidden justify-center mb-2">
+                <div className="flex gap-1">
+                  {Array(totalBoxes).fill(null).map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index < scopeData.length 
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-500' 
+                          : 'bg-gray-600/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs text-gray-400 ml-2">
+                  {scopeData.length}/{totalBoxes}
+                </span>
+              </div>
+
+            {/* Career Items Container */}
+            <div className="relative">
+              <div className="flex gap-3 lg:gap-4 justify-start items-center overflow-x-auto scrollbar-hide pb-2">
+                {/* Render 5 total boxes */}
+                {Array(totalBoxes).fill(null).map((_, index) => 
+                  renderItemBox(scopeData && index < scopeData.length ? scopeData[index] : null, index)
+                )}
+              </div>
+              
+              {/* Scroll indicators */}
+              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-800/60 to-transparent pointer-events-none"></div>
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-800/60 to-transparent pointer-events-none"></div>
+            </div>
           </div>
         </div>
       </div>
