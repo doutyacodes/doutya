@@ -1016,7 +1016,6 @@ export const MILESTONES = mysqlTable("milestones", {
   milestone_age: decimal("milestone_age", { precision: 3, scale: 1 }).default(null), // e.g. 14.2 years
 });
 
-
 export const USER_MILESTONES = mysqlTable("user_milestones", {
   id: int("id").notNull().autoincrement().primaryKey(),
   scope_id: int("scope_id").notNull(), // replaces user_career_id

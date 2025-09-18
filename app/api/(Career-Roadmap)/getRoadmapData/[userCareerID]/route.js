@@ -857,63 +857,64 @@ export async function GET(req, { params }) {
       }
     } else {
       // For careers, fetch user milestones as before (no duplicate prevention needed)
-      userMilestones = await db
-        .select({
-          milestoneId: USER_MILESTONES.milestone_id,
-          milestoneDescription: MILESTONES.description,
-          milestoneCategoryName: MILESTONE_CATEGORIES.name,
-          milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
-          milestoneCompletionStatus: MILESTONES.completion_status,
-          milestoneDateAchieved: MILESTONES.date_achieved,
-          certificationId: CERTIFICATIONS.id,
-          certificationName: CERTIFICATIONS.certification_name,
-          certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
-          courseStatus: USER_COURSE_PROGRESS.status,
-        })
-        .from(USER_MILESTONES)
-        .innerJoin(MILESTONES, eq(USER_MILESTONES.milestone_id, MILESTONES.id))
-        .innerJoin(
-          MILESTONE_CATEGORIES,
-          eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
+    userMilestones = await db
+      .select({
+        milestoneId: USER_MILESTONES.milestone_id,
+        milestoneDescription: MILESTONES.description,
+        milestoneCategoryName: MILESTONE_CATEGORIES.name,
+        milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
+        milestoneCompletionStatus: MILESTONES.completion_status,
+        milestoneDateAchieved: MILESTONES.date_achieved,
+        certificationId: CERTIFICATIONS.id,
+        certificationName: CERTIFICATIONS.certification_name,
+        certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
+        courseStatus: USER_COURSE_PROGRESS.status,
+      })
+      .from(USER_MILESTONES)
+      .innerJoin(MILESTONES, eq(USER_MILESTONES.milestone_id, MILESTONES.id))
+      .innerJoin(
+        MILESTONE_CATEGORIES,
+        eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
+      )
+      .leftJoin(
+        MILESTONE_SUBCATEGORIES,
+        eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+      )
+      .leftJoin(
+        CERTIFICATIONS,
+        and(
+          eq(CERTIFICATIONS.milestone_id, MILESTONES.id),
+          eq(CERTIFICATIONS.scope_id, scopeId),
+          eq(CERTIFICATIONS.scope_type, scopeType),
+          eq(CERTIFICATIONS.class_level, classLevel),
+          eq(CERTIFICATIONS.milestone_interval, currentMonth)
         )
-        .leftJoin(
-          MILESTONE_SUBCATEGORIES,
-          eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+      )
+      .leftJoin(
+        USER_CERTIFICATION_COMPLETION,
+        and(
+          eq(USER_CERTIFICATION_COMPLETION.certification_id, CERTIFICATIONS.id),
+          eq(USER_CERTIFICATION_COMPLETION.user_id, userId)
         )
-        .leftJoin(
-          CERTIFICATIONS,
-          and(
-            eq(CERTIFICATIONS.milestone_id, MILESTONES.id),
-            eq(CERTIFICATIONS.scope_id, scopeId),
-            eq(CERTIFICATIONS.scope_type, scopeType)
-          )
+      )
+      .leftJoin(
+        USER_COURSE_PROGRESS,
+        and(
+          eq(USER_COURSE_PROGRESS.certification_id, CERTIFICATIONS.id),
+          eq(USER_COURSE_PROGRESS.user_id, userId)
         )
-        .leftJoin(
-          USER_CERTIFICATION_COMPLETION,
-          and(
-            eq(
-              USER_CERTIFICATION_COMPLETION.certification_id,
-              CERTIFICATIONS.id
-            ),
-            eq(USER_CERTIFICATION_COMPLETION.user_id, userId)
-          )
+      )
+      .where(
+        and(
+          eq(USER_MILESTONES.scope_id, scopeId),
+          eq(USER_MILESTONES.scope_type, scopeType),
+          eq(MILESTONES.class_level, classLevel),
+          eq(MILESTONES.milestone_interval, currentMonth)
         )
-        .leftJoin(
-          USER_COURSE_PROGRESS,
-          and(
-            eq(USER_COURSE_PROGRESS.certification_id, CERTIFICATIONS.id),
-            eq(USER_COURSE_PROGRESS.user_id, userId)
-          )
-        )
-        .where(
-          and(
-            eq(USER_MILESTONES.scope_id, userCareerID),
-            eq(USER_MILESTONES.scope_type, scopeType),
-            eq(MILESTONES.class_level, classLevel),
-            eq(MILESTONES.milestone_interval, currentMonth)
-          )
-        )
-        .execute();
+      )
+      .execute();
+
+      console.log("currentMonth", currentMonth,"classLevel", classLevel,"scopeType", scopeType,"userCareerID", userCareerID,);
 
       // If no milestones are found for careers, generate them (no duplicate prevention)
       if (userMilestones.length === 0) {

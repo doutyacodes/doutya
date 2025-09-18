@@ -31,7 +31,7 @@ export default function SectorSelectionPage() {
   }, []);
   
   // const maxSelections = user.plan_type === "base" ? 2 : 5;
-  const maxSelections = 6;
+  const maxSelections = 3;
 
   useEffect(() => {
     const fetchData = async () => {

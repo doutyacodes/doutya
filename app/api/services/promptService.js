@@ -305,87 +305,87 @@ export const dynamic = 'force-dynamic';
     };
 
 
-export const generateSubjectsPrompt = async (
-    userId,
-    scopeName,
-    country,
-    currentAgeWeek,
-    scopeType,
-    className,
-    sectorDescription,
-    userStream,
-    userSchoolSubjects,
-    userCourse = null,
-    userUniversity = null
-) => {
-    const educationData = await getUserEducationPromptData(userId);
+    export const generateSubjectsPrompt = async (
+        userId,
+        scopeName,
+        country,
+        currentAgeWeek,
+        scopeType,
+        className,
+        sectorDescription,
+        userStream,
+        userSchoolSubjects,
+        userCourse = null,
+        userUniversity = null
+    ) => {
+        const educationData = await getUserEducationPromptData(userId);
 
-    const getLabel = (scopeType, scopeName) => {
-        if (scopeType === "career") return `pursuing a career in ${scopeName}`;
-        if (scopeType === "cluster") return `exploring the cluster "${scopeName}"`;
-        if (scopeType === "sector") return `navigating the sector "${scopeName}"`;
-    };
+        const getLabel = (scopeType, scopeName) => {
+            if (scopeType === "career") return `pursuing a career in ${scopeName}`;
+            if (scopeType === "cluster") return `exploring the cluster "${scopeName}"`;
+            if (scopeType === "sector") return `navigating the sector "${scopeName}"`;
+        };
 
-    const getTitle = (scopeType) => {
-        if (scopeType === "career") return "career";
-        if (scopeType === "cluster") return "cluster";
-        if (scopeType === "sector") return "sector";
-    };
+        const getTitle = (scopeType) => {
+            if (scopeType === "career") return "career";
+            if (scopeType === "cluster") return "cluster";
+            if (scopeType === "sector") return "sector";
+        };
 
-    const basePrompt = `For a student ${
-        className === "completed-education" 
-            ? "who has completed their formal education"
-            : `studying in class ${className}${
-                (className === "11" || className === "12") && userStream
-                    ? ` with a focus on the ${userStream} stream`
+        const basePrompt = `For a student ${
+            className === "completed-education" 
+                ? "who has completed their formal education"
+                : `studying in class ${className}${
+                    (className === "11" || className === "12") && userStream
+                        ? ` with a focus on the ${userStream} stream`
+                        : ""
+                }`
+        }, ${getLabel(scopeType, scopeName)}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(
+            scopeType
+        )}.${userSchoolSubjects ? `. This is user's subjects: ${userSchoolSubjects}. Choose relevant subjects only from this and no outside subjects needed to be included here even though the subject is relevant for the ${scopeName}` : ""}.${userCourse ? ` This is user's course: ${userCourse}.` : ""}${userUniversity ? ` This is user's university: ${userUniversity}.` : ""}
+
+            Focus specifically on subjects directly related to the ${getTitle(
+                scopeType
+            )} of "${scopeName}", considering the educational standards of ${country}. 
+            ${
+                sectorDescription
+                    ? `\n    **Sector Description:** ${sectorDescription}\n`
                     : ""
-            }`
-    }, ${getLabel(scopeType, scopeName)}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(
-        scopeType
-    )}.${userSchoolSubjects ? `. This is user's subjects: ${userSchoolSubjects}. Choose relevant subjects only from this and no outside subjects needed to be included here even though the subject is relevant for the ${scopeName}` : ""}.${userCourse ? ` This is user's course: ${userCourse}.` : ""}${userUniversity ? ` This is user's university: ${userUniversity}.` : ""}
+            }
 
-        Focus specifically on subjects directly related to the ${getTitle(
-            scopeType
-        )} of "${scopeName}", considering the educational standards of ${country}. 
-        ${
-            sectorDescription
-                ? `\n    **Sector Description:** ${sectorDescription}\n`
-                : ""
-        }
+            ⚠️ Very Important: 
+            ${className === "completed-education" 
+                ? "- Since the student has completed their formal education, focus on comprehensive, advanced subjects that cover the breadth and depth required for this field. Include both foundational and specialized subjects that would be essential for professional development in this area."
+                : `- Ensure subjects are appropriate for the student's current class level (${className}). 
+            - If class is between 5–8, recommend age-appropriate, introductory or foundational subjects. 
+            - If class is 9–12, suggest more advanced subjects relevant to the field. 
+            - If class is "college", include specialized and university-level subjects. 
+            - Avoid recommending subjects that are too advanced for their level.`
+            }
+            ${
+                className !== "completed-education"
+                    ? "- Only include subjects that are directly related to this career path. Use strictly the NCERT syllabus subjects for Class " +
+                    className +
+                    " as defined by CBSE. Do not assume or add elective/optional subjects. Provide exactly 5 subjects — no more, no less."
+                    : "- Include subjects from various educational levels that are directly related to this career path, covering both foundational concepts and advanced specialized knowledge. Provide exactly 5 subjects — no more, no less."
+            }
 
-        ⚠️ Very Important: 
-        ${className === "completed-education" 
-            ? "- Since the student has completed their formal education, focus on comprehensive, advanced subjects that cover the breadth and depth required for this field. Include both foundational and specialized subjects that would be essential for professional development in this area."
-            : `- Ensure subjects are appropriate for the student's current class level (${className}). 
-        - If class is between 5–8, recommend age-appropriate, introductory or foundational subjects. 
-        - If class is 9–12, suggest more advanced subjects relevant to the field. 
-        - If class is "college", include specialized and university-level subjects. 
-        - Avoid recommending subjects that are too advanced for their level.`
-        }
-        ${
-            className !== "completed-education"
-                ? "- Only include subjects that are directly related to this career path. Use strictly the NCERT syllabus subjects for Class " +
-                className +
-                " as defined by CBSE. Do not assume or add elective/optional subjects. Provide exactly 5 subjects — no more, no less."
-                : "- Include subjects from various educational levels that are directly related to this career path, covering both foundational concepts and advanced specialized knowledge. Provide exactly 5 subjects — no more, no less."
-        }
+            The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
 
-        The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
+            Provide  ${
+                scopeType == "career" ? "at least 5 to 10 key" : " exactly 5 "
+            } subjects relevant for this ${className === "completed-education" ? "educational background" : "class"}, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
 
-        Provide  ${
-            scopeType == "career" ? "at least 5 to 10 key" : " exactly 5 "
-        } subjects relevant for this ${className === "completed-education" ? "educational background" : "class"}, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
+            {
+            "subject-data": ["Subject1", "Subject2", "Subject3", ...]
+            }
 
-        {
-        "subject-data": ["Subject1", "Subject2", "Subject3", ...]
-        }
+            Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective ${className === "completed-education" ? "educational level" : "class"}, considering the ${getTitle(
+                scopeType
+            )}'s requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
 
-        Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective ${className === "completed-education" ? "educational level" : "class"}, considering the ${getTitle(
-            scopeType
-        )}'s requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
-
-    return enhancePromptWithEducation(basePrompt, educationData);
-};
+        return enhancePromptWithEducation(basePrompt, educationData);
+    };
 
 
     // export const generateSubjectsTestsPrompt = async (
