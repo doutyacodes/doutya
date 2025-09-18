@@ -111,7 +111,7 @@ export async function GET(req) {
     })
     .from(QUIZ_SEQUENCES)
     .where(
-      and(eq(QUIZ_SEQUENCES.user_id, userId), eq(QUIZ_SEQUENCES.quiz_id, 1))
+      and(eq(QUIZ_SEQUENCES.user_id, userId), eq(QUIZ_SEQUENCES.quiz_id, 2))
     )
     .execute();
 

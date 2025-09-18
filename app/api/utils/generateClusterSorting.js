@@ -38,9 +38,20 @@ ${ALL_CLUSTERS.map((cluster, index) => {
 - R (Realistic): Hands-on, practical, mechanical, outdoors
 - I (Investigative): Analytical, scientific, research-oriented
 - A (Artistic): Creative, expressive, aesthetic, original
-- S (Social): Helping people, teaching, counseling, community-focused
-- E (Enterprising): Leadership, persuasion, business, competitive
+- S (Social): Helping and caring for individuals, counseling, healing people
+- E (Enterprising): Leadership, persuasion, business management, organizing groups
 - C (Conventional): Organized, detail-oriented, structured, systematic
+
+**Interest Code Hierarchy:**
+- The interest code represents a ranked preference order based on assessment scores
+- Primary interest (1st letter): Most important - should heavily influence cluster selection
+- Secondary interest (2nd letter): Important supporting factor
+- Additional interests: Consider but don't override primary preference
+- When personality and primary interest align → strong match
+- When personality and primary interest conflict → consider secondary interests and personality fit
+
+**Important Note:**
+Each interest type can appear in multiple clusters depending on the specific role and context. Focus on finding the best overall fit rather than rigid category matching.
 
 **Output Format (JSON only):**
 {
@@ -85,6 +96,7 @@ ${ALL_CLUSTERS.map((cluster, index) => {
 - Select exactly 5 clusters from the provided list
 - Use EXACT cluster names (only the part before the colon) as provided in the list above
 - Suitability scores should range 70-100 and be realistic
+- Give primary interest significant weight but don't ignore personality fit
 - Reasoning should be specific to the personality and interest combination
 - Consider developmental appropriateness for the age group
 - Focus on natural interests and personality tendencies
@@ -98,7 +110,7 @@ export async function generateClusterSorting(mbtiType, riasecCode, classLevel) {
     console.log(`Generating cluster sorting for MBTI: ${mbtiType}, RIASEC: ${riasecCode}, Class: ${classLevel}`);
     
     const prompt = generateClusterSortingPrompt(mbtiType, riasecCode, classLevel);
-
+    console.log("prompt", prompt)
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {

@@ -3,69 +3,81 @@ import axios from 'axios';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 const generateSectorSortingPrompt = (mbtiType, riasecCode, classLevel) => `
-You are an expert career counselor specializing in personality-based career guidance for children aged 5-7 years (class levels 1-7). Based on the provided personality type and interest code, sort the 6 career sectors from most to least suitable.
+  You are an expert career counselor specializing in personality-based career guidance for children aged 5-7 years (class levels 1-7). Based on the provided personality type and interest code, sort the 6 career sectors from most to least suitable.
 
-**User Profile:**
-- Personality Type: ${mbtiType}
-- Interest Code: ${riasecCode} 
-- Class Level: ${classLevel} (Age: ~${classLevel + 4} years)
+  **User Profile:**
+  - Personality Type: ${mbtiType}
+  - Interest Code: ${riasecCode} 
+  - Class Level: ${classLevel} (Age: ~${classLevel + 4} years)
 
-**Available Sectors:**
-1. **Nature** - Earth systems, agriculture, environmental conservation, renewable resources 
-2. **Making** - Engineering, technology, manufacturing, building systems and infrastructure
-3. **Life** - Healthcare, medicine, human wellbeing, biological sciences
-4. **Knowledge** - Research, education, discovery, academic 
-5. **Society** - Governance, business, law, economic systems, human organization
-6. **Culture** - Arts, entertainment, creativity, sports, cultural expression
+  **Available Sectors:**
+  1. **Nature** - Earth systems, agriculture, environmental conservation, renewable resources 
+  2. **Making** - Engineering, technology, manufacturing, building systems and infrastructure
+  3. **Life** - Healthcare, medicine, human wellbeing, biological sciences
+  4. **Knowledge** - Research, education, discovery, academic 
+  5. **Society** - Governance, business, law, economic systems, human organization
+  6. **Culture** - Arts, entertainment, creativity, sports, cultural expression
 
-**Analysis Guidelines:**
-- Consider age-appropriate career interests and developmental stage
-- Match personality cognitive preferences with sector characteristics
-- Align interest patterns with sector activities
-- Think about long-term personality-career fit
-- Consider introversion/extraversion needs
-- Factor in thinking vs feeling decision-making styles
-- Account for sensing vs intuition information processing
-- Consider judging vs perceiving lifestyle preferences
+  **Analysis Guidelines:**
+  - Consider age-appropriate career interests and developmental stage
+  - Match personality cognitive preferences with sector characteristics
+  - Align interest patterns with sector activities
+  - Think about long-term personality-career fit
+  - Consider introversion/extraversion needs
+  - Factor in thinking vs feeling decision-making styles
+  - Account for sensing vs intuition information processing
+  - Consider judging vs perceiving lifestyle preferences
 
-**Interest Code Mapping:**
-- R (Realistic): Hands-on, practical, mechanical, outdoors
-- I (Investigative): Analytical, scientific, research-oriented
-- A (Artistic): Creative, expressive, aesthetic, original
-- S (Social): Helping people, teaching, counseling, community-focused
-- E (Enterprising): Leadership, persuasion, business, competitive
-- C (Conventional): Organized, detail-oriented, structured, systematic
+  **Interest Code Mapping:**
+  - R (Realistic): Hands-on, practical, mechanical, outdoors
+  - I (Investigative): Analytical, scientific, research-oriented
+  - A (Artistic): Creative, expressive, aesthetic, original
+  - S (Social): Helping and caring for individuals, counseling, healing people
+  - E (Enterprising): Leadership, persuasion, business management, organizing groups
+  - C (Conventional): Organized, detail-oriented, structured, systematic
 
-**Output Format (JSON only):**
-{
-  "sorted_sectors": [
-    {
-      "rank": 1,
-      "sector": "Sector Name",
-      "suitability_score": 95,
-      "reasoning": "Why this sector is most suitable based on personality and interest profile"
-    },
-    {
-      "rank": 2,
-      "sector": "Sector Name", 
-      "suitability_score": 85,
-      "reasoning": "Explanation for second choice"
-    },
-    // ... continue for all 6 sectors
-  ],
-  "personality_summary": "Brief summary of how this personality and interest combination influences career preferences",
-  "development_notes": "Age-appropriate guidance for class level ${classLevel} students"
-}
+  **Interest Code Hierarchy:**
+  - The interest code represents a ranked preference order based on assessment scores
+  - Primary interest (1st letter): Most important - should heavily influence sector choice
+  - Secondary interest (2nd letter): Important supporting factor
+  - Additional interests: Consider but don't override primary preference
+  - When personality and primary interest align → strong match
+  - When personality and primary interest conflict → consider secondary interests and personality fit
 
-**Important Instructions:**
-- Return ONLY valid JSON, no additional text
-- Include all 6 sectors in ranking order
-- Suitability scores should range 60-100 and be realistic
-- Reasoning should be specific to the personality and interest combination
-- Consider developmental appropriateness for the age group
-- Focus on natural interests and personality tendencies
-- NEVER mention "MBTI", "RIASEC", or any assessment methodology terms in the response
-- Use only generic terms like "personality traits", "interests", "preferences" in all descriptions
+  **Important Note:**
+  Each interest type can appear in multiple sectors depending on the specific role and context. Focus on finding the best overall fit rather than rigid category matching.
+
+  **Output Format (JSON only):**
+  {
+    "sorted_sectors": [
+      {
+        "rank": 1,
+        "sector": "Sector Name",
+        "suitability_score": 95,
+        "reasoning": "Why this sector is most suitable based on personality and interest profile"
+      },
+      {
+        "rank": 2,
+        "sector": "Sector Name", 
+        "suitability_score": 85,
+        "reasoning": "Explanation for second choice"
+      },
+      // ... continue for all 6 sectors
+    ],
+    "personality_summary": "Brief summary of how this personality and interest combination influences career preferences",
+    "development_notes": "Age-appropriate guidance for class level ${classLevel} students"
+  }
+
+  **Important Instructions:**
+  - Return ONLY valid JSON, no additional text
+  - Include all 6 sectors in ranking order
+  - Suitability scores should range 60-100 and be realistic
+  - Give primary interest significant weight but don't ignore personality fit
+  - Reasoning should be specific to the personality and interest combination
+  - Consider developmental appropriateness for the age group
+  - Focus on natural interests and personality tendencies
+  - NEVER mention "MBTI", "RIASEC", or any assessment methodology terms in the response
+  - Use only generic terms like "personality traits", "interests", "preferences" in all descriptions
 `;
 
 export async function generateSectorSorting(mbtiType, riasecCode, classLevel) {
@@ -74,6 +86,7 @@ export async function generateSectorSorting(mbtiType, riasecCode, classLevel) {
     
     const prompt = generateSectorSortingPrompt(mbtiType, riasecCode, classLevel);
 
+    console.log("Prompt", prompt)
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {

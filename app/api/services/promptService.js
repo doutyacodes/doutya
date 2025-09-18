@@ -27,46 +27,64 @@ export const dynamic = 'force-dynamic';
 
     // Career suggestions prompt
     export const generateCareerPrompt = async (userId, type1, type2, industry, country, finalAge, currentAgeWeek, language, languageOptions) => {
-    const educationData = await getUserEducationPromptData(userId);
-    
-    const basePrompt = `Provide a list of the most suitable careers ${
-        industry === "any" ? "" : `in the ${industry}`
-    } ${
-        country ? "in " + country : ""
-    } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}. Include eactly 3 traditional careers, 3 trending careers, 3 AI-proof career 3 entrepreneurial careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Include exactly 3 unique careers for each category (no more, no less).
-. Additionally, provide ${
-        finalAge >= 18
-        ? "3 futuristic careers for individual aged " +
-            finalAge +
-            " in the year " +
-            (new Date().getFullYear() + 3)
-        : "3 futuristic careers for individual aged " +
-            finalAge +
-            " until they reach the age of 21."
-    }(currently in week ${currentAgeWeek} of this age)
-    Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. 
-        For each career, include the following information:
-            career_name: A brief title of the career.
-            type: trending, offbeat, traditional, futuristic, ai-proof, entrepreneurial, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
-            description: Why this specific career is suitable for this user based on their ${type1} personality type and ${type2} RIASEC interests. Explain the alignment with their personality traits and interests.
-            brief_overview: A concise description of what this career involves, key responsibilities, and typical work environment.
-            future_potential: Future growth prospects, emerging opportunities, job market outlook, salary expectations, and career advancement possibilities in this field.
+        const educationData = await getUserEducationPromptData(userId);
+        
+        // New logic for futuristic careers
+        let futuristicCareerPrompt;
+        if (finalAge < 19) {
+            futuristicCareerPrompt = "3 futuristic careers for individual aged 25 in the year " + (new Date().getFullYear() + (25 - finalAge));
+        } else {
+            const futureAge = finalAge + 10;
+            futuristicCareerPrompt = "3 futuristic careers for individual aged " + futureAge + " in the year " + (new Date().getFullYear() + 10);
+        }
+        
+        const basePrompt = `Provide a list of the most suitable careers ${
+            industry === "any" ? "" : `in the ${industry}`
+        } ${
+            country ? "in " + country : ""
+        } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}. 
 
-            Ensure that the response is valid JSON with the following structure for each career:
-            {
-            "career_name": "Career Title",
-            "type": "career type",
-            "description": "Why suitable for this user",
-            "brief_overview": "What the career involves",
-            "future_potential": "Growth and opportunities"
-            }
-            Do not include the terms '${type1}' in the data.
-        languageOptions[language] || "in English"
-    }, keeping the keys in English only, but the career names should be ${
-        languageOptions[language] || "in English"
-    }. Present it as a single JSON data array without any wrapping other than []`;
-    
-    return enhancePromptWithEducation(basePrompt, educationData);
+    **RIASEC Interest Code Guidelines:**
+    - The interest code represents a ranked preference order based on assessment scores
+    - Each letter's position indicates preference strength (1st position = highest score, 2nd position = second highest, etc.)
+    - Sequences may be 3+ characters long due to tied scores in the assessment
+    - Primary interest (1st letter): Dominant preference - heavily weight in career matching
+    - Secondary interest (2nd letter): Strong preference - significant influence on career fit
+    - Tertiary interest (3rd letter): Moderate preference - notable consideration
+    - Additional letters (4th+): Emerging preferences - minor but relevant considerations
+    - R (Realistic): Hands-on, practical, mechanical, outdoors
+    - I (Investigative): Analytical, scientific, research-oriented
+    - A (Artistic): Creative, expressive, aesthetic, original
+    - S (Social): Helping people, teaching, counseling, community-focused
+    - E (Enterprising): Leadership, persuasion, business, competitive
+    - C (Conventional): Organized, detail-oriented, structured, systematic
+    - Weight career recommendations based on how well they align with the hierarchical interest pattern
+
+    Include eactly 3 traditional careers, 3 trending careers, 3 AI-proof career 3 entrepreneurial careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Include exactly 3 unique careers for each category (no more, no less).
+    . Additionally, provide ${futuristicCareerPrompt}(currently in week ${currentAgeWeek} of this age)
+        Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. 
+            For each career, include the following information:
+                career_name: A brief title of the career.
+                type: trending, offbeat, traditional, futuristic, ai-proof, entrepreneurial, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
+                description: Why this specific career is suitable for this user based on their ${type1} personality type and ${type2} RIASEC interests. Explain the alignment with their personality traits and interests.
+                brief_overview: A concise description of what this career involves, key responsibilities, and typical work environment.
+                future_potential: Future growth prospects, emerging opportunities, job market outlook, salary expectations, and career advancement possibilities in this field.
+
+                Ensure that the response is valid JSON with the following structure for each career:
+                {
+                "career_name": "Career Title",
+                "type": "career type",
+                "description": "Why suitable for this user",
+                "brief_overview": "What the career involves",
+                "future_potential": "Growth and opportunities"
+                }
+                Do not include the terms MBTI or RIASEC and '${type1}' or '${type2}' in the response data.
+            languageOptions[language] || "in English"
+        }, keeping the keys in English only, but the career names should be ${
+            languageOptions[language] || "in English"
+        }. Present it as a single JSON data array without any wrapping other than []`;
+        
+        return enhancePromptWithEducation(basePrompt, educationData);
     };
 
     // Career details prompt
