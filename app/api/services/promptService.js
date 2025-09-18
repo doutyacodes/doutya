@@ -208,172 +208,184 @@ export const dynamic = 'force-dynamic';
     // };
 
     // Updated Roadmap prompt
-export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1, type2, classLevel, currentMonth, language, languageOptions, sectorDescription=null) => {
-    const educationData = await getUserEducationPromptData(userId);
-    const getLabel = (scopeType, careerLabel) => {
-        if (scopeType === "career") return `aspiring to be a ${careerLabel}`;
-        if (scopeType === "cluster") return `exploring the cluster "${careerLabel}"`;
-        if (scopeType === "sector") return `navigating the sector "${careerLabel}"`;
-    };
-    
-    const getTitle = (scopeType) => {
-        if (scopeType === "career") return "career";
-        if (scopeType === "cluster") return "cluster";
-        if (scopeType === "sector") return "sector";
-    };
-    
-    const basePrompt = `You are tasked with generating a personalized roadmap and guidance based on the user's current career exploration progress.
-    
-    The user's current exploration scope is: **${scopeType}**
-    
-    This scope refers to:
-    - **Sector**: A broad domain of related professional paths (e.g., health, technology, education) that includes various clusters and careers.
-    - **Cluster**: A group of closely related careers or disciplines within a sector.
-    - **Career**: A specific job or role a person can prepare for directly.
-    
-    Currently, we are generating the roadmap for the given **${getTitle(scopeType)}** named **"${scopeName}"**.
-    
-    The roadmap must consider:
-    - Personality Type: ${type1}
-    ${type2 ? `- RIASEC Interest Types: ${type2}` : ''}
-    - Current Class Level: ${classLevel}
-    - Current Month: ${currentMonth}
-    ${sectorDescription ? `\n    **Sector Description:** ${sectorDescription}\n` : ''}
-    
-    For this ${getTitle(scopeType)}, include the following information:
-    - career_name: A brief title of the ${getTitle(scopeType)}.
-    - reason_for_recommendation: Why this ${getTitle(scopeType)} fits someone with these interests.
-    - present_trends: Current trends and opportunities in this ${getTitle(scopeType)}.
-    - future_prospects: Predictions and potential growth in this ${getTitle(scopeType)}.
-    - user_description: A narrative of the user's traits and how they align with this ${getTitle(scopeType)}.
-    
-    Now, create a step-by-step roadmap specifically tailored for ${getLabel(scopeType, scopeName)} for a Class ${classLevel} student, broken down into **2-month intervals** for one year:
-    (Interval 1, Interval 2, Interval 3, Interval 4, Interval 5, Interval 6)
-    
-    Each interval must contain:
-    1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
-    2. **Physical Milestones**
-    3. **Mental Milestones**
-
-    Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
-
-    The **Educational Milestones** should include:
-    - **Academic Milestones**: These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the selected ${scopeType === "career" ? "career" : scopeType === "cluster" ? "cluster" : "sector"}.
-    - **Certification Milestones**: These should be general certifications relevant to the selected ${scopeType === "career" ? "career named \"" + scopeName + "\"" : scopeType === "cluster" ? "cluster \"" + scopeName + "\"" : "sector \"" + scopeName + "\""}, and **must not be tied to private companies, organizations, or vendors like CompTIA, Microsoft, etc.** Only include the name of the course (do not include the platform or organization offering the course).
-      
-    Each milestone group must include exactly **three items** and follow this format:
-      
-    {
-        "interval": <interval_number>,
-        "milestones": {
-            "Educational Milestones": {
-                "Academic Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-                "Certification Milestones": [
-                    {
-                        "milestone_description": "<description1>",
-                        "certification_course_name": "<certification_name1>"
-                    },
-                    {
-                        "milestone_description": "<description2>",
-                        "certification_course_name": "<certification_name2>"
-                    },
-                    {
-                        "milestone_description": "<description3>",
-                        "certification_course_name": "<certification_name3>"
-                    }
-                ]
-            },
-            "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
-            "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
-        }
-    }
-      
-    Guidelines:
-    - If the ${getTitle(scopeType)} is a **career**, give a full detailed roadmap as above.
-    - If it is a **cluster**, follow the exact same format but ensure milestones are **structured and versatile** (not limited to a single role).
-    - If it is a **sector**, follow the same format but make the milestones **simpler and more general** (broadly applicable to many paths).
-    - All milestones should be appropriate for a Class ${classLevel} student.
-    - Focus on progressive skill building and age-appropriate activities.
-    
-    Ensure the final output is valid JSON and structured cleanly. Use the following language: ${languageOptions[language] || 'English'}.
-    `;
-    
-    return enhancePromptWithEducation(basePrompt, educationData);
-};
-
-
-    export const generateSubjectsPrompt = async (
-        userId,
-        scopeName,
-        country,
-        currentAgeWeek,
-        scopeType,
-        className,
-        sectorDescription,
-        userStream,
-        userSchoolSubjects,
-        userCourse = null,
-        userUniversity = null
-    ) => {
+    export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1, type2, classLevel, currentMonth, language, languageOptions, sectorDescription=null) => {
         const educationData = await getUserEducationPromptData(userId);
-
-        const getLabel = (scopeType, scopeName) => {
-            if (scopeType === "career") return `pursuing a career in ${scopeName}`;
-            if (scopeType === "cluster") return `exploring the cluster "${scopeName}"`;
-            if (scopeType === "sector") return `navigating the sector "${scopeName}"`;
+        const getLabel = (scopeType, careerLabel) => {
+            if (scopeType === "career") return `aspiring to be a ${careerLabel}`;
+            if (scopeType === "cluster") return `exploring the cluster "${careerLabel}"`;
+            if (scopeType === "sector") return `navigating the sector "${careerLabel}"`;
         };
-
+        
         const getTitle = (scopeType) => {
             if (scopeType === "career") return "career";
             if (scopeType === "cluster") return "cluster";
             if (scopeType === "sector") return "sector";
         };
+        
+        const basePrompt = `You are tasked with generating a personalized roadmap and guidance based on the user's current career exploration progress.
+        
+        The user's current exploration scope is: **${scopeType}**
+        
+        This scope refers to:
+        - **Sector**: A broad domain of related professional paths (e.g., health, technology, education) that includes various clusters and careers.
+        - **Cluster**: A group of closely related careers or disciplines within a sector.
+        - **Career**: A specific job or role a person can prepare for directly.
+        
+        Currently, we are generating the roadmap for the given **${getTitle(scopeType)}** named **"${scopeName}"**.
+        
+        The roadmap must consider:
+        - Personality Type: ${type1}
+        ${type2 ? `- RIASEC Interest Types: ${type2}` : ''}
+        - Current ${classLevel === "completed-education" ? "Educational Status" : "Class Level"}: ${classLevel}
+        - Current Month: ${currentMonth}
+        ${sectorDescription ? `\n    **Sector Description:** ${sectorDescription}\n` : ''}
+        
+        For this ${getTitle(scopeType)}, include the following information:
+        - career_name: A brief title of the ${getTitle(scopeType)}.
+        - reason_for_recommendation: Why this ${getTitle(scopeType)} fits someone with these interests.
+        - present_trends: Current trends and opportunities in this ${getTitle(scopeType)}.
+        - future_prospects: Predictions and potential growth in this ${getTitle(scopeType)}.
+        - user_description: A narrative of the user's traits and how they align with this ${getTitle(scopeType)}.
+        
+        Now, create a step-by-step roadmap specifically tailored for ${getLabel(scopeType, scopeName)} for a ${classLevel === "completed-education" ? "person who has completed their formal education" : `Class ${classLevel} student`}, broken down into **2-month intervals** for one year:
+        (Interval 1, Interval 2, Interval 3, Interval 4, Interval 5, Interval 6)
+        
+        Each interval must contain:
+        1. Educational Milestones (divided into **Academic Milestones** and **Certification Milestones**)
+        2. **Physical Milestones**
+        3. **Mental Milestones**
 
-        const basePrompt = `For a student studying in class ${className}${
-            (className === "11" || className === "12") && userStream
-                ? ` with a focus on the ${userStream} stream`
-                : ""
-        }, ${getLabel(scopeType, scopeName)}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(
-            scopeType
-        )}.${userSchoolSubjects ? `. This is user's subjects: ${userSchoolSubjects}. Choose relevant subjects only from this and no outside subjects needed to be included here even though the subject is relevant for the ${scopeName}` : ""}.${userCourse ? ` This is user's course: ${userCourse}.` : ""}${userUniversity ? ` This is user's university: ${userUniversity}.` : ""}
+        Each of the **Educational**, **Physical**, and **Mental Milestones** should have **three milestones**. Each milestone should be separated with a '|' symbol.
 
-            Focus specifically on subjects directly related to the ${getTitle(
-                scopeType
-            )} of "${scopeName}", considering the educational standards of ${country}. 
-            ${
-                sectorDescription
-                    ? `\n    **Sector Description:** ${sectorDescription}\n`
-                    : ""
+        The **Educational Milestones** should include:
+        - **Academic Milestones**: ${classLevel === "completed-education" 
+            ? "These should include professional development achievements, advanced learning opportunities, skill enhancement programs, and any formal certifications from recognized institutions tied to the selected " + (scopeType === "career" ? "career" : scopeType === "cluster" ? "cluster" : "sector") + "."
+            : "These should include formal education achievements (e.g., university, college) and any certifications from private or official organizations tied to the selected " + (scopeType === "career" ? "career" : scopeType === "cluster" ? "cluster" : "sector") + "."
+        }
+        - **Certification Milestones**: These should be ${classLevel === "completed-education" ? "professional" : "general"} certifications relevant to the selected ${scopeType === "career" ? "career named \"" + scopeName + "\"" : scopeType === "cluster" ? "cluster \"" + scopeName + "\"" : "sector \"" + scopeName + "\""}, and **must not be tied to private companies, organizations, or vendors like CompTIA, Microsoft, etc.** Only include the name of the course (do not include the platform or organization offering the course).
+        
+        Each milestone group must include exactly **three items** and follow this format:
+        
+        {
+            "interval": <interval_number>,
+            "milestones": {
+                "Educational Milestones": {
+                    "Academic Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+                    "Certification Milestones": [
+                        {
+                            "milestone_description": "<description1>",
+                            "certification_course_name": "<certification_name1>"
+                        },
+                        {
+                            "milestone_description": "<description2>",
+                            "certification_course_name": "<certification_name2>"
+                        },
+                        {
+                            "milestone_description": "<description3>",
+                            "certification_course_name": "<certification_name3>"
+                        }
+                    ]
+                },
+                "Physical Milestones": "<milestone1> | <milestone2> | <milestone3> | ...",
+                "Mental Milestones": "<milestone1> | <milestone2> | <milestone3> | ..."
             }
-
-            ⚠️ Very Important: 
-            - Ensure subjects are appropriate for the student’s current class level (${className}). 
-            - If class is between 5–8, recommend age-appropriate, introductory or foundational subjects. 
-            - If class is 9–12, suggest more advanced subjects relevant to the field. 
-            - If class is "college", include specialized and university-level subjects. 
-            - Avoid recommending subjects that are too advanced for their level. 
-            ${
-                "- Only include subjects that are directly related to this career path. Use strictly the NCERT syllabus subjects for Class " +
-                className +
-                " as defined by CBSE. Do not assume or add elective/optional subjects. Provide exactly 5 subjects — no more, no less."
-            }
-
-            The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
-
-            Provide  ${
-                scopeType == "career" ? "at least 5 to 10 key" : " exactly 5 "
-            } subjects relevant for this class, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
-
-            {
-            "subject-data": ["Subject1", "Subject2", "Subject3", ...]
-            }
-
-            Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective class, considering the ${getTitle(
-                scopeType
-            )}'s requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
-
+        }
+        
+        Guidelines:
+        - If the ${getTitle(scopeType)} is a **career**, give a full detailed roadmap as above.
+        - If it is a **cluster**, follow the exact same format but ensure milestones are **structured and versatile** (not limited to a single role).
+        - If it is a **sector**, follow the same format but make the milestones **simpler and more general** (broadly applicable to many paths).
+        - All milestones should be appropriate for a ${classLevel === "completed-education" ? "person who has completed their formal education, focusing on professional development and career advancement" : `Class ${classLevel} student`}.
+        - Focus on progressive skill building and ${classLevel === "completed-education" ? "career-relevant" : "age-appropriate"} activities.
+        
+        Ensure the final output is valid JSON and structured cleanly. Use the following language: ${languageOptions[language] || 'English'}.
+        `;
+        
         return enhancePromptWithEducation(basePrompt, educationData);
     };
+
+
+export const generateSubjectsPrompt = async (
+    userId,
+    scopeName,
+    country,
+    currentAgeWeek,
+    scopeType,
+    className,
+    sectorDescription,
+    userStream,
+    userSchoolSubjects,
+    userCourse = null,
+    userUniversity = null
+) => {
+    const educationData = await getUserEducationPromptData(userId);
+
+    const getLabel = (scopeType, scopeName) => {
+        if (scopeType === "career") return `pursuing a career in ${scopeName}`;
+        if (scopeType === "cluster") return `exploring the cluster "${scopeName}"`;
+        if (scopeType === "sector") return `navigating the sector "${scopeName}"`;
+    };
+
+    const getTitle = (scopeType) => {
+        if (scopeType === "career") return "career";
+        if (scopeType === "cluster") return "cluster";
+        if (scopeType === "sector") return "sector";
+    };
+
+    const basePrompt = `For a student ${
+        className === "completed-education" 
+            ? "who has completed their formal education"
+            : `studying in class ${className}${
+                (className === "11" || className === "12") && userStream
+                    ? ` with a focus on the ${userStream} stream`
+                    : ""
+            }`
+    }, ${getLabel(scopeType, scopeName)}, identify the most essential academic subjects that provide a solid foundation for this ${getTitle(
+        scopeType
+    )}.${userSchoolSubjects ? `. This is user's subjects: ${userSchoolSubjects}. Choose relevant subjects only from this and no outside subjects needed to be included here even though the subject is relevant for the ${scopeName}` : ""}.${userCourse ? ` This is user's course: ${userCourse}.` : ""}${userUniversity ? ` This is user's university: ${userUniversity}.` : ""}
+
+        Focus specifically on subjects directly related to the ${getTitle(
+            scopeType
+        )} of "${scopeName}", considering the educational standards of ${country}. 
+        ${
+            sectorDescription
+                ? `\n    **Sector Description:** ${sectorDescription}\n`
+                : ""
+        }
+
+        ⚠️ Very Important: 
+        ${className === "completed-education" 
+            ? "- Since the student has completed their formal education, focus on comprehensive, advanced subjects that cover the breadth and depth required for this field. Include both foundational and specialized subjects that would be essential for professional development in this area."
+            : `- Ensure subjects are appropriate for the student's current class level (${className}). 
+        - If class is between 5–8, recommend age-appropriate, introductory or foundational subjects. 
+        - If class is 9–12, suggest more advanced subjects relevant to the field. 
+        - If class is "college", include specialized and university-level subjects. 
+        - Avoid recommending subjects that are too advanced for their level.`
+        }
+        ${
+            className !== "completed-education"
+                ? "- Only include subjects that are directly related to this career path. Use strictly the NCERT syllabus subjects for Class " +
+                className +
+                " as defined by CBSE. Do not assume or add elective/optional subjects. Provide exactly 5 subjects — no more, no less."
+                : "- Include subjects from various educational levels that are directly related to this career path, covering both foundational concepts and advanced specialized knowledge. Provide exactly 5 subjects — no more, no less."
+        }
+
+        The subjects should be suitable for multiple-choice questions (MCQs) and not merely general foundational subjects.
+
+        Provide  ${
+            scopeType == "career" ? "at least 5 to 10 key" : " exactly 5 "
+        } subjects relevant for this ${className === "completed-education" ? "educational background" : "class"}, formatted as a JSON object where 'subject-data' is the key, and the value is an array of important subjects. The format should be as follows:
+
+        {
+        "subject-data": ["Subject1", "Subject2", "Subject3", ...]
+        }
+
+        Ensure that the response is valid JSON and the array includes only the most relevant subjects for the respective ${className === "completed-education" ? "educational level" : "class"}, considering the ${getTitle(
+            scopeType
+        )}'s requirements. Focus on subjects that pertain to theoretical knowledge, fundamental concepts, or history, while excluding practical or subjective areas unsuitable for MCQs.`;
+
+    return enhancePromptWithEducation(basePrompt, educationData);
+};
 
 
     // export const generateSubjectsTestsPrompt = async (
@@ -481,7 +493,50 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
     //                 `;
 
     //     return enhancePromptWithEducation(basePrompt, educationData);
+    
     // };
+
+
+    // const mathematicalInstructions = subjectName.toLowerCase().includes('math') || 
+    //                                 subjectName.toLowerCase().includes('physics') || 
+    //                                 subjectName.toLowerCase().includes('chemistry') ? `
+            
+    //         ### CRITICAL MATHEMATICAL REQUIREMENTS:
+    //         **MANDATORY CALCULATION VERIFICATION PROCESS:**
+    //         For EVERY mathematical question, you MUST:
+    //         1. **Calculate the correct answer step-by-step BEFORE creating options**
+    //         2. **Set the correct answer as one of the four options**
+    //         3. **Create three plausible wrong answers that represent common errors**
+    //         4. **Double-check your calculation at least twice**
+    //         5. **Verify that only ONE option matches your verified correct answer**
+            
+    //         **MATHEMATICAL QUESTION CREATION PROCESS:**
+    //         Step 1: Create the mathematical problem
+    //         Step 2: Solve it completely and verify your solution
+    //         Step 3: Note the correct numerical answer
+    //         Step 4: Create option A with the correct answer
+    //         Step 5: Create options B, C, D with common mistake patterns:
+    //         - Calculation errors (wrong signs, missed steps)
+    //         - Conceptual errors (wrong formulas)
+    //         - Unit conversion errors
+    //         - Rounding errors
+    //         Step 6: Final verification - confirm only option A is mathematically correct
+            
+    //         **MATHEMATICAL VALIDATION CHECKLIST:**
+    //         ✓ I have solved the problem completely
+    //         ✓ I have verified my calculation is correct
+    //         ✓ Exactly one option contains the correct answer
+    //         ✓ The three wrong options are mathematically incorrect but plausible
+    //         ✓ No two options have the same value
+    //         ✓ All options use the same units and format
+            
+    //         **EXAMPLES OF PROPER MATHEMATICAL OPTIONS:**
+    //         ❌ WRONG: All options are 25, 25, 25, 25
+    //         ❌ WRONG: Options are 25, 30, "not enough information", "none of the above"
+    //         ✅ CORRECT: Options are 25, 23, 27, 24 (where 25 is the verified correct answer)
+            
+    //         ` : '';
+    // // ${mathematicalInstructions}
 
     export const generateSubjectsTestsPrompt = async (
         userId,
@@ -507,62 +562,30 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
             if (scopeType === "sector") return "sector";
         };
 
-        // Enhanced mathematical instructions
-        const mathematicalInstructions = subjectName.toLowerCase().includes('math') || 
-                                    subjectName.toLowerCase().includes('physics') || 
-                                    subjectName.toLowerCase().includes('chemistry') ? `
-            
-            ### CRITICAL MATHEMATICAL REQUIREMENTS:
-            **MANDATORY CALCULATION VERIFICATION PROCESS:**
-            For EVERY mathematical question, you MUST:
-            1. **Calculate the correct answer step-by-step BEFORE creating options**
-            2. **Set the correct answer as one of the four options**
-            3. **Create three plausible wrong answers that represent common errors**
-            4. **Double-check your calculation at least twice**
-            5. **Verify that only ONE option matches your verified correct answer**
-            
-            **MATHEMATICAL QUESTION CREATION PROCESS:**
-            Step 1: Create the mathematical problem
-            Step 2: Solve it completely and verify your solution
-            Step 3: Note the correct numerical answer
-            Step 4: Create option A with the correct answer
-            Step 5: Create options B, C, D with common mistake patterns:
-            - Calculation errors (wrong signs, missed steps)
-            - Conceptual errors (wrong formulas)
-            - Unit conversion errors
-            - Rounding errors
-            Step 6: Final verification - confirm only option A is mathematically correct
-            
-            **MATHEMATICAL VALIDATION CHECKLIST:**
-            ✓ I have solved the problem completely
-            ✓ I have verified my calculation is correct
-            ✓ Exactly one option contains the correct answer
-            ✓ The three wrong options are mathematically incorrect but plausible
-            ✓ No two options have the same value
-            ✓ All options use the same units and format
-            
-            **EXAMPLES OF PROPER MATHEMATICAL OPTIONS:**
-            ❌ WRONG: All options are 25, 25, 25, 25
-            ❌ WRONG: Options are 25, 30, "not enough information", "none of the above"
-            ✅ CORRECT: Options are 25, 23, 27, 24 (where 25 is the verified correct answer)
-            
-            ` : '';
-                        // ${mathematicalInstructions}
 
         const basePrompt = `
-            Create 10 multiple-choice questions in ${subjectName} for a student studying in class ${className}${
-                (className === "11" || className === "12") && userStream
-                    ? ` with a focus on the ${userStream} stream`
-                    : ""
+            Create 10 multiple-choice questions in ${subjectName} for a ${className === "completed-education" 
+                ? "person who has completed their formal education"
+                : `student studying in class ${className}${
+                    (className === "11" || className === "12") && userStream
+                        ? ` with a focus on the ${userStream} stream`
+                        : ""
+                }`
             } in ${country}, ${getLabel(scopeType, scopeName)}.
             
-            The questions must align with the education system and curriculum standards of ${country} and match the understanding level of a student in class ${className} within that country's educational framework.
+            The questions must align with the education system and curriculum standards of ${country} and match the understanding level of a ${className === "completed-education" 
+                ? "person with completed formal education"
+                : `student in class ${className}`
+            } within that country's educational framework.
             - Consider the specific educational standards, terminology, and learning objectives used in ${country}'s education system
             - Ensure questions reflect the teaching methodology and assessment style common in ${country}
             - Use appropriate units of measurement, currency, historical references, and cultural context relevant to ${country}
-            - If class is between 5–8, keep questions simpler and introductory according to ${country}'s elementary/primary education standards
+            ${className === "completed-education" 
+                ? "- Since the person has completed their formal education, create comprehensive questions that cover advanced concepts and professional-level understanding of the subject matter relevant to the career path"
+                : `- If class is between 5–8, keep questions simpler and introductory according to ${country}'s elementary/primary education standards
             - If class is 9–12, create moderately advanced questions suitable for ${country}'s secondary/high school level
-            - If class is "college", create university-level advanced questions appropriate for ${country}'s higher education system
+            - If class is "college", create university-level advanced questions appropriate for ${country}'s higher education system`
+            }
 
             ### Context and Relevance:
             Focus on ${subjectName} topics that are directly relevant to the ${getTitle(scopeType)} of "${scopeName}". 
@@ -579,11 +602,12 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
             - For subjects like Science, focus on theoretical concepts, principles, and applications relevant to the ${getTitle(scopeType)}
             - Questions should test understanding of ${subjectName} concepts that build foundation for the ${getTitle(scopeType)} path
 
-            ${
-                `\n### NCERT Restriction:\n- Base all topics and questions strictly on the NCERT CBSE Class ${className} ${subjectName} syllabus.\n- The academic year is assumed to run from June to March.\n- Since the current month is 
+            ${className !== "completed-education"
+                ? `\n### NCERT Restriction:\n- Base all topics and questions strictly on the NCERT CBSE Class ${className} ${subjectName} syllabus.\n- The academic year is assumed to run from June to March.\n- Since the current month is 
                 ${new Date().toLocaleString("en-US", {
                     month: "long",
                 })} assume that only the proportionate portion of the syllabus has been taught up to this point.\n- Do not include topics that would normally be scheduled for later months.\n`
+                : `\n### Educational Background Consideration:\n- Since the person has completed their formal education, base questions on comprehensive knowledge that spans multiple educational levels and includes advanced concepts.\n- Focus on professional-level understanding and practical applications of ${subjectName} concepts.\n- Include both foundational and specialized knowledge relevant to the ${getTitle(scopeType)}.\n`
             }
             
             ### Critical Requirements:
@@ -604,10 +628,10 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
             - Wrong options should reflect common student errors (sign mistakes, formula errors, etc.)
             
             **For Subject-Specific Questions:**
-            - Focus strictly on ${subjectName} curriculum content appropriate for class ${className}
+            - Focus strictly on ${subjectName} curriculum content appropriate for ${className === "completed-education" ? "comprehensive professional-level understanding" : `class ${className}`}
             - Avoid general knowledge or trivia questions
             - Base questions on specific topics taught in ${subjectName} classes in ${country}
-            - Focus on core curriculum concepts, terminology, and applications as per syllabus
+            - Focus on core curriculum concepts, terminology, and applications as per ${className === "completed-education" ? "comprehensive educational background" : "syllabus"}
             
             ### Quality Assurance Checklist:
             Before finalizing each question, verify:
@@ -620,10 +644,10 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
             7. ✓ All options follow the same format and style
             
             Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
-            Make sure no questions or options are repeated. The questions should be unique and difficulty level should be challenging but appropriate for the student's class within ${country}'s curriculum framework.   
+            Make sure no questions or options are repeated. The questions should be unique and difficulty level should be challenging but appropriate for the ${className === "completed-education" ? "person's comprehensive educational background" : "student's class"} within ${country}'s curriculum framework.   
             
             Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others. 
-            Make sure no questions or options are repeated. The questions should be unique and difficulty level should be challenging but appropriate for the student's class within ${country}'s curriculum framework.   
+            Make sure no questions or options are repeated. The questions should be unique and difficulty level should be challenging but appropriate for the ${className === "completed-education" ? "person's comprehensive educational background" : "student's class"} within ${country}'s curriculum framework.   
             
             Ensure that the quiz questions are appropriately designed:
             1. The incorrect options (distractors) should be plausible and related to the course content as taught in ${country}
@@ -635,7 +659,7 @@ export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1,
             7. For numerical questions, wrong answers should reflect common calculation errors or plausible alternative values
             8. Avoid instances where the correct answer is the only complete, grammatically correct, or specific option
             9. Use educational terminology, examples, and references that are familiar and relevant to students in ${country}
-            10. The questions and answers must be based strictly on the NCERT CBSE Class ${className} syllabus. The questions and answers given in the MCQ must be correct and questions must be precise.
+            10. The questions and answers must be based ${className === "completed-education" ? "on comprehensive knowledge spanning multiple educational levels" : `strictly on the NCERT CBSE Class ${className} syllabus`}. The questions and answers given in the MCQ must be correct and questions must be precise.
             11. **MANDATORY: Verify that exactly one option per question is correct - never zero correct answers, never multiple correct answers**
 
             Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:

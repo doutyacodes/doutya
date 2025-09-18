@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, MapPin, GraduationCap, Building, Award } from 'lucide-react';
+import { X, MapPin, GraduationCap, Building, Award, CheckCircle } from 'lucide-react';
 import Select from 'react-select';
 import countryList from 'react-select-country-list';
 import { toast } from 'react-hot-toast';
@@ -33,6 +33,8 @@ const LocationDetailsModal = ({
       return 'graduation';
     } else if (gradeStr === 'post graduate' || gradeStr === 'postgraduate') {
       return 'postgraduate';
+    } else if (gradeStr === 'completed-education' || gradeStr === 'completed education') {
+      return 'completed-education';
     }
     return 'school';
   };
@@ -79,17 +81,23 @@ const LocationDetailsModal = ({
     
     switch (level) {
       case 'school':
-        return isCurrentLevel 
+        return educationLevel === 'completed-education' 
+          ? "Where did you complete your schooling?" 
+          : isCurrentLevel 
           ? "Where are you currently doing your schooling?" 
           : "Where do you intend to do your schooling?";
       case 'graduation':
-        return isCurrentLevel 
+        return educationLevel === 'completed-education' 
+          ? "Where did you complete your graduation?" 
+          : isCurrentLevel 
           ? "Where are you currently doing your graduation?" 
           : "Where do you intend to do your graduation?";
-      case 'postgraduate':
-        return isCurrentLevel 
-          ? "Where are you currently doing your post-graduation?" 
-          : "Where do you intend to do your post-graduation?";
+      // case 'postgraduate':
+      //   return educationLevel === 'completed-education' 
+      //     ? "Where did you complete your post-graduation?" 
+      //     : isCurrentLevel 
+      //     ? "Where are you currently doing your post-graduation?" 
+      //     : "Where do you intend to do your post-graduation?";
       default:
         return "";
     }
@@ -104,8 +112,26 @@ const LocationDetailsModal = ({
         return level !== 'school'; // Don't show school question
       case 'postgraduate':
         return level === 'postgraduate'; // Only show postgraduate question
+      case 'completed-education':
+        return true; // Show all questions as they've completed all levels
       default:
         return true;
+    }
+  };
+
+  // Get the display name for education level
+  const getEducationLevelDisplay = (level) => {
+    switch (level) {
+      case 'school':
+        return 'School';
+      case 'graduation':
+        return 'Graduation';
+      case 'postgraduate':
+        return 'Post-Graduate';
+      case 'completed-education':
+        return 'Completed Education';
+      default:
+        return 'School';
     }
   };
 
@@ -127,10 +153,10 @@ const LocationDetailsModal = ({
       return;
     }
     
-    if (shouldShowQuestion('postgraduate') && !postGraduationLocation) {
-      toast.error('Please select post-graduation location');
-      return;
-    }
+    // if (shouldShowQuestion('postgraduate') && !postGraduationLocation) {
+    //   toast.error('Please select post-graduation location');
+    //   return;
+    // }
 
     const locationData = {
       currentCountry: currentCountry?.value || currentCountry?.label,
@@ -159,6 +185,18 @@ const LocationDetailsModal = ({
     if (sectors.length > 0) items.push(`Sector${sectors.length > 1 ? 's' : ''}: ${sectors.join(', ')}`);
     return items.join(' | ');
   };
+
+  // Get appropriate icon based on education level
+  const getEducationIcon = () => {
+    switch (educationLevel) {
+      case 'completed-education':
+        return CheckCircle;
+      default:
+        return GraduationCap;
+    }
+  };
+
+  const EducationIcon = getEducationIcon();
 
   if (!isOpen) return null;
 
@@ -252,7 +290,7 @@ const LocationDetailsModal = ({
               )}
 
               {/* Post-graduation Location */}
-              {shouldShowQuestion('postgraduate') && (
+              {/* {shouldShowQuestion('postgraduate') && (
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700 flex items-center">
                     <Award className="w-4 h-4 mr-1 text-gray-500" />
@@ -268,18 +306,37 @@ const LocationDetailsModal = ({
                     isDisabled={loading}
                   />
                 </div>
-              )}
+              )} */}
 
               {/* Current Education Level Info */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className={`border rounded-lg p-4 ${
+                educationLevel === 'completed-education' 
+                  ? 'bg-green-50 border-green-200' 
+                  : 'bg-blue-50 border-blue-200'
+              }`}>
                 <div className="flex items-center">
-                  <GraduationCap className="w-5 h-5 text-blue-600 mr-2" />
+                  <EducationIcon className={`w-5 h-5 mr-2 ${
+                    educationLevel === 'completed-education' 
+                      ? 'text-green-600' 
+                      : 'text-blue-600'
+                  }`} />
                   <div>
-                    <p className="text-sm font-medium text-blue-800">
-                      Current Education Level: {educationLevel.charAt(0).toUpperCase() + educationLevel.slice(1)}
+                    <p className={`text-sm font-medium ${
+                      educationLevel === 'completed-education' 
+                        ? 'text-green-800' 
+                        : 'text-blue-800'
+                    }`}>
+                      Current Education Level: {getEducationLevelDisplay(educationLevel)}
                     </p>
-                    <p className="text-xs text-blue-600 mt-1">
-                      Questions are customized based on your current education level
+                    <p className={`text-xs mt-1 ${
+                      educationLevel === 'completed-education' 
+                        ? 'text-green-600' 
+                        : 'text-blue-600'
+                    }`}>
+                      {educationLevel === 'completed-education' 
+                        ? 'Questions are about where you completed your education'
+                        : 'Questions are customized based on your current education level'
+                      }
                     </p>
                   </div>
                 </div>
@@ -314,29 +371,107 @@ const LocationDetailsModal = ({
         </div>
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
         .react-select__control {
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          padding: 4px;
-          box-shadow: none;
+          border: 2px solid #e5e7eb !important;
+          border-radius: 8px !important;
+          padding: 4px !important;
+          box-shadow: none !important;
+          background-color: white !important;
         }
         
         .react-select__control:hover {
-          border-color: #d1d5db;
+          border-color: #d1d5db !important;
         }
         
         .react-select__control--is-focused {
-          border-color: #3b82f6;
-          box-shadow: 0 0 0 1px #3b82f6;
+          border-color: #3b82f6 !important;
+          box-shadow: 0 0 0 1px #3b82f6 !important;
+        }
+        
+        .react-select__menu {
+          background-color: white !important;
+          border: 1px solid #e5e7eb !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+          z-index: 9999 !important;
+        }
+        
+        .react-select__menu-list {
+          background-color: white !important;
+          border-radius: 8px !important;
+          padding: 4px !important;
+        }
+        
+        .react-select__option {
+          background-color: white !important;
+          color: #374151 !important;
+          padding: 8px 12px !important;
+          cursor: pointer !important;
+          border-radius: 4px !important;
+          margin: 1px 0 !important;
+        }
+        
+        .react-select__option:hover,
+        .react-select__option--is-focused {
+          background-color: #dbeafe !important;
+          color: #1f2937 !important;
         }
         
         .react-select__option--is-selected {
-          background-color: #3b82f6;
+          background-color: #3b82f6 !important;
+          color: white !important;
         }
         
-        .react-select__option--is-focused {
-          background-color: #dbeafe;
+        .react-select__option--is-selected:hover {
+          background-color: #2563eb !important;
+          color: white !important;
+        }
+        
+        .react-select__single-value {
+          color: #374151 !important;
+        }
+        
+        .react-select__placeholder {
+          color: #9ca3af !important;
+        }
+        
+        .react-select__input-container {
+          color: #374151 !important;
+        }
+        
+        .react-select__indicators {
+          color: #6b7280 !important;
+        }
+        
+        .react-select__dropdown-indicator {
+          color: #6b7280 !important;
+        }
+        
+        .react-select__dropdown-indicator:hover {
+          color: #374151 !important;
+        }
+        
+        .react-select__clear-indicator {
+          color: #6b7280 !important;
+        }
+        
+        .react-select__clear-indicator:hover {
+          color: #374151 !important;
+        }
+        
+        .react-select__value-container {
+          padding: 2px 8px !important;
+        }
+        
+        .react-select__control--is-disabled {
+          background-color: #f9fafb !important;
+          border-color: #e5e7eb !important;
+          opacity: 0.6 !important;
+        }
+        
+        .react-select__control--is-disabled .react-select__single-value {
+          color: #6b7280 !important;
         }
       `}</style>
     </div>

@@ -874,6 +874,7 @@ function SignUp() {
               <option value="11">11th</option>
               <option value="12">12th</option>
               <option value="college">College</option>
+              <option value="completed-education">Completed Educaton</option>
             </select>
           </div>
 

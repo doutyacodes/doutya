@@ -96,9 +96,9 @@ export async function GET(req, { params }) {
 
     console.log(`User , Scope type: ${scopeType}`);
 
-    // Get user's school subjects if they exist (for classes 11, 12, and college)
+    // Get user's school subjects if they exist (for classes 11, 12, and college, completed-education)
     let userSchoolSubjects = "";
-    if (["11", "12", "college"].includes(className)) {
+    if (["11", "12", "college", "completed-education"].includes(className)) {
       const schoolSubjects = await db
         .select({ subject: USER_SCHOOL_SUBJECTS.subject })
         .from(USER_SCHOOL_SUBJECTS)

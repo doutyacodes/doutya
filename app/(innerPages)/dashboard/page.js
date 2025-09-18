@@ -104,7 +104,7 @@ export default function Dashboard() {
         // 2️⃣ Then check grade-based suggestions
         else if (["8", "9", "10"].includes(gradeData)) {
           router.replace("/dashboard_junior/cluster-suggestion");
-        } else if (["11", "12", "college"].includes(gradeData)) {
+        } else if (["11", "12", "college", "completed-education"].includes(gradeData)) {
           router.replace("/dashboard/careers/career-suggestions");
         }
         // 3️⃣ Then check if results page is shown

@@ -72,7 +72,7 @@ export default function Dashboard() {
         else if (["8", "9", "10"].includes(gradeData)) {
           router.replace("/dashboard_junior/cluster-suggestion");
         } 
-        else if (["11", "12", "college"].includes(gradeData)) {
+        else if (["11", "12", "college", "completed-education"].includes(gradeData)) {
           router.replace("/dashboard/careers/career-suggestions");
         }
         else {

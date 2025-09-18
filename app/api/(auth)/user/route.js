@@ -39,7 +39,7 @@ export async function POST(req) {
     // }
 
     // Determine scope_type based on class
-    let scope_type = "career"; // default for 11th, 12th, college
+    let scope_type = "career"; // default for 11th, 12th, college, completed-education
     if (["5", "6", "7"].includes(data?.class)) {
       scope_type = "sector";
     } else if (["8", "9", "10"].includes(data?.class)) {
