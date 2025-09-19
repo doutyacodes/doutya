@@ -26,7 +26,7 @@ export const dynamic = 'force-dynamic';
     };
 
     // Career suggestions prompt
-    export const generateCareerPrompt = async (userId, type1, type2, industry, country, finalAge, currentAgeWeek, language, languageOptions) => {
+    export const generateCareerPrompt = async (userId, type1, type2, industry, country, finalAge, currentAgeWeek, language, languageOptions,educationWorkDescription=null) => {
         const educationData = await getUserEducationPromptData(userId);
         
         // New logic for futuristic careers
@@ -59,6 +59,8 @@ export const dynamic = 'force-dynamic';
     - E (Enterprising): Leadership, persuasion, business, competitive
     - C (Conventional): Organized, detail-oriented, structured, systematic
     - Weight career recommendations based on how well they align with the hierarchical interest pattern
+
+    ${educationWorkDescription !=null ? "Qualification: "+ educationWorkDescription :""}
 
     Include eactly 3 traditional careers, 3 trending careers, 3 AI-proof career 3 entrepreneurial careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Include exactly 3 unique careers for each category (no more, no less).
     . Additionally, provide ${futuristicCareerPrompt}(currently in week ${currentAgeWeek} of this age)
@@ -208,7 +210,7 @@ export const dynamic = 'force-dynamic';
     // };
 
     // Updated Roadmap prompt
-    export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1, type2, classLevel, currentMonth, language, languageOptions, sectorDescription=null) => {
+    export const generateRoadmapPrompt = async (userId, scopeType, scopeName, type1, type2, classLevel, currentMonth, language, languageOptions, sectorDescription=null,educationWorkDescription=null) => {
         const educationData = await getUserEducationPromptData(userId);
         const getLabel = (scopeType, careerLabel) => {
             if (scopeType === "career") return `aspiring to be a ${careerLabel}`;
@@ -239,7 +241,7 @@ export const dynamic = 'force-dynamic';
         - Current ${classLevel === "completed-education" ? "Educational Status" : "Class Level"}: ${classLevel}
         - Current Month: ${currentMonth}
         ${sectorDescription ? `\n    **Sector Description:** ${sectorDescription}\n` : ''}
-        
+         ${educationWorkDescription !=null ? "Qualification: "+ educationWorkDescription :""}
         For this ${getTitle(scopeType)}, include the following information:
         - career_name: A brief title of the ${getTitle(scopeType)}.
         - reason_for_recommendation: Why this ${getTitle(scopeType)} fits someone with these interests.

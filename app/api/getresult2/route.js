@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { authenticate } from "@/lib/jwtMiddleware";
-import { QUIZ_SEQUENCES, USER_DETAILS, USER_RESULTS } from "@/utils/schema";
+import {
+  QUIZ_SEQUENCES,
+  USER_DETAILS,
+  USER_RESULTS,
+  COMPLETED_EDUCATION,
+  WORK_EXPERIENCE,
+} from "@/utils/schema";
 import { eq, and } from "drizzle-orm";
 import { db } from "@/utils";
 import axios from "axios";
@@ -45,20 +51,129 @@ export async function GET(req) {
       experience: USER_DETAILS.experience,
       educationQualification: USER_DETAILS.education_qualification,
       currentJob: USER_DETAILS.current_job,
-      academicYearStart : USER_DETAILS.academicYearStart,
-      academicYearEnd : USER_DETAILS.academicYearEnd,
-      className: USER_DETAILS.class_name
+      academicYearStart: USER_DETAILS.academicYearStart,
+      academicYearEnd: USER_DETAILS.academicYearEnd,
+      className: USER_DETAILS.class_name,
+      grade: USER_DETAILS.grade,
     })
     .from(USER_DETAILS)
     .where(eq(USER_DETAILS.id, userId))
     .execute();
   // console.log("userDetails",userDetails);
   const country = userDetails[0].country; // Access the country
-  const currentAgeWeek = getCurrentWeekOfAge(userDetails[0].birth_date)
-  
+  const currentAgeWeek = getCurrentWeekOfAge(userDetails[0].birth_date);
+
+  // Fetch education and work experience for completed education users
+  let educationWorkDescription = null;
+  let workExperience = "";
+  let completedEducation = "";
+
+  if (userDetails[0].grade === "completed-education") {
+    // Fetch completed education
+    const completedEducation = await db
+      .select({
+        degree: COMPLETED_EDUCATION.degree,
+        field: COMPLETED_EDUCATION.field,
+        institution: COMPLETED_EDUCATION.institution,
+        start_date: COMPLETED_EDUCATION.start_date,
+        end_date: COMPLETED_EDUCATION.end_date,
+        is_currently_studying: COMPLETED_EDUCATION.is_currently_studying,
+      })
+      .from(COMPLETED_EDUCATION)
+      .where(eq(COMPLETED_EDUCATION.user_id, userId))
+      .execute();
+
+    // Fetch work experience
+    const workExperience = await db
+      .select({
+        job_title: WORK_EXPERIENCE.job_title,
+        company: WORK_EXPERIENCE.company,
+        start_date: WORK_EXPERIENCE.start_date,
+        end_date: WORK_EXPERIENCE.end_date,
+        is_currently_working: WORK_EXPERIENCE.is_currently_working,
+        skills: WORK_EXPERIENCE.skills,
+      })
+      .from(WORK_EXPERIENCE)
+      .where(eq(WORK_EXPERIENCE.user_id, userId))
+      .execute();
+
+    // Helper function to format dates
+    const formatDate = (date) => {
+      if (!date) return "unknown";
+      const d = new Date(date);
+      const month = d.toLocaleDateString("en-US", { month: "long" });
+      const year = d.getFullYear();
+      return `${month} ${year}`;
+    };
+
+    // Format education information
+    let educationText = "";
+    if (completedEducation.length > 0) {
+      const educationDetails = completedEducation
+        .map((edu) => {
+          const duration =
+            edu.start_date && edu.end_date
+              ? `from ${formatDate(edu.start_date)} to ${formatDate(
+                  edu.end_date
+                )}`
+              : edu.is_currently_studying
+              ? `from ${formatDate(edu.start_date)} (currently studying)`
+              : "";
+
+          return `${edu.degree} in ${edu.field}${
+            edu.institution ? ` from ${edu.institution}` : ""
+          }${duration ? ` ${duration}` : ""}`;
+        })
+        .join(", ");
+
+      educationText = `Education: ${educationDetails}.`;
+    }
+
+    // Format work experience information
+    let workText = "";
+    if (workExperience.length > 0) {
+      const workDetails = workExperience
+        .map((work) => {
+          const duration =
+            work.start_date && work.end_date && !work.is_currently_working
+              ? `from ${formatDate(work.start_date)} to ${formatDate(
+                  work.end_date
+                )}`
+              : work.is_currently_working
+              ? `from ${formatDate(work.start_date)} (currently working)`
+              : work.start_date
+              ? `from ${formatDate(work.start_date)}`
+              : "";
+
+          let workDetail = `${work.job_title}${
+            work.company ? ` at ${work.company}` : ""
+          }${duration ? ` ${duration}` : ""}`;
+          if (work.skills) {
+            workDetail += ` with skills in ${work.skills}`;
+          }
+          return workDetail;
+        })
+        .join(", ");
+
+      workText = `Work Experience: ${workDetails}.`;
+    }
+
+    // Combine both education and work information
+    educationWorkDescription = [educationText, workText]
+      .filter(Boolean)
+      .join(" ");
+  }
+
+  // console.log("educationWorkDescription", educationWorkDescription);
+  // console.log("completedEducation data:", completedEducation);
+  // console.log("workExperience data:", workExperience);
+  // return NextResponse.json({
+  //   debug: { educationWorkDescription, completedEducation, workExperience },
+  // });
+
   let finalAge = 18;
   if (userDetails.length > 0) {
-    console.log("in the condition" )
+    console.log("in the condition");
     const birthDate = new Date(userDetails[0].birth_date); // Access the birth date from the first result
     const today = new Date(); // Get today's date
 
@@ -78,8 +193,6 @@ export async function GET(req) {
     console.log("No user found with the given ID");
   }
   const industry = url.searchParams.get("industry") || null; // Get industry from URL parameters
-
-
 
   if (industry == null) {
     const existingResult = await db
@@ -104,7 +217,6 @@ export async function GET(req) {
     }
   }
 
- 
   const personality2 = await db
     .select({
       typeSequence: QUIZ_SEQUENCES.type_sequence,
@@ -132,24 +244,31 @@ export async function GET(req) {
 
   let jobDescription = "";
 
-  if (userDetails[0].educationLevel === "Completed Education" && userDetails[0].experience === null) {
+  if (
+    userDetails[0].grade === "completed-education" &&
+    userDetails[0].experience === null
+  ) {
     jobDescription = `has completed the education and is looking for a job with educational qualification of ${userDetails[0].educationQualification}, graduated from ${userDetails[0].university} university.`;
-  } else if (userDetails[0].educationLevel === "Completed Education" && userDetails[0].experience !== null) {
+  } else if (
+    userDetails[0].grade === "completed-education" &&
+    userDetails[0].experience !== null
+  ) {
     jobDescription = `currently has a job in ${userDetails[0].currentJob} with ${userDetails[0].experience} years of experience, and is looking for a career change with educational qualification of ${userDetails[0].educationQualification}, graduated from ${userDetails[0].university} university. Please exclude careers involving ${userDetails[0].currentJob}.`;
   }
 
   const prompt = await generateCareerPrompt(
-    userId, 
+    userId,
     type1,
-    type2, 
+    type2,
     industry,
-    country, 
+    country,
     finalAge,
-    currentAgeWeek, 
-    language, 
-    languageOptions
+    currentAgeWeek,
+    language,
+    languageOptions,
+    educationWorkDescription
   );
-  console.log("prompt", prompt)
+  console.log("prompt", prompt);
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
@@ -166,9 +285,15 @@ export async function GET(req) {
     }
   );
 
-  console.log(`Input tokens careers result: ${response.data.usage.prompt_tokens}`);
-  console.log(`Output tokens careers result: ${response.data.usage.completion_tokens}`);
-  console.log(`Total tokens careers result : ${response.data.usage.total_tokens}`);
+  console.log(
+    `Input tokens careers result: ${response.data.usage.prompt_tokens}`
+  );
+  console.log(
+    `Output tokens careers result: ${response.data.usage.completion_tokens}`
+  );
+  console.log(
+    `Total tokens careers result : ${response.data.usage.total_tokens}`
+  );
 
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();

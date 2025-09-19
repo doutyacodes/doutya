@@ -165,7 +165,7 @@ export const COMPLETED_EDUCATION = mysqlTable("completed_education", {
   id: int("id").primaryKey().autoincrement(),
   user_id: int("user_id")
     .notNull()
-    .references(() => USERS.id, { onDelete: "cascade" }),
+    .references(() => USER_DETAILS.id, { onDelete: "cascade" }),
   degree: varchar("degree", 255).notNull(),
   field: varchar("field", 255).notNull(),
   institution: varchar("institution", 255), 
@@ -181,7 +181,7 @@ export const WORK_EXPERIENCE = mysqlTable(
     id: int("id").primaryKey().autoincrement(),
     user_id: int("user_id")
       .notNull()
-      .references(() => USERS.id, { onDelete: "cascade" }),
+      .references(() => USER_DETAILS.id, { onDelete: "cascade" }),
     job_title: varchar("job_title", 255).notNull(),
     company: varchar("company", 255), 
     start_date: date("start_date"), 

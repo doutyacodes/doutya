@@ -311,7 +311,8 @@ export async function fetchAndSaveRoadmap(
   type2,
   language,
   scopeType = "career",
-  sectorDescription = null
+  sectorDescription = null,
+  educationWorkDescription = null
 ) {
   console.log(
     `scopeId: ${scopeId}, classLevel: ${classLevel}, currentMonth: ${currentMonth}, scopeType: ${scopeType}, scopeName: ${scopeName}, type1: ${type1}, type2: ${type2}`
@@ -329,7 +330,8 @@ export async function fetchAndSaveRoadmap(
       currentMonth,
       language,
       languageOptions,
-      sectorDescription
+      sectorDescription,
+      educationWorkDescription,
     );
 
     console.log("prompt", prompt);
