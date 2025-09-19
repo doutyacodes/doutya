@@ -168,6 +168,10 @@ export const COMPLETED_EDUCATION = mysqlTable("completed_education", {
     .references(() => USERS.id, { onDelete: "cascade" }),
   degree: varchar("degree", 255).notNull(),
   field: varchar("field", 255).notNull(),
+  institution: varchar("institution", 255), 
+  start_date: date("start_date"),
+  end_date: date("end_date"),
+  is_currently_studying: boolean("is_currently_studying").default(false), 
   description: text("description"),
 });
 
@@ -179,11 +183,16 @@ export const WORK_EXPERIENCE = mysqlTable(
       .notNull()
       .references(() => USERS.id, { onDelete: "cascade" }),
     job_title: varchar("job_title", 255).notNull(),
-    years_of_experience: int("years_of_experience").notNull(), // Removed .check()
+    company: varchar("company", 255), 
+    start_date: date("start_date"), 
+    end_date: date("end_date"),
+    is_currently_working: boolean("is_currently_working").default(false), 
+    skills: text("skills"),
+    years_of_experience: int("years_of_experience"),
   },
   (table) => {
     return {
-      yearsOfExperienceCheck: sql`CHECK (years_of_experience >= 0)`, // Table-level CHECK constraint
+      yearsOfExperienceCheck: sql`CHECK (years_of_experience >= 0 OR years_of_experience IS NULL)`,
     };
   }
 );

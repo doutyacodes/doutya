@@ -1,11 +1,10 @@
-// File: /app/api/education-profile/route.js
+// File: /app/api/user/education-profile/route.js
 import { 
   USER_EDUCATION_STAGE, 
   SCHOOL_EDUCATION, 
   COLLEGE_EDUCATION, 
   COMPLETED_EDUCATION, 
   WORK_EXPERIENCE, 
-  USER_SKILLS, 
   CAREER_PREFERENCES 
 } from "@/utils/schema";
 import { NextResponse } from "next/server";
@@ -17,8 +16,8 @@ export async function POST(req) {
   try {
     const authResult = await authenticate(req);
     if (!authResult.authenticated) {
-        return authResult.response;
-        }
+      return authResult.response;
+    }
 
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
@@ -37,10 +36,8 @@ export async function POST(req) {
 
       // 2. Handle school education if applicable
       if (data.educationStage === "school") {
-        // Delete any existing school education for this user
         await tx.delete(SCHOOL_EDUCATION).where(eq(SCHOOL_EDUCATION.user_id, userId));
         
-        // Insert new school education data
         if (data.schoolEducation) {
           await tx.insert(SCHOOL_EDUCATION).values({
             user_id: userId,
@@ -53,10 +50,8 @@ export async function POST(req) {
 
       // 3. Handle college education if applicable
       if (data.educationStage === "college") {
-        // Delete any existing college education for this user
         await tx.delete(COLLEGE_EDUCATION).where(eq(COLLEGE_EDUCATION.user_id, userId));
         
-        // Insert new college education data
         if (data.collegeEducation && data.collegeEducation.length > 0) {
           for (const education of data.collegeEducation) {
             await tx.insert(COLLEGE_EDUCATION).values({
@@ -73,63 +68,64 @@ export async function POST(req) {
 
       // 4. Handle completed education if applicable
       if (data.educationStage === "completed_education") {
-        // Delete any existing completed education for this user
+        // Clear existing data
         await tx.delete(COMPLETED_EDUCATION).where(eq(COMPLETED_EDUCATION.user_id, userId));
-        
-        // Insert new completed education data
+        await tx.delete(WORK_EXPERIENCE).where(eq(WORK_EXPERIENCE.user_id, userId));
+
+        // Insert completed education entries
         if (data.completedEducation && data.completedEducation.length > 0) {
           for (const education of data.completedEducation) {
             await tx.insert(COMPLETED_EDUCATION).values({
               user_id: userId,
               degree: education.degree,
               field: education.field,
+              institution: education.institution,
+              start_date: education.startDate ? new Date(education.startDate + "-01") : null,
+              end_date: education.isCurrentlyStudying ? null : (education.endDate ? new Date(education.endDate + "-01") : null),
+              is_currently_studying: education.isCurrentlyStudying || false,
               description: education.description,
             });
           }
         }
 
-        // 5. Handle work experience if applicable
-        await tx.delete(WORK_EXPERIENCE).where(eq(WORK_EXPERIENCE.user_id, userId));
+        // Insert work experience entries
         if (data.workExperience && data.workExperience.length > 0) {
           for (const experience of data.workExperience) {
             await tx.insert(WORK_EXPERIENCE).values({
               user_id: userId,
               job_title: experience.jobTitle,
-              years_of_experience: experience.yearsOfExperience,
-            });
-          }
-        }
-
-        // 6. Handle skills if applicable
-        await tx.delete(USER_SKILLS).where(eq(USER_SKILLS.user_id, userId));
-        if (data.skills && data.skills.length > 0) {
-          for (const skill of data.skills) {
-            await tx.insert(USER_SKILLS).values({
-              user_id: userId,
-              skill_name: skill.skillName,
+              company: experience.company,
+              start_date: experience.startDate ? new Date(experience.startDate + "-01") : null,
+              end_date: experience.isCurrentlyWorking ? null : (experience.endDate ? new Date(experience.endDate + "-01") : null),
+              is_currently_working: experience.isCurrentlyWorking || false,
+              skills: experience.skills, // stays inside work experience
+              years_of_experience: experience.yearsOfExperience || null,
+              description: experience.description,
             });
           }
         }
       }
 
-      // 7. Update career preferences
-      await tx
-        .insert(CAREER_PREFERENCES)
-        .values({
-          userId: userId,
-          schoolPref: data.careerPreferences.schoolPref,
-          collegePref: data.careerPreferences.collegePref,
-          completedPref: data.careerPreferences.completedPref,
-          noJobPref: data.careerPreferences.noJobPref,
-        })
-        .onDuplicateKeyUpdate({
-          set: {
+      // 5. Update career preferences (only if provided)
+      if (data.careerPreferences) {
+        await tx
+          .insert(CAREER_PREFERENCES)
+          .values({
+            userId: userId,
             schoolPref: data.careerPreferences.schoolPref,
             collegePref: data.careerPreferences.collegePref,
             completedPref: data.careerPreferences.completedPref,
             noJobPref: data.careerPreferences.noJobPref,
-          },
-        });
+          })
+          .onDuplicateKeyUpdate({
+            set: {
+              schoolPref: data.careerPreferences.schoolPref,
+              collegePref: data.careerPreferences.collegePref,
+              completedPref: data.careerPreferences.completedPref,
+              noJobPref: data.careerPreferences.noJobPref,
+            },
+          });
+      }
 
       return NextResponse.json({ success: true });
     });
@@ -145,12 +141,13 @@ export async function POST(req) {
 // GET endpoint to fetch user's education profile
 export async function GET(req) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await authenticate(req);
+    if (!authResult.authenticated) {
+      return authResult.response;
     }
 
-    const userId = session.user.id;
+    const userData = authResult.decoded_Data;
+    const userId = userData.userId;
     
     // Fetch all education data for this user
     const [
@@ -159,7 +156,6 @@ export async function GET(req) {
       collegeEducation,
       completedEducation,
       workExperience,
-      skills,
       careerPreferences
     ] = await Promise.all([
       db.select().from(USER_EDUCATION_STAGE).where(eq(USER_EDUCATION_STAGE.user_id, userId)).limit(1),
@@ -167,17 +163,60 @@ export async function GET(req) {
       db.select().from(COLLEGE_EDUCATION).where(eq(COLLEGE_EDUCATION.user_id, userId)),
       db.select().from(COMPLETED_EDUCATION).where(eq(COMPLETED_EDUCATION.user_id, userId)),
       db.select().from(WORK_EXPERIENCE).where(eq(WORK_EXPERIENCE.user_id, userId)),
-      db.select().from(USER_SKILLS).where(eq(USER_SKILLS.user_id, userId)),
       db.select().from(CAREER_PREFERENCES).where(eq(CAREER_PREFERENCES.userId, userId)).limit(1)
     ]);
+
+    // Transform data to match the new UI structure
+    const completedEntries = [];
+    
+    // Add education entries
+    if (completedEducation && completedEducation.length > 0) {
+      completedEducation.forEach(edu => {
+        completedEntries.push({
+          type: "education",
+          degree: edu.degree,
+          field: edu.field,
+          institution: edu.institution,
+          startDate: edu.start_date ? edu.start_date.toISOString().substring(0, 7) : "",
+          endDate: edu.end_date ? edu.end_date.toISOString().substring(0, 7) : "",
+          isCurrentlyStudying: edu.is_currently_studying,
+          description: edu.description,
+          jobTitle: "",
+          company: "",
+          isCurrentlyWorking: false,
+          skills: ""
+        });
+      });
+    }
+
+    // Add work entries
+    if (workExperience && workExperience.length > 0) {
+      workExperience.forEach(work => {
+        completedEntries.push({
+          type: "work",
+          degree: "",
+          field: "",
+          institution: "",
+          startDate: work.start_date ? work.start_date.toISOString().substring(0, 7) : "",
+          endDate: work.end_date ? work.end_date.toISOString().substring(0, 7) : "",
+          isCurrentlyStudying: false,
+          description: work.description,
+          jobTitle: work.job_title,
+          company: work.company,
+          isCurrentlyWorking: work.is_currently_working,
+          skills: work.skills || ""
+        });
+      });
+    }
 
     return NextResponse.json({
       educationStage: educationStage[0]?.stage || null,
       schoolEducation: schoolEducation[0] || null,
       collegeEducation: collegeEducation || [],
+      completedEntries: completedEntries,
+      // Legacy format for backward compatibility
       completedEducation: completedEducation || [],
       workExperience: workExperience || [],
-      skills: skills || [],
       careerPreferences: careerPreferences[0] || null
     });
   } catch (error) {

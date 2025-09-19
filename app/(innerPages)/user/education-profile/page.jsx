@@ -7,10 +7,28 @@ import { CareerDataCollectionGuide } from "@/app/_components/StepCompletionNotif
 import { useRouter } from "next/navigation";
 import GlobalApi from "@/app/_services/GlobalApi";
 import LoadingOverlay from "@/app/_components/LoadingOverlay";
+import {
+  ChevronDown,
+  Plus,
+  X,
+  GraduationCap,
+  Briefcase,
+  BookOpen,
+  User,
+} from "lucide-react";
 
-export default function EducationProfileForm() {
-  // Main form state
-  const { register, handleSubmit, control, watch, getValues, setValue, trigger, formState: { errors } } = useForm({
+export default function ModernEducationProfileForm() {
+  // Main form state with comprehensive default values including junior's new structure
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    getValues,
+    setValue,
+    trigger,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       educationStage: "",
       // School
@@ -22,75 +40,80 @@ export default function EducationProfileForm() {
       degrees: [{ degree: "", field: "", yearOfStudy: 1, isCompleted: false }],
       collegeDescription: "",
       collegePreference: "",
-      // Completed Education
-      completedDegrees: [{ degree: "", field: "" }],
-      isCurrentlyWorking: false,
-      jobs: [{ jobTitle: "", yearsOfExperience: 0 }],
-      skills: [{ skillName: "" }],
+      // Completed Education - Junior's new structure
+      completedEntries: [
+        {
+          type: "education", // or "work"
+          // Education fields
+          degree: "",
+          field: "",
+          institution: "",
+          startDate: "",
+          endDate: "",
+          isCurrentlyStudying: false,
+          // Work fields
+          jobTitle: "",
+          company: "",
+          isCurrentlyWorking: false,
+          skills: "",
+        },
+      ],
       completedDescription: "",
       completedPreference: "",
-      noJobPreference: ""
-    }
+      noJobPreference: "",
+    },
   });
-  const [isLoading, setisLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true)
+
+  // State management
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   // Watch values for conditional rendering
   const educationStage = watch("educationStage");
   const isHigherSecondary = watch("isHigherSecondary");
-  const isCurrentlyWorking = watch("isCurrentlyWorking");
+  const completedEntries = watch("completedEntries") || [];
 
   // State to manage dynamic arrays
-  const [degrees, setDegrees] = useState([{ degree: "", field: "", yearOfStudy: 1, isCompleted: false }]);
-  const [completedDegrees, setCompletedDegrees] = useState([{ degree: "", field: "" }]);
-  const [jobs, setJobs] = useState([{ jobTitle: "", yearsOfExperience: 0 }]);
-  const [skills, setSkills] = useState([{ skillName: "" }]);
+  const [degrees, setDegrees] = useState([
+    { degree: "", field: "", yearOfStudy: 1, isCompleted: false },
+  ]);
 
   const router = useRouter();
-
 
   // Check authentication and completion status on component mount
   useEffect(() => {
     const checkAuth = () => {
-      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token =
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
       if (token) {
         setIsAuthenticated(true);
         return token;
       }
-      router.replace("/login"); // Redirect to login if no token
+      router.replace("/login");
       return null;
     };
-    
+
     const getProfileStatus = async () => {
-      setisLoading(true);
+      setIsLoading(true);
       try {
         const token = checkAuth();
         if (!token) return;
-        
+
         const resp = await GlobalApi.GetDashboarCheck(token);
         const scopeType = resp.data.scopeType;
-        // Check if education profile is already completed and redirect accordingly
+
         if (resp.data.educationStageExists) {
-          // Check if the user has completed education
           if (resp.data.isEducationCompleted) {
-            // If completed education, skip institution details check
-            // if (!resp.data.countryAdded) {
-            //   router.replace("/country");
-            // } else {
-              if (scopeType === "career") {
-                router.replace("/dashboard/careers/career-suggestions");
-              } else if (scopeType === "sector") {
-                router.replace("/dashboard_kids/sector-suggestion");
-              } else if (scopeType === "cluster") {
-                router.replace("/dashboard_junior/cluster-suggestion");
-              }
-            // }
+            if (scopeType === "career") {
+              router.replace("/dashboard/careers/career-suggestions");
+            } else if (scopeType === "sector") {
+              router.replace("/dashboard_kids/sector-suggestion");
+            } else if (scopeType === "cluster") {
+              router.replace("/dashboard_junior/cluster-suggestion");
+            }
           } else {
-            // For school/college users, check institution details
             if (!resp.data.institutionDetailsAdded) {
               router.replace("/education-details");
-            // } else if (!resp.data.countryAdded) {
-            //   router.replace("/country");
             } else {
               if (scopeType === "career") {
                 router.replace("/dashboard/careers/career-suggestions");
@@ -102,195 +125,202 @@ export default function EducationProfileForm() {
             }
           }
         }
-        // If education stage doesn't exist, we stay on this page
       } catch (error) {
         console.error("Error fetching profile status:", error);
         toast.error("Error loading profile status. Please try again.");
       } finally {
-        setisLoading(false);
+        setIsLoading(false);
       }
     };
-    
+
     getProfileStatus();
   }, [router]);
-  
-// Handle form submission
-const onSubmit = async (data) => {
+
+  // Handle form submission with proper payload mapping
+  const onSubmit = async (data) => {
     try {
-      // Map form data to your API structure
-      const payload = {
+      let payload = {
         educationStage: data.educationStage,
-        schoolEducation: data.educationStage === "school" ? {
-          isHigherSecondary: data.isHigherSecondary,
-          mainSubject: data.isHigherSecondary ? data.mainSubject || null : null,
-          description: data.schoolDescription || null
-        } : null,
-        collegeEducation: data.educationStage === "college" ? 
-          data.degrees.map((deg, index) => ({
-            degree: deg.degree,
-            field: deg.field,
-            yearOfStudy: parseInt(deg.yearOfStudy),
-            isCompleted: deg.isCompleted || false,
-            description: index === 0 ? data.collegeDescription : null // Only save description once
-          })) : null,
-        completedEducation: data.educationStage === "completed_education" ? 
-          data.completedDegrees.map((deg, index) => ({
-            degree: deg.degree,
-            field: deg.field,
-            description: index === 0 ? data.completedDescription : null // Only save description once
-          })) : null,
-        workExperience: data.educationStage === "completed_education" && data.isCurrentlyWorking ? 
-          data.jobs.map(job => ({
-            jobTitle: job.jobTitle,
-            yearsOfExperience: parseInt(job.yearsOfExperience)
-          })) : null,
-        skills: data.educationStage === "completed_education" && data.isCurrentlyWorking && data.skills ? 
-          data.skills.map(skill => ({
-            skillName: skill.skillName
-          })) : null,
+        schoolEducation:
+          data.educationStage === "school"
+            ? {
+                isHigherSecondary: data.isHigherSecondary,
+                mainSubject: data.isHigherSecondary
+                  ? data.mainSubject || null
+                  : null,
+                description: data.schoolDescription || null,
+              }
+            : null,
+        collegeEducation:
+          data.educationStage === "college"
+            ? data.degrees.map((deg, index) => ({
+                degree: deg.degree,
+                field: deg.field,
+                yearOfStudy: parseInt(deg.yearOfStudy),
+                isCompleted: deg.isCompleted || false,
+                description: index === 0 ? data.collegeDescription : null,
+              }))
+            : null,
         careerPreferences: {
-          schoolPref: data.educationStage === "school" ? (data.isHigherSecondary ? data.schoolPreference : "personality_based") : null,
-          collegePref: data.educationStage === "college" ? data.collegePreference : null,
-          completedPref: data.educationStage === "completed_education" && data.isCurrentlyWorking ? data.completedPreference : null,
-          noJobPref: data.educationStage === "completed_education" && !data.isCurrentlyWorking ? data.noJobPreference : null
-        }
+          schoolPref:
+            data.educationStage === "school"
+              ? data.isHigherSecondary
+                ? data.schoolPreference
+                : "personality_based"
+              : null,
+          collegePref:
+            data.educationStage === "college" ? data.collegePreference : null,
+          completedPref: null,
+          noJobPref: null,
+        },
       };
 
-    //   setSubmitting(true);
-      console.log("Submitting data:", payload);
+      // Handle completed education with new structure
+      if (data.educationStage === "completed_education") {
+        const educationEntries = data.completedEntries.filter(
+          (entry) => entry.type === "education"
+        );
+        const workEntries = data.completedEntries.filter(
+          (entry) => entry.type === "work"
+        );
 
-      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-       // Ensure token exists before making the request
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        payload.completedEducation =
+          educationEntries.length > 0
+            ? educationEntries.map((entry, index) => ({
+                degree: entry.degree,
+                field: entry.field,
+                institution: entry.institution || null,
+                startDate: entry.startDate || null,
+                endDate: entry.isCurrentlyStudying
+                  ? null
+                  : entry.endDate || null,
+                isCurrentlyStudying: entry.isCurrentlyStudying || false,
+                description: index === 0 ? data.completedDescription : null,
+              }))
+            : null;
 
-        // Make API call
-        const response = await axios.post("/api/user/education-profile", payload, { headers });
+        payload.workExperience =
+          workEntries.length > 0
+            ? workEntries.map((entry) => ({
+                jobTitle: entry.jobTitle,
+                company: entry.company || null,
+                startDate: entry.startDate || null,
+                endDate: entry.isCurrentlyWorking
+                  ? null
+                  : entry.endDate || null,
+                isCurrentlyWorking: entry.isCurrentlyWorking || false,
+                skills: entry.skills || null,
+              }))
+            : null;
 
-      if (response.status === 200 && response.data.success) {
-          console.log("Response:", response.data);
-          toast.success("Education profile updated successfully!");
-          router.replace("/education-details");
-      } else {
-          throw new Error("Unexpected response status");
+        // Set career preferences based on whether user is working or not
+        const hasWorkExperience = workEntries.some(
+          (entry) => entry.isCurrentlyWorking
+        );
+        if (hasWorkExperience) {
+          payload.careerPreferences.completedPref = data.completedPreference;
+        } else {
+          payload.careerPreferences.noJobPref = data.noJobPreference;
+        }
       }
 
+      console.log("Submitting data:", payload);
+
+      const token =
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      const response = await axios.post(
+        "/api/user/education-profile",
+        payload,
+        { headers }
+      );
+
+      if (response.status === 200 && response.data.success) {
+        console.log("Response:", response.data);
+        toast.success("Education profile updated successfully!");
+        router.replace("/education-details");
+      } else {
+        throw new Error("Unexpected response status");
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Error updating profile. Please try again.");
-    } finally {
-    //   setSubmitting(false);
     }
   };
 
-
-  // Dynamic field handlers
+  // Dynamic field handlers for college degrees
   const addDegree = () => {
-    const currentDegrees = getValues("degrees"); // Retrieve current degrees from react-hook-form
-    const updatedDegrees = [...currentDegrees, { degree: "", field: "", yearOfStudy: 1, isCompleted: false }];
-    setValue("degrees", updatedDegrees, { shouldValidate: true, shouldDirty: true });
-    setDegrees(updatedDegrees); // Sync local state
+    const currentDegrees = getValues("degrees");
+    const updatedDegrees = [
+      ...currentDegrees,
+      { degree: "", field: "", yearOfStudy: 1, isCompleted: false },
+    ];
+    setValue("degrees", updatedDegrees, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setDegrees(updatedDegrees);
   };
-  
+
   const removeDegree = (index) => {
-    const currentDegrees = getValues("degrees"); // Retrieve current degrees from react-hook-form
+    const currentDegrees = getValues("degrees");
     const updatedDegrees = currentDegrees.filter((_, i) => i !== index);
-    setValue("degrees", updatedDegrees, { shouldValidate: true, shouldDirty: true });
-    setDegrees(updatedDegrees); // Sync local state
+    setValue("degrees", updatedDegrees, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setDegrees(updatedDegrees);
   };
 
-  // const addCompletedDegree = () => {
-  //   const currentCompletedDegrees = getValues("completedDegrees");
-  //   const updatedDegrees = [...currentCompletedDegrees, { degree: "", field: "" }];
-  //   setValue("completedDegrees", updatedDegrees);
-    
-  //   // Fix: properly preserve the boolean value
-  //   const isWorking = watch("isCurrentlyWorking");
-  //   setValue("isCurrentlyWorking", isWorking);
-  //   setCompletedDegrees(updatedDegrees);
-  // };
-
-  const addCompletedDegree = () => {
-    // Get current values
-    const currentCompletedDegrees = getValues("completedDegrees");
-    const updatedDegrees = [...currentCompletedDegrees, { degree: "", field: "" }];
-    
-    // Save current working status before updating the degrees
-    const isWorking = getValues("isCurrentlyWorking") === true;
-    
-    // Update degrees first
-    setValue("completedDegrees", updatedDegrees);
-    
-    // Update the working status with a small delay to ensure it applies after the form update
-    setTimeout(() => {
-      setValue("isCurrentlyWorking", isWorking);
-    }, 0);
-    
-    setCompletedDegrees(updatedDegrees);
-  };
-  
-  // const removeCompletedDegree = (index) => {
-  //   const currentCompletedDegrees = getValues("completedDegrees");
-  //   const updatedDegrees = currentCompletedDegrees.filter((_, i) => i !== index);
-  //   setValue("completedDegrees", updatedDegrees);
-    
-  //   // Fix: properly preserve the boolean value
-  //   const isWorking = watch("isCurrentlyWorking");
-  //   setValue("isCurrentlyWorking", isWorking);
-  //   setCompletedDegrees(updatedDegrees);
-  // };
-
-  const removeCompletedDegree = (index) => {
-    const currentCompletedDegrees = getValues("completedDegrees");
-    const updatedDegrees = currentCompletedDegrees.filter((_, i) => i !== index);
-    
-    // Save current working status
-    const isWorking = getValues("isCurrentlyWorking") === true;
-    
-    // Update degrees
-    setValue("completedDegrees", updatedDegrees);
-    
-    // Ensure working status is preserved
-    setTimeout(() => {
-      setValue("isCurrentlyWorking", isWorking);
-    }, 0);
-    
-    setCompletedDegrees(updatedDegrees);
+  // Dynamic completed entries handlers (Junior's new structure)
+  const addCompletedEntry = () => {
+    const current = getValues("completedEntries");
+    setValue("completedEntries", [
+      ...current,
+      {
+        type: "education",
+        degree: "",
+        field: "",
+        institution: "",
+        startDate: "",
+        endDate: "",
+        isCurrentlyStudying: false,
+        jobTitle: "",
+        company: "",
+        isCurrentlyWorking: false,
+        skills: "",
+      },
+    ]);
   };
 
-  const addJob = () => {
-    const currentJobs = getValues("jobs"); // Retrieve current jobs
-    const updatedJobs = [...currentJobs, { jobTitle: "", yearsOfExperience: 0 }];
-    setValue("jobs", updatedJobs, { shouldValidate: true, shouldDirty: true });
-    // Ensure isCurrentlyWorking remains true
-    setValue("isCurrentlyWorking", true, { shouldValidate: true });
-    setJobs(updatedJobs); // Sync local state
+  const removeCompletedEntry = (index) => {
+    const current = getValues("completedEntries");
+    setValue(
+      "completedEntries",
+      current.filter((_, i) => i !== index)
+    );
   };
-  
-  const removeJob = (index) => {
-    const currentJobs = getValues("jobs"); // Retrieve current jobs
-    const updatedJobs = currentJobs.filter((_, i) => i !== index);
-    setValue("jobs", updatedJobs, { shouldValidate: true, shouldDirty: true });
-    // Ensure isCurrentlyWorking remains true
-    setValue("isCurrentlyWorking", true, { shouldValidate: true });
-    setJobs(updatedJobs); // Sync local state
-  };
-  
-  const addSkill = () => {
-    const currentSkills = getValues("skills"); // Retrieve current skills
-    const updatedSkills = [...currentSkills, { skillName: "" }];
-    setValue("skills", updatedSkills, { shouldValidate: true, shouldDirty: true });
-    // Ensure isCurrentlyWorking remains true
-    setValue("isCurrentlyWorking", true, { shouldValidate: true });
-    setSkills(updatedSkills); // Sync local state
-  };
-  
-  const removeSkill = (index) => {
-    const currentSkills = getValues("skills"); // Retrieve current skills
-    const updatedSkills = currentSkills.filter((_, i) => i !== index);
-    setValue("skills", updatedSkills, { shouldValidate: true, shouldDirty: true });
-    // Ensure isCurrentlyWorking remains true
-    setValue("isCurrentlyWorking", true, { shouldValidate: true });
-    setSkills(updatedSkills); // Sync local state
+
+  const updateEntryType = (index, type) => {
+    const current = getValues("completedEntries");
+    const updated = [...current];
+    updated[index] = {
+      ...updated[index],
+      type,
+      // Reset fields when changing type
+      degree: "",
+      field: "",
+      institution: "",
+      startDate: "",
+      endDate: "",
+      isCurrentlyStudying: false,
+      jobTitle: "",
+      company: "",
+      isCurrentlyWorking: false,
+      skills: "",
+    };
+    setValue("completedEntries", updated);
   };
 
   // Show loading overlay while checking status
@@ -301,626 +331,815 @@ const onSubmit = async (data) => {
       </div>
     );
   }
-  
 
   return (
-    <div className="min-h-screen bg-gray-950 py-12 flex flex-col items-center">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-8">
       <CareerDataCollectionGuide />
-      {/* Page heading section */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-white">Education Profile</h1>
-        <p className="text-gray-400 mt-2">Please provide your educational information to get personalized career suggestions</p>
+
+      {/* Animated background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
-      <div className="bg-gray-900 p-8 rounded-xl shadow-lg w-full max-w-3xl mx-auto">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Education Stage Selection */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-2">Your Education Stage</h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {["school", "college", "completed_education"].map((stage) => (
-                <label 
-                  key={stage} 
-                  className={`flex items-center justify-center p-4 rounded-lg border ${
-                    watch("educationStage") === stage 
-                      ? "bg-blue-600 border-blue-500 text-white" 
-                      : "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
-                  } cursor-pointer transition-colors`}
-                >
-                  <input
-                    type="radio"
-                    {...register("educationStage", { required: "Please select your education stage" })}
-                    value={stage}
-                    className="sr-only"
-                  />
-                  <span className="capitalize">{stage.replace("_", " ")}</span>
-                </label>
-              ))}
-            </div>
-            {errors.educationStage && (
-              <p className="mt-2 text-sm text-red-500">{errors.educationStage.message}</p>
-            )}
+      <div className="relative z-10 max-w-4xl mx-auto px-4">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl backdrop-blur-sm border border-blue-500/30 mb-6">
+            <GraduationCap className="w-10 h-10 text-blue-400" />
           </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
+            Education Profile
+          </h1>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            Tell us about your educational journey to get personalized career
+            recommendations
+          </p>
+        </div>
 
-          {/* School Section */}
-          {educationStage === "school" && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-2">School Details</h2>
+        {/* Main Form Container */}
+        <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/30 rounded-3xl shadow-2xl overflow-hidden">
+          {/* Animated border gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-50 animate-pulse"></div>
 
-              {/* Higher Secondary Selection */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Are you in higher secondary (11th-12th grade)?</label>
-                <div className="flex gap-4">
-                  <label className={`flex items-center justify-center p-3 rounded-lg border ${
-                    watch("isHigherSecondary") === true
-                      ? "bg-blue-600 border-blue-500 text-white" 
-                      : "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
-                  } cursor-pointer transition-colors`}>
-                    <input
-                      type="radio"
-                      {...register("isHigherSecondary")}
-                      value="true"
-                      onChange={() => setValue("isHigherSecondary", true, { shouldValidate: true, shouldDirty: true })}
-                      className="sr-only"
-                    />
-                    <span>Yes</span>
-                  </label>
-                  <label className={`flex items-center justify-center p-3 rounded-lg border ${
-                    watch("isHigherSecondary") === false
-                      ? "bg-blue-600 border-blue-500 text-white" 
-                      : "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
-                  } cursor-pointer transition-colors`}>
-                    <input
-                      type="radio"
-                      {...register("isHigherSecondary")}
-                      value="false"
-                      onChange={() => setValue("isHigherSecondary", false, { shouldValidate: true, shouldDirty: true })}
-                      className="sr-only"
-                    />
-                    <span>No</span>
-                  </label>
+          <div className="relative p-8 lg:p-12">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+              {/* Education Stage Selection */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-white">
+                    Your Education Stage
+                  </h2>
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    { value: "school", label: "School", icon: BookOpen },
+                    { value: "college", label: "College", icon: GraduationCap },
+                    {
+                      value: "completed_education",
+                      label: "Completed Education",
+                      icon: Briefcase,
+                    },
+                  ].map((stage, index) => {
+                    const Icon = stage.icon;
+                    const isSelected = educationStage === stage.value;
+                    return (
+                      <label
+                        key={stage.value}
+                        className={`group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                          isSelected
+                            ? "bg-gradient-to-br from-blue-500/30 to-purple-500/30 border-2 border-blue-400/60 shadow-lg shadow-blue-500/20"
+                            : "bg-gradient-to-br from-gray-700/60 to-gray-800/60 border border-gray-600/40 hover:from-gray-600/60 hover:to-gray-700/60"
+                        }`}
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <input
+                          type="radio"
+                          {...register("educationStage", {
+                            required: "Please select your education stage",
+                          })}
+                          value={stage.value}
+                          className="sr-only"
+                        />
+                        <div className="p-6 text-center">
+                          <div
+                            className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-3 transition-all duration-300 ${
+                              isSelected
+                                ? "bg-gradient-to-br from-blue-400/30 to-purple-400/30"
+                                : "bg-gray-700/50 group-hover:bg-gray-600/50"
+                            }`}
+                          >
+                            <Icon
+                              className={`w-6 h-6 transition-colors duration-300 ${
+                                isSelected
+                                  ? "text-blue-300"
+                                  : "text-gray-400 group-hover:text-gray-300"
+                              }`}
+                            />
+                          </div>
+                          <span
+                            className={`text-lg font-semibold transition-colors duration-300 ${
+                              isSelected
+                                ? "text-blue-200"
+                                : "text-gray-200 group-hover:text-white"
+                            }`}
+                          >
+                            {stage.label}
+                          </span>
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      </label>
+                    );
+                  })}
+                </div>
+                {errors.educationStage && (
+                  <p className="text-red-400 text-sm mt-2 animate-fade-in">
+                    {errors.educationStage.message}
+                  </p>
+                )}
               </div>
 
-              {/* Main Subject (only for higher secondary) */}
-              {isHigherSecondary && (
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Main Subject/Stream</label>
-                  <input
-                    type="text"
-                    {...register("mainSubject", { required: isHigherSecondary && "Please enter your main subject" })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="e.g., Computer Science, Science, Arts, Commerce"
-                  />
-                  {errors.mainSubject && (
-                    <p className="mt-1 text-sm text-red-500">{errors.mainSubject.message}</p>
+              {/* School Section */}
+              {educationStage === "school" && (
+                <div className="space-y-6 transition-all duration-500 ease-out transform translate-y-0 opacity-100">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                      <BookOpen className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">
+                      School Details
+                    </h3>
+                  </div>
+
+                  {/* Higher Secondary Toggle */}
+                  <div className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30">
+                    <label className="block text-gray-300 font-medium mb-4">
+                      Are you in higher secondary (11th-12th grade)?
+                    </label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { value: true, label: "Yes" },
+                        { value: false, label: "No" },
+                      ].map((option) => (
+                        <label
+                          key={option.value.toString()}
+                          className={`flex items-center justify-center p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
+                            isHigherSecondary === option.value
+                              ? "bg-gradient-to-br from-blue-500/30 to-purple-500/30 border-blue-400/60 text-blue-200"
+                              : "bg-gray-800/60 border-gray-600/40 text-gray-300 hover:bg-gray-700/60"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="isHigherSecondary"
+                            value={option.value.toString()}
+                            checked={isHigherSecondary === option.value}
+                            onChange={(e) =>
+                              setValue(
+                                "isHigherSecondary",
+                                e.target.value === "true"
+                              )
+                            }
+                            className="sr-only"
+                          />
+                          <span className="font-medium">{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Main Subject (conditional) */}
+                  {isHigherSecondary && (
+                    <div className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30 transition-all duration-500 ease-out transform translate-y-0 opacity-100">
+                      <label className="block text-gray-300 font-medium mb-4">
+                        Main Subject/Stream
+                      </label>
+                      <input
+                        type="text"
+                        {...register("mainSubject", {
+                          required:
+                            isHigherSecondary &&
+                            "Please enter your main subject",
+                        })}
+                        className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+                        placeholder="e.g., Computer Science, Science, Arts, Commerce"
+                      />
+                      {errors.mainSubject && (
+                        <p className="text-red-400 text-sm mt-2">
+                          {errors.mainSubject.message}
+                        </p>
+                      )}
+                    </div>
                   )}
+
+                  {/* Career Preferences */}
+                  <div className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30">
+                    <label className="block text-gray-300 font-medium mb-4">
+                      Career Suggestion Preference
+                    </label>
+                    <div className="space-y-3">
+                      {(isHigherSecondary
+                        ? [
+                            {
+                              value: "subject_based",
+                              label: "Based on my current subject/stream",
+                            },
+                            {
+                              value: "personality_based",
+                              label:
+                                "Based only on my personality and career interests",
+                            },
+                            { value: "mixed", label: "Mix of both" },
+                          ]
+                        : [
+                            {
+                              value: "personality_based",
+                              label:
+                                "Based on personality and career interests",
+                            },
+                          ]
+                      ).map((option) => (
+                        <label
+                          key={option.value}
+                          className="flex items-start p-4 rounded-lg border border-gray-700/30 bg-gray-800/30 hover:bg-gray-700/30 cursor-pointer transition-all duration-300 group"
+                        >
+                          <input
+                            type="radio"
+                            {...register("schoolPreference", {
+                              required:
+                                isHigherSecondary &&
+                                "Please select a preference",
+                            })}
+                            value={option.value}
+                            className="mt-1 text-blue-500 focus:ring-blue-500"
+                          />
+                          <span className="ml-3 text-gray-200 group-hover:text-white transition-colors duration-300">
+                            {option.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                    {errors.schoolPreference && isHigherSecondary && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.schoolPreference.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Additional Information */}
+                  <div className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30">
+                    <label className="block text-gray-300 font-medium mb-4">
+                      Additional Information (Optional)
+                    </label>
+                    <textarea
+                      {...register("schoolDescription")}
+                      rows={4}
+                      className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 resize-none"
+                      placeholder="Share any additional information about your interests, hobbies, or experiences..."
+                    />
+                  </div>
                 </div>
               )}
 
-              {/* School Preference Selection */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Career Suggestion Preference</label>
-                <div className="space-y-2">
-                  {isHigherSecondary ? (
-                    <>
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("schoolPreference", { required: "Please select a preference" })}
-                          value="subject_based"
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Based on my current subject/stream</span>
-                      </label>
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("schoolPreference")}
-                          value="personality_based" 
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Based only on my personality and career interests</span>
-                      </label>
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("schoolPreference")}
-                          value="mixed"
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Mix of both</span>
-                      </label>
-                    </>
-                  ) : (
-                    <p className="text-gray-400">You will receive career suggestions based on your personality and career interests.</p>
-                  )}
-                </div>
-                {errors.schoolPreference && isHigherSecondary && (
-                  <p className="mt-1 text-sm text-red-500">{errors.schoolPreference.message}</p>
-                )}
-              </div>
-
-              {/* Additional Details */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Additional Information (Optional)</label>
-                <textarea
-                  {...register("schoolDescription")}
-                  rows={4}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Share any additional information about your interests, hobbies, or experiences that might help with career suggestions"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* College Section */}
-          {educationStage === "college" && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-2">College Education</h2>
-
-              {/* Dynamic College Degrees */}
-              <div className="space-y-4">
-                <label className="block text-md font-medium text-gray-200">Your Degree(s)</label>
-                
-                {degrees.map((degree, index) => (
-                  <div key={index} className="p-4 border border-gray-700 rounded-lg bg-gray-800 space-y-3">
-                    <div className="flex justify-between items-center mb-2">
-                      <h4 className="text-white font-medium">Degree {index + 1}</h4>
-                      {index > 0 && (
-                        <button 
-                          type="button" 
-                          onClick={() => removeDegree(index)}
-                          className="text-red-400 hover:text-red-300"
-                        >
-                          Remove
-                        </button>
-                      )}
+              {/* College Section */}
+              {educationStage === "college" && (
+                <div className="space-y-6 transition-all duration-500 ease-out transform translate-y-0 opacity-100">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
+                      <GraduationCap className="w-4 h-4 text-white" />
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Degree/Diploma</label>
-                        <input
-                          type="text"
-                          {...register(`degrees[${index}].degree`, { required: "Degree is required" })}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                          placeholder="e.g., Bachelor's, Master's, Diploma"
-                        />
-                        {errors.degrees?.[index]?.degree && (
-                          <p className="mt-1 text-sm text-red-500">{errors.degrees[index].degree.message}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Field/Subject</label>
-                        <input
-                          type="text"
-                          {...register(`degrees[${index}].field`, { required: "Field is required" })}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                          placeholder="e.g., Computer Science, Engineering, Psychology"
-                        />
-                        {errors.degrees?.[index]?.field && (
-                          <p className="mt-1 text-sm text-red-500">{errors.degrees[index].field.message}</p>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Year of Study</label>
-                        <select
-                          {...register(`degrees[${index}].yearOfStudy`, { required: "Year is required" })}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        >
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => (
-                            <option key={year} value={year}>Year {year}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Status</label>
-                        <div className="flex items-center h-10 mt-1">
-                          <label className="inline-flex items-center">
-                            <input
-                              type="checkbox"
-                              {...register(`degrees[${index}].isCompleted`)}
-                              className="rounded border-gray-700 bg-gray-800 text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="ml-2 text-gray-200">Completed</span>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
+                    <h3 className="text-xl font-bold text-white">
+                      College Education
+                    </h3>
                   </div>
-                ))}
-                
-                <button
-                  type="button"
-                  onClick={addDegree}
-                  className="mt-2 px-4 py-2 border border-gray-700 bg-gray-800 text-blue-400 rounded-md hover:bg-gray-700 transition-colors"
-                >
-                  + Add Another Degree
-                </button>
-              </div>
 
-              {/* College Preference Selection */}
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Career Suggestion Preference</label>
-                <div className="space-y-2">
-                  <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                    <input
-                      type="radio"
-                      {...register("collegePreference", { required: "Please select a preference" })}
-                      value="education_based"
-                      className="mr-2"
-                    />
-                    <span className="text-gray-200">Based on my current education</span>
-                  </label>
-                  <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                    <input
-                      type="radio"
-                      {...register("collegePreference")}
-                      value="personality_based" 
-                      className="mr-2"
-                    />
-                    <span className="text-gray-200">Based only on my personality and career interests</span>
-                  </label>
-                  <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                    <input
-                      type="radio"
-                      {...register("collegePreference")}
-                      value="mixed"
-                      className="mr-2"
-                    />
-                    <span className="text-gray-200">Mix of both</span>
-                  </label>
-                </div>
-                {errors.collegePreference && (
-                  <p className="mt-1 text-sm text-red-500">{errors.collegePreference.message}</p>
-                )}
-              </div>
+                  {/* Dynamic College Degrees */}
+                  <div className="space-y-4">
+                    <label className="block text-md font-medium text-gray-200">
+                      Your Degree(s)
+                    </label>
 
-              {/* Additional Details */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Additional Information (Optional)</label>
-                <textarea
-                  {...register("collegeDescription")}
-                  rows={4}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Share any additional information about your interests, hobbies, or experiences that might help with career suggestions"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Completed Education Section */}
-          {educationStage === "completed_education" && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-2">Completed Education</h2>
-
-              {/* Dynamic Completed Degrees */}
-              <div className="space-y-4">
-                <label className="block text-md font-medium text-gray-200">Your Degree(s)</label>
-                
-                {completedDegrees.map((degree, index) => (
-                  <div key={index} className="p-4 border border-gray-700 rounded-lg bg-gray-800 space-y-3">
-                    <div className="flex justify-between items-center mb-2">
-                      <h4 className="text-white font-medium">Degree {index + 1}</h4>
-                      {index > 0 && (
-                        <button 
-                          type="button" 
-                          onClick={() => removeCompletedDegree(index)}
-                          className="text-red-400 hover:text-red-300"
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Degree/Diploma</label>
-                        <input
-                          type="text"
-                          {...register(`completedDegrees[${index}].degree`, { required: "Degree is required" })}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                          placeholder="e.g., Bachelor's, Master's, Diploma"
-                        />
-                        {errors.completedDegrees?.[index]?.degree && (
-                          <p className="mt-1 text-sm text-red-500">{errors.completedDegrees[index].degree.message}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Field/Subject</label>
-                        <input
-                          type="text"
-                          {...register(`completedDegrees[${index}].field`, { required: "Field is required" })}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                          placeholder="e.g., Computer Science, Engineering, Psychology"
-                        />
-                        {errors.completedDegrees?.[index]?.field && (
-                          <p className="mt-1 text-sm text-red-500">{errors.completedDegrees[index].field.message}</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                
-                <button
-                  type="button"
-                  onClick={addCompletedDegree}
-                  className="mt-2 px-4 py-2 border border-gray-700 bg-gray-800 text-blue-400 rounded-md hover:bg-gray-700 transition-colors"
-                >
-                  + Add Another Degree
-                </button>
-              </div>
-
-              {/* Working Status */}
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Are you currently working?</label>
-                <div className="flex gap-4">
-                <label 
-                  className={`flex items-center justify-center p-3 rounded-lg border ${
-                    watch("isCurrentlyWorking") === true
-                      ? "bg-blue-600 border-blue-500 text-white" 
-                      : "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
-                  } cursor-pointer transition-colors`}
-                >
-                  <input
-                    type="radio"
-                    name="isCurrentlyWorking"
-                    checked={watch("isCurrentlyWorking") === true}
-                    onChange={() => {
-                      setValue("isCurrentlyWorking", true);
-                    }}
-                    className="sr-only"
-                  />
-                  <span>Yes</span>
-                </label>
-                <label 
-                  className={`flex items-center justify-center p-3 rounded-lg border ${
-                    watch("isCurrentlyWorking") === false
-                      ? "bg-blue-600 border-blue-500 text-white" 
-                      : "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
-                  } cursor-pointer transition-colors`}
-                >
-                  <input
-                    type="radio"
-                    name="isCurrentlyWorking"
-                    checked={watch("isCurrentlyWorking") === false}
-                    onChange={() => {
-                      setValue("isCurrentlyWorking", false);
-                    }}
-                    className="sr-only"
-                  />
-                  <span>No</span>
-                </label>
-              </div>
-            </div>
-
-              {/* Jobs and Skills (only if working) */}
-              {isCurrentlyWorking && (
-                <>
-                  {/* Dynamic Jobs */}
-                  <div className="mt-6 space-y-4">
-                    <label className="block text-md font-medium text-gray-200">Your Current Job(s)</label>
-                    
-                    {jobs.map((job, index) => (
-                      <div key={index} className="p-4 border border-gray-700 rounded-lg bg-gray-800 space-y-3">
+                    {watch("degrees")?.map((degree, index) => (
+                      <div
+                        key={index}
+                        className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30 space-y-4"
+                      >
                         <div className="flex justify-between items-center mb-2">
-                          <h4 className="text-white font-medium">Job {index + 1}</h4>
+                          <h4 className="text-white font-medium">
+                            Degree {index + 1}
+                          </h4>
                           {index > 0 && (
-                            <button 
-                              type="button" 
-                              onClick={() => removeJob(index)}
-                              className="text-red-400 hover:text-red-300"
+                            <button
+                              type="button"
+                              onClick={() => removeDegree(index)}
+                              className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-300"
                             >
-                              Remove
+                              <X className="w-4 h-4" />
                             </button>
                           )}
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Job Title</label>
+                            <label className="block text-gray-300 font-medium mb-2">
+                              Degree/Diploma
+                            </label>
                             <input
                               type="text"
-                              {...register(`jobs[${index}].jobTitle`, { required: "Job title is required" })}
-                              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                              placeholder="e.g., Software Engineer, Accountant"
+                              {...register(`degrees[${index}].degree`, {
+                                required: "Degree is required",
+                              })}
+                              className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                              placeholder="e.g., Bachelor's, Master's, Diploma"
                             />
-                            {errors.jobs?.[index]?.jobTitle && (
-                              <p className="mt-1 text-sm text-red-500">{errors.jobs[index].jobTitle.message}</p>
+                            {errors.degrees?.[index]?.degree && (
+                              <p className="mt-1 text-sm text-red-500">
+                                {errors.degrees[index].degree.message}
+                              </p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Years of Experience</label>
+                            <label className="block text-gray-300 font-medium mb-2">
+                              Field/Subject
+                            </label>
                             <input
-                              type="number"
-                              {...register(`jobs[${index}].yearsOfExperience`, { 
-                                required: "Years is required",
-                                min: { value: 0, message: "Must be 0 or more" },
-                                valueAsNumber: true
+                              type="text"
+                              {...register(`degrees[${index}].field`, {
+                                required: "Field is required",
                               })}
-                              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                              placeholder="e.g., 2"
-                              min="0"
+                              className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                              placeholder="e.g., Computer Science, Engineering"
                             />
-                            {errors.jobs?.[index]?.yearsOfExperience && (
-                              <p className="mt-1 text-sm text-red-500">{errors.jobs[index].yearsOfExperience.message}</p>
+                            {errors.degrees?.[index]?.field && (
+                              <p className="mt-1 text-sm text-red-500">
+                                {errors.degrees[index].field.message}
+                              </p>
                             )}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-gray-300 font-medium mb-2">
+                              Year of Study
+                            </label>
+                            <div className="relative">
+                              <select
+                                {...register(`degrees[${index}].yearOfStudy`, {
+                                  required: "Year is required",
+                                })}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer"
+                              >
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                                  <option key={year} value={year}>
+                                    Year {year}
+                                  </option>
+                                ))}
+                              </select>
+                              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-gray-300 font-medium mb-2">
+                              Status
+                            </label>
+                            <div className="flex items-center h-12 mt-1">
+                              <label className="inline-flex items-center cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  {...register(`degrees[${index}].isCompleted`)}
+                                  className="rounded border-gray-700 bg-gray-800 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className="ml-2 text-gray-200">
+                                  Completed
+                                </span>
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </div>
                     ))}
-                    
+
                     <button
                       type="button"
-                      onClick={addJob}
-                      className="mt-2 px-4 py-2 border border-gray-700 bg-gray-800 text-blue-400 rounded-md hover:bg-gray-700 transition-colors"
+                      onClick={addDegree}
+                      className="w-full p-4 border-2 border-dashed border-gray-600 rounded-xl text-gray-400 hover:text-gray-300 hover:border-gray-500 transition-all duration-300 flex items-center justify-center gap-2 group"
                     >
-                      + Add Another Job
+                      <Plus className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                      Add Another Degree
                     </button>
                   </div>
 
-                  {/* Dynamic Skills */}
-                  <div className="mt-6 space-y-4">
-                    <label className="block text-md font-medium text-gray-200">Your Skills</label>
-                    
-                    {skills.map((skill, index) => (
-                      <div key={index} className="p-4 border border-gray-700 rounded-lg bg-gray-800 space-y-3">
-                        <div className="flex justify-between items-center mb-2">
-                          <h4 className="text-white font-medium">Skill {index + 1}</h4>
+                  {/* College Preference Selection */}
+                  <div className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30">
+                    <label className="block text-gray-300 font-medium mb-4">
+                      Career Suggestion Preference
+                    </label>
+                    <div className="space-y-3">
+                      {[
+                        {
+                          value: "education_based",
+                          label: "Based on my current education",
+                        },
+                        {
+                          value: "personality_based",
+                          label:
+                            "Based only on my personality and career interests",
+                        },
+                        { value: "mixed", label: "Mix of both" },
+                      ].map((option) => (
+                        <label
+                          key={option.value}
+                          className="flex items-start p-4 rounded-lg border border-gray-700/30 bg-gray-800/30 hover:bg-gray-700/30 cursor-pointer transition-all duration-300 group"
+                        >
+                          <input
+                            type="radio"
+                            {...register("collegePreference", {
+                              required: "Please select a preference",
+                            })}
+                            value={option.value}
+                            className="mt-1 text-blue-500 focus:ring-blue-500"
+                          />
+                          <span className="ml-3 text-gray-200 group-hover:text-white transition-colors duration-300">
+                            {option.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                    {errors.collegePreference && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.collegePreference.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Additional Details */}
+                  <div className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30">
+                    <label className="block text-gray-300 font-medium mb-4">
+                      Additional Information (Optional)
+                    </label>
+                    <textarea
+                      {...register("collegeDescription")}
+                      rows={4}
+                      className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 resize-none"
+                      placeholder="Share any additional information about your interests, hobbies, or experiences..."
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Completed Education Section - Junior's Enhanced Design */}
+              {educationStage === "completed_education" && (
+                <div className="space-y-6 transition-all duration-500 ease-out transform translate-y-0 opacity-100">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                      <Briefcase className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">
+                      Education & Work Experience
+                    </h3>
+                  </div>
+
+                  {/* Dynamic Completed Entries */}
+                  <div className="space-y-4">
+                    {completedEntries.map((entry, index) => (
+                      <div
+                        key={index}
+                        className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30 space-y-4 relative group"
+                      >
+                        <div className="flex justify-between items-center mb-4">
+                          <h4 className="text-white font-medium">
+                            Entry {index + 1}
+                          </h4>
                           {index > 0 && (
-                            <button 
-                              type="button" 
-                              onClick={() => removeSkill(index)}
-                              className="text-red-400 hover:text-red-300"
-                              >
-                                Remove
-                              </button>
-                            )}
-                          </div>
-                          
-                          <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Skill Name</label>
-                            <input
-                              type="text"
-                              {...register(`skills[${index}].skillName`, { required: "Skill name is required" })}
-                              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                              placeholder="e.g., Programming, Project Management, Data Analysis"
-                            />
-                            {errors.skills?.[index]?.skillName && (
-                              <p className="mt-1 text-sm text-red-500">{errors.skills[index].skillName.message}</p>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => removeCompletedEntry(index)}
+                              className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-300"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Entry Type Dropdown */}
+                        <div className="mb-4">
+                          <label className="block text-gray-300 font-medium mb-2">
+                            Type
+                          </label>
+                          <div className="relative">
+                            <select
+                              value={entry.type}
+                              onChange={(e) =>
+                                updateEntryType(index, e.target.value)
+                              }
+                              className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer"
+                            >
+                              <option value="education">Education</option>
+                              <option value="work">Work Experience</option>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                           </div>
                         </div>
-                      ))}
-                      
-                      <button
-                        type="button"
-                        onClick={addSkill}
-                        className="mt-2 px-4 py-2 border border-gray-700 bg-gray-800 text-blue-400 rounded-md hover:bg-gray-700 transition-colors"
-                      >
-                        + Add Another Skill
-                      </button>
-                    </div>
-                  </>
-                )}
-  
-                {/* Career Preference Selection - Working */}
-                {isCurrentlyWorking && (
-                  <div className="mt-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Career Suggestion Preference</label>
-                    <div className="space-y-2">
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("completedPreference", { required: "Please select a preference" })}
-                          value="education_based"
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Based on my education</span>
-                      </label>
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("completedPreference")}
-                          value="job_based" 
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Based on my current job and skills</span>
-                      </label>
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("completedPreference")}
-                          value="personality_based"
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Based only on my personality and career interests</span>
-                      </label>
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("completedPreference")}
-                          value="mixed_all"
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Mix of all</span>
-                      </label>
-                    </div>
-                    {errors.completedPreference && isCurrentlyWorking && (
-                      <p className="mt-1 text-sm text-red-500">{errors.completedPreference.message}</p>
-                    )}
+
+                        {/* Education Fields */}
+                        {entry.type === "education" && (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-gray-300 font-medium mb-2">
+                                Degree/Diploma
+                              </label>
+                              <input
+                                type="text"
+                                {...register(
+                                  `completedEntries[${index}].degree`,
+                                  { required: "Degree is required" }
+                                )}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="e.g., Bachelor's, Master's"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-gray-300 font-medium mb-2">
+                                Field of Study
+                              </label>
+                              <input
+                                type="text"
+                                {...register(
+                                  `completedEntries[${index}].field`,
+                                  { required: "Field is required" }
+                                )}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="e.g., Computer Science"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-gray-300 font-medium mb-2">
+                                Institution
+                              </label>
+                              <input
+                                type="text"
+                                {...register(
+                                  `completedEntries[${index}].institution`
+                                )}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="e.g., University Name"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-gray-300 font-medium mb-2">
+                                Start Date
+                              </label>
+                              <input
+                                type="month"
+                                {...register(
+                                  `completedEntries[${index}].startDate`
+                                )}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-gray-300 font-medium mb-2">
+                                End Date
+                              </label>
+                              <input
+                                type="month"
+                                {...register(
+                                  `completedEntries[${index}].endDate`
+                                )}
+                                disabled={watch(
+                                  `completedEntries[${index}].isCurrentlyStudying`
+                                )}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50"
+                              />
+                            </div>
+                            <div className="flex items-center">
+                              <label className="flex items-center cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  {...register(
+                                    `completedEntries[${index}].isCurrentlyStudying`
+                                  )}
+                                  className="rounded border-gray-600 bg-gray-800 text-blue-500 focus:ring-blue-500"
+                                />
+                                <span className="ml-2 text-gray-300">
+                                  Currently studying
+                                </span>
+                              </label>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Work Fields */}
+                        {entry.type === "work" && (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-gray-300 font-medium mb-2">
+                                Job Title
+                              </label>
+                              <input
+                                type="text"
+                                {...register(
+                                  `completedEntries[${index}].jobTitle`,
+                                  { required: "Job title is required" }
+                                )}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="e.g., Software Engineer"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-gray-300 font-medium mb-2">
+                                Company
+                              </label>
+                              <input
+                                type="text"
+                                {...register(
+                                  `completedEntries[${index}].company`
+                                )}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="e.g., Company Name"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-gray-300 font-medium mb-2">
+                                Start Date
+                              </label>
+                              <input
+                                type="month"
+                                {...register(
+                                  `completedEntries[${index}].startDate`
+                                )}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-gray-300 font-medium mb-2">
+                                End Date
+                              </label>
+                              <input
+                                type="month"
+                                {...register(
+                                  `completedEntries[${index}].endDate`
+                                )}
+                                disabled={watch(
+                                  `completedEntries[${index}].isCurrentlyWorking`
+                                )}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50"
+                              />
+                            </div>
+                            <div className="md:col-span-2">
+                              <label className="block text-gray-300 font-medium mb-2">
+                                Skills
+                              </label>
+                              <textarea
+                                {...register(
+                                  `completedEntries[${index}].skills`
+                                )}
+                                rows={3}
+                                className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
+                                placeholder="e.g., JavaScript, Project Management, Data Analysis"
+                              />
+                            </div>
+                            <div className="flex items-center">
+                              <label className="flex items-center cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  {...register(
+                                    `completedEntries[${index}].isCurrentlyWorking`
+                                  )}
+                                  className="rounded border-gray-600 bg-gray-800 text-blue-500 focus:ring-blue-500"
+                                />
+                                <span className="ml-2 text-gray-300">
+                                  Currently working
+                                </span>
+                              </label>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={addCompletedEntry}
+                      className="w-full p-4 border-2 border-dashed border-gray-600 rounded-xl text-gray-400 hover:text-gray-300 hover:border-gray-500 transition-all duration-300 flex items-center justify-center gap-2 group"
+                    >
+                      <Plus className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                      Add Another Entry
+                    </button>
                   </div>
-                )}
-  
-                {/* Career Preference Selection - Not Working */}
-                {educationStage === "completed_education" && isCurrentlyWorking === false && (
-                  <div className="mt-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Career Suggestion Preference</label>
-                    <div className="space-y-2">
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("noJobPreference", { required: "Please select a preference" })}
-                          value="education_based"
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Based on my education</span>
-                      </label>
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("noJobPreference")}
-                          value="personality_based" 
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Based only on my personality and career interests</span>
-                      </label>
-                      <label className="flex items-center p-3 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          {...register("noJobPreference")}
-                          value="mixed"
-                          className="mr-2"
-                        />
-                        <span className="text-gray-200">Mix of both</span>
-                      </label>
+
+                  {/* Career Preferences for Completed Education */}
+                  <div className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30">
+                    <label className="block text-gray-300 font-medium mb-4">
+                      Career Suggestion Preference
+                    </label>
+                    <div className="space-y-3">
+                      {/* Check if user has work experience */}
+                      {completedEntries.some(
+                        (entry) =>
+                          entry.type === "work" && entry.isCurrentlyWorking
+                      )
+                        ? // Show options for users with work experience
+                          [
+                            {
+                              value: "education_based",
+                              label: "Based on my education",
+                            },
+                            {
+                              value: "job_based",
+                              label: "Based on my current job and skills",
+                            },
+                            {
+                              value: "personality_based",
+                              label:
+                                "Based only on my personality and career interests",
+                            },
+                            { value: "mixed_all", label: "Mix of all" },
+                          ].map((option) => (
+                            <label
+                              key={option.value}
+                              className="flex items-start p-4 rounded-lg border border-gray-700/30 bg-gray-800/30 hover:bg-gray-700/30 cursor-pointer transition-all duration-300 group"
+                            >
+                              <input
+                                type="radio"
+                                {...register("completedPreference", {
+                                  required: "Please select a preference",
+                                })}
+                                value={option.value}
+                                className="mt-1 text-blue-500 focus:ring-blue-500"
+                              />
+                              <span className="ml-3 text-gray-200 group-hover:text-white transition-colors duration-300">
+                                {option.label}
+                              </span>
+                            </label>
+                          ))
+                        : // Show options for users without work experience
+                          [
+                            {
+                              value: "education_based",
+                              label: "Based on my education",
+                            },
+                            {
+                              value: "personality_based",
+                              label:
+                                "Based only on my personality and career interests",
+                            },
+                            { value: "mixed", label: "Mix of both" },
+                          ].map((option) => (
+                            <label
+                              key={option.value}
+                              className="flex items-start p-4 rounded-lg border border-gray-700/30 bg-gray-800/30 hover:bg-gray-700/30 cursor-pointer transition-all duration-300 group"
+                            >
+                              <input
+                                type="radio"
+                                {...register("noJobPreference", {
+                                  required: "Please select a preference",
+                                })}
+                                value={option.value}
+                                className="mt-1 text-blue-500 focus:ring-blue-500"
+                              />
+                              <span className="ml-3 text-gray-200 group-hover:text-white transition-colors duration-300">
+                                {option.label}
+                              </span>
+                            </label>
+                          ))}
                     </div>
-                    {errors.noJobPreference && isCurrentlyWorking === false && (
-                      <p className="mt-1 text-sm text-red-500">{errors.noJobPreference.message}</p>
-                    )}
+                    {errors.completedPreference &&
+                      completedEntries.some(
+                        (entry) =>
+                          entry.type === "work" && entry.isCurrentlyWorking
+                      ) && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.completedPreference.message}
+                        </p>
+                      )}
+                    {errors.noJobPreference &&
+                      !completedEntries.some(
+                        (entry) =>
+                          entry.type === "work" && entry.isCurrentlyWorking
+                      ) && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.noJobPreference.message}
+                        </p>
+                      )}
                   </div>
-                )}
-  
-                {/* Additional Details */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Additional Information (Optional)</label>
-                  <textarea
-                    {...register("completedDescription")}
-                    rows={4}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Share any additional information about your interests, hobbies, or experiences that might help with career suggestions"
-                  />
+
+                  {/* Additional Details */}
+                  <div className="bg-gray-800/40 rounded-xl p-6 border border-gray-700/30">
+                    <label className="block text-gray-300 font-medium mb-4">
+                      Additional Information (Optional)
+                    </label>
+                    <textarea
+                      {...register("completedDescription")}
+                      rows={4}
+                      className="w-full px-4 py-3 bg-gray-900/60 border border-gray-600/40 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 resize-none"
+                      placeholder="Share any additional information about your interests, hobbies, or experiences..."
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
-  
-            {/* Submit Button - Only show if education stage is selected */}
-            {educationStage && (
-              <div className="mt-8">
-                <button
-                  type="submit"
-                  className="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                >
-                  Save Profile
-                </button>
-              </div>
-            )}
-          </form>
+              )}
+
+              {/* Submit Button */}
+              {educationStage && (
+                <div className="pt-8">
+                  <button
+                    type="submit"
+                    className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden group"
+                  >
+                    Save Education Profile
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </button>
+                </div>
+              )}
+            </form>
+          </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
