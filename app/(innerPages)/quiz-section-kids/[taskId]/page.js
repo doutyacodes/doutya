@@ -136,8 +136,9 @@ function Page({ params }) {
       }, 1000);
 
       const timer = setTimeout(() => {
-        const url = typeof window !== "undefined" ? localStorage.getItem("dashboardUrl") : null;
-        router.replace(url);
+        // const url = typeof window !== "undefined" ? localStorage.getItem("dashboardUrl") : null;
+        // router.replace(url);
+        router.replace("/personality");
         console.log("Route");
       }, 5000);
 
