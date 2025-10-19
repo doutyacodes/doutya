@@ -10,6 +10,7 @@ import {
   FaBuilding,
   FaInfoCircle,
   FaVial,
+  FaUsers,
 } from "react-icons/fa";
 import { PiCompassRoseFill } from "react-icons/pi";
 import { AlertCircle, CheckCircle, ChevronLeft, Clock } from "lucide-react";
@@ -164,6 +165,12 @@ const LeftSideBar = () => {
         },
         { name: "Career Guide", link: "/dashboard/careers/career-guide" },
       ],
+    },
+    {
+      name: "Community",
+      icon: <FaUsers className="text-base" />, // You might need to import FaUsers from react-icons/fa
+      link: "/community",
+      submenus: [],
     },
     // {
     //   name: "Companies",

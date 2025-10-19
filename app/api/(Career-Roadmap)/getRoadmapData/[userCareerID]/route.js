@@ -570,7 +570,7 @@ export async function GET(req, { params }) {
           );
         }
 
-        scopeId = userCareerData[0].careerGroupID;
+        scopeId = userCareerID;
         scopeName = userCareerData[0].career_name;
         type1 = userCareerData[0].type1;
         type2 = userCareerData[0].type2;
@@ -580,7 +580,7 @@ export async function GET(req, { params }) {
         // Fetch cluster data from USER_CLUSTER
         const userClusterData = await db
           .select({
-            clusterId: CLUSTER.id,
+            clusterId: USER_CLUSTER.id,
             clusterName: CLUSTER.name,
             mbtiType: USER_CLUSTER.mbti_type,
             riasecCode: USER_CLUSTER.riasec_code,
@@ -607,7 +607,7 @@ export async function GET(req, { params }) {
         // Fetch sector data from USER_SECTOR
         const userSectorData = await db
           .select({
-            sectorId: SECTOR.id,
+            sectorId: USER_SECTOR.id,
             sectorName: SECTOR.name,
             sectorDescription: SECTOR.description,
             mbtiType: USER_SECTOR.mbti_type,
@@ -638,6 +638,9 @@ export async function GET(req, { params }) {
         );
     }
 
+    console.log("scopeType", scopeType);
+    console.log("scopeId", scopeId);
+
     // Fetch milestones based on scope type
     let userMilestones;
 
@@ -651,64 +654,72 @@ export async function GET(req, { params }) {
       );
 
       // First check if milestones exist for this class level and month
-      const existingMilestones = await db
-        .select({
-          milestoneId: MILESTONES.id,
-          milestoneDescription: MILESTONES.description,
-          milestoneCategoryName: MILESTONE_CATEGORIES.name,
-          milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
-          milestoneCompletionStatus: MILESTONES.completion_status,
-          milestoneDateAchieved: MILESTONES.date_achieved,
-          certificationId: CERTIFICATIONS.id,
-          certificationName: CERTIFICATIONS.certification_name,
-          certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
-          courseStatus: USER_COURSE_PROGRESS.status,
-        })
-        .from(MILESTONES)
-        .innerJoin(
-          MILESTONE_CATEGORIES,
-          eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
+     const existingMilestones = await db
+      .select({
+        milestoneId: MILESTONES.id,
+        milestoneDescription: MILESTONES.description,
+        milestoneCategoryName: MILESTONE_CATEGORIES.name,
+        milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
+        milestoneCompletionStatus: USER_MILESTONES.completion_status,
+        milestoneDateAchieved: USER_MILESTONES.date_achieved,
+        certificationId: CERTIFICATIONS.id,
+        certificationName: CERTIFICATIONS.certification_name,
+        certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
+        courseStatus: USER_COURSE_PROGRESS.status,
+      })
+      .from(MILESTONES)
+      .innerJoin(
+        MILESTONE_CATEGORIES,
+        eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
+      )
+      .leftJoin(
+        MILESTONE_SUBCATEGORIES,
+        eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+      )
+      .leftJoin(
+        USER_MILESTONES,
+        and(
+          eq(USER_MILESTONES.milestone_id, MILESTONES.id),
+          eq(USER_MILESTONES.user_id, userId),
+          eq(USER_MILESTONES.scope_id, scopeId),
+          eq(USER_MILESTONES.scope_type, scopeType)
         )
-        .leftJoin(
-          MILESTONE_SUBCATEGORIES,
-          eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+      )
+      .leftJoin(
+        CERTIFICATIONS,
+        and(
+          eq(CERTIFICATIONS.milestone_id, MILESTONES.id),
+          eq(CERTIFICATIONS.scope_id, scopeId),
+          eq(CERTIFICATIONS.scope_type, scopeType)
         )
-        .leftJoin(
-          CERTIFICATIONS,
-          and(
-            eq(CERTIFICATIONS.milestone_id, MILESTONES.id),
-            eq(CERTIFICATIONS.scope_id, scopeId),
-            eq(CERTIFICATIONS.scope_type, scopeType)
-          )
+      )
+      .leftJoin(
+        USER_CERTIFICATION_COMPLETION,
+        and(
+          eq(
+            USER_CERTIFICATION_COMPLETION.certification_id,
+            CERTIFICATIONS.id
+          ),
+          eq(USER_CERTIFICATION_COMPLETION.user_id, userId)
         )
-        .leftJoin(
-          USER_CERTIFICATION_COMPLETION,
-          and(
-            eq(
-              USER_CERTIFICATION_COMPLETION.certification_id,
-              CERTIFICATIONS.id
-            ),
-            eq(USER_CERTIFICATION_COMPLETION.user_id, userId)
-          )
+      )
+      .leftJoin(
+        USER_COURSE_PROGRESS,
+        and(
+          eq(USER_COURSE_PROGRESS.certification_id, CERTIFICATIONS.id),
+          eq(USER_COURSE_PROGRESS.user_id, userId)
         )
-        .leftJoin(
-          USER_COURSE_PROGRESS,
-          and(
-            eq(USER_COURSE_PROGRESS.certification_id, CERTIFICATIONS.id),
-            eq(USER_COURSE_PROGRESS.user_id, userId)
-          )
+      )
+      .where(
+        and(
+          eq(MILESTONES.class_level, classLevel),
+          scopeType === "sector"
+            ? eq(MILESTONES.sector_id, scopeId)
+            : eq(MILESTONES.cluster_id, scopeId),
+          eq(MILESTONES.milestone_interval, currentMonth)
         )
-        .where(
-          and(
-            eq(MILESTONES.class_level, classLevel),
-            scopeType === "sector"
-              ? eq(MILESTONES.sector_id, scopeId)
-              : eq(MILESTONES.cluster_id, scopeId),
-            eq(MILESTONES.milestone_interval, currentMonth)
-          )
-        )
-        .execute();
-
+      )
+      .execute();
       // If no milestones exist, handle generation with duplicate prevention
       if (existingMilestones.length === 0) {
         console.log(
@@ -742,8 +753,8 @@ export async function GET(req, { params }) {
                   milestoneDescription: MILESTONES.description,
                   milestoneCategoryName: MILESTONE_CATEGORIES.name,
                   milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
-                  milestoneCompletionStatus: MILESTONES.completion_status,
-                  milestoneDateAchieved: MILESTONES.date_achieved,
+                  milestoneCompletionStatus: USER_MILESTONES.completion_status,
+                  milestoneDateAchieved: USER_MILESTONES.date_achieved,
                   certificationId: CERTIFICATIONS.id,
                   certificationName: CERTIFICATIONS.certification_name,
                   certificationCompletedStatus:
@@ -758,6 +769,15 @@ export async function GET(req, { params }) {
                 .leftJoin(
                   MILESTONE_SUBCATEGORIES,
                   eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+                )
+                .leftJoin(
+                  USER_MILESTONES,
+                  and(
+                    eq(USER_MILESTONES.milestone_id, MILESTONES.id),
+                    eq(USER_MILESTONES.user_id, userId),
+                    eq(USER_MILESTONES.scope_id, scopeId),
+                    eq(USER_MILESTONES.scope_type, scopeType)
+                  )
                 )
                 .leftJoin(
                   CERTIFICATIONS,
@@ -808,68 +828,77 @@ export async function GET(req, { params }) {
               );
               await waitForMilestoneGenerationCompletion(milestoneKeyHash);
 
-              // Fetch the generated milestones
-              const generatedMilestones = await db
-                .select({
-                  milestoneId: MILESTONES.id,
-                  milestoneDescription: MILESTONES.description,
-                  milestoneCategoryName: MILESTONE_CATEGORIES.name,
-                  milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
-                  milestoneCompletionStatus: MILESTONES.completion_status,
-                  milestoneDateAchieved: MILESTONES.date_achieved,
-                  certificationId: CERTIFICATIONS.id,
-                  certificationName: CERTIFICATIONS.certification_name,
-                  certificationCompletedStatus:
-                    USER_CERTIFICATION_COMPLETION.completed,
-                  courseStatus: USER_COURSE_PROGRESS.status,
-                })
-                .from(MILESTONES)
-                .innerJoin(
-                  MILESTONE_CATEGORIES,
-                  eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
+           // Fetch the generated milestones
+            const generatedMilestones = await db
+              .select({
+                milestoneId: MILESTONES.id,
+                milestoneDescription: MILESTONES.description,
+                milestoneCategoryName: MILESTONE_CATEGORIES.name,
+                milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
+                milestoneCompletionStatus: USER_MILESTONES.completion_status,
+                milestoneDateAchieved: USER_MILESTONES.date_achieved,
+                certificationId: CERTIFICATIONS.id,
+                certificationName: CERTIFICATIONS.certification_name,
+                certificationCompletedStatus:
+                  USER_CERTIFICATION_COMPLETION.completed,
+                courseStatus: USER_COURSE_PROGRESS.status,
+              })
+              .from(MILESTONES)
+              .innerJoin(
+                MILESTONE_CATEGORIES,
+                eq(MILESTONES.category_id, MILESTONE_CATEGORIES.id)
+              )
+              .leftJoin(
+                MILESTONE_SUBCATEGORIES,
+                eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+              )
+              .leftJoin(
+                USER_MILESTONES,
+                and(
+                  eq(USER_MILESTONES.milestone_id, MILESTONES.id),
+                  eq(USER_MILESTONES.user_id, userId),
+                  eq(USER_MILESTONES.scope_id, scopeId),
+                  eq(USER_MILESTONES.scope_type, scopeType)
                 )
-                .leftJoin(
-                  MILESTONE_SUBCATEGORIES,
-                  eq(MILESTONES.subcategory_id, MILESTONE_SUBCATEGORIES.id)
+              )
+              .leftJoin(
+                CERTIFICATIONS,
+                and(
+                  eq(CERTIFICATIONS.milestone_id, MILESTONES.id),
+                  eq(CERTIFICATIONS.scope_id, scopeId),
+                  eq(CERTIFICATIONS.scope_type, scopeType)
                 )
-                .leftJoin(
-                  CERTIFICATIONS,
-                  and(
-                    eq(CERTIFICATIONS.milestone_id, MILESTONES.id),
-                    eq(CERTIFICATIONS.scope_id, scopeId),
-                    eq(CERTIFICATIONS.scope_type, scopeType)
-                  )
+              )
+              .leftJoin(
+                USER_CERTIFICATION_COMPLETION,
+                and(
+                  eq(
+                    USER_CERTIFICATION_COMPLETION.certification_id,
+                    CERTIFICATIONS.id
+                  ),
+                  eq(USER_CERTIFICATION_COMPLETION.user_id, userId)
                 )
-                .leftJoin(
-                  USER_CERTIFICATION_COMPLETION,
-                  and(
-                    eq(
-                      USER_CERTIFICATION_COMPLETION.certification_id,
-                      CERTIFICATIONS.id
-                    ),
-                    eq(USER_CERTIFICATION_COMPLETION.user_id, userId)
-                  )
+              )
+              .leftJoin(
+                USER_COURSE_PROGRESS,
+                and(
+                  eq(
+                    USER_COURSE_PROGRESS.certification_id,
+                    CERTIFICATIONS.id
+                  ),
+                  eq(USER_COURSE_PROGRESS.user_id, userId)
                 )
-                .leftJoin(
-                  USER_COURSE_PROGRESS,
-                  and(
-                    eq(
-                      USER_COURSE_PROGRESS.certification_id,
-                      CERTIFICATIONS.id
-                    ),
-                    eq(USER_COURSE_PROGRESS.user_id, userId)
-                  )
+              )
+              .where(
+                and(
+                  eq(MILESTONES.class_level, classLevel),
+                  scopeType === "sector"
+                    ? eq(MILESTONES.sector_id, scopeId)
+                    : eq(MILESTONES.cluster_id, scopeId),
+                  eq(MILESTONES.milestone_interval, currentMonth)
                 )
-                .where(
-                  and(
-                    eq(MILESTONES.class_level, classLevel),
-                    scopeType === "sector"
-                      ? eq(MILESTONES.sector_id, scopeId)
-                      : eq(MILESTONES.cluster_id, scopeId),
-                    eq(MILESTONES.milestone_interval, currentMonth)
-                  )
-                )
-                .execute();
+              )
+              .execute();
 
               userMilestones = generatedMilestones;
               break;
@@ -964,7 +993,8 @@ export async function GET(req, { params }) {
           .where(
             and(
               eq(USER_MILESTONES.scope_id, userCareerID),
-              eq(USER_MILESTONES.scope_type, scopeType)
+              eq(USER_MILESTONES.scope_type, scopeType),
+              eq(USER_MILESTONES.user_id, userId)
             )
           )
           .execute();
@@ -978,6 +1008,7 @@ export async function GET(req, { params }) {
                 scope_id: userCareerID,
                 scope_type: scopeType,
                 milestone_id: milestone.milestoneId,
+                user_id: userId,
               })
               .execute();
           }
@@ -986,15 +1017,15 @@ export async function GET(req, { params }) {
         userMilestones = existingMilestones;
       }
     } else {
-      // For careers, fetch user milestones as before (no duplicate prevention needed)
+     // For careers, fetch user milestones as before (no duplicate prevention needed)
       userMilestones = await db
         .select({
           milestoneId: USER_MILESTONES.milestone_id,
           milestoneDescription: MILESTONES.description,
           milestoneCategoryName: MILESTONE_CATEGORIES.name,
           milestoneSubcategoryName: MILESTONE_SUBCATEGORIES.name,
-          milestoneCompletionStatus: MILESTONES.completion_status,
-          milestoneDateAchieved: MILESTONES.date_achieved,
+          milestoneCompletionStatus: USER_MILESTONES.completion_status,
+          milestoneDateAchieved: USER_MILESTONES.date_achieved,
           certificationId: CERTIFICATIONS.id,
           certificationName: CERTIFICATIONS.certification_name,
           certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
@@ -1039,6 +1070,7 @@ export async function GET(req, { params }) {
         )
         .where(
           and(
+            eq(USER_MILESTONES.user_id, userId),
             eq(USER_MILESTONES.scope_id, scopeId),
             eq(USER_MILESTONES.scope_type, scopeType),
             eq(MILESTONES.class_level, classLevel),

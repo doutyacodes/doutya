@@ -31,6 +31,20 @@ function SignUp() {
     return date.toISOString().split("T")[0]; // Format it as YYYY-MM-DD
   };
 
+  // Add these new state variables after line 33
+  const [institutionType, setInstitutionType] = useState(""); // "School" or "College"
+  const [institutions, setInstitutions] = useState([]);
+  const [filteredInstitutions, setFilteredInstitutions] = useState([]);
+  const [institutionSearch, setInstitutionSearch] = useState("");
+  const [selectedInstitution, setSelectedInstitution] = useState(null);
+  const [classOptions, setClassOptions] = useState([]);
+  const [divisionOptions, setDivisionOptions] = useState([]);
+  const [streamOptions, setStreamOptions] = useState([]);
+  const [courseOptions, setCourseOptions] = useState([]);
+  const [selectedClassGrade, setSelectedClassGrade] = useState("");
+  const [selectedStream, setSelectedStream] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState("");
+
   const [selectedDOB, setSelectedDOB] = useState(null);
   const [step, setStep] = useState("eligibility_info");
   const [isCollegeStudent, setIsCollegeStudent] = useState(false);
@@ -43,7 +57,6 @@ function SignUp() {
   const [ageCategory, setAgeCategory] = useState(""); // New state for age category
   const [selectedClass, setSelectedClass] = useState("");
 
-  const [selectedStream, setSelectedStream] = useState("");
   const [showStreamInput, setShowStreamInput] = useState(false);
 
   // const [institutions, setInstitutions] = useState([]);
@@ -52,30 +65,7 @@ function SignUp() {
 
   const router = useRouter();
   const t = useTranslations("SignupPage");
-  // useEffect(() => {
-  //   const authCheck = () => {
-  //     if (typeof window !== "undefined") {
-  //       const token = localStorage.getItem("token");
-  //       if (token) {
-  //         // router.push("/dashboard");
-  //         const url = typeof window !== "undefined" ? localStorage.getItem("navigateUrl") : null;
-  //         router.replace(url);
-  //       } 
-  //     }
-  //   };
-  //   authCheck();
-  // }, [router]);
 
-  // const classMapping = {
-  //   "6": "6th",
-  //   "7": "7th", 
-  //   "8": "8th",
-  //   "9": "9th",
-  //   "10": "10th",
-  //   "11": "11th",
-  //   "12": "12th",
-  //   "college": "College"
-  // };
   const {
     register,
     handleSubmit,
@@ -97,22 +87,6 @@ function SignUp() {
     1: "Career Change",
   };
 
-  const streamOptions = [
-    "Science",
-    "Commerce", 
-    "Arts/Humanities",
-    "Biology",
-    "Mathematics",
-    "Computer Science",
-    "Economics",
-    "Literature",
-    "Other"
-  ];
-
-  // useEffect(() => {
-  //   router.push("/login");
-  // });
-
   useEffect(() => {
     localStorage.setItem("language", selectedLanguage);
     document.cookie = `locale=${selectedLanguage}; path=/`;
@@ -126,60 +100,114 @@ function SignUp() {
     setSelectedLanguage(newLanguage);
   };
 
-  // // Fetch institutes on component mount
-  // useEffect(() => {
-  //   const fetchInstitutes = async () => {
-  //     try {
-  //       const response = await GlobalApi.GetAllInstitutes();
-  //       if (response.status === 200) {
-  //         console.log("before");
-  //         setInstitutions(response.data.institutions);
-  //         console.log("after");
-  //       }
-  //     } catch (error) {
-  //       toast.error("Failed to fetch institutes");
-  //     }
-  //   };
+  // Fetch institutions when type is selected
+  useEffect(() => {
+    if (institutionType) {
+      fetchInstitutions();
+    }
+  }, [institutionType]);
 
-  //   fetchInstitutes();
-  // }, []);
+  // Filter institutions based on search
+  useEffect(() => {
+    if (institutionSearch) {
+      const filtered = institutions.filter(inst =>
+        inst.name.toLowerCase().includes(institutionSearch.toLowerCase())
+      );
+      setFilteredInstitutions(filtered);
+    } else {
+      setFilteredInstitutions(institutions);
+    }
+  }, [institutionSearch, institutions]);
 
-  // // Function to fetch classes for a specific child
-  // const fetchClassesForChild = async (instituteId) => {
-  //   try {
-  //     const response = await GlobalApi.GetClassesByInstitute(instituteId);
-  //     if (response.status === 200) {
-  //       console.log("before");
-  //       setChildClassOptions(response.data.classes);
-  //       console.log("after 1");
-  //       // Reset dependent fields
-  //       setValue(`classId`, '');
-  //       setValue(`divisionId`, '');
+  const fetchInstitutions = async () => {
+    try {
+      const response = await GlobalApi.GetInstitutionsByType(institutionType);
+      if (response.status === 200) {
+        setInstitutions(response.data.institutions);
+        setFilteredInstitutions(response.data.institutions);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch institutions");
+    }
+  };
 
-  //       // Reset division options for this child
-  //       setChildDivisionOptions([]);
-  //       console.log("after 3");
+  const fetchClassesByInstitution = async (instituteId) => {
+    try {
+      const response = await GlobalApi.GetClassesByInstitute(instituteId);
+      if (response.status === 200) {
+        setClassOptions(response.data.classes);
+        // Reset dependent fields
+        setValue('classId', '');
+        setValue('divisionId', '');
+        setSelectedClassGrade("");
+        setDivisionOptions([]);
+        setStreamOptions([]);
+        setCourseOptions([]);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch classes");
+    }
+  };
 
-  //     }
-  //   } catch (error) {
-  //     toast.error("Failed to fetch classes");
-  //   }
-  // };
+  const fetchDivisionsByClass = async (classId) => {
+    try {
+      const response = await GlobalApi.GetDivisionsByClass(classId);
+      if (response.status === 200) {
+        setDivisionOptions(response.data.divisions);
+        setValue('divisionId', '');
+      }
+    } catch (error) {
+      toast.error("Failed to fetch divisions");
+    }
+  };
 
-  // // Function to fetch divisions for a specific child
-  // const fetchDivisionsForChild = async (classId) => {
-  //   try {
-  //     const response = await GlobalApi.GetDivisionsByClass(classId);
-  //     if (response.status === 200) {
-  //       setChildDivisionOptions(response.data.divisions);
-        
-  //       // Reset division field
-  //       setValue(`divisionId`, '');
-  //     }
-  //   } catch (error) {
-  //     toast.error("Failed to fetch divisions");
-  //   }
-  // };
+  const fetchStreamsByInstitution = async (instituteId) => {
+    try {
+      const response = await GlobalApi.GetStreamsByInstitution(instituteId);
+      if (response.status === 200) {
+        setStreamOptions(response.data.streams);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch streams");
+    }
+  };
+
+  const fetchCoursesByInstitution = async (instituteId) => {
+    try {
+      const response = await GlobalApi.GetCoursesByInstitution(instituteId);
+      if (response.status === 200) {
+        setCourseOptions(response.data.courses);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch courses");
+    }
+  };
+
+  const handleInstitutionChange = (instituteId) => {
+    const institute = institutions.find(inst => inst.id === parseInt(instituteId));
+    setSelectedInstitution(institute);
+    fetchClassesByInstitution(instituteId);
+  };
+
+  const handleClassChange = (classId) => {
+    const selectedClass = classOptions.find(cls => cls.id === parseInt(classId));
+    if (selectedClass) {
+      setSelectedClassGrade(selectedClass.standard_grade);
+      
+      // Fetch divisions
+      fetchDivisionsByClass(classId);
+      
+      // If grade is 11 or 12, fetch streams
+      if (["11", "12"].includes(selectedClass.standard_grade)) {
+        fetchStreamsByInstitution(selectedInstitution.id);
+      }
+      
+      // If grade is college, fetch courses
+      if (selectedClass.standard_grade === "college") {
+        fetchCoursesByInstitution(selectedInstitution.id);
+      }
+    }
+  };
 
   console.log("setLanguageSelected", selectedLanguage);
   console.log("selectedDOB", selectedDOB);
@@ -213,24 +241,6 @@ function SignUp() {
     }
   };
 
-  // const handleNext = () => {
-  //   if (step === "language") {
-  //     setStep("dob");
-  //   } else if (step === "dob") {
-  //     setStep("education_level");
-  //   } else if (step === "education_level") {
-  //     if (educationLevel == 2) {
-  //       setStep("reason");
-  //     } else {
-  //       setStep("signup");
-  //     }
-  //   } else if (step === "reason") {
-  //     setStep("additional_info");
-  //   } else if (step === "additional_info") {
-  //     setStep("signup");
-  //   }
-  // };
-
   const handleNext = () => {
     if (step === "eligibility_info") {
       setStep("dob");
@@ -242,7 +252,6 @@ function SignUp() {
   };
 
   const onSubmit = async (data) => {
-    
     if (!data.gender) {
       setError("gender", {
         type: "manual",
@@ -258,34 +267,55 @@ function SignUp() {
       });
       return;
     }
-    if (!selectedClass) {
-      toast.error("Please select your class/grade");
+
+    if (!institutionType) {
+      toast.error("Please select institution type (School/College)");
       return;
     }
-    if (["11", "12"].includes(selectedClass) && !selectedStream) {
+
+    if (!data.instituteId) {
+      toast.error("Please select your institution");
+      return;
+    }
+
+    if (!data.classId) {
+      toast.error("Please select your class");
+      return;
+    }
+
+    if (!data.divisionId) {
+      toast.error("Please select your division");
+      return;
+    }
+
+    // Validate stream for grades 11, 12
+    if (["11", "12"].includes(selectedClassGrade) && !selectedStream) {
       toast.error("Please select your stream");
+      return;
+    }
+
+    // Validate course for college
+    if (selectedClassGrade === "college" && !selectedCourse) {
+      toast.error("Please select your course");
       return;
     }
 
     const encryptedPassword = encryptText(data.password);
     data.password = encryptedPassword;
-
     data.dob = selectedDOB;
-
     data.language = languageMapping[selectedLanguage] || selectedLanguage;
-
-    // ✅ Add stream only if class is 11 or 12
-    if (["11", "12"].includes(selectedClass) && selectedStream) {
-      data.stream = selectedStream;
+    data.classGrade = selectedClassGrade; // Add grade to data
+    
+    // Add stream_id or course_id based on grade
+    if (["11", "12"].includes(selectedClassGrade)) {
+      data.streamId = parseInt(selectedStream);
+    }
+    if (selectedClassGrade === "college") {
+      data.courseId = parseInt(selectedCourse);
+      data.country = selectedCountry?.label;
+      data.educationLevel = educationLevelMapping[educationLevel];
     }
 
-    if (isCollegeStudent && data.college && data.university) {
-      data.college = encryptText(data.college);
-      data.university = encryptText(data.university);
-    }
-    data.country = selectedCountry?.label;
-    data.educationLevel = educationLevelMapping[educationLevel];
-    data.class = selectedClass;
     try {
       const response = await GlobalApi.CreateNewUser(data);
 
@@ -474,35 +504,6 @@ function SignUp() {
                 <p className="mt-2 text-sm text-red-400">{dobError}</p>
               )}
             </div>
-        
-        {/* College confirmation for users 16 or younger */}
-        {/* {showCollegeConfirmation && (
-          <div className="mt-4 mb-6 p-4 border border-yellow-500 bg-yellow-900 bg-opacity-20 rounded-md">
-            <p className="text-yellow-300 font-medium mb-2">Confirmation Required</p>
-            <p className="text-gray-300 text-sm mb-3">
-              Xortcut is primarily for college students and professionals. Are you a college student or working professional?
-            </p>
-            <div className="flex gap-3 mt-2">
-              <button
-                onClick={() => setIsCollegeStudent(true)}
-                className={`flex-1 py-2 px-3 rounded-md text-sm transition-colors ${
-                  isCollegeStudent 
-                    ? "bg-green-600 text-white" 
-                    : "bg-gray-800 text-gray-300 border border-gray-700"
-                }`}
-              >
-                Yes
-              </button>
-              <button
-                onClick={() => window.location.href = "/"}
-                className="flex-1 py-2 px-3 rounded-md text-sm bg-gray-800 text-gray-300 border border-gray-700 hover:bg-gray-700 transition-colors"
-              >
-                Exit Sign Up
-              </button>
-            </div>
-          </div>
-        )}
-         */}
             <button
               onClick={handleNext}
               className={`w-full py-3 px-6 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-orange-500/50 ${
@@ -850,264 +851,162 @@ function SignUp() {
             </div>
           </div>
 
+          {/* Institution Type Selection */}
           <div className="mb-4">
-            <label
-              htmlFor="class"
-              className="block text-sm font-medium text-gray-300"
-            >
-              {t("class")}
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Institution Type
             </label>
             <select
-              id="class"
-              value={selectedClass}
-              onChange={(e) => setSelectedClass(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              value={institutionType}
+              onChange={(e) => {
+                setInstitutionType(e.target.value);
+                setSelectedInstitution(null);
+                setInstitutions([]);
+                setFilteredInstitutions([]);
+                setInstitutionSearch("");
+                setValue('instituteId', '');
+              }}
+              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
               required
             >
-              <option value="">Select Class/Grade</option>
-              <option value="5">5th</option>
-              <option value="6">6th</option>
-              <option value="7">7th</option>
-              <option value="8">8th</option>
-              <option value="9">9th</option>
-              <option value="10">10th</option>
-              <option value="11">11th</option>
-              <option value="12">12th</option>
-              <option value="college">College</option>
-              <option value="completed-education">Completed Educaton</option>
+              <option value="">Select Type</option>
+              <option value="School">School</option>
+              <option value="College">College</option>
             </select>
           </div>
 
-          {["11", "12"].includes(selectedClass) && (
-          <div>
-            <label
-              htmlFor="stream"
-              className="block text-sm font-medium text-gray-200 mb-2"
-            >
-              Stream
-            </label>
-            {!showStreamInput ? (
-              <div className="space-y-2">
-                <select
-                  id="stream"
-                  value={selectedStream}
-                  onChange={(e) => {
-                    if (e.target.value === "Other") {
-                      setShowStreamInput(true);
-                      setSelectedStream("");
-                    } else {
-                      setSelectedStream(e.target.value);
-                    }
-                  }}
-                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                  required
-                >
-                  <option value="">Select Stream</option>
-                  {streamOptions.map((stream) => (
-                    <option key={stream} value={stream}>
-                      {stream}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={selectedStream}
-                  onChange={(e) => setSelectedStream(e.target.value)}
-                  placeholder="Enter your stream"
-                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowStreamInput(false);
-                    setSelectedStream("");
-                  }}
-                  className="text-sm text-gray-400 hover:text-gray-300 transition-colors duration-200"
-                >
-                  ← Back to dropdown
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-          {/* <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300">Institute</label>
-            <select
-              {...register("instituteId", { 
-                required: "Institute is required",
-                onChange: (e) => {
-                  const instituteId = e.target.value;
-                  fetchClassesForChild(instituteId);
-                } 
-              })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            >
-              <option value="">Select Institute</option>
-              {institutions.map((institute) => (
-                <option key={institute.id} value={institute.id}>
-                  {institute.name}
-                </option>
-              ))}
-            </select>
-            {errors.childUsers?.institute && (
-              <p className="mt-1 text-sm text-red-600">{errors.childUsers.institute.message}</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-300">Class</label>
+          {/* Institution Selection with Search */}
+          {institutionType && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Search & Select Your Institution
+              </label>
+              <input
+                type="text"
+                placeholder="Search institution..."
+                value={institutionSearch}
+                onChange={(e) => setInstitutionSearch(e.target.value)}
+                className="w-full px-4 py-3 mb-2 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+              />
               <select
-                {...register("classId", { 
-                  required: "Class is required",
-                  onChange: (e) => {
-                    const classId = e.target.value;
-                    fetchDivisionsForChild(classId);
-                  }
-                })}
-                disabled={!childClassOptions || childClassOptions.length === 0}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:opacity-50"
+                {...register("instituteId", { required: "Institution is required" })}
+                onChange={(e) => handleInstitutionChange(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200 max-h-48 overflow-y-auto"
+                required
+                size="5"
               >
-                <option value="">Select Class</option>
-                {childClassOptions?.map((classItem) => (
-                  <option key={classItem.id} value={classItem.id}>
-                    {classItem.name}
+                <option value="">Select Institution</option>
+                {filteredInstitutions.map((institution) => (
+                  <option key={institution.id} value={institution.id}>
+                    {institution.name}
                   </option>
                 ))}
               </select>
-              {errors.childUsers?.class && (
-                <p className="mt-1 text-sm text-red-600">{errors.childUsers.class.message}</p>
+              {errors.instituteId && (
+                <p className="text-red-400 text-sm mt-1">{errors.instituteId.message}</p>
               )}
             </div>
+          )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300">Division</label>
+          {/* Class Selection */}
+          {selectedInstitution && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Class
+              </label>
+              <select
+                {...register("classId", { 
+                  required: "Class is required",
+                  onChange: (e) => handleClassChange(e.target.value)
+                })}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                disabled={!classOptions || classOptions.length === 0}
+                required
+              >
+                <option value="">Select Class</option>
+                {classOptions.map((classItem) => (
+                  <option key={classItem.id} value={classItem.id}>
+                    {classItem.name} {classItem.standard_grade && `(Grade ${classItem.standard_grade})`}
+                  </option>
+                ))}
+              </select>
+              {errors.classId && (
+                <p className="text-red-400 text-sm mt-1">{errors.classId.message}</p>
+              )}
+            </div>
+          )}
+
+          {/* Division Selection */}
+          {selectedClassGrade && divisionOptions.length > 0 && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Division
+              </label>
               <select
                 {...register("divisionId", { required: "Division is required" })}
-                disabled={!childDivisionOptions || childDivisionOptions.length === 0}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:opacity-50"
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                required
               >
                 <option value="">Select Division</option>
-                {childDivisionOptions.map((division) => (
+                {divisionOptions.map((division) => (
                   <option key={division.id} value={division.id}>
                     {division.name}
                   </option>
                 ))}
               </select>
-              {errors.childUsers?.division && (
-                <p className="mt-1 text-sm text-red-600">{errors.childUsers.division.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300">Academic Year Start</label>
-              <input
-                type="month"
-                {...register("academicYearStart", {
-                  required: "Academic year start is required"
-                })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-              {errors.childUsers?.academicYearStart && (
-                <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearStart.message}</p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300">Academic Year End</label>
-              <input
-                type="month"
-                {...register("academicYearEnd", {
-                  required: "Academic year end is required"
-                })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-              {errors.childUsers?.academicYearEnd && (
-                <p className="mt-1 text-sm text-red-600">{errors.childUsers.academicYearEnd.message}</p>
-              )}
-            </div>
-          </div> */}
-
-          {ageCategory !== "kids" && educationLevel!=0 && (
-            <div className="mb-4">
-              <label
-                htmlFor="highestEducation"
-                className="block text-sm font-medium text-gray-300"
-              >
-                {isCollegeStudent ? "Current Education" : "Highest Education"}
-              </label>
-              <select
-                id="highestEducation"
-                {...register("education", {
-                  required:
-                    ageCategory !== "kids" ? t("educationRequired") : false,
-                })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                required={ageCategory !== "kids"}
-              >
-                <option value="">
-                  Select{" "}
-                  {isCollegeStudent ? "Current Education" : "Highest Education"}
-                </option>
-
-                {ageCategory === "junior" && (
-                  <>
-                    <option value="10th Std">{t("10th Std")}</option>
-                    <option value="12th Std">{t("12th Std")}</option>
-                  </>
-                )}
-
-                <option value="Bachelor's Degree">
-                  {t("bachelorsDegree")}
-                </option>
-                <option value="Associates Degree">
-                  {t("associateDegree")}
-                </option>
-                <option value="Masters Degree">{t("mastersDegree")}</option>
-              </select>
-              {isCollegeStudent && (
-                <>
-                  <div className="my-4">
-                    <label
-                      htmlFor="college"
-                      className="block text-sm font-medium text-gray-300"
-                    >
-                      {t("college")}
-                    </label>
-                    <input
-                      type="text"
-                      {...register("college")}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="university"
-                      className="block text-sm font-medium text-gray-300"
-                    >
-                      {t("university")}
-                    </label>
-                    <input
-                      type="text"
-                      {...register("university")}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    />
-                  </div>
-                </>
-              )}
-              {errors.education && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.education.message}
-                </p>
+              {errors.divisionId && (
+                <p className="text-red-400 text-sm mt-1">{errors.divisionId.message}</p>
               )}
             </div>
           )}
+
+          {/* Stream Selection for Grades 11, 12 */}
+          {["11", "12"].includes(selectedClassGrade) && streamOptions.length > 0 && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Stream
+              </label>
+              <select
+                value={selectedStream}
+                onChange={(e) => setSelectedStream(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                required
+              >
+                <option value="">Select Stream</option>
+                {streamOptions.map((stream) => (
+                  <option key={stream.id} value={stream.id}>
+                    {stream.name}
+                    {stream.description && ` - ${stream.description}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Course Selection for College */}
+          {selectedClassGrade === "college" && courseOptions.length > 0 && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Course
+              </label>
+              <select
+                value={selectedCourse}
+                onChange={(e) => setSelectedCourse(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                required
+              >
+                <option value="">Select Course</option>
+                {courseOptions.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.course_name}
+                    {course.duration_years && ` (${course.duration_years} years)`}
+                    {course.description && ` - ${course.description}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
 
           <button
             type="submit"

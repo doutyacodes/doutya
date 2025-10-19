@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/utils";
-import { COMMUNITY_POST, MILESTONES, COMMUNITY } from "@/utils/schema";  // Include COMMUNITY table
+import { COMMUNITY_POST, MILESTONES, COMMUNITY, USER_MILESTONES } from "@/utils/schema";  // Include COMMUNITY table
 import { eq, and } from "drizzle-orm/expressions";  // Import expressions for conditions
 import { authenticate } from "@/lib/jwtMiddleware";
+import { sql } from "drizzle-orm";
 
 export async function PUT(req) {
   const authResult = await authenticate(req);
@@ -72,12 +73,20 @@ export async function PUT(req) {
         });
       }
 
-      // Update the milestone completion status
-      await db
-        .update(MILESTONES)
-        .set({ completion_status: completed })
-        .where(eq(MILESTONES.id, milestoneId))
-        .execute();
+    // Update the milestone completion status
+    await db
+      .update(USER_MILESTONES)
+      .set({
+        completion_status: completed,
+        date_achieved: completed ? sql`NOW()` : null,
+      })
+      .where(
+        and(
+          eq(USER_MILESTONES.milestone_id, milestoneId),
+          eq(USER_MILESTONES.user_id, userId)
+        )
+      )
+      .execute();
 
       return NextResponse.json(
         { message: "Milestone status updated and posts created successfully" },

@@ -38,16 +38,47 @@ export async function POST(req) {
     //   scope_type = "cluster";
     // }
 
-    // Determine scope_type based on class
-    let scope_type = "career"; // default for 11th, 12th, college, completed-education
-    if (["5", "6", "7"].includes(data?.class)) {
+    // Determine scope_type based on class grade
+    let scope_type = "career"; // default
+    const classGrade = data?.classGrade; // This will come from the selected class's standard_grade
+
+    if (["5", "6", "7"].includes(classGrade)) {
       scope_type = "sector";
-    } else if (["8", "9", "10"].includes(data?.class)) {
+    } else if (["8", "9", "10"].includes(classGrade)) {
       scope_type = "cluster";
     }
-    console.log("scope_type", scope_type)
+    console.log("scope_type", scope_type);
 
     // Insert user details into the database
+    // const result = await db.insert(USER_DETAILS).values({
+    //   name: data?.name,
+    //   gender: data?.gender,
+    //   mobile: data?.mobile,
+    //   birth_date: new Date(data?.dob),
+    //   password: data?.password,
+    //   username: data?.username,
+    //   education: data?.education,
+    //   student: data?.student,
+    //   college: data?.college,
+    //   university: data?.university,
+    //   yearOfPassing: data?.yearOfPassing,
+    //   monthOfPassing: data?.monthOfPassing,
+    //   country: data?.country,
+    //   language:data?.language,
+    //   education_level:data?.educationLevel,
+    //   education_qualification: data?.educationQualification,
+    //   experience: data?.experience,
+    //   current_job: data?.currentJob,
+    //   account_status: 'separated',
+    //   scope_type: scope_type,
+    //   grade: data?.class,
+    //   user_stream: data?.stream || null,
+    //   // institution_id: data?.instituteId,
+    //   // class_id: data?.classId,
+    //   // division_id: data?.divisionId, /* moved to speratee section
+    //   // */
+    // });
+
     const result = await db.insert(USER_DETAILS).values({
       name: data?.name,
       gender: data?.gender,
@@ -56,28 +87,20 @@ export async function POST(req) {
       password: data?.password,
       username: data?.username,
       education: data?.education,
-      student: data?.student,
-      college: data?.college,
-      university: data?.university,
-      yearOfPassing: data?.yearOfPassing,
-      monthOfPassing: data?.monthOfPassing,
       country: data?.country,
-      language:data?.language,
-      education_level:data?.educationLevel,
-      education_qualification: data?.educationQualification,
-      experience: data?.experience,
-      current_job: data?.currentJob,
+      language: data?.language,
       account_status: 'separated',
       scope_type: scope_type,
-      grade: data?.class,
-      user_stream: data?.stream || null,
-      // institution_id: data?.instituteId,
-      // class_id: data?.classId,
-      // division_id: data?.divisionId, /* moved to speratee section
-      //  */
+      grade: data?.classGrade, // Store the grade (5, 6, 7, etc.)
+      institution_id: data?.instituteId,
+      class_id: data?.classId,
+      division_id: data?.divisionId,
+      stream_id: data?.streamId || null, // For grades 11, 12
+      course_id: data?.courseId || null, // For college
+      user_role : 'Institutional'
     });
 
-    if (!result) {
+      if (!result) {
       return NextResponse.json(
         { message: "User registration failed" },
         { status: 500 } // Internal Server Error

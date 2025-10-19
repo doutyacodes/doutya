@@ -33,11 +33,12 @@ const VerificationPending = () => {
           strokeWidth={1.5}
         />
         <h1 className="text-3xl font-semibold text-gray-800 mb-4">
-          Verification Pending
+          Verification in Progress
         </h1>
+
         <p className="text-gray-600 mb-6">
-          Your account is currently under review by the administration. 
-          This process ensures the security and integrity of our platform.
+          Your account is awaiting approval from your institution. Once your institute verifies your details and confirms your class information, your account will be activated. 
+          Please check back later or contact your institution if the verification takes longer than expected.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
           <button 

@@ -426,8 +426,6 @@ export async function fetchAndSaveRoadmap(
                         category_id: categoryId,
                         subcategory_id: subcategoryId,
                         description: desc,
-                        completion_status: false,
-                        date_achieved: null,
                         class_level: classLevel,
                         milestone_interval: milestoneInterval,
                       };
@@ -453,6 +451,7 @@ export async function fetchAndSaveRoadmap(
                           scope_id: parentScopeId,
                           scope_type: scopeType,
                           milestone_id: milestoneId,
+                          user_id: userId,
                         })
                         .execute();
 
@@ -481,8 +480,6 @@ export async function fetchAndSaveRoadmap(
                         category_id: categoryId,
                         subcategory_id: subcategoryId,
                         description: milestone_description,
-                        completion_status: false,
-                        date_achieved: null,
                         class_level: classLevel,
                         milestone_interval: milestoneInterval,
                       };
@@ -545,6 +542,7 @@ export async function fetchAndSaveRoadmap(
                           scope_id: parentScopeId,
                           scope_type: scopeType,
                           milestone_id: milestoneId,
+                          user_id: userId,
                         })
                         .execute();
 
@@ -575,8 +573,6 @@ export async function fetchAndSaveRoadmap(
                   const milestoneValues = {
                     category_id: categoryId,
                     description: desc,
-                    completion_status: false,
-                    date_achieved: null,
                     class_level: classLevel,
                     milestone_interval: milestoneInterval,
                   };
@@ -602,6 +598,7 @@ export async function fetchAndSaveRoadmap(
                       scope_id: parentScopeId,
                       scope_type: scopeType,
                       milestone_id: milestoneId,
+                      user_id: userId,
                     })
                     .execute();
 

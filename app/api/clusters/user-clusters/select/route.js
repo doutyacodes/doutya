@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
 import { db } from "@/utils";
-import { CLUSTER, COMMUNITY, USER_CLUSTER, USER_COMMUNITY, USER_DETAILS } from "@/utils/schema";
+import { 
+  CLUSTER, 
+  COMMUNITY, 
+  USER_CLUSTER, 
+  USER_COMMUNITY, 
+  USER_DETAILS,
+  COMMUNITIES,
+  COMMUNITY_MEMBERS,
+  CLASS_MODERATOR
+} from "@/utils/schema";
 import { eq, and } from "drizzle-orm/expressions";
 import { authenticate } from "@/lib/jwtMiddleware";
 
@@ -129,7 +138,21 @@ export async function POST(req) {
       );
     }
 
-    const { country } = userDetails[0];
+    const { country, class_id } = userDetails[0];
+
+    if (!class_id) {
+      return NextResponse.json(
+        { message: "User class_id not found" },
+        { status: 400 }
+      );
+    }
+
+    // Get all moderators for this class
+    const classModerators = await db
+      .select({ moderator_id: CLASS_MODERATOR.moderator_id })
+      .from(CLASS_MODERATOR)
+      .where(eq(CLASS_MODERATOR.class_id, class_id))
+      .execute();
 
     console.log("addedCluster", addedCluster, addedCluster[0].name);
 
@@ -165,6 +188,94 @@ export async function POST(req) {
     // Add user to global and country-specific communities
     await addUserToCommunity(globalCommunity.id, null);
     await addUserToCommunity(countryCommunity.id, country);
+
+    // ===== NEW COMMUNITIES TABLE LOGIC =====
+    
+    // Check if community already exists in COMMUNITIES table
+    const existingNewCommunity = await db
+      .select()
+      .from(COMMUNITIES)
+      .where(
+        and(
+          eq(COMMUNITIES.class_id, class_id),
+          eq(COMMUNITIES.type, "cluster"),
+          eq(COMMUNITIES.ref_id, cluster_id)
+        )
+      )
+      .execute();
+
+    let newCommunityId;
+
+    if (existingNewCommunity.length > 0) {
+      // Community already exists
+      newCommunityId = existingNewCommunity[0].id;
+    } else {
+      // Create new community in COMMUNITIES table
+      const [newCommunityInsert] = await db
+        .insert(COMMUNITIES)
+        .values({
+          class_id: class_id,
+          type: "cluster",
+          ref_id: cluster_id,
+          name: addedCluster[0].name,
+          description: `Community for ${addedCluster[0].name} cluster`,
+        })
+        .execute();
+
+      newCommunityId = newCommunityInsert.insertId;
+    }
+
+    // Add current user as member in COMMUNITY_MEMBERS
+    const existingUserMember = await db
+      .select()
+      .from(COMMUNITY_MEMBERS)
+      .where(
+        and(
+          eq(COMMUNITY_MEMBERS.community_id, newCommunityId),
+          eq(COMMUNITY_MEMBERS.user_id, userId)
+        )
+      )
+      .execute();
+
+    if (existingUserMember.length === 0) {
+      await db
+        .insert(COMMUNITY_MEMBERS)
+        .values({
+          community_id: newCommunityId,
+          user_id: userId,
+          moderator_id: null,
+          role: "member",
+          is_active: true,
+        })
+        .execute();
+    }
+
+    // Add all class moderators as admins in COMMUNITY_MEMBERS
+    for (const moderator of classModerators) {
+      const existingModeratorMember = await db
+        .select()
+        .from(COMMUNITY_MEMBERS)
+        .where(
+          and(
+            eq(COMMUNITY_MEMBERS.community_id, newCommunityId),
+            eq(COMMUNITY_MEMBERS.moderator_id, moderator.moderator_id)
+          )
+        )
+        .execute();
+
+      if (existingModeratorMember.length === 0) {
+        await db
+          .insert(COMMUNITY_MEMBERS)
+          .values({
+            community_id: newCommunityId,
+            user_id: null,
+            moderator_id: moderator.moderator_id,
+            role: "admin",
+            is_active: true,
+          })
+          .execute();
+      }
+    }
 
     return NextResponse.json({ 
       message: existingUserCluster.length === 0 ? "Cluster added and marked as selected" : "Cluster marked as selected", 

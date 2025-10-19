@@ -165,6 +165,7 @@ function Page() {
     { key: "assessment", label: t("assessment") },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
+    { key: "community", label: t("community") },
   ];
 
   useEffect(() => {

@@ -700,15 +700,15 @@ const GetAllInstitutes = () => {
   });
 };
 
-const GetClassesByInstitute = (InstituteId) => {
-  return axios.get(`/api/getClassesByInstitute/${InstituteId}`, {
-  });
-};
+// const GetClassesByInstitute = (InstituteId) => {
+//   return axios.get(`/api/getClassesByInstitute/${InstituteId}`, {
+//   });
+// };
 
-const GetDivisionsByClass = (classId) => {
-  return axios.get(`/api/getDivisionsByClass/${classId}`, {
-  });
-};
+// const GetDivisionsByClass = (classId) => {
+//   return axios.get(`/api/getDivisionsByClass/${classId}`, {
+//   });
+// };
 
 const GetInstitueCommunityPosts = (token) => {
   return axios.get(`/api/getAllInstitutePosts`, {
@@ -717,6 +717,27 @@ const GetInstitueCommunityPosts = (token) => {
     }
   });
 };
+
+const GetInstitutionsByType = (type) => {
+  return axios.get(`/api/institutions?type=${type}`);
+};
+
+const GetClassesByInstitute = (instituteId) => {
+  return axios.get(`/api/institutions/${instituteId}/classes`);
+};
+
+const GetDivisionsByClass = (classId) => {
+  return axios.get(`/api/classes/${classId}/divisions`);
+};
+
+const GetStreamsByInstitution = (instituteId) => {
+  return axios.get(`/api/institutions/${instituteId}/streams`);
+};
+
+const GetCoursesByInstitution = (instituteId) => {
+  return axios.get(`/api/institutions/${instituteId}/courses`);
+};
+
 
 // Companies
 
@@ -898,6 +919,10 @@ export default {
   GetDivisionsByClass,
   GetInstitueCommunityPosts,
 
+  GetInstitutionsByType,
+  GetStreamsByInstitution,
+  GetCoursesByInstitution,
+
   // Companies
 
   FetchCompany,
@@ -913,5 +938,8 @@ export default {
 
   /* career News */
   GetCareerNews,
+
+
+
 
 };
