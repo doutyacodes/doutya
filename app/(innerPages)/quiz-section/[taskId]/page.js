@@ -201,7 +201,7 @@ function Page({ params }) {
       }, 1000);
 
       const timer = setTimeout(() => {
-        router.replace("/dashboard");
+        router.replace("/personality");
       }, 5000);
 
       return () => {

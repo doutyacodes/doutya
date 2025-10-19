@@ -462,7 +462,8 @@ import {
   USER_SECTOR,
   SECTOR,
   MBTI_SECTOR_MAP,
-  PERSONALITY_PROFILES // Added new table
+  PERSONALITY_PROFILES,
+  CLUSTER_MBTI_RIASEC_COMBINATIONS
 } from '@/utils/schema';
 import { db } from '@/utils';
 import { and, desc, eq, inArray, not } from 'drizzle-orm';
@@ -484,6 +485,49 @@ const languageOptions = {
   ge: 'german',
   mal: 'malayalam',
   tam: 'tamil'
+};
+
+// Helper function to safely parse JSON data
+const safeParse = (data) => {
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error('Error parsing JSON string:', e);
+      return data;
+    }
+  }
+  return data;
+};
+
+// Helper function to ensure proper data structure
+const normalizeReportData = (reportData) => {
+  try {
+    // If reportData is already an object, return it
+    if (typeof reportData === 'object' && reportData !== null && !Array.isArray(reportData)) {
+      // Ensure personality_analysis is parsed if it's a string
+      if (reportData.detailed_results?.personality_analysis && 
+          typeof reportData.detailed_results.personality_analysis === 'string') {
+        reportData.detailed_results.personality_analysis = safeParse(reportData.detailed_results.personality_analysis);
+      }
+      return reportData;
+    }
+    
+    // If it's a string, try to parse it
+    if (typeof reportData === 'string') {
+      const parsed = JSON.parse(reportData);
+      if (parsed.detailed_results?.personality_analysis && 
+          typeof parsed.detailed_results.personality_analysis === 'string') {
+        parsed.detailed_results.personality_analysis = safeParse(parsed.detailed_results.personality_analysis);
+      }
+      return parsed;
+    }
+    
+    return reportData;
+  } catch (error) {
+    console.error('Error normalizing report data:', error);
+    return reportData;
+  }
 };
 
 export async function GET(req) {
@@ -578,7 +622,8 @@ export async function GET(req) {
     if (existingReport.length > 0) {
       console.log('Found cached report, updating with fresh user data...');
       
-      const cachedReportData = existingReport[0].report_data;
+      // Properly normalize the cached report data
+      const cachedReportData = normalizeReportData(existingReport[0].report_data);
       
       // Update the cached report with fresh user data
       const updatedReport = {
@@ -646,7 +691,7 @@ export async function GET(req) {
 
     console.log(`User Age: ${userAge}, Scope Type: ${scopeType}, Assessments completed: Personality: ${personalityType}, Career: ${careerType}`);
 
-    // Fetch personality data from database instead of file
+    // Fetch personality data from database
     const personalityProfile = await db
       .select({
         data: PERSONALITY_PROFILES.data
@@ -659,14 +704,15 @@ export async function GET(req) {
       return NextResponse.json({ error: "Personality profile not found" }, { status: 404 });
     }
 
-    const personalityData = personalityProfile[0].data;
+    // Safely parse personality data
+    const personalityData = safeParse(personalityProfile[0].data);
 
     // Fetch scope-specific data based on scopeType with new fields
     let scopeSpecificData = null;
     let scopeDataString = '';
 
     if (scopeType === 'career') {
-      // Fetch from USER_RESULTS table (no change here)
+      // Fetch from USER_RESULTS table
       const userResults = await db
         .select({
           result2: USER_RESULTS.result2
@@ -675,53 +721,69 @@ export async function GET(req) {
         .where(eq(USER_RESULTS.user_id, userId))
         .execute();
 
+        console.log("userResults[0]", userResults[0])
+
       if (userResults.length > 0 && userResults[0].result2) {
         try {
-          scopeSpecificData = JSON.parse(userResults[0].result2);
+
+          let raw = userResults[0].result2;
+
+          // Remove backticks and concatenations
+          raw = raw.replace(/`/g, "").replace(/\+\s*$/gm, "");
+
+          // Parse safely
+          scopeSpecificData = JSON.parse(raw);
+
+          // scopeSpecificData = JSON.parse(userResults[0].result2);
           scopeDataString = `Career Data: ${userResults[0].result2}`;
         } catch (e) {
           console.error('Error parsing career data:', e);
           scopeDataString = `Career Data: ${userResults[0].result2}`;
         }
       }
-    } else if (scopeType === 'cluster') {
-      // Fetch from USER_CLUSTER and CLUSTER tables with new fields
-      const existingUserClusters = await db
-        .select({
-          cluster_id: USER_CLUSTER.cluster_id,
-          selected: USER_CLUSTER.selected
-        })
-        .from(USER_CLUSTER)
-        .where(eq(USER_CLUSTER.user_id, userId))
-        .execute();
+   } else if (scopeType === 'cluster') {
+        // Use personalityType (MBTI) and careerType (RIASEC) directly
+        const mbtiType = personalityType;
+        const riasecCode = careerType;
 
-      if (existingUserClusters.length > 0) {
-        const clusterIds = existingUserClusters.map(uc => uc.cluster_id);
-        
-        const clusters = await Promise.all(clusterIds.map(async (id) => {
-          const result = await db
-            .select({
-              id: CLUSTER.id,
-              name: CLUSTER.name,
-              why_suitable: CLUSTER.why_suitable,
-              related_jobs: CLUSTER.related_jobs,
-              sector: CLUSTER.sector,
-              ideal_stream: CLUSTER.ideal_stream,
-              brief_overview: CLUSTER.brief_overview,
-              future_potential: CLUSTER.future_potential
-            })
-            .from(CLUSTER)
-            .where(eq(CLUSTER.id, id))
-            .execute();
-          return result[0];
-        }));
+        // Fetch existing combination
+        const [combination] = await db
+          .select()
+          .from(CLUSTER_MBTI_RIASEC_COMBINATIONS)
+          .where(
+            and(
+              eq(CLUSTER_MBTI_RIASEC_COMBINATIONS.mbti_type, mbtiType),
+              eq(CLUSTER_MBTI_RIASEC_COMBINATIONS.riasec_code, riasecCode)
+            )
+          )
+          .execute();
 
-        scopeSpecificData = clusters.filter(Boolean);
-        scopeDataString = `Cluster Data: ${JSON.stringify(scopeSpecificData)}`;
-      }
+        let sortingData = combination?.sorted_clusters
+          ? (typeof combination.sorted_clusters === "string"
+              ? JSON.parse(combination.sorted_clusters)
+              : combination.sorted_clusters)
+          : null;
+
+        if (!sortingData) {
+          scopeDataString = "Cluster Data: No suggested clusters available";
+        } else {
+          // Fetch all cluster details
+          const allClusters = await db.select().from(CLUSTER);
+
+          // Merge sortingData with details
+          const sortedClustersWithDetails = sortingData.sorted_clusters.map(sortedCluster => {
+            const details = allClusters.find(c => c.name === sortedCluster.cluster);
+            return {
+              ...sortedCluster,
+              cluster_details: details
+            };
+          });
+          scopeSpecificData = sortedClustersWithDetails,
+          scopeDataString = `Cluster Data: ${JSON.stringify(scopeSpecificData)}`;
+        }
 
     } else if (scopeType === 'sector') {
-      // Fetch from MBTI_SECTOR_MAP based on personality type, then get sector details with new fields
+      // Fetch from MBTI_SECTOR_MAP based on personality type
       const mbtiMapping = await db
         .select({
           sector_1_id: MBTI_SECTOR_MAP.sector_1_id,
@@ -740,7 +802,7 @@ export async function GET(req) {
         const mapping = mbtiMapping[0];
         matchingSectorIds = [mapping.sector_1_id, mapping.sector_2_id, mapping.sector_3_id];
         
-        // Fetch matching sector details with new fields
+        // Fetch matching sector details
         matchingSectors = await Promise.all(matchingSectorIds.map(async (sectorId) => {
           const result = await db
             .select({
@@ -757,6 +819,8 @@ export async function GET(req) {
           return result[0];
         }));
 
+        console.log("matchingSectors", matchingSectors)
+
         matchingSectors = matchingSectors.filter(Boolean);
       }
 
@@ -768,7 +832,7 @@ export async function GET(req) {
       scopeDataString = `Sector Data: Matching Sectors - ${JSON.stringify(matchingSectors)}`;
     }
 
-    // Generate comprehensive AI analysis (excluding personality_analysis since it comes from DB)
+    // Generate comprehensive AI analysis
     const comprehensivePrompt = `
       Generate a structured and detailed career assessment report for ${userName} with the following information:
 
@@ -845,7 +909,7 @@ export async function GET(req) {
       return NextResponse.json({ error: "Error processing assessment results" }, { status: 500 });
     }
 
-    // Structure final response (combining personality data from DB and AI-generated career analysis)
+    // Structure final response
     const finalResponse = {
       user_profile: {
         name: userName,
@@ -859,10 +923,10 @@ export async function GET(req) {
         scope_type: scopeType
       },
       detailed_results: {
-        personality_analysis: personalityData, // From database
+        personality_analysis: personalityData, // Already parsed from database
         ...comprehensiveResults // AI-generated career analysis and insights
       },
-      scope_data: scopeSpecificData, // Include the raw scope data for frontend use if needed
+      scope_data: scopeSpecificData,
     };
 
     // Save the generated report to database
@@ -873,8 +937,8 @@ export async function GET(req) {
     await db.insert(USER_ASSESSMENT_REPORTS).values({
       user_id: userId,
       assessment_date: currentDate,
-      is_kid: 0, // Always 0 now since we removed kids functionality
-      report_data: finalResponse
+      is_kid: 0,
+      report_data: finalResponse // This will be stored as JSON
     }).execute();
 
     console.log('Assessment report saved successfully');

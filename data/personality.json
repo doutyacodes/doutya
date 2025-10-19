@@ -1,0 +1,348 @@
+[
+  {
+    "id": "INTJ",
+    "strengths": [
+      "You are highly strategic and can see the bigger picture clearly.",
+      "You value efficiency and focus on long-term goals.",
+      "You are independent and self-motivated, often excelling in leadership roles."
+    ],
+    "weaknesses": [
+      "You may appear overly critical or dismissive of others’ ideas.",
+      "You struggle with expressing emotions openly.",
+      "You can be perfectionistic, which sometimes slows progress."
+    ],
+    "values": [
+      "Growth and knowledge",
+      "Efficiency and structure",
+      "Independence and autonomy"
+    ],
+    "ideal_careers": ["Strategist", "Scientist", "Engineer", "Entrepreneur"],
+    "communication_style": "You prefer direct, concise communication and appreciate logical discussions over emotional ones.",
+    "relationships": "You seek deep, meaningful connections and prefer quality over quantity in friendships and partnerships."
+  },
+  {
+    "id": "INTP",
+    "strengths": [
+      "You are analytical and excellent at problem-solving.",
+      "You enjoy exploring complex theories and abstract concepts.",
+      "You adapt well to new ideas and love innovation."
+    ],
+    "weaknesses": [
+      "You may overthink and struggle to take action.",
+      "You can become detached in social settings.",
+      "You sometimes neglect practical details."
+    ],
+    "values": [
+      "Curiosity and exploration",
+      "Independence",
+      "Innovation and discovery"
+    ],
+    "ideal_careers": [
+      "Researcher",
+      "Software Developer",
+      "Philosopher",
+      "Inventor"
+    ],
+    "communication_style": "You like open-minded conversations and enjoy questioning assumptions.",
+    "relationships": "You connect best with people who respect your need for space and intellectual freedom."
+  },
+  {
+    "id": "ENTJ",
+    "strengths": [
+      "You are decisive and naturally take charge.",
+      "You excel at organizing people and resources.",
+      "You are confident and goal-driven."
+    ],
+    "weaknesses": [
+      "You may come across as too domineering.",
+      "You can be impatient with inefficiency.",
+      "You might struggle with vulnerability."
+    ],
+    "values": ["Achievement and success", "Leadership", "Discipline and order"],
+    "ideal_careers": [
+      "Executive",
+      "Entrepreneur",
+      "Project Manager",
+      "Politician"
+    ],
+    "communication_style": "You prefer clear, results-focused discussions and dislike wasting time.",
+    "relationships": "You value ambitious partners and friends who support your vision."
+  },
+  {
+    "id": "ENTP",
+    "strengths": [
+      "You are charismatic and full of creative ideas.",
+      "You adapt quickly to new situations.",
+      "You are persuasive and energetic."
+    ],
+    "weaknesses": [
+      "You may lose focus and leave projects unfinished.",
+      "You can be argumentative just for fun.",
+      "You struggle with routine and repetition."
+    ],
+    "values": ["Freedom and flexibility", "Innovation", "Adventure"],
+    "ideal_careers": [
+      "Entrepreneur",
+      "Journalist",
+      "Consultant",
+      "Marketing Specialist"
+    ],
+    "communication_style": "You are enthusiastic and engaging, often bringing humor into conversations.",
+    "relationships": "You enjoy lively connections with people who share your love for exploration."
+  },
+  {
+    "id": "ENFP",
+    "strengths": [
+      "You are energetic, enthusiastic, and inspire others easily.",
+      "You see possibilities everywhere and thrive on creativity.",
+      "You are empathetic and easily connect with people emotionally."
+    ],
+    "weaknesses": [
+      "You may get distracted by too many interests at once.",
+      "You sometimes struggle with following through on long-term projects.",
+      "You can be overly idealistic and sensitive to criticism."
+    ],
+    "values": [
+      "Freedom and independence",
+      "Authenticity and self-expression",
+      "Exploration and new experiences"
+    ],
+    "ideal_careers": ["Writer", "Counselor", "Entrepreneur", "Public Speaker"],
+    "communication_style": "You communicate with enthusiasm, warmth, and creativity, often making others feel inspired.",
+    "relationships": "You value deep emotional connections and enjoy adventurous, spontaneous relationships."
+  },
+  {
+    "id": "ENFJ",
+    "strengths": [
+      "You are warm, empathetic, and deeply attuned to others’ feelings.",
+      "You are an inspiring leader who motivates and unites people.",
+      "You are organized and dedicated to achieving collective goals."
+    ],
+    "weaknesses": [
+      "You may become overly involved in others’ problems.",
+      "You sometimes prioritize harmony over your own needs.",
+      "You can be sensitive to rejection or criticism."
+    ],
+    "values": [
+      "Community and belonging",
+      "Compassion and understanding",
+      "Growth and progress"
+    ],
+    "ideal_careers": [
+      "Teacher",
+      "Human Resources Manager",
+      "Psychologist",
+      "Nonprofit Leader"
+    ],
+    "communication_style": "You express yourself with warmth and clarity, often encouraging others to feel supported.",
+    "relationships": "You are nurturing in relationships, valuing loyalty, trust, and emotional closeness."
+  },
+  {
+    "id": "INFJ",
+    "strengths": [
+      "You have deep insight and often see hidden meanings behind situations.",
+      "You are compassionate and driven by a strong sense of purpose.",
+      "You are creative and visionary, often inspiring others."
+    ],
+    "weaknesses": [
+      "You may become overly perfectionistic or idealistic.",
+      "You struggle to set boundaries and may burn out by helping too much.",
+      "You can be reserved and find it hard to open up quickly."
+    ],
+    "values": ["Meaning and purpose", "Authenticity", "Helping others grow"],
+    "ideal_careers": ["Writer", "Counselor", "Psychologist", "Spiritual Guide"],
+    "communication_style": "You communicate thoughtfully and meaningfully, often focusing on deep ideas and emotions.",
+    "relationships": "You seek soulful, long-lasting connections and value trust, depth, and authenticity in relationships."
+  },
+  {
+    "id": "INFP",
+    "strengths": [
+      "You are deeply empathetic and value authenticity.",
+      "You are creative and often express yourself through art or writing.",
+      "You are guided by strong personal values and ideals."
+    ],
+    "weaknesses": [
+      "You may avoid conflict, even at the cost of your own needs.",
+      "You can become overly idealistic and disappointed when reality falls short.",
+      "You may struggle with structure and organization."
+    ],
+    "values": [
+      "Authenticity and individuality",
+      "Creativity and imagination",
+      "Compassion and harmony"
+    ],
+    "ideal_careers": ["Writer", "Artist", "Therapist", "Philanthropist"],
+    "communication_style": "You communicate with sincerity and passion, often expressing ideas through storytelling or creativity.",
+    "relationships": "You value deep emotional bonds and prefer authentic, supportive, and understanding relationships."
+  },
+  {
+    "id": "ESTJ",
+    "strengths": [
+      "You are highly organized and dependable.",
+      "You are decisive and excel at managing people and resources.",
+      "You are practical and focus on getting results."
+    ],
+    "weaknesses": [
+      "You may be seen as overly strict or controlling.",
+      "You can resist change and prefer traditional approaches.",
+      "You might struggle to be flexible in unfamiliar situations."
+    ],
+    "values": [
+      "Structure and stability",
+      "Responsibility",
+      "Tradition and order"
+    ],
+    "ideal_careers": ["Manager", "Military Officer", "Judge", "Accountant"],
+    "communication_style": "You are straightforward, clear, and results-driven in your communication.",
+    "relationships": "You value loyalty, responsibility, and commitment in relationships."
+  },
+  {
+    "id": "ESFJ",
+    "strengths": [
+      "You are warm, caring, and attentive to others’ needs.",
+      "You are loyal and committed in your relationships.",
+      "You are organized and reliable in both personal and professional life."
+    ],
+    "weaknesses": [
+      "You may become overly dependent on others’ approval.",
+      "You can be too focused on traditions and expectations.",
+      "You may avoid conflict, even when necessary."
+    ],
+    "values": [
+      "Community and service",
+      "Harmony and cooperation",
+      "Tradition and loyalty"
+    ],
+    "ideal_careers": ["Nurse", "Teacher", "Social Worker", "Event Planner"],
+    "communication_style": "You communicate warmly and kindly, often encouraging teamwork and harmony.",
+    "relationships": "You thrive in close, supportive relationships and value loyalty and stability."
+  },
+  {
+    "id": "ISTJ",
+    "strengths": [
+      "You are responsible, reliable, and detail-oriented.",
+      "You value tradition and consistency.",
+      "You are logical and excel at following through with commitments."
+    ],
+    "weaknesses": [
+      "You may struggle with adapting to change.",
+      "You can be seen as rigid or overly serious.",
+      "You sometimes prioritize duty over personal needs."
+    ],
+    "values": [
+      "Duty and responsibility",
+      "Stability",
+      "Precision and reliability"
+    ],
+    "ideal_careers": ["Accountant", "Lawyer", "Inspector", "Administrator"],
+    "communication_style": "You are clear, factual, and straightforward, often focusing on practical matters.",
+    "relationships": "You value loyalty and commitment, preferring stable and long-term relationships."
+  },
+  {
+    "id": "ISFJ",
+    "strengths": [
+      "You are compassionate and attentive to others’ needs.",
+      "You are dependable and responsible.",
+      "You excel at creating harmony in your environment."
+    ],
+    "weaknesses": [
+      "You may neglect your own needs to care for others.",
+      "You can be overly modest and reluctant to assert yourself.",
+      "You may struggle with handling criticism."
+    ],
+    "values": [
+      "Care and compassion",
+      "Stability and loyalty",
+      "Community and service"
+    ],
+    "ideal_careers": ["Nurse", "Teacher", "Counselor", "Librarian"],
+    "communication_style": "You communicate with warmth and sincerity, often putting others at ease.",
+    "relationships": "You value loyalty, kindness, and a strong sense of responsibility in relationships."
+  },
+  {
+    "id": "ESTP",
+    "strengths": [
+      "You are energetic, bold, and quick to act.",
+      "You thrive in dynamic, fast-paced environments.",
+      "You are persuasive and excel in hands-on problem-solving."
+    ],
+    "weaknesses": [
+      "You may act impulsively without thinking through consequences.",
+      "You sometimes struggle with long-term planning.",
+      "You can become restless and bored easily."
+    ],
+    "values": [
+      "Action and excitement",
+      "Freedom and independence",
+      "Practical results"
+    ],
+    "ideal_careers": [
+      "Entrepreneur",
+      "Salesperson",
+      "Athlete",
+      "Emergency Responder"
+    ],
+    "communication_style": "You communicate with energy and confidence, often using humor and charisma.",
+    "relationships": "You enjoy adventurous relationships and value spontaneity and excitement with your partner."
+  },
+  {
+    "id": "ESFP",
+    "strengths": [
+      "You are lively, fun-loving, and make people feel comfortable.",
+      "You are adaptable and enjoy living in the moment.",
+      "You are empathetic and sensitive to others’ emotions."
+    ],
+    "weaknesses": [
+      "You may avoid serious or difficult situations.",
+      "You can struggle with planning and long-term goals.",
+      "You may seek too much external validation."
+    ],
+    "values": ["Fun and enjoyment", "Spontaneity", "Compassion and warmth"],
+    "ideal_careers": [
+      "Performer",
+      "Event Planner",
+      "Tour Guide",
+      "Salesperson"
+    ],
+    "communication_style": "You communicate with enthusiasm and warmth, often bringing humor and joy to conversations.",
+    "relationships": "You value excitement and emotional connection, often thriving in relationships that bring joy and adventure."
+  },
+  {
+    "id": "ISTP",
+    "strengths": [
+      "You are practical and excel at hands-on problem-solving.",
+      "You remain calm and resourceful under pressure.",
+      "You are independent and adaptable."
+    ],
+    "weaknesses": [
+      "You may be seen as reserved or emotionally distant.",
+      "You can struggle with long-term commitments.",
+      "You sometimes act impulsively without considering consequences."
+    ],
+    "values": ["Independence", "Practical skills", "Freedom to explore"],
+    "ideal_careers": ["Engineer", "Mechanic", "Pilot", "Detective"],
+    "communication_style": "You are direct and action-oriented, preferring practical discussions over emotional ones.",
+    "relationships": "You value freedom and independence but are loyal once you commit to someone."
+  },
+  {
+    "id": "ISFP",
+    "strengths": [
+      "You are gentle, artistic, and deeply empathetic.",
+      "You appreciate beauty and often express yourself creatively.",
+      "You are flexible and adapt well to change."
+    ],
+    "weaknesses": [
+      "You may avoid conflict and suppress your true feelings.",
+      "You can be overly sensitive to criticism.",
+      "You sometimes struggle with structure and discipline."
+    ],
+    "values": [
+      "Creativity and individuality",
+      "Compassion",
+      "Freedom and authenticity"
+    ],
+    "ideal_careers": ["Artist", "Musician", "Designer", "Therapist"],
+    "communication_style": "You communicate with warmth and sincerity, often expressing yourself through creative outlets.",
+    "relationships": "You value deep emotional connections and prefer relationships built on trust and authenticity."
+  }
+]
