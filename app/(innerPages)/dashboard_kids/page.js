@@ -58,9 +58,10 @@ export default function Dashboard() {
 
         if (!educationStageExists) {
           router.replace("/user/education-profile");
-        } else if (!isInstitutionDetailsAdded) {
-            router.replace("/education-details");
         } 
+        // else if (!isInstitutionDetailsAdded) {
+        //     router.replace("/education-details");
+        // } 
         // 2️⃣ Then go to kids/junior/career suggestion
         else if (["8", "9", "10"].includes(gradeData)) {
           router.replace("/dashboard_junior/cluster-suggestion");

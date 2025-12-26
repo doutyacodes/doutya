@@ -102,29 +102,41 @@ export default function ModernEducationProfileForm() {
         const resp = await GlobalApi.GetDashboarCheck(token);
         const scopeType = resp.data.scopeType;
 
+        // if (resp.data.educationStageExists) {
+        //   if (resp.data.isEducationCompleted) {
+        //     if (scopeType === "career") {
+        //       router.replace("/dashboard/careers/career-suggestions");
+        //     } else if (scopeType === "sector") {
+        //       router.replace("/dashboard_kids/sector-suggestion");
+        //     } else if (scopeType === "cluster") {
+        //       router.replace("/dashboard_junior/cluster-suggestion");
+        //     }
+        //   } else {
+        //     if (!resp.data.institutionDetailsAdded) {
+        //       router.replace("/education-details");
+        //     } else {
+        //       if (scopeType === "career") {
+        //         router.replace("/dashboard/careers/career-suggestions");
+        //       } else if (scopeType === "sector") {
+        //         router.replace("/dashboard_kids/sector-suggestion");
+        //       } else if (scopeType === "cluster") {
+        //         router.replace("/dashboard_junior/cluster-suggestion");
+        //       }
+        //     }
+        //   }
+        // }
+
         if (resp.data.educationStageExists) {
-          if (resp.data.isEducationCompleted) {
-            if (scopeType === "career") {
-              router.replace("/dashboard/careers/career-suggestions");
-            } else if (scopeType === "sector") {
-              router.replace("/dashboard_kids/sector-suggestion");
-            } else if (scopeType === "cluster") {
-              router.replace("/dashboard_junior/cluster-suggestion");
-            }
-          } else {
-            if (!resp.data.institutionDetailsAdded) {
-              router.replace("/education-details");
-            } else {
-              if (scopeType === "career") {
-                router.replace("/dashboard/careers/career-suggestions");
-              } else if (scopeType === "sector") {
-                router.replace("/dashboard_kids/sector-suggestion");
-              } else if (scopeType === "cluster") {
-                router.replace("/dashboard_junior/cluster-suggestion");
-              }
-            }
-          }
+          const redirectUrl =
+            scopeType === "career"
+              ? "/dashboard/careers/career-suggestions"
+              : scopeType === "sector"
+              ? "/dashboard_kids/sector-suggestion"
+              : "/dashboard_junior/cluster-suggestion";
+
+          router.replace(redirectUrl);
         }
+
       } catch (error) {
         console.error("Error fetching profile status:", error);
         toast.error("Error loading profile status. Please try again.");
@@ -139,6 +151,9 @@ export default function ModernEducationProfileForm() {
   // Handle form submission with proper payload mapping
   const onSubmit = async (data) => {
     try {
+      const resp = await GlobalApi.GetDashboarCheck(token);
+      const scopeType = resp.data.scopeType;
+
       let payload = {
         educationStage: data.educationStage,
         schoolEducation:
@@ -239,7 +254,14 @@ export default function ModernEducationProfileForm() {
       if (response.status === 200 && response.data.success) {
         console.log("Response:", response.data);
         toast.success("Education profile updated successfully!");
-        router.replace("/education-details");
+        // router.replace("/education-details");
+        if (scopeType === "career") {
+          router.replace("/dashboard/careers/career-suggestions");
+        } else if (scopeType === "sector") {
+          router.replace("/dashboard_kids/sector-suggestion");
+        } else if (scopeType === "cluster") {
+          router.replace("/dashboard_junior/cluster-suggestion");
+        }
       } else {
         throw new Error("Unexpected response status");
       }

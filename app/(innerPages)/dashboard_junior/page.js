@@ -61,13 +61,14 @@ export default function Dashboard() {
       const timer = setTimeout(() => {
         if (!educationStageExists) {
             router.replace("/user/education-profile");
-        } else if (!isInstitutionDetailsAdded) {
-              router.replace("/education-details");
+        } 
+        // else if (!isInstitutionDetailsAdded) {
+        //       router.replace("/education-details");
         // } else if (!isCountryAdded) {
         // 1️⃣ Check if country is added
           // console.log("Country not added");
           // router.replace("/country");
-        } 
+        // } 
         // 2️⃣ Then go to kids/junior/career suggestion
         else if (["8", "9", "10"].includes(gradeData)) {
           router.replace("/dashboard_junior/cluster-suggestion");

@@ -82,22 +82,23 @@ export async function POST(req) {
         const userInfo = userDetails[0];
         const countryAdded = !!(userInfo?.country && userInfo?.country.trim() !== '');
 
-        if (!isEducationCompleted) {
-          const institutionDetailsAdded = !!(
-            (userInfo?.institutionId || (userInfo?.instituteName && userInfo?.instituteName.trim() !== '')) &&
-            (userInfo?.classId || (userInfo?.className && userInfo?.className.trim() !== '')) &&
-            userInfo?.academicYearStart &&
-            userInfo?.academicYearEnd
-          );
+        // if (!isEducationCompleted) {
+        //   const institutionDetailsAdded = !!(
+        //     (userInfo?.institutionId || (userInfo?.instituteName && userInfo?.instituteName.trim() !== '')) &&
+        //     (userInfo?.classId || (userInfo?.className && userInfo?.className.trim() !== '')) &&
+        //     userInfo?.academicYearStart &&
+        //     userInfo?.academicYearEnd
+        //   );
 
-          if (!institutionDetailsAdded) {
-            navigateUrl = '/education-details';
-          }
-        }
+        //   if (!institutionDetailsAdded) {
+        //     navigateUrl = '/education-details';
+        //   }
+        // }
 
-        if (!countryAdded) {
-          navigateUrl = '/country';
-        } else {
+        // if (!countryAdded) {
+        //   navigateUrl = '/country';
+        // } else {
+          
           const hasAddedCareers = userCareers.length > 0;
           
           // Determine the appropriate suggestion page based on scope_type
@@ -115,7 +116,7 @@ export async function POST(req) {
               navigateUrl = '/dashboard_junior/cluster-suggestion';
             }
           }
-        }
+        // }
       }
     }
 
