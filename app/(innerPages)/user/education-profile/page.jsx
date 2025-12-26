@@ -151,6 +151,9 @@ export default function ModernEducationProfileForm() {
   // Handle form submission with proper payload mapping
   const onSubmit = async (data) => {
     try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
       const resp = await GlobalApi.GetDashboarCheck(token);
       const scopeType = resp.data.scopeType;
 
@@ -240,10 +243,6 @@ export default function ModernEducationProfileForm() {
       }
 
       console.log("Submitting data:", payload);
-
-      const token =
-        typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
       const response = await axios.post(
         "/api/user/education-profile",
