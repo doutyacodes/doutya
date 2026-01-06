@@ -9,7 +9,7 @@ export default function MaintenancePage() {
   useEffect(() => {
     const autoRefreshTimer = setTimeout(() => {
       window.location.reload();
-    }, 5000);
+    }, 60000);
 
     return () => clearTimeout(autoRefreshTimer);
   }, []);
