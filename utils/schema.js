@@ -2093,3 +2093,15 @@ export const COMMUNITY_POSTS_LIKES = mysqlTable("community_posts_likes", {
   liked_by_type: mysqlEnum("liked_by_type", ["user", "moderator"]).notNull(),
   created_at: timestamp("created_at").defaultNow(),
 });
+
+export const APP_SETTINGS = mysqlTable("app_settings", {
+  id: int("id").primaryKey().autoincrement(),
+
+  maintenanceMode: int("maintenance_mode").default(0).notNull(),
+  // 0 = OFF
+  // 1 = ON
+
+  maintenanceMessage: varchar("maintenance_message", { length: 500 }),
+
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});

@@ -96,7 +96,9 @@ import { jwtVerify } from 'jose';
 export async function middleware(req) {
   const pathname = req.nextUrl.pathname;
 
-  // Skip static assets and favicon
+  /* =====================================================
+     1️⃣ SKIP STATIC FILES & API ROUTES
+  ===================================================== */
   if (
     pathname.startsWith('/api') ||
     pathname.startsWith('/_next/') ||
@@ -110,7 +112,50 @@ export async function middleware(req) {
 
   console.log("🔔 Middleware triggered for PAGE:", pathname);
 
-  // Public routes
+  /* =====================================================
+     2️⃣ MAINTENANCE MODE CHECK (NEW)
+  ===================================================== */
+  try {
+    const maintenanceRes = await fetch(
+      `${req.nextUrl.origin}/api/app/maintenance/status`,
+      { cache: 'no-store' }
+    );
+
+    const maintenanceData = await maintenanceRes.json();
+
+    console.log("🔔 Middleware maintenanceData:", maintenanceData);
+
+    // 🟥 Maintenance ON → force everyone to /maintenance
+    if (maintenanceData?.maintenanceMode === true) {
+      if (!pathname.startsWith('/maintenance')) {
+        console.log("🚧 Maintenance ON → redirecting to /maintenance");
+        return NextResponse.redirect(
+          new URL('/maintenance', req.url)
+        );
+      }
+
+      // Already on /maintenance → allow
+      return NextResponse.next();
+    }
+
+    // 🟩 Maintenance OFF but user still on /maintenance
+    if (
+      maintenanceData?.maintenanceMode === false &&
+      pathname.startsWith('/maintenance')
+    ) {
+      console.log("✅ Maintenance OFF → leaving maintenance page");
+      return NextResponse.redirect(
+        new URL('/', req.url)
+      );
+    }
+
+  } catch (err) {
+    console.log("⚠️ Maintenance check failed, allowing access");
+  }
+
+  /* =====================================================
+     3️⃣ PUBLIC ROUTES (EXISTING LOGIC)
+  ===================================================== */
   const publicRoutes = [
     '/login',
     '/signup',
@@ -120,7 +165,6 @@ export async function middleware(req) {
     '/verify/verify-certificate'
   ];
 
-  // Allow homepage (/) and specific public routes
   const isPublicRoute =
     pathname === '/' ||
     publicRoutes.some(route => pathname.startsWith(route));
@@ -130,7 +174,9 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  // Get token from cookies
+  /* =====================================================
+     4️⃣ AUTH TOKEN CHECK (EXISTING)
+  ===================================================== */
   const token = req.cookies.get('auth_token')?.value;
 
   if (!token) {
@@ -144,22 +190,30 @@ export async function middleware(req) {
 
     console.log("✅ JWT payload:", payload);
 
-    // ✅ Step 1: Check verification first
+    /* =====================================================
+       5️⃣ VERIFICATION CHECK (EXISTING)
+    ===================================================== */
     if (payload.isVerified === false) {
       if (!pathname.startsWith('/verification-pending')) {
-        console.log("⚠️ Not verified → redirecting to /verification-pending");
-        return NextResponse.redirect(new URL('/verification-pending', req.url));
+        console.log("⚠️ Not verified → redirecting");
+        return NextResponse.redirect(
+          new URL('/verification-pending', req.url)
+        );
       }
     }
 
-    // ✅ Step 2: Check plan (only if verified)
+    /* =====================================================
+       6️⃣ PLAN CHECK (EXISTING)
+    ===================================================== */
     if (!payload.plan) {
       if (
         !pathname.startsWith('/activation') &&
         !pathname.startsWith('/verification-pending')
       ) {
-        console.log("⚠️ No plan → redirecting to /activation");
-        return NextResponse.redirect(new URL('/activation', req.url));
+        console.log("⚠️ No plan → redirecting");
+        return NextResponse.redirect(
+          new URL('/activation', req.url)
+        );
       }
     }
 
