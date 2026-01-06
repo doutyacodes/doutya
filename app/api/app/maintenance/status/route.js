@@ -3,6 +3,9 @@ import { db } from "@/utils";
 import { APP_SETTINGS } from "@/utils/schema";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export async function GET() {
   try {
     const settings = await db
