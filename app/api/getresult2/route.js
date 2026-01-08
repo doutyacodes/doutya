@@ -12,6 +12,7 @@ import { db } from "@/utils";
 import axios from "axios";
 import { getCurrentWeekOfAge } from "@/lib/getCurrentWeekOfAge";
 import { generateCareerPrompt } from "../services/promptService";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const languageOptions = {
   en: "in English",
@@ -268,14 +269,14 @@ export async function GET(req) {
     languageOptions,
     educationWorkDescription
   );
-  console.log("prompt", prompt);
+  // console.log("prompt", prompt);
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 7000, // Adjust the token limit as needed
+      max_tokens: 8000, // Adjust the token limit as needed
     },
     {
       headers: {
@@ -298,17 +299,45 @@ export async function GET(req) {
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
 
+// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+// // USE THE LATEST SERIES 3 MODELS:
+// const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+
+// const result = await model.generateContent(prompt);
+// const response = await result.response;
+
+// console.log("Gemini 3 Result:", response.text());
+
+// New Gemini 3 Feature: Precise Token Counting
+// const usage = response.usageMetadata;
+
+// if (usage) {
+//   console.log("--- Token Usage Details ---");
+//   console.log(`Input (Prompt) Tokens:   ${usage.promptTokenCount}`);
+//   console.log(`Output (Response) Tokens: ${usage.candidatesTokenCount}`);
+  
+//   // New for Gemini 3: Reasoning/Thinking tokens
+//   if (usage.thoughtsTokenCount) {
+//     console.log(`Thinking Tokens:         ${usage.thoughtsTokenCount}`);
+//   }
+  
+//   console.log(`Total Tokens:            ${usage.totalTokenCount}`);
+//   console.log("---------------------------");
+// }
+// const responseText =  response.text()
+
   // Store the new result in the user_results table
-  await db
-    .insert(USER_RESULTS)
-    .values({
-      user_id: userId,
-      result2: responseText,
-      quiz_id: 2,
-      type: industry == null ? "basic" : "advance",
-      country: country,
-    })
-    .execute();
+  // await db
+  //   .insert(USER_RESULTS)
+  //   .values({
+  //     user_id: userId,
+  //     result2: responseText,
+  //     quiz_id: 2,
+  //     type: industry == null ? "basic" : "advance",
+  //     country: country,
+  //   })
+  //   .execute();
 
   // return NextResponse.json({ result: responseText });
   return NextResponse.json({ result: responseText }, { status: 200 });

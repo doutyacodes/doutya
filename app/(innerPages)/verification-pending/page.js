@@ -11,7 +11,9 @@ const VerificationPending = () => {
     window.location.href = 'mailto:support@institution.com';
   };
 
-  const handleRetryLogin = () => {
+  const handleRetryLogin = async() => {
+    await fetch('/api/logout', { method: 'GET' });
+
     // Clear localStorage
     localStorage.removeItem("token");
 
@@ -22,8 +24,6 @@ const VerificationPending = () => {
     router.push('/login');
   };
   
-  
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 text-center">
