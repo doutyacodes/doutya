@@ -580,7 +580,7 @@ export async function GET(req, { params }) {
         // Fetch cluster data from USER_CLUSTER
         const userClusterData = await db
           .select({
-            clusterId: USER_CLUSTER.id,
+            clusterId: USER_CLUSTER.cluster_id,
             clusterName: CLUSTER.name,
             mbtiType: USER_CLUSTER.mbti_type,
             riasecCode: USER_CLUSTER.riasec_code,
@@ -607,7 +607,7 @@ export async function GET(req, { params }) {
         // Fetch sector data from USER_SECTOR
         const userSectorData = await db
           .select({
-            sectorId: USER_SECTOR.id,
+            sectorId: USER_SECTOR.sector_id,
             sectorName: SECTOR.name,
             sectorDescription: SECTOR.description,
             mbtiType: USER_SECTOR.mbti_type,
