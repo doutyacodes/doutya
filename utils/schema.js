@@ -69,6 +69,17 @@ export const USER_KEYS = mysqlTable("user_keys", {
   unique_key: varchar("unique_key", { length: 50 }).notNull(),
 });
 
+export const ACTIVATION_KEYS = mysqlTable("activation_keys", {
+  id: int("id").autoincrement().primaryKey(),
+  user_id: int("user_id").notNull(),
+  plan_type: mysqlEnum("plan_type", ["base", "pro"]).notNull(),
+  activation_key: varchar("activation_key", { length: 100 }).notNull(),
+  payment_id: varchar("payment_id", { length: 255 }).notNull(),
+  order_id: varchar("order_id", { length: 255 }).notNull(),
+  is_used: boolean("is_used").notNull().default(false),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
 // Define the schema for the 'page' table
 export const PAGE = mysqlTable("page", {
   id: int("id").primaryKey().notNull(),
