@@ -12,7 +12,7 @@ import mysql from "mysql2/promise";
 const connection = await mysql.createConnection({
   host: "68.178.163.247",
   user: "devuser_quiz_project_user",
-  database: "devuser_quiz_project",
+  database: "devuser_quiz_project_dev",
   password:'Wowfy#user',
   port:'3306',
 });
