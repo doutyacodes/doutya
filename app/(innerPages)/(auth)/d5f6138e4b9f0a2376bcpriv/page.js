@@ -24,6 +24,8 @@ const languageMapping = {
   mal: "Malayalam",
 };
 
+const testVariable = 0;
+
 function SignUp() {
   const getSixYearsAgo = () => {
     const date = new Date();
