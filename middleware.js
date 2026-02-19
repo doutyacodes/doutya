@@ -159,9 +159,11 @@ export async function middleware(req) {
   const publicRoutes = [
     '/login',
     '/signup',
+    '/open-signup',
     '/verify',
     '/api/login',
     '/api/signup',
+    '/api/open-signup',
     '/verify/verify-certificate'
   ];
 

@@ -33,7 +33,7 @@ const LeftSideBar = () => {
   const [guideDropdownOpen, setGuideDropdownOpen] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [userRoleType, setUserRoleType] = useState(null);
 
   const [isTest2Completed, setIsTest2Completed] = useState(false);
 
@@ -74,7 +74,7 @@ const LeftSideBar = () => {
         const resp = await GlobalApi.GetDashboarCheck(token);
 
         setScopeType(resp.data.scopeType)
-
+        setUserRoleType(resp.data.userRoleType);
         // Check if Test 2 is completed
         const test2 = resp.data.data.find((q) => q.quiz_id === 2);
         if (test2 && test2.isCompleted) {
@@ -166,12 +166,12 @@ const LeftSideBar = () => {
         { name: "Career Guide", link: "/dashboard/careers/career-guide" },
       ],
     },
-    {
+    ...(userRoleType !== "Individual" ? [{
       name: "Community",
-      icon: <FaUsers className="text-base" />, // You might need to import FaUsers from react-icons/fa
+      icon: <FaUsers className="text-base" />,
       link: "/community",
       submenus: [],
-    },
+    }] : []),
     // {
     //   name: "Companies",
     //   icon: <FaSuitcase className="text-xl" />,

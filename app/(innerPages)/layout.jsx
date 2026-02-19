@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
     setIsAuthenticated(!!token);
   }, [pathname]);
 
-  const shouldHideSidebar = pathname === '/login' || pathname === '/signup';
+  const shouldHideSidebar = pathname === '/login' || pathname === '/signup' || pathname === '/open-signup' || pathname === '/activation';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">

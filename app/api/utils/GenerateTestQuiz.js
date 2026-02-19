@@ -32,31 +32,31 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, className
         //     }
         // );
 
-        //  const response = await axios.post(
-        //     "https://api.openai.com/v1/chat/completions",
-        //     {
-        //         model: "gpt-4o-mini",
-        //         messages: [
-        //             {
-        //                 role: "system",
-        //                 content: "You are an expert educator who creates accurate, well-structured multiple-choice questions. For mathematical problems, you always solve them completely before creating options and ensure exactly one correct answer exists."
-        //             },
-        //             {
-        //                 role: "user", 
-        //                 content: prompt
-        //             }
-        //         ],
-        //         max_tokens: 4000, // Increased from 2500
-        //         temperature: 0.3, // Lower temperature for more consistent mathematical accuracy
-        //         top_p: 0.9,
-        //     },
-        //     {
-        //         headers: {
-        //             Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        //             "Content-Type": "application/json",
-        //         },
-        //     }
-        // );
+         const response = await axios.post(
+            "https://api.openai.com/v1/chat/completions",
+            {
+                model: "gpt-4o-mini",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are an expert educator who creates accurate, well-structured multiple-choice questions. For mathematical problems, you always solve them completely before creating options and ensure exactly one correct answer exists."
+                    },
+                    {
+                        role: "user", 
+                        content: prompt
+                    }
+                ],
+                max_tokens: 4000, // Increased from 2500
+                temperature: 0.3, // Lower temperature for more consistent mathematical accuracy
+                top_p: 0.9,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
 
         // Deepseek Test
         // const response = await axios.post(
@@ -87,39 +87,39 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, className
 
         // Gemini Test
 
-        const response = await axios.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-        {
-            contents: [
-            {
-                parts: [
-                { text: "You are an expert educator who creates accurate, well-structured multiple-choice questions. For mathematical problems, you always solve them completely before creating options and ensure exactly one correct answer exists.\n\n" + prompt }
-                ]
-            }
-            ]
-        },
-        {
-            headers: {
-            "Content-Type": "application/json",
-            "X-goog-api-key": process.env.GEMINI_API_KEY,
-            },
-        }
-        );
+        // const response = await axios.post(
+        // "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        // {
+        //     contents: [
+        //     {
+        //         parts: [
+        //         { text: "You are an expert educator who creates accurate, well-structured multiple-choice questions. For mathematical problems, you always solve them completely before creating options and ensure exactly one correct answer exists.\n\n" + prompt }
+        //         ]
+        //     }
+        //     ]
+        // },
+        // {
+        //     headers: {
+        //     "Content-Type": "application/json",
+        //     "X-goog-api-key": process.env.GEMINI_API_KEY,
+        //     },
+        // }
+        // );
                 
 
-        // console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
-        // console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
-        // console.log(`Total tokens Test quiz: ${response.data.usage.total_tokens}`);
+        console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
+        console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+        console.log(`Total tokens Test quiz: ${response.data.usage.total_tokens}`);
 
-        // let responseText = response.data.choices[0].message.content.trim();
-        // responseText = responseText.replace(/```json|```/g, "").trim();
-        // const parsedData = JSON.parse(responseText);
+        let responseText = response.data.choices[0].message.content.trim();
+        responseText = responseText.replace(/```json|```/g, "").trim();
+        const parsedData = JSON.parse(responseText);
 
         /* gemini */
 
-        let responseText = response.data.candidates[0].content.parts[0].text.trim();
-        responseText = responseText.replace(/```json|```/g, "").trim();
-        const parsedData = JSON.parse(responseText);
+        // let responseText = response.data.candidates[0].content.parts[0].text.trim();
+        // responseText = responseText.replace(/```json|```/g, "").trim();
+        // const parsedData = JSON.parse(responseText);
 
 
         // const result = await generateMCQs(prompt);

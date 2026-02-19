@@ -305,7 +305,7 @@ function SignUp() {
     data.dob = selectedDOB;
     data.language = languageMapping[selectedLanguage] || selectedLanguage;
     data.classGrade = selectedClassGrade; // Add grade to data
-    
+    data.country = selectedCountry;
     // Add stream_id or course_id based on grade
     if (["11", "12"].includes(selectedClassGrade)) {
       data.streamId = parseInt(selectedStream);
@@ -367,6 +367,14 @@ function SignUp() {
   const handleQuickSignup = () => {
     router.push('/quick-signup');
   };
+
+const handleBackButton = () => {
+  if (window.history.length > 1) {
+    router.back();
+  } else {
+    router.push('/login');
+  }
+};
 
   const collegeStudent = watch("student");
   // Language Step
@@ -456,11 +464,18 @@ function SignUp() {
             >
               {t("continue") || "Continue"}
             </button>
-            <button
+            {/* <button
                 onClick={handleQuickSignup}
                 className="w-full py-2 px-6 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white font-medium rounded-xl border border-gray-600/50 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-500/50 mt-3"
               >
                 Quick Signup (Testing)
+              </button> */}
+
+              <button
+                onClick={handleBackButton}
+                className="w-full py-2 px-6 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white font-medium rounded-xl border border-gray-600/50 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-500/50 mt-3"
+              >
+                Back
               </button>
           </div>
         </div>

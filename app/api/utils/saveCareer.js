@@ -13,45 +13,55 @@ import {
 import { and, eq } from "drizzle-orm";
 
 export async function saveCareer(
-  careersArray, 
-  country, 
-  userId, 
-  type1, 
+  careersArray,
+  country,
+  userId,
+  type1,
   type2,
-  locationData = {} // New parameter for location data
+  locationData = {}
 ) {
   try {
-    // Extract location data
     const {
       schoolingLocation = null,
       graduationLocation = null,
-      postGraduationLocation = null
+      postGraduationLocation = null,
     } = locationData;
 
-    // Get user's class_id
+    // Fetch user details — we need class_id and user_role
     const [userDetails] = await db
-      .select({ class_id: USER_DETAILS.class_id })
+      .select({
+        class_id: USER_DETAILS.class_id,
+        user_role: USER_DETAILS.user_role,
+      })
       .from(USER_DETAILS)
       .where(eq(USER_DETAILS.id, userId))
       .execute();
 
-    if (!userDetails || !userDetails.class_id) {
-      throw new Error("User class_id not found");
+    if (!userDetails) {
+      throw new Error("User not found");
     }
 
-    const classId = userDetails.class_id;
+    // Individual users (mall kiosk / no institution) have no class_id.
+    // They can still save careers, communities, etc. — but skip anything
+    // that requires a class_id (COMMUNITIES table, CLASS_MODERATOR, etc.)
+    const isIndividualUser =
+      userDetails.user_role === "Individual" || !userDetails.class_id;
 
-    // Get all moderators for this class
-    const classModerators = await db
-      .select({ moderator_id: CLASS_MODERATOR.moderator_id })
-      .from(CLASS_MODERATOR)
-      .where(eq(CLASS_MODERATOR.class_id, classId))
-      .execute();
+    const classId = isIndividualUser ? null : userDetails.class_id;
+
+    // Only fetch moderators for institutional users who have a class
+    let classModerators = [];
+    if (!isIndividualUser && classId) {
+      classModerators = await db
+        .select({ moderator_id: CLASS_MODERATOR.moderator_id })
+        .from(CLASS_MODERATOR)
+        .where(eq(CLASS_MODERATOR.class_id, classId))
+        .execute();
+    }
 
     for (const career of careersArray) {
-      // Helper function to reduce repeated code for community creation
+      // ── Helper: find or create a community (global or country-specific) ──
       const findOrCreateCommunity = async (isGlobal) => {
-        // First, ensure we have the career group ID
         const [careerGroup] = await db
           .select({ id: CAREER_GROUP.id })
           .from(CAREER_GROUP)
@@ -84,8 +94,8 @@ export async function saveCareer(
             career,
             global: isGlobal ? "yes" : "no",
             country: isGlobal ? null : country,
-            scope_id: careerGroup.id, // Explicitly insert career_id
-            scope_type: 'career'
+            scope_id: careerGroup.id,
+            scope_type: "career",
           })
           .execute();
 
@@ -98,21 +108,23 @@ export async function saveCareer(
         };
       };
 
-      // Find or create career group
-      const [careerGroup] = await db
+      // ── Find or create career group ───────────────────────────────────────
+      const [existingCareerGroup] = await db
         .select({ id: CAREER_GROUP.id })
         .from(CAREER_GROUP)
         .where(eq(CAREER_GROUP.career_name, career))
-        .execute() || [];
+        .execute();
 
-      const careerGroupId = careerGroup 
-        ? careerGroup.id 
-        : (await db
-            .insert(CAREER_GROUP)
-            .values({ career_name: career })
-            .execute())[0].insertId;
+      const careerGroupId = existingCareerGroup
+        ? existingCareerGroup.id
+        : (
+            await db
+              .insert(CAREER_GROUP)
+              .values({ career_name: career })
+              .execute()
+          )[0].insertId;
 
-      // Check if user career already exists
+      // ── Guard against duplicate user career ───────────────────────────────
       const existingUserCareer = await db
         .select()
         .from(USER_CAREER)
@@ -131,7 +143,7 @@ export async function saveCareer(
         };
       }
 
-      // Insert user career with location data
+      // ── Insert user career (same for all user types) ──────────────────────
       const [userCareerInsert] = await db
         .insert(USER_CAREER)
         .values({
@@ -148,7 +160,7 @@ export async function saveCareer(
 
       const userCareerId = userCareerInsert.insertId;
 
-      // Insert user career status
+      // ── Insert user career status (same for all user types) ───────────────
       await db
         .insert(USER_CAREER_STATUS)
         .values({
@@ -157,11 +169,10 @@ export async function saveCareer(
         })
         .execute();
 
-      // Find or create global and country-specific communities
+      // ── Global + country-specific communities (same for all user types) ───
       const globalCommunity = await findOrCreateCommunity(true);
       const countryCommunity = await findOrCreateCommunity(false);
 
-      // Helper function to add user to community
       const addUserToCommunity = async (communityId, communityCountry) => {
         const existingUserCommunity = await db
           .select()
@@ -186,13 +197,18 @@ export async function saveCareer(
         }
       };
 
-      // Add user to global and country-specific communities
       await addUserToCommunity(globalCommunity.id, null);
       await addUserToCommunity(countryCommunity.id, country);
 
-      // ===== NEW COMMUNITIES TABLE LOGIC =====
-      
-      // Check if community already exists in COMMUNITIES table
+      // ── Class-based communities — INSTITUTIONAL USERS ONLY ────────────────
+      // Individual users (user_role = "Individual" or no class_id) are not
+      // linked to any institution, so we skip the COMMUNITIES / COMMUNITY_MEMBERS
+      // logic entirely. Everything above still runs for them normally.
+      if (isIndividualUser) {
+        continue; // move to next career in the loop
+      }
+
+      // ── COMMUNITIES table (institutional users only) ───────────────────────
       const existingNewCommunity = await db
         .select()
         .from(COMMUNITIES)
@@ -208,10 +224,8 @@ export async function saveCareer(
       let newCommunityId;
 
       if (existingNewCommunity.length > 0) {
-        // Community already exists
         newCommunityId = existingNewCommunity[0].id;
       } else {
-        // Create new community in COMMUNITIES table
         const [newCommunityInsert] = await db
           .insert(COMMUNITIES)
           .values({
@@ -226,7 +240,7 @@ export async function saveCareer(
         newCommunityId = newCommunityInsert.insertId;
       }
 
-      // Add current user as member in COMMUNITY_MEMBERS
+      // Add current user as member
       const existingUserMember = await db
         .select()
         .from(COMMUNITY_MEMBERS)
@@ -251,7 +265,7 @@ export async function saveCareer(
           .execute();
       }
 
-      // Add all class moderators as admins in COMMUNITY_MEMBERS
+      // Add class moderators as admins
       for (const moderator of classModerators) {
         const existingModeratorMember = await db
           .select()
