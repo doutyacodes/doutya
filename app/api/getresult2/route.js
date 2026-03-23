@@ -269,7 +269,7 @@ export async function GET(req) {
     languageOptions,
     educationWorkDescription
   );
-  // console.log("prompt", prompt);
+  console.log("prompt", prompt);
 
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
@@ -298,6 +298,8 @@ export async function GET(req) {
 
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
+
+  console.log(responseText)
 
 // const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 

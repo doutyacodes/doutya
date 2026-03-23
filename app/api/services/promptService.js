@@ -44,47 +44,111 @@ export const dynamic = 'force-dynamic';
             country ? "in " + country : ""
         } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}. 
 
-    **RIASEC Interest Code Guidelines:**
-    - The interest code represents a ranked preference order based on assessment scores
-    - Each letter's position indicates preference strength (1st position = highest score, 2nd position = second highest, etc.)
-    - Sequences may be 3+ characters long due to tied scores in the assessment
-    - Primary interest (1st letter): Dominant preference - heavily weight in career matching
-    - Secondary interest (2nd letter): Strong preference - significant influence on career fit
-    - Tertiary interest (3rd letter): Moderate preference - notable consideration
-    - Additional letters (4th+): Emerging preferences - minor but relevant considerations
-    - R (Realistic): Hands-on, practical, mechanical, outdoors
-    - I (Investigative): Analytical, scientific, research-oriented
-    - A (Artistic): Creative, expressive, aesthetic, original
-    - S (Social): Helping people, teaching, counseling, community-focused
-    - E (Enterprising): Leadership, persuasion, business, competitive
-    - C (Conventional): Organized, detail-oriented, structured, systematic
-    - Weight career recommendations based on how well they align with the hierarchical interest pattern
+        **RIASEC Interest Code Guidelines:**
+        - The interest code represents a ranked preference order based on assessment scores
+        - Each letter's position indicates preference strength (1st position = highest score, 2nd position = second highest, etc.)
+        - Sequences may be 3+ characters long due to tied scores in the assessment
+        - Primary interest (1st letter): Dominant preference - heavily weight in career matching
+        - Secondary interest (2nd letter): Strong preference - significant influence on career fit
+        - Tertiary interest (3rd letter): Moderate preference - notable consideration
+        - Additional letters (4th+): Emerging preferences - minor but relevant considerations
+        - R (Realistic): Hands-on, practical, mechanical, outdoors
+        - I (Investigative): Analytical, scientific, research-oriented
+        - A (Artistic): Creative, expressive, aesthetic, original
+        - S (Social): Helping people, teaching, counseling, community-focused
+        - E (Enterprising): Leadership, persuasion, business, competitive
+        - C (Conventional): Organized, detail-oriented, structured, systematic
+        - Weight career recommendations based on how well they align with the hierarchical interest pattern
 
-    ${educationWorkDescription !=null ? "Qualification: "+ educationWorkDescription :""}
+        ${educationWorkDescription != null ? "Qualification: " + educationWorkDescription : ""}
 
-    Include eactly 3 traditional careers, 3 trending careers, 3 AI-proof career 3 entrepreneurial careers, 3 offbeat careers, 3 creative careers, 3 hybrid careers, 3 sustainable and green careers, 3 social impact careers, 3 tech-driven careers, 3 experiential careers, and 3 digital and online careers. Include exactly 3 unique careers for each category (no more, no less).
-    . Additionally, provide ${futuristicCareerPrompt}(currently in week ${currentAgeWeek} of this age)
-        Ensure that the recommended careers align at least 80% with how compatible the user is with each specific career. Do not overlap careers. 
-            For each career, include the following information:
-                career_name: A brief title of the career.
-                type: trending, offbeat, traditional, futuristic, ai-proof, entrepreneurial, normal, hybrid, creative, sustainable and green, social impact, tech-driven, experiential, digital and online.
-                description: Why this specific career is suitable for this user based on their ${type1} personality type and ${type2} RIASEC interests. Explain the alignment with their personality traits and interests.
-                brief_overview: A concise description of what this career involves, key responsibilities, and typical work environment.
-                future_potential: Future growth prospects, emerging opportunities, job market outlook, salary expectations, and career advancement possibilities in this field.
+        Include exactly 3 careers for each category:
+        traditional, trending, entrepreneurial, offbeat, creative, hybrid, sustainable and green, social impact, tech-driven, experiential, digital and online, and futuristic.
 
-                Ensure that the response is valid JSON with the following structure for each career:
-                {
-                "career_name": "Career Title",
-                "type": "career type",
-                "description": "Why suitable for this user",
-                "brief_overview": "What the career involves",
-                "future_potential": "Growth and opportunities"
-                }
-                Do not include the terms MBTI or RIASEC and '${type1}' or '${type2}' in the response data.
-            languageOptions[language] || "in English"
+        CRITICAL AI CLASSIFICATION RULE:
+        - In EACH category:
+        - Provide exactly 3 careers
+        - Maintain strict 1:1:1 ratio:
+            - 1 career must be AI Proof
+            - 1 career must be AI Augmented
+            - 1 career must be AI Risk
+
+        AI FUTURE RESILIENCE SCORING SYSTEM:
+
+        For EACH career, calculate an AI Future Resilience Score (FRS) from 0 to 100 using:
+
+        A. Task Automation Risk (40%)
+        B. Human Judgment Requirement (25%)
+        C. Creativity Requirement (15%)
+        D. Human Interaction Depth (10%)
+        E. Regulatory / Physical Constraints (10%)
+
+        FRS FORMULA:
+        FRS =
+        (1 - Automation Risk)*40 +
+        Judgment*25 +
+        Creativity*15 +
+        Human Interaction*10 +
+        Constraints*10
+
+        (All parameter values between 0 and 1)
+
+        CLASSIFICATION BASED ON SCORE:
+        - 90–100 → AI Proof
+        - 60–89 → AI Augmented
+        - 0–59 → AI Risk
+
+        IMPORTANT:
+        - Classification MUST match the calculated score
+        - Maintain strict 1:1:1 ratio per category
+
+        EXPLANATION RULE:
+        - "Why AI Proof/ Augments/ Replaces" must be written in simple natural language
+        - DO NOT mention scores, formula, or parameters
+        - Keep explanation human-readable and clear
+
+        CAREER COMPATIBILITY:
+        - For EACH career, assign a compatibility_score (0–100)
+        - Based on personality fit and interest alignment
+        - Ensure all careers are at least 80% compatible
+
+        Ensure that the recommended careers align at least 80% compatibility and do not overlap.
+
+        For each career, include:
+        {
+        "career_name": "Career Title",
+        "type": "career type",
+        "ai_proof": true/false,
+        "ai_category": "AI Proof / AI Augmented / AI Risk",
+        "ai_resilience_score": number,
+        "compatibility_score": number,
+        "Why AI Proof/ Augments/ Replaces": "Simple explanation",
+        "description": "Why suitable for this user",
+        "brief_overview": "What the career involves",
+        "future_potential": "Growth and opportunities"
+        }
+
+        STRICT OUTPUT REQUIREMENTS (MANDATORY):
+        - Total careers MUST be exactly 36 (12 categories × 3 each)
+        - EACH category MUST have exactly 3 careers
+        - NO category can have less or more than 3 careers
+        - Output is INVALID if any category is missing or has incorrect count
+        - Maintain strict 1:1:1 ratio (AI Proof, AI Augmented, AI Risk) inside EACH category
+        - Ensure all 12 categories are present in the response
+        - Do NOT skip or merge categories
+
+        OUTPUT STRUCTURE RULE:
+        - Careers MUST be grouped logically by category
+        - Ensure each category clearly contains 3 careers before moving to next category
+
+        Do not include the terms MBTI or RIASEC and '${type1}' or '${type2}' in the response data.
+
+        Return the result strictly as a single JSON array without any wrapping other than [].
+
+        languageOptions[language] || "in English"
         }, keeping the keys in English only, but the career names should be ${
             languageOptions[language] || "in English"
-        }. Present it as a single JSON data array without any wrapping other than []`;
+        }.`;
         
         return enhancePromptWithEducation(basePrompt, educationData);
     };
