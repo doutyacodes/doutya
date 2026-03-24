@@ -330,16 +330,16 @@ export async function GET(req) {
 // const responseText =  response.text()
 
   // Store the new result in the user_results table
-  // await db
-  //   .insert(USER_RESULTS)
-  //   .values({
-  //     user_id: userId,
-  //     result2: responseText,
-  //     quiz_id: 2,
-  //     type: industry == null ? "basic" : "advance",
-  //     country: country,
-  //   })
-  //   .execute();
+  await db
+    .insert(USER_RESULTS)
+    .values({
+      user_id: userId,
+      result2: responseText,
+      quiz_id: 2,
+      type: industry == null ? "basic" : "advance",
+      country: country,
+    })
+    .execute();
 
   // return NextResponse.json({ result: responseText });
   return NextResponse.json({ result: responseText }, { status: 200 });
