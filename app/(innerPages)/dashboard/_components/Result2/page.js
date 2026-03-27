@@ -376,6 +376,19 @@ function DetailedReportModal({ careers, onClose }) {
     }
   };
 
+  const getAiTitle = (category) => {
+    switch (category) {
+      case "AI Proof":
+        return "Why This Career is AI-Proof";
+      case "AI Augmented":
+        return "How AI Enhances This Career";
+      case "AI Risk":
+        return "AI Impact & Risks in This Career";
+      default:
+        return "AI Impact";
+    }
+  };
+
   return (
     // Contained overlay — sits inside the result area, not full-screen covering sidebar
     <div
@@ -481,9 +494,12 @@ function DetailedReportModal({ careers, onClose }) {
                         )}
                         {career["Why AI Proof/ Augments/ Replaces"] && (
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: ac.color }}>
-                              AI Impact — {career.ai_category}
-                            </p>
+                               <p
+                                className="text-[10px] font-bold uppercase tracking-widest mb-1.5"
+                                style={{ color: ac.color }}
+                              >
+                                {getAiTitle(career.ai_category)}
+                              </p>
                             <p className="text-sm leading-relaxed" style={{ color: "#d1d5db" }}>
                               {career["Why AI Proof/ Augments/ Replaces"]}
                             </p>
@@ -930,6 +946,22 @@ export default function Results2({ step, setStep }) {
                         ))}
                       </div>
                     )}
+
+                    
+                  {singleCareer["Why AI Proof/ Augments/ Replaces"] && (
+                      <div>
+                        <p
+                          className="text-[10px] font-bold uppercase tracking-widest mb-1.5"
+                          style={{ color: getAiCfg(singleCareer.ai_category).color }}
+                        >
+                          {getAiTitle(singleCareer.ai_category)}
+                        </p>
+                        <p className="text-sm leading-relaxed text-gray-300">
+                          {singleCareer["Why AI Proof/ Augments/ Replaces"]}
+                        </p>
+                      </div>
+                    )}
+
 
                     {singleCareer?.reason_for_recommendation && (
                       <div className="col-span-12">
