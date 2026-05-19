@@ -19,19 +19,24 @@ export async function POST(req) {
     plan_type,
   } = await req.json();
 
-  // STEP 1: VERIFY SIGNATURE
-  const body = razorpay_order_id + "|" + razorpay_payment_id;
+  // SKIP SIGNATURE VERIFICATION FOR MOCK PAYMENTS
+  const isMock = razorpay_order_id?.startsWith("mock_");
 
-  const expectedSignature = crypto
-    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-    .update(body.toString())
-    .digest("hex");
+  if (!isMock) {
+    // STEP 1: VERIFY SIGNATURE
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
 
-  if (expectedSignature !== razorpay_signature) {
-    return NextResponse.json(
-      { message: "Invalid payment signature!" },
-      { status: 400 }
-    );
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(body.toString())
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      return NextResponse.json(
+        { message: "Invalid payment signature!" },
+        { status: 400 }
+      );
+    }
   }
 
   // STEP 2: UPDATE USER PLAN

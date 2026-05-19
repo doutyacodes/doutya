@@ -574,97 +574,145 @@ export default function PlanSelectionPage() {
     setTimeout(() => setNotification(null), 4000);
   };
 
-  const handlePayment = async () => {
-    if (!selectedPlan) {
-      showNotification("Please select a plan to continue");
-      return;
-    }
+const handlePayment = async () => {
+  if (!selectedPlan) {
+    showNotification("Please select a plan to continue");
+    return;
+  }
 
-    // Check if Razorpay is loaded
-    if (!razorpayLoaded || !window.Razorpay) {
-      showNotification("Payment gateway is loading. Please wait a moment and try again.");
-      return;
-    }
+  setLoading(true);
 
-    setLoading(true);
+  // MOCK PAYMENT FOR DEV
+  if (process.env.NEXT_PUBLIC_MOCK_PAYMENT === "true") {
+    setTimeout(async () => {
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-    try {
-      const res = await fetch("/api/payment/create-order", {
-        method: "POST",
-        body: JSON.stringify({ plan_type: selectedPlan }),
-      });
+        const verifyRes = await fetch("/api/payment/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            razorpay_order_id: "mock_order_" + Date.now(),
+            razorpay_payment_id: "mock_pay_" + Date.now(),
+            razorpay_signature: "mock_signature",
+            plan_type: selectedPlan,
+          }),
+        });
 
-      const { order } = await res.json();
+        const data = await verifyRes.json();
 
-      if (!order) {
-        showNotification("Failed to create order. Please try again.");
+        if (verifyRes.ok) {
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+          }
+          setPaymentSuccess(true);
+          showNotification("Payment successful! Redirecting...", "success");
+          const storedUrl = localStorage.getItem("navigateUrl");
+          setTimeout(() => {
+            window.location.href = storedUrl || "/dashboard";
+          }, 2000);
+        } else {
+          showNotification(data.message || "Mock payment failed");
+          setLoading(false);
+        }
+      } catch (err) {
+        showNotification("Mock payment error. Please try again.");
         setLoading(false);
-        return;
       }
+    }, 1500);
+    return;
+  }
+  // END MOCK
 
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: "INR",
-        name: "XORTCUT",
-        description: "Plan Upgrade",
-        order_id: order.id,
+  // REAL RAZORPAY FLOW
+  if (!razorpayLoaded || !window.Razorpay) {
+    showNotification("Payment gateway is loading. Please wait a moment and try again.");
+    setLoading(false);
+    return;
+  }
 
-        handler: async (response) => {
-          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-          
-          try {
-            const verifyRes = await fetch("/api/payment/verify", {
-              method: "POST",
-              headers: { 
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                plan_type: selectedPlan,
-              }),
-            });
+  try {
+    const res = await fetch("/api/payment/create-order", {
+      method: "POST",
+      body: JSON.stringify({ plan_type: selectedPlan }),
+    });
 
-            const data = await verifyRes.json();
+    const { order } = await res.json();
 
-            if (verifyRes.ok) {
-              setPaymentSuccess(true);
-              showNotification("Payment successful! Redirecting...", "success");
-              
-              const storedUrl = localStorage.getItem("navigateUrl");
-              setTimeout(() => {
-                window.location.href = storedUrl || "/dashboard";
-              }, 2000);
-            } else {
-              showNotification(data.message || "Payment verification failed. Please contact support.");
-            }
-          } catch (err) {
-            showNotification("Verification error. Please contact support with your payment ID.");
-          }
-        },
-
-        modal: {
-          ondismiss: () => {
-            setLoading(false);
-          }
-        },
-
-        theme: {
-          color: selectedPlan === "pro" ? "#8b5cf6" : "#3b82f6",
-        },
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
-    } catch (err) {
-      showNotification("Something went wrong. Please try again.");
-      console.error(err);
+    if (!order) {
+      showNotification("Failed to create order. Please try again.");
       setLoading(false);
+      return;
     }
-  };
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: "INR",
+      name: "XORTCUT",
+      description: "Plan Upgrade",
+      order_id: order.id,
+
+      handler: async (response) => {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+        try {
+          const verifyRes = await fetch("/api/payment/verify", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              plan_type: selectedPlan,
+            }),
+          });
+
+          const data = await verifyRes.json();
+
+          if (verifyRes.ok) {
+            if (data.token) {
+              localStorage.setItem("token", data.token);
+            }
+            setPaymentSuccess(true);
+            showNotification("Payment successful! Redirecting...", "success");
+            const storedUrl = localStorage.getItem("navigateUrl");
+            setTimeout(() => {
+              window.location.href = storedUrl || "/dashboard";
+            }, 2000);
+          } else {
+            showNotification(data.message || "Payment verification failed. Please contact support.");
+          }
+        } catch (err) {
+          showNotification("Verification error. Please contact support with your payment ID.");
+        }
+      },
+
+      modal: {
+        ondismiss: () => {
+          setLoading(false);
+        },
+      },
+
+      theme: {
+        color: selectedPlan === "pro" ? "#8b5cf6" : "#3b82f6",
+      },
+    };
+
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
+  } catch (err) {
+    showNotification("Something went wrong. Please try again.");
+    console.error(err);
+    setLoading(false);
+  }
+};
 
   if (paymentSuccess) {
     return (
