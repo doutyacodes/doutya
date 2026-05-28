@@ -5,129 +5,149 @@ import {
   COLLEGE_EDUCATION, 
   COMPLETED_EDUCATION, 
   WORK_EXPERIENCE, 
-  CAREER_PREFERENCES 
+  CAREER_PREFERENCES, 
+  USER_DETAILS,
+  INSTITUTION,
+  CLASS
 } from "@/utils/schema";
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { authenticate } from "@/lib/jwtMiddleware";
 import { db } from "@/utils";
+import { INSTITUTION_COURSES, INSTITUTION_STREAMS } from "@/utils/schema/institutional_schema";
 
+// app/api/user/education-profile/route.js  (POST section)
 export async function POST(req) {
   try {
     const authResult = await authenticate(req);
-    if (!authResult.authenticated) {
-      return authResult.response;
-    }
+    if (!authResult.authenticated) return authResult.response;
 
-    const userData = authResult.decoded_Data;
-    const userId = userData.userId;
+    const userId = authResult.decoded_Data.userId;
     const data = await req.json();
-    
-    // Begin transaction
+    // data = { preference, description }
+
     return await db.transaction(async (tx) => {
-      // 1. Update or insert user education stage
+      // 1. Fetch user profile to auto-fill education data
+      const userRows = await tx
+        .select({
+          grade: USER_DETAILS.grade,
+          institutionId: USER_DETAILS.institution_id,
+          instituteName: USER_DETAILS.institute_name,
+          classId: USER_DETAILS.class_id,
+          className: USER_DETAILS.class_name,
+          userStream: USER_DETAILS.user_stream,
+          streamId: USER_DETAILS.stream_id,
+          courseId: USER_DETAILS.course_id,
+          institutionType: INSTITUTION.type,
+          institutionName: INSTITUTION.name,
+          className2: CLASS.name,
+          academicYearStart: USER_DETAILS.academicYearStart,
+          academicYearEnd: USER_DETAILS.academicYearEnd,
+        })
+        .from(USER_DETAILS)
+        .leftJoin(INSTITUTION, eq(USER_DETAILS.institution_id, INSTITUTION.id))
+        .leftJoin(CLASS, eq(USER_DETAILS.class_id, CLASS.id))
+        .where(eq(USER_DETAILS.id, userId))
+        .limit(1);
+
+      if (!userRows.length) throw new Error("User not found");
+
+      const user = userRows[0];
+      const institutionType = user.institutionType; // "School" | "College"
+      const className = user.className2 || user.className;
+      const grade = user.grade || "";
+      const gradeNum = parseInt(grade);
+      const isHigherSecondary = gradeNum >= 11;
+
+      // Resolve stream name
+      let streamName = user.userStream || null;
+      if (user.streamId) {
+        const streamRows = await tx
+          .select({ name: INSTITUTION_STREAMS.name })
+          .from(INSTITUTION_STREAMS)
+          .where(eq(INSTITUTION_STREAMS.id, user.streamId))
+          .limit(1);
+        if (streamRows.length) streamName = streamRows[0].name;
+      }
+
+      // 2. Determine education stage from institution type
+      const educationStage =
+        institutionType === "College" ? "college" : "school";
+
+      // 3. Upsert USER_EDUCATION_STAGE
       await tx
         .insert(USER_EDUCATION_STAGE)
-        .values({
-          user_id: userId,
-          stage: data.educationStage,
-        })
-        .onDuplicateKeyUpdate({ set: { stage: data.educationStage } });
+        .values({ user_id: userId, stage: educationStage })
+        .onDuplicateKeyUpdate({ set: { stage: educationStage } });
 
-      // 2. Handle school education if applicable
-      if (data.educationStage === "school") {
-        await tx.delete(SCHOOL_EDUCATION).where(eq(SCHOOL_EDUCATION.user_id, userId));
-        
-        if (data.schoolEducation) {
-          await tx.insert(SCHOOL_EDUCATION).values({
-            user_id: userId,
-            is_higher_secondary: data.schoolEducation.isHigherSecondary,
-            main_subject: data.schoolEducation.mainSubject,
-            description: data.schoolEducation.description,
-          });
-        }
-      }
-
-      // 3. Handle college education if applicable
-      if (data.educationStage === "college") {
-        await tx.delete(COLLEGE_EDUCATION).where(eq(COLLEGE_EDUCATION.user_id, userId));
-        
-        if (data.collegeEducation && data.collegeEducation.length > 0) {
-          for (const education of data.collegeEducation) {
-            await tx.insert(COLLEGE_EDUCATION).values({
-              user_id: userId,
-              degree: education.degree,
-              field: education.field,
-              year_of_study: education.yearOfStudy,
-              is_completed: education.isCompleted,
-              description: education.description,
-            });
-          }
-        }
-      }
-
-      // 4. Handle completed education if applicable
-      if (data.educationStage === "completed_education") {
-        // Clear existing data
-        await tx.delete(COMPLETED_EDUCATION).where(eq(COMPLETED_EDUCATION.user_id, userId));
-        await tx.delete(WORK_EXPERIENCE).where(eq(WORK_EXPERIENCE.user_id, userId));
-
-        // Insert completed education entries
-        if (data.completedEducation && data.completedEducation.length > 0) {
-          for (const education of data.completedEducation) {
-            await tx.insert(COMPLETED_EDUCATION).values({
-              user_id: userId,
-              degree: education.degree,
-              field: education.field,
-              institution: education.institution,
-              start_date: education.startDate ? new Date(education.startDate + "-01") : null,
-              end_date: education.isCurrentlyStudying ? null : (education.endDate ? new Date(education.endDate + "-01") : null),
-              is_currently_studying: education.isCurrentlyStudying || false,
-              description: education.description,
-            });
-          }
-        }
-
-        // Insert work experience entries
-        if (data.workExperience && data.workExperience.length > 0) {
-          for (const experience of data.workExperience) {
-            await tx.insert(WORK_EXPERIENCE).values({
-              user_id: userId,
-              job_title: experience.jobTitle,
-              company: experience.company,
-              start_date: experience.startDate ? new Date(experience.startDate + "-01") : null,
-              end_date: experience.isCurrentlyWorking ? null : (experience.endDate ? new Date(experience.endDate + "-01") : null),
-              is_currently_working: experience.isCurrentlyWorking || false,
-              skills: experience.skills, // stays inside work experience
-              years_of_experience: experience.yearsOfExperience || null,
-              description: experience.description,
-            });
-          }
-        }
-      }
-
-      // 5. Update career preferences (only if provided)
-      if (data.careerPreferences) {
+      // 4. Auto-fill SCHOOL_EDUCATION
+      if (educationStage === "school") {
         await tx
-          .insert(CAREER_PREFERENCES)
-          .values({
-            userId: userId,
-            schoolPref: data.careerPreferences.schoolPref,
-            collegePref: data.careerPreferences.collegePref,
-            completedPref: data.careerPreferences.completedPref,
-            noJobPref: data.careerPreferences.noJobPref,
-          })
-          .onDuplicateKeyUpdate({
-            set: {
-              schoolPref: data.careerPreferences.schoolPref,
-              collegePref: data.careerPreferences.collegePref,
-              completedPref: data.careerPreferences.completedPref,
-              noJobPref: data.careerPreferences.noJobPref,
-            },
-          });
+          .delete(SCHOOL_EDUCATION)
+          .where(eq(SCHOOL_EDUCATION.user_id, userId));
+
+        await tx.insert(SCHOOL_EDUCATION).values({
+          user_id: userId,
+          is_higher_secondary: isHigherSecondary,
+          main_subject: streamName || null,
+          description: data.description || null,
+        });
       }
 
-      return NextResponse.json({ success: true });
+      // 5. Auto-fill COLLEGE_EDUCATION
+      if (educationStage === "college") {
+        await tx
+          .delete(COLLEGE_EDUCATION)
+          .where(eq(COLLEGE_EDUCATION.user_id, userId));
+
+        // Resolve course name if available
+        let courseName = null;
+        if (user.courseId) {
+          const courseRows = await tx
+            .select({ name: INSTITUTION_COURSES.name })
+            .from(INSTITUTION_COURSES)
+            .where(eq(INSTITUTION_COURSES.id, user.courseId))
+            .limit(1);
+          if (courseRows.length) courseName = courseRows[0].name;
+        }
+
+        await tx.insert(COLLEGE_EDUCATION).values({
+          user_id: userId,
+          degree: courseName || "Undergraduate", // best-effort
+          field: streamName || className || "General",
+          year_of_study: 1, // default; we don't collect this separately
+          is_completed: false,
+          description: data.description || null,
+        });
+      }
+
+      // 6. Map preference to the right column
+      const prefValue = data.preference;
+      let prefPayload = {
+        userId: userId,
+        schoolPref: null,
+        collegePref: null,
+        completedPref: null,
+        noJobPref: null,
+      };
+
+      if (educationStage === "school") {
+        prefPayload.schoolPref = prefValue;
+      } else if (educationStage === "college") {
+        prefPayload.collegePref = prefValue;
+      }
+
+      await tx
+        .insert(CAREER_PREFERENCES)
+        .values(prefPayload)
+        .onDuplicateKeyUpdate({
+          set: {
+            schoolPref: prefPayload.schoolPref,
+            collegePref: prefPayload.collegePref,
+          },
+        });
+
+      return NextResponse.json({ success: true, educationStage });
     });
   } catch (error) {
     console.error("Error updating education profile:", error);
