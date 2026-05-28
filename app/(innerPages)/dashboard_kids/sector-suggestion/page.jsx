@@ -476,7 +476,7 @@ export default function SectorSelectionPage() {
           
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-7xl mx-auto">
                   <AnimatePresence>
-                      {sortedSectors.slice(0, 6).map((sortedSector, index) => (
+                      {sortedSectors.slice(0, 3).map((sortedSector, index) => (
                       <motion.div
                         key={sortedSector.sector_details?.id || index}
                         initial={{ opacity: 0, y: 50, rotateY: 10 }}
