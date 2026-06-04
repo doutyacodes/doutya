@@ -16,6 +16,12 @@ export default function Results2() {
     const [industries, setIndustries] = useState([])
     const [industrySelect, setIndustrySelect] = useState(null)
     const router = useRouter();
+
+    const handleOptionSelect = async(e) => {
+        setIndustrySelect(e.target.innerText); 
+        const selectedIndustry = e.target.innerText
+        fetchResults(selectedIndustry)
+    };
     
     const handleStayClick = () => {
       setStep(0); // Hide everything if "Stay" is clicked
@@ -23,12 +29,6 @@ export default function Results2() {
   
     const handleContinueClick = () => {
       setStep(2); // Show industry options if "Continue" is clicked
-    };
-
-    const handleOptionSelect = async(e) => {
-        setIndustrySelect(e.target.innerText); 
-        const selectedIndustry = e.target.innerText
-        fetchResults(selectedIndustry)
     };
 
     const fetchResults = async (selectedIndustry, country = null ) => {
