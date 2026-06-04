@@ -57,8 +57,8 @@ function SignUp() {
   const [ageCategory, setAgeCategory] = useState(""); // New state for age category
   const [selectedClass, setSelectedClass] = useState("");
 
-  const [showStreamInput, setShowStreamInput] = useState(false);
-  const [checking, setChecking] = useState(true);
+const [showStreamInput, setShowStreamInput] = useState(false);
+const [checking, setChecking] = useState(true);
 
   // const [institutions, setInstitutions] = useState([]);
   // const [childClassOptions, setChildClassOptions] = useState([]);
@@ -120,19 +120,22 @@ function SignUp() {
     }
   }, [institutionSearch, institutions]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      const url = localStorage.getItem("navigateUrl");
-      if (token && url) {
-        router.replace(url);
-      } else {
-        setChecking(false);
-      }
-    }
-  }, [router]);
-
-  if (checking) return null;
+    useEffect(() => {
+      const checkAuth = async () => {
+        try {
+          const res = await fetch('/api/check');
+          if (res.ok) {
+            const url = localStorage.getItem("navigateUrl") || "/dashboard";
+            router.replace(url);
+          } else {
+            setChecking(false);
+          }
+        } catch (err) {
+          setChecking(false);
+        }
+      };
+      checkAuth();
+    }, []);
 
   const fetchInstitutions = async () => {
     try {
@@ -390,6 +393,7 @@ const handleBackButton = () => {
     router.push('/login');
   }
 };
+  if (checking) return null;
 
   const collegeStudent = watch("student");
   // Language Step
