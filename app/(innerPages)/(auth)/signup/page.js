@@ -58,6 +58,7 @@ function SignUp() {
   const [selectedClass, setSelectedClass] = useState("");
 
   const [showStreamInput, setShowStreamInput] = useState(false);
+  const [checking, setChecking] = useState(true);
 
   // const [institutions, setInstitutions] = useState([]);
   // const [childClassOptions, setChildClassOptions] = useState([]);
@@ -118,6 +119,20 @@ function SignUp() {
       setFilteredInstitutions(institutions);
     }
   }, [institutionSearch, institutions]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      const url = localStorage.getItem("navigateUrl");
+      if (token && url) {
+        router.replace(url);
+      } else {
+        setChecking(false);
+      }
+    }
+  }, [router]);
+
+  if (checking) return null;
 
   const fetchInstitutions = async () => {
     try {

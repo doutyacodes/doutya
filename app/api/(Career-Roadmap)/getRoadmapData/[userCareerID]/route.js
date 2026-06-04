@@ -345,17 +345,18 @@ const handleFailedMilestoneGeneration = async (
     console.log("Attempting to retry failed milestone generation...");
 
     const savedMilestones = await fetchAndSaveRoadmap(
-      userId,
-      scopeId,
-      classLevel,
-      currentMonth,
-      userCareerID,
-      scopeName,
-      type1,
-      type2,
-      language,
-      scopeType,
-      sectorDescription
+        userId,
+        scopeId,
+        classLevel,
+        currentMonth,
+        scopeId,
+        scopeName,
+        type1,
+        type2,
+        language,
+        scopeType,
+        sectorDescription,
+        educationWorkDescription
     );
 
     await db
@@ -987,28 +988,26 @@ export async function GET(req, { params }) {
         }
       } else {
         // Milestones exist, check if user milestones are linked
-        const userMilestonesExist = await db
+      const userMilestonesExist = await db
           .select()
           .from(USER_MILESTONES)
           .where(
-            and(
-              eq(USER_MILESTONES.scope_id, userCareerID),
-              eq(USER_MILESTONES.scope_type, scopeType),
-              eq(USER_MILESTONES.user_id, userId)
-            )
+              and(
+                  eq(USER_MILESTONES.scope_id, scopeId),
+                  eq(USER_MILESTONES.scope_type, scopeType),
+                  eq(USER_MILESTONES.user_id, userId)
+              )
           )
           .execute();
 
         if (userMilestonesExist.length === 0 && existingMilestones.length > 0) {
           // Link existing milestones to user
           for (const milestone of existingMilestones) {
-            await db
-              .insert(USER_MILESTONES)
-              .values({
-                scope_id: userCareerID,
-                scope_type: scopeType,
-                milestone_id: milestone.milestoneId,
-                user_id: userId,
+              await db.insert(USER_MILESTONES).values({
+                  scope_id: scopeId,
+                  scope_type: scopeType,
+                  milestone_id: milestone.milestoneId,
+                  user_id: userId,
               })
               .execute();
           }

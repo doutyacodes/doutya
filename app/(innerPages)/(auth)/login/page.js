@@ -26,31 +26,45 @@ function Login() {
     setSelectedLanguage(savedLanguage);
   }, []);
 
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     const token = localStorage.getItem("token");
+
+  //     // Get auth_token from cookies
+  //     // const cookies = document.cookie.split("; ").find(row => row.startsWith("auth_token="));
+  //     // const authToken = cookies ? cookies.split("=")[1] : null;
+
+  //     console.log("token:", token, "authToken:");
+      
+  //     if (token) {
+  //       const url = typeof window !== "undefined" ? localStorage.getItem("navigateUrl") : null;
+  //       router.replace(url);
+  //       // router.replace("/dashboard"); // Redirect only if both exist
+
+  //     } /* else { */
+  //     //   localStorage.clear(); // Clear localStorage if either token is missing
+      
+  //     // }
+
+  //     // if (token && authToken) {
+  //     //   router.replace("/dashboard"); // Redirect only if both exist
+  //     // } else {
+  //     //   localStorage.clear(); // Clear localStorage if either token is missing
+  //     // }
+  //   }
+  // }, [router]);
+
+  const [checking, setChecking] = useState(true);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("token");
-
-      // Get auth_token from cookies
-      // const cookies = document.cookie.split("; ").find(row => row.startsWith("auth_token="));
-      // const authToken = cookies ? cookies.split("=")[1] : null;
-
-      console.log("token:", token, "authToken:");
-      
-      if (token) {
-        const url = typeof window !== "undefined" ? localStorage.getItem("navigateUrl") : null;
+      const url = localStorage.getItem("navigateUrl");
+      if (token && url) {
         router.replace(url);
-        // router.replace("/dashboard"); // Redirect only if both exist
-
-      } /* else { */
-      //   localStorage.clear(); // Clear localStorage if either token is missing
-      
-      // }
-
-      // if (token && authToken) {
-      //   router.replace("/dashboard"); // Redirect only if both exist
-      // } else {
-      //   localStorage.clear(); // Clear localStorage if either token is missing
-      // }
+      } else {
+        setChecking(false);
+      }
     }
   }, [router]);
 
@@ -102,6 +116,7 @@ function Login() {
  
   const t = useTranslations('LoginPage');
   const s = useTranslations('SignupPage');
+  if (checking) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">

@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import Footer from "./_components/Footer";
@@ -9,13 +10,25 @@ import Header from "./_components/Header";
 
 const Page = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const { scrollY } = useScroll();
+  const [checking, setChecking] = useState(true);  const { scrollY } = useScroll();
   const backgroundY = useTransform(scrollY, [0, 500], [0, 150]);
   const textY = useTransform(scrollY, [0, 500], [0, 200]);
+  const router = useRouter();
 
   useEffect(() => {
     setIsVisible(true);
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      const url = localStorage.getItem("navigateUrl");
+      if (token && url) {
+        router.replace(url);
+      } else {
+        setChecking(false);
+      }
+    }
   }, []);
+
+  if (checking) return null;
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
