@@ -381,9 +381,9 @@
 //     const aiResponse = await axios.post(
 //       "https://api.openai.com/v1/chat/completions",
 //       {
-//         model: "gpt-5.4-mini",
+//         model: "gpt-4o-mini",
 //         messages: [{ role: "user", content: comprehensivePrompt }],
-//         max_completion_tokens: 4000,
+//         max_tokens: 4000,
 //         temperature: 0.7
 //       },
 //       {
@@ -881,9 +881,9 @@ export async function GET(req) {
     const aiResponse = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-5.4-mini",
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: comprehensivePrompt }],
-        max_completion_tokens: 4000,
+        max_tokens: 4000,
         temperature: 0.7
       },
       {

@@ -90,9 +90,9 @@ export async function generateSectorSorting(mbtiType, riasecCode, classLevel) {
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-5.4-mini",
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
-        max_completion_tokens: 2000,
+        max_tokens: 2000,
         temperature: 0.7,
       },
       {

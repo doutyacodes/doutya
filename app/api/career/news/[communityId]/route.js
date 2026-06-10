@@ -96,9 +96,9 @@ async function fetchNews(scopeId, scopeType, scopeName) {
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-5.4-mini",
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
-        max_completion_tokens: 2500,
+        max_tokens: 2500,
       },
       {
         headers: {

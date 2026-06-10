@@ -22,7 +22,7 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, className
         //     {
         //         model: "gpt-4.1-mini",
         //         messages: [{ role: "user", content: prompt }],
-        //         max_completion_tokens: 2500,
+        //         max_tokens: 2500,
         //     },
         //     {
         //         headers: {
@@ -35,7 +35,7 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, className
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-5.4-mini",
+                model: "gpt-4o-mini",
                 messages: [
                     {
                         role: "system",
@@ -46,7 +46,7 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, className
                         content: prompt
                     }
                 ],
-                max_completion_tokens: 4000, // Increased from 2500
+                max_tokens: 4000, // Increased from 2500
                 temperature: 0.3, // Lower temperature for more consistent mathematical accuracy
                 top_p: 0.9,
             },
@@ -73,7 +73,7 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, className
         //             content: prompt
         //         }
         //         ],
-        //         max_completion_tokens: 5000,
+        //         max_tokens: 5000,
         //         temperature: 0.3,
         //         top_p: 0.9,
         //     },

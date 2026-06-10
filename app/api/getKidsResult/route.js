@@ -89,9 +89,9 @@ export async function GET(req) {
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
-      model: "gpt-5.4-mini",
+      model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
-      max_completion_tokens: 4000, // Adjust the token limit as needed
+      max_tokens: 4000, // Adjust the token limit as needed
     },
     {
       headers: {

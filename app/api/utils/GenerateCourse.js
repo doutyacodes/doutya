@@ -48,9 +48,9 @@ export async function GenerateCourse(
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-5.4-mini",
+                model: "gpt-4o-mini",
                 messages: [{ role: "user", content: prompt }],
-                max_completion_tokens: 5000,
+                max_tokens: 5000,
             },
             {
                 headers: {

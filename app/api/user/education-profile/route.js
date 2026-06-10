@@ -104,7 +104,7 @@ export async function POST(req) {
         let courseName = null;
         if (user.courseId) {
           const courseRows = await tx
-            .select({ name: INSTITUTION_COURSES.name })
+            .select({ name: INSTITUTION_COURSES.course_name })
             .from(INSTITUTION_COURSES)
             .where(eq(INSTITUTION_COURSES.id, user.courseId))
             .limit(1);

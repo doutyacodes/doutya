@@ -31,9 +31,9 @@ export async function validateCareer(career) {
         const validationResponse = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-5.4-mini",
+                model: "gpt-4o-mini",
                 messages: [{ role: "user", content: validationPrompt }],
-                max_completion_tokens: 500, // Adjust the token limit as needed
+                max_tokens: 500, // Adjust the token limit as needed
             },
             {
                 headers: {
