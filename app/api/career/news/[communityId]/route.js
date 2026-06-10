@@ -96,9 +96,9 @@ async function fetchNews(scopeId, scopeType, scopeName) {
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini",  
+        model: "gpt-5.4-mini",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 2500,
+        max_completion_tokens: 2500,
       },
       {
         headers: {
@@ -121,7 +121,7 @@ async function fetchNews(scopeId, scopeType, scopeName) {
       parsedData = JSON.parse(responseText);
     } catch (error) {
       console.error(`Failed to parse response for ${scopeName}:`, error);
-      
+
       // Update pending entries to failed
       const pendingEntries = await db
         .select({ id: CAREER_NEWS.id })
@@ -134,7 +134,7 @@ async function fetchNews(scopeId, scopeType, scopeName) {
           )
         )
         .execute();
-      
+
       for (const entry of pendingEntries) {
         await db
           .update(CAREER_NEWS)
@@ -142,7 +142,7 @@ async function fetchNews(scopeId, scopeType, scopeName) {
           .where(eq(CAREER_NEWS.id, entry.id))
           .execute();
       }
-      
+
       return null;
     }
 
@@ -177,7 +177,7 @@ async function fetchNews(scopeId, scopeType, scopeName) {
     return parsedData;
   } catch (error) {
     console.error(`Error generating news for ${scopeType} ${scopeName}:`, error);
-    
+
     // Update pending entries to failed
     const pendingEntries = await db
       .select({ id: CAREER_NEWS.id })
@@ -190,7 +190,7 @@ async function fetchNews(scopeId, scopeType, scopeName) {
         )
       )
       .execute();
-    
+
     for (const entry of pendingEntries) {
       await db
         .update(CAREER_NEWS)
@@ -198,7 +198,7 @@ async function fetchNews(scopeId, scopeType, scopeName) {
         .where(eq(CAREER_NEWS.id, entry.id))
         .execute();
     }
-    
+
     return null;
   }
 }
@@ -246,7 +246,7 @@ async function waitForNewsGeneration(scopeId, scopeType, maxAttempts = 10, delay
     // Wait before checking again
     await new Promise(resolve => setTimeout(resolve, delayMs));
   }
-  
+
   return null; // Max attempts reached, assume failure
 }
 
@@ -261,7 +261,7 @@ function getTodayStart() {
 async function getScopeName(scopeType, scopeId) {
   try {
     let result;
-    
+
     if (scopeType === "career") {
       result = await db
         .select({ name: CAREER_GROUP.career_name })
@@ -284,7 +284,7 @@ async function getScopeName(scopeType, scopeId) {
         .limit(1)
         .execute();
     }
-    
+
     return result && result.length > 0 ? result[0].name : null;
   } catch (error) {
     console.error(`Error fetching scope name for ${scopeType} ID ${scopeId}:`, error);
@@ -311,7 +311,7 @@ export async function GET(req, { params }) {
 
     // Fetch scope info from COMMUNITY table
     const communityDetails = await db
-      .select({ 
+      .select({
         scopeId: COMMUNITY.scope_id,
         scopeType: COMMUNITY.scope_type
       })
@@ -331,7 +331,7 @@ export async function GET(req, { params }) {
 
     // Check if we have today's news that is completed
     const todayStart = getTodayStart();
-    
+
     const existingNews = await db
       .select()
       .from(CAREER_NEWS)
@@ -349,8 +349,8 @@ export async function GET(req, { params }) {
     if (existingNews.length > 0) {
       // We have today's news already generated
       return NextResponse.json(
-        { 
-          message: "News fetched successfully", 
+        {
+          message: "News fetched successfully",
           news: existingNews,
           source: "cached"
         },
@@ -375,11 +375,11 @@ export async function GET(req, { params }) {
     if (pendingNews.length > 0) {
       // News generation is already in progress, wait for it to complete
       const completedNews = await waitForNewsGeneration(scopeId, scopeType);
-      
+
       if (completedNews) {
         return NextResponse.json(
-          { 
-            message: "News fetched successfully", 
+          {
+            message: "News fetched successfully",
             news: completedNews,
             source: "waited"
           },
@@ -399,10 +399,10 @@ export async function GET(req, { params }) {
           .orderBy(desc(CAREER_NEWS.created_at))
           .limit(3)
           .execute();
-          
+
         return NextResponse.json(
-          { 
-            message: "Could not generate fresh news, returning most recent available", 
+          {
+            message: "Could not generate fresh news, returning most recent available",
             news: fallbackNews,
             source: "fallback"
           },
@@ -420,10 +420,10 @@ export async function GET(req, { params }) {
         { status: 404 }
       );
     }
-    
+
     // Start news generation
     const newsGeneration = fetchNews(scopeId, scopeType, scopeName);
-    
+
     // Don't wait for it to complete, instead check for any news we can return immediately
     const mostRecentNews = await db
       .select()
@@ -439,8 +439,8 @@ export async function GET(req, { params }) {
       .execute();
 
     return NextResponse.json(
-      { 
-        message: "News generation initiated. Returning most recent available news.", 
+      {
+        message: "News generation initiated. Returning most recent available news.",
         news: mostRecentNews,
         source: "generation_started"
       },
@@ -450,8 +450,8 @@ export async function GET(req, { params }) {
   } catch (error) {
     console.error("Error in GET news:", error);
     return NextResponse.json(
-      { 
-        message: error.message || "An unexpected error occurred" 
+      {
+        message: error.message || "An unexpected error occurred"
       },
       { status: 500 }
     );

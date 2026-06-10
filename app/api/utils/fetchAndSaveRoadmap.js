@@ -41,9 +41,9 @@
 //         const response = await axios.post(
 //             "https://api.openai.com/v1/chat/completions",
 //             {
-//                 model: "gpt-4o-mini",
+//                 model: "gpt-5.4-mini",
 //                 messages: [{ role: "user", content: prompt }],
-//                 max_tokens: 5500,
+//                 max_completion_tokens: 5500,
 //             },
 //             {
 //                 headers: {
@@ -339,9 +339,9 @@ export async function fetchAndSaveRoadmap(
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini",
+        model: "gpt-5.4-mini",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 5500,
+        max_completion_tokens: 5500,
       },
       {
         headers: {

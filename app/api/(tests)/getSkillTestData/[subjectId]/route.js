@@ -22,7 +22,7 @@ export async function GET(request, { params }) {
     const userId = userData.userId;
 
     const { subjectId } = params;
-    
+
     if (!subjectId) {
         return NextResponse.json({ message: 'Invalid subjectId' }, { status: 400 });
     }
@@ -45,8 +45,8 @@ export async function GET(request, { params }) {
             .from(SUBJECTS)
             .where(eq(SUBJECTS.subject_id, subjectId));
 
-         const subjectName = subject[0].subjectName
-        
+        const subjectName = subject[0].subjectName
+
         // Check if questions exist in the database for the given subjectName and age
         const existingQuestions = await db
             .select({
@@ -65,26 +65,26 @@ export async function GET(request, { params }) {
                 )
             )
 
-            let totalAnswered = 0;
+        let totalAnswered = 0;
 
-            // Check if isStarted is true in the  table
-            const checkProgress = await db
-                                .select({
-                                    isStarted: USER_SUBJECT_COMPLETION.isStarted
-                                })
-                                .from(USER_SUBJECT_COMPLETION)
-                                .where(
-                                    and(
-                                        eq(USER_SUBJECT_COMPLETION.user_id, userId),
-                                        eq(USER_SUBJECT_COMPLETION.subject_id, subjectId)
-                                    )
-                                )
-                                .execute();
+        // Check if isStarted is true in the  table
+        const checkProgress = await db
+            .select({
+                isStarted: USER_SUBJECT_COMPLETION.isStarted
+            })
+            .from(USER_SUBJECT_COMPLETION)
+            .where(
+                and(
+                    eq(USER_SUBJECT_COMPLETION.user_id, userId),
+                    eq(USER_SUBJECT_COMPLETION.subject_id, subjectId)
+                )
+            )
+            .execute();
 
-            // Proceed only if a progress exists and isStarted is true
-            if (checkProgress.length > 0 && checkProgress[0].isStarted) { 
-                // Geting the total no of saved quiz from SUBJECT_USER_PROGRESS if isStarted is true
-                const totalQuestionsAnswered = await db
+        // Proceed only if a progress exists and isStarted is true
+        if (checkProgress.length > 0 && checkProgress[0].isStarted) {
+            // Geting the total no of saved quiz from SUBJECT_USER_PROGRESS if isStarted is true
+            const totalQuestionsAnswered = await db
                 .select({
                     countQuestionIds: sql`COUNT(${SUBJECT_USER_PROGRESS.quiz_id})`
                 })
@@ -97,19 +97,19 @@ export async function GET(request, { params }) {
                 )
                 .execute();
 
-                // The total number of questions answered
-                totalAnswered = totalQuestionsAnswered[0]?.countQuestionIds || 0;
-            }
+            // The total number of questions answered
+            totalAnswered = totalQuestionsAnswered[0]?.countQuestionIds || 0;
+        }
 
 
-         // If existing questions are found, format them and return
-         if (existingQuestions.length > 0) {
+        // If existing questions are found, format them and return
+        if (existingQuestions.length > 0) {
 
             console.log("Previously exist");
-            
+
 
             const formattedQuestions = existingQuestions.reduce((acc, row) => {
-                const {questionId, question, optionId, option_text, is_answer } = row;
+                const { questionId, question, optionId, option_text, is_answer } = row;
 
                 // Find or create a question entry in the accumulator
                 let questionEntry = acc.find(q => q.question === question);
@@ -128,10 +128,10 @@ export async function GET(request, { params }) {
                 return acc;
             }, []);
 
-            return NextResponse.json({quizProgress: totalAnswered, questions: formattedQuestions}, { status: 200 });
+            return NextResponse.json({ quizProgress: totalAnswered, questions: formattedQuestions }, { status: 200 });
         }
-        
-            const prompt = `
+
+        const prompt = `
                     Create 9 multiple-choice questions in ${subjectName} for a ${age} year old (currently in week ${currentAgeWeek} of this age).
                    Each question should have 4 answer options, and one option should be marked as the correct answer using "is_answer": "yes" for the correct option and "is_answer": "no" for the others.Make sure no questions and the options being repeated and the questions must be apt for the age ${age}. The questions should be unique and difficulty level should be hard.  
                     Return all questions in a single array with no additional commentary or difficulty labels. The format for each question should be:
@@ -149,76 +149,76 @@ export async function GET(request, { params }) {
                     Only return the array of questions, nothing else.
                     `;
 
-              const response = await axios.post(
-                "https://api.openai.com/v1/chat/completions",
-                {
-                  model: "gpt-4o-mini",
-                  messages: [{ role: "user", content: prompt }],
-                  max_tokens: 2500,
-                },
-                {
-                  headers: {
+        const response = await axios.post(
+            "https://api.openai.com/v1/chat/completions",
+            {
+                model: "gpt-5.4-mini",
+                messages: [{ role: "user", content: prompt }],
+                max_completion_tokens: 2500,
+            },
+            {
+                headers: {
                     Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
                     "Content-Type": "application/json",
-                  },
-                }
-              );
+                },
+            }
+        );
 
-              console.log(`Input tokens skill test: ${response.data.usage.prompt_tokens}`);
-              console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
-              console.log(`Total tokens: ${response.data.usage.total_tokens}`);
+        console.log(`Input tokens skill test: ${response.data.usage.prompt_tokens}`);
+        console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
+        console.log(`Total tokens: ${response.data.usage.total_tokens}`);
 
-              let responseText = response.data.choices[0].message.content.trim();
-              responseText = responseText.replace(/```json|```/g, "").trim();
-              console.log("responseText",responseText);
-              const parsedData = JSON.parse(responseText);
+        let responseText = response.data.choices[0].message.content.trim();
+        responseText = responseText.replace(/```json|```/g, "").trim();
+        console.log("responseText", responseText);
+        const parsedData = JSON.parse(responseText);
 
-            // Save questions and options to the database
-            const questionIds = [];
-            const questionsWithOptions = []; // Array to store questions with their options
+        // Save questions and options to the database
+        const questionIds = [];
+        const questionsWithOptions = []; // Array to store questions with their options
 
-            for (const questionData of parsedData) {
-                // Insert question into SUBJECT_QUIZ
-                const questionInsert = await db.insert(SUBJECT_QUIZ).values({
-                    question: questionData.question,
-                    subject_id: subjectId, 
-                    age: age
+        for (const questionData of parsedData) {
+            // Insert question into SUBJECT_QUIZ
+            const questionInsert = await db.insert(SUBJECT_QUIZ).values({
+                question: questionData.question,
+                subject_id: subjectId,
+                age: age
+            });
+
+            const questionId = questionInsert[0].insertId; // Adjust this according to your ORM's way of retrieving last insert ID
+            questionIds.push(questionId); // Store the question ID for future reference
+
+            const optionsArray = []; // Array to store options for the current question
+
+            for (const option of questionData.options) {
+                // Insert options into SUBJECT_QUIZ_OPTIONS
+                const optionInsert = await db.insert(SUBJECT_QUIZ_OPTIONS).values({
+                    question_id: questionId,
+                    option_text: option.text,
+                    is_answer: option.is_answer, // Convert to boolean
                 });
-            
-                const questionId = questionInsert[0].insertId; // Adjust this according to your ORM's way of retrieving last insert ID
-                questionIds.push(questionId); // Store the question ID for future reference
-            
-                const optionsArray = []; // Array to store options for the current question
-            
-                for (const option of questionData.options) {
-                    // Insert options into SUBJECT_QUIZ_OPTIONS
-                    const optionInsert = await db.insert(SUBJECT_QUIZ_OPTIONS).values({
-                        question_id: questionId,
-                        option_text: option.text,
-                        is_answer: option.is_answer, // Convert to boolean
-                    });
-            
-                    const optionId = optionInsert[0].insertId;
-                    optionsArray.push({
-                        id: optionId,
-                        text: option.text,
-                        is_answer: option.is_answer, 
-                    });
-                }
-            
-                // Push the question with its options to the main array
-                questionsWithOptions.push({
-                    id: questionId,
-                    question: questionData.question,
-                    options: optionsArray,
+
+                const optionId = optionInsert[0].insertId;
+                optionsArray.push({
+                    id: optionId,
+                    text: option.text,
+                    is_answer: option.is_answer,
                 });
             }
-            
-            // Prepare the response with quiz progress and questions
-            return NextResponse.json({
-                quizProgress: totalAnswered,
-                questions: questionsWithOptions, // Return the questions with options
-            }, { status: 200 });
+
+            // Push the question with its options to the main array
+            questionsWithOptions.push({
+                id: questionId,
+                question: questionData.question,
+                options: optionsArray,
+            });
+        }
+
+        // Prepare the response with quiz progress and questions
+        return NextResponse.json({
+            quizProgress: totalAnswered,
+            questions: questionsWithOptions, // Return the questions with options
+        }, { status: 200 });
 
     } catch (error) {
         console.error("Error fetching questions and answers:", error);

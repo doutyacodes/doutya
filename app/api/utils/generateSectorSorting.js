@@ -83,16 +83,16 @@ const generateSectorSortingPrompt = (mbtiType, riasecCode, classLevel) => `
 export async function generateSectorSorting(mbtiType, riasecCode, classLevel) {
   try {
     console.log(`Generating sector sorting for MBTI: ${mbtiType}, RIASEC: ${riasecCode}, Class: ${classLevel}`);
-    
+
     const prompt = generateSectorSortingPrompt(mbtiType, riasecCode, classLevel);
 
     console.log("Prompt", prompt)
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini",
+        model: "gpt-5.4-mini",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 2000,
+        max_completion_tokens: 2000,
         temperature: 0.7,
       },
       {
@@ -131,7 +131,7 @@ export async function generateSectorSorting(mbtiType, riasecCode, classLevel) {
     const requiredSectors = ['Nature', 'Making', 'Life', 'Knowledge', 'Society', 'Culture'];
     const responseSectors = parsedData.sorted_sectors.map(s => s.sector);
     const missingSectors = requiredSectors.filter(s => !responseSectors.includes(s));
-    
+
     if (missingSectors.length > 0) {
       throw new Error(`Missing required sectors: ${missingSectors.join(', ')}`);
     }
@@ -148,7 +148,7 @@ export function validateMBTI(mbtiType) {
   if (!mbtiType || typeof mbtiType !== 'string' || mbtiType.length !== 4) {
     return false;
   }
-  
+
   const validMBTI = /^[EI][SN][TF][JP]$/i;
   return validMBTI.test(mbtiType);
 }
@@ -158,7 +158,7 @@ export function validateRIASEC(riasecCode) {
   if (!riasecCode || typeof riasecCode !== 'string') {
     return false;
   }
-  
+
   const validChars = /^[RIASEC]+$/i;
   return validChars.test(riasecCode) && riasecCode.length >= 1 && riasecCode.length <= 6;
 }

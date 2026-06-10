@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { QUIZ_SEQUENCES } from '@/utils/schema';
 import { db } from '@/utils';
-import { and,eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { RESULTS1 } from '@/utils/schema';
 import path from 'path';
 import fs from 'fs';
@@ -18,8 +18,8 @@ const languageOptions = {
   ben: 'bengali',
   assa: 'assamese',
   ge: 'german',
-  mal:'malayalam',
-  tam:'tamil'
+  mal: 'malayalam',
+  tam: 'tamil'
 };
 
 export async function GET(req) {
@@ -34,7 +34,7 @@ export async function GET(req) {
   const userId = userData.userId;
 
   const shortLanguage = req.headers.get('accept-language') || 'en';
-  const language = languageOptions[shortLanguage] || 'english'; 
+  const language = languageOptions[shortLanguage] || 'english';
 
   console.log(userId)
 
@@ -79,7 +79,7 @@ export async function GET(req) {
     // Regex to split by commas only outside parentheses
     careers = filteredResults[0].most_suitable_careers.split(/,(?![^(]*\))/).map(career => career.trim());
   }
-  
+
   const description = filteredResults[0].description;
 
   const prompt = `
@@ -89,9 +89,9 @@ export async function GET(req) {
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
-      model: "gpt-4o-mini",
+      model: "gpt-5.4-mini",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 4000, // Adjust the token limit as needed
+      max_completion_tokens: 4000, // Adjust the token limit as needed
     },
     {
       headers: {
@@ -108,11 +108,11 @@ export async function GET(req) {
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
 
-  
+
 
   const careerMatches = JSON.parse(responseText);
 
-  
+
 
   const updatedResults = filteredResults.map(result => ({
     ...result,
@@ -122,7 +122,7 @@ export async function GET(req) {
     }))
   }));
 
-  
+
 
   return NextResponse.json(updatedResults);
 }

@@ -36,7 +36,7 @@
 
 // export async function GET(req) {
 //   console.log('Getting comprehensive assessment results...');
-  
+
 //   const authResult = await authenticate(req);
 //   if (!authResult.authenticated) {
 //     return authResult.response;
@@ -124,9 +124,9 @@
 //     // If cached report exists, update with fresh user data and return
 //     if (existingReport.length > 0) {
 //       console.log('Found cached report, updating with fresh user data...');
-      
+
 //       const cachedReportData = existingReport[0].report_data;
-      
+
 //       // Update the cached report with fresh user data
 //       const updatedReport = {
 //         ...cachedReportData,
@@ -173,7 +173,7 @@
 //     // Check if required assessments are completed
 //     const personalityResult = assessmentSequences.find(seq => seq.quizId === 1);
 //     const careerResult = assessmentSequences.find(seq => seq.quizId === 2);
-    
+
 //     if (!personalityResult) {
 //       return NextResponse.json(
 //         { message: 'Please complete the Personality Assessment to view results.' },
@@ -243,7 +243,7 @@
 
 //       if (existingUserClusters.length > 0) {
 //         const clusterIds = existingUserClusters.map(uc => uc.cluster_id);
-        
+
 //         const clusters = await Promise.all(clusterIds.map(async (id) => {
 //           const result = await db
 //             .select({
@@ -282,7 +282,7 @@
 //         // Get the matching sector IDs from the mapping (sector_1_id, sector_2_id, sector_3_id)
 //         const mapping = mbtiMapping[0];
 //         matchingSectorIds = [mapping.sector_1_id, mapping.sector_2_id, mapping.sector_3_id];
-        
+
 //         // Fetch matching sector details
 //         matchingSectors = await Promise.all(matchingSectorIds.map(async (sectorId) => {
 //           const result = await db
@@ -318,7 +318,7 @@
 //         matching_sectors: matchingSectors,
 //         other_sectors: otherSectors
 //       };
-      
+
 //       scopeDataString = `Sector Data: Matching Sectors - ${JSON.stringify(matchingSectors)}, Other Available Sectors - ${JSON.stringify(otherSectors)}`;
 //     }
 //     // Generate comprehensive AI analysis
@@ -381,9 +381,9 @@
 //     const aiResponse = await axios.post(
 //       "https://api.openai.com/v1/chat/completions",
 //       {
-//         model: "gpt-4o-mini",
+//         model: "gpt-5.4-mini",
 //         messages: [{ role: "user", content: comprehensivePrompt }],
-//         max_tokens: 4000,
+//         max_completion_tokens: 4000,
 //         temperature: 0.7
 //       },
 //       {
@@ -398,7 +398,7 @@
 
 //     let aiResponseText = aiResponse.data.choices[0].message.content.trim();
 //     aiResponseText = aiResponseText.replace(/```json|```/g, "").trim();
-    
+
 //     let comprehensiveResults;
 //     try {
 //       comprehensiveResults = JSON.parse(aiResponseText);
@@ -426,9 +426,9 @@
 
 //     // Save the generated report to database
 //     console.log('Saving new assessment report to database...');
-    
+
 //     const currentDate = new Date();
-    
+
 //     await db.insert(USER_ASSESSMENT_REPORTS).values({
 //       user_id: userId,
 //       assessment_date: currentDate,
@@ -451,10 +451,10 @@
 
 import { NextResponse } from 'next/server';
 import { authenticate } from '@/lib/jwtMiddleware';
-import { 
-  QUIZ_SEQUENCES, 
-  USER_ASSESSMENT_REPORTS, 
-  USER_DETAILS, 
+import {
+  QUIZ_SEQUENCES,
+  USER_ASSESSMENT_REPORTS,
+  USER_DETAILS,
   USER_FEATURE_FLAGS,
   USER_RESULTS,
   USER_CLUSTER,
@@ -506,23 +506,23 @@ const normalizeReportData = (reportData) => {
     // If reportData is already an object, return it
     if (typeof reportData === 'object' && reportData !== null && !Array.isArray(reportData)) {
       // Ensure personality_analysis is parsed if it's a string
-      if (reportData.detailed_results?.personality_analysis && 
-          typeof reportData.detailed_results.personality_analysis === 'string') {
+      if (reportData.detailed_results?.personality_analysis &&
+        typeof reportData.detailed_results.personality_analysis === 'string') {
         reportData.detailed_results.personality_analysis = safeParse(reportData.detailed_results.personality_analysis);
       }
       return reportData;
     }
-    
+
     // If it's a string, try to parse it
     if (typeof reportData === 'string') {
       const parsed = JSON.parse(reportData);
-      if (parsed.detailed_results?.personality_analysis && 
-          typeof parsed.detailed_results.personality_analysis === 'string') {
+      if (parsed.detailed_results?.personality_analysis &&
+        typeof parsed.detailed_results.personality_analysis === 'string') {
         parsed.detailed_results.personality_analysis = safeParse(parsed.detailed_results.personality_analysis);
       }
       return parsed;
     }
-    
+
     return reportData;
   } catch (error) {
     console.error('Error normalizing report data:', error);
@@ -532,7 +532,7 @@ const normalizeReportData = (reportData) => {
 
 export async function GET(req) {
   console.log('Getting comprehensive assessment results...');
-  
+
   const authResult = await authenticate(req);
   if (!authResult.authenticated) {
     return authResult.response;
@@ -621,10 +621,10 @@ export async function GET(req) {
     // If cached report exists, update with fresh user data and return
     if (existingReport.length > 0) {
       console.log('Found cached report, updating with fresh user data...');
-      
+
       // Properly normalize the cached report data
       const cachedReportData = normalizeReportData(existingReport[0].report_data);
-      
+
       // Update the cached report with fresh user data
       const updatedReport = {
         ...cachedReportData,
@@ -641,7 +641,7 @@ export async function GET(req) {
       // Update the cached report in database with fresh user data
       await db
         .update(USER_ASSESSMENT_REPORTS)
-        .set({ 
+        .set({
           report_data: updatedReport
         })
         .where(eq(USER_ASSESSMENT_REPORTS.id, existingReport[0].id))
@@ -671,7 +671,7 @@ export async function GET(req) {
     // Check if required assessments are completed
     const personalityResult = assessmentSequences.find(seq => seq.quizId === 1);
     const careerResult = assessmentSequences.find(seq => seq.quizId === 2);
-    
+
     if (!personalityResult) {
       return NextResponse.json(
         { message: 'Please complete the Personality Assessment to view results.' },
@@ -721,7 +721,7 @@ export async function GET(req) {
         .where(eq(USER_RESULTS.user_id, userId))
         .execute();
 
-        console.log("userResults[0]", userResults[0])
+      console.log("userResults[0]", userResults[0])
 
       if (userResults.length > 0 && userResults[0].result2) {
         try {
@@ -741,46 +741,46 @@ export async function GET(req) {
           scopeDataString = `Career Data: ${userResults[0].result2}`;
         }
       }
-   } else if (scopeType === 'cluster') {
-        // Use personalityType (MBTI) and careerType (RIASEC) directly
-        const mbtiType = personalityType;
-        const riasecCode = careerType;
+    } else if (scopeType === 'cluster') {
+      // Use personalityType (MBTI) and careerType (RIASEC) directly
+      const mbtiType = personalityType;
+      const riasecCode = careerType;
 
-        // Fetch existing combination
-        const [combination] = await db
-          .select()
-          .from(CLUSTER_MBTI_RIASEC_COMBINATIONS)
-          .where(
-            and(
-              eq(CLUSTER_MBTI_RIASEC_COMBINATIONS.mbti_type, mbtiType),
-              eq(CLUSTER_MBTI_RIASEC_COMBINATIONS.riasec_code, riasecCode)
-            )
+      // Fetch existing combination
+      const [combination] = await db
+        .select()
+        .from(CLUSTER_MBTI_RIASEC_COMBINATIONS)
+        .where(
+          and(
+            eq(CLUSTER_MBTI_RIASEC_COMBINATIONS.mbti_type, mbtiType),
+            eq(CLUSTER_MBTI_RIASEC_COMBINATIONS.riasec_code, riasecCode)
           )
-          .execute();
+        )
+        .execute();
 
-        let sortingData = combination?.sorted_clusters
-          ? (typeof combination.sorted_clusters === "string"
-              ? JSON.parse(combination.sorted_clusters)
-              : combination.sorted_clusters)
-          : null;
+      let sortingData = combination?.sorted_clusters
+        ? (typeof combination.sorted_clusters === "string"
+          ? JSON.parse(combination.sorted_clusters)
+          : combination.sorted_clusters)
+        : null;
 
-        if (!sortingData) {
-          scopeDataString = "Cluster Data: No suggested clusters available";
-        } else {
-          // Fetch all cluster details
-          const allClusters = await db.select().from(CLUSTER);
+      if (!sortingData) {
+        scopeDataString = "Cluster Data: No suggested clusters available";
+      } else {
+        // Fetch all cluster details
+        const allClusters = await db.select().from(CLUSTER);
 
-          // Merge sortingData with details
-          const sortedClustersWithDetails = sortingData.sorted_clusters.map(sortedCluster => {
-            const details = allClusters.find(c => c.name === sortedCluster.cluster);
-            return {
-              ...sortedCluster,
-              cluster_details: details
-            };
-          });
-          scopeSpecificData = sortedClustersWithDetails,
+        // Merge sortingData with details
+        const sortedClustersWithDetails = sortingData.sorted_clusters.map(sortedCluster => {
+          const details = allClusters.find(c => c.name === sortedCluster.cluster);
+          return {
+            ...sortedCluster,
+            cluster_details: details
+          };
+        });
+        scopeSpecificData = sortedClustersWithDetails,
           scopeDataString = `Cluster Data: ${JSON.stringify(scopeSpecificData)}`;
-        }
+      }
 
     } else if (scopeType === 'sector') {
       // Fetch from MBTI_SECTOR_MAP based on personality type
@@ -801,7 +801,7 @@ export async function GET(req) {
         // Get the matching sector IDs from the mapping
         const mapping = mbtiMapping[0];
         matchingSectorIds = [mapping.sector_1_id, mapping.sector_2_id, mapping.sector_3_id];
-        
+
         // Fetch matching sector details
         matchingSectors = await Promise.all(matchingSectorIds.map(async (sectorId) => {
           const result = await db
@@ -828,7 +828,7 @@ export async function GET(req) {
       scopeSpecificData = {
         matching_sectors: matchingSectors,
       };
-      
+
       scopeDataString = `Sector Data: Matching Sectors - ${JSON.stringify(matchingSectors)}`;
     }
 
@@ -881,9 +881,9 @@ export async function GET(req) {
     const aiResponse = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini",
+        model: "gpt-5.4-mini",
         messages: [{ role: "user", content: comprehensivePrompt }],
-        max_tokens: 4000,
+        max_completion_tokens: 4000,
         temperature: 0.7
       },
       {
@@ -900,7 +900,7 @@ export async function GET(req) {
 
     let aiResponseText = aiResponse.data.choices[0].message.content.trim();
     aiResponseText = aiResponseText.replace(/```json|```/g, "").trim();
-    
+
     let comprehensiveResults;
     try {
       comprehensiveResults = JSON.parse(aiResponseText);
@@ -931,9 +931,9 @@ export async function GET(req) {
 
     // Save the generated report to database
     console.log('Saving new assessment report to database...');
-    
+
     const currentDate = new Date();
-    
+
     await db.insert(USER_ASSESSMENT_REPORTS).values({
       user_id: userId,
       assessment_date: currentDate,

@@ -104,7 +104,7 @@
 //                 .select()
 //                 .from(USER_EDUCATION_STAGE)
 //                 .where(eq(USER_EDUCATION_STAGE.user_id, userId));
-                          
+
 //               const educationStage = educationStageData[0].stage;
 
 //             // Fetch career name from the CAREER_GROUP table
@@ -116,7 +116,7 @@
 //             const career_name = careerGroup[0]?.career_name;
 //             const { type1, type2, country } = userCareer[0];
 
-                      
+
 //           //   const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} (currently in week ${currentAgeWeek} of this age)${
 //           //     (educationStage === 'school' || educationStage === 'college') 
 //           //     ? ` in ${className} with ${percentageCompleted}% of the academic year completed, who is pursuing their education in ${education}` 
@@ -124,7 +124,7 @@
 //           // } with a ${type1} personality type and ${type2} RIASEC interest types in the field of ${career_name}${country ? " in " + country : ""}. The feedback should highlight key areas for improvement in this career in order to excel in this career what the person has to change. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the terms '${type1}' and 'RIASEC' from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
 
 
-          
+
 //             const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} (currently in week ${currentAgeWeek} of this age)${
 //                 (educationStage === 'school' || educationStage === 'college') 
 //                 ? ` in ${className} with ${percentageCompleted}% of the academic year completed, who is pursuing their education` 
@@ -135,13 +135,13 @@
 //               // const FINAL_PROMPT = await generateInitialFeedBackPrompt(
 //               //   userId, type1, type2, age, career_name, country, currentAgeWeek, languageOptions, language
 //               // );
-          
+
 //               const response = await axios.post(
 //                 "https://api.openai.com/v1/chat/completions",
 //                 {
-//                   model: "gpt-4o-mini",
+//                   model: "gpt-5.4-mini",
 //                   messages: [{ role: "user", content: FINAL_PROMPT }],
-//                   max_tokens: 1500,
+//                   max_completion_tokens: 1500,
 //                 },
 //                 {
 //                   headers: {
@@ -150,7 +150,7 @@
 //                   },
 //                 }
 //               );
-              
+
 //               console.log(`Input tokens: ${response.data.usage.prompt_tokens}`);
 //               console.log(`Output tokens: ${response.data.usage.completion_tokens}`);
 //               console.log(`Total tokens: ${response.data.usage.total_tokens}`);
@@ -183,14 +183,14 @@
 
 
 import { db } from '@/utils';
-import { 
-    CAREER_GROUP, 
+import {
+    CAREER_GROUP,
     CLUSTER,
     SECTOR,
-    USER_CAREER, 
+    USER_CAREER,
     USER_CLUSTER,
     USER_SECTOR,
-    USER_DETAILS, 
+    USER_DETAILS,
     USER_EDUCATION_STAGE,
     USER_FEEDBACK
 } from '@/utils/schema';
@@ -203,16 +203,16 @@ import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 import { calculateAcademicPercentage } from '@/lib/calculateAcademicPercentage';
 
 const languageOptions = {
-  en: 'in English',
-  hi: 'in Hindi',
-  mar: 'in Marathi',
-  ur: 'in Urdu',
-  sp: 'in Spanish',
-  ben: 'in Bengali',
-  assa: 'in Assamese',
-  ge: 'in German',
-  tam: 'in Tamil',
-  mal: 'in Malayalam'
+    en: 'in English',
+    hi: 'in Hindi',
+    mar: 'in Marathi',
+    ur: 'in Urdu',
+    sp: 'in Spanish',
+    ben: 'in Bengali',
+    assa: 'in Assamese',
+    ge: 'in German',
+    tam: 'in Tamil',
+    mal: 'in Malayalam'
 };
 
 export const maxDuration = 40;
@@ -220,7 +220,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req, { params }) {
     console.log('Generating feedback');
-    
+
     // Authenticate user
     const authResult = await authenticate(req);
     if (!authResult.authenticated) {
@@ -230,12 +230,12 @@ export async function GET(req, { params }) {
     const userData = authResult.decoded_Data;
     const userId = userData.userId;
     const language = req.headers.get('accept-language') || 'en';
-    const { careerGrpId:scopeId } = params; // Changed from careerGrpId to scopeId
+    const { careerGrpId: scopeId } = params; // Changed from careerGrpId to scopeId
 
     try {
         // Get user's details including scope_type and plan_type
         const userDetailsResult = await db
-            .select({ 
+            .select({
                 birth_date: USER_DETAILS.birth_date,
                 education: USER_DETAILS.education,
                 educationLevel: USER_DETAILS.education_level,
@@ -248,7 +248,7 @@ export async function GET(req, { params }) {
             })
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId));
-        
+
         if (!userDetailsResult.length) {
             return NextResponse.json({ message: 'User details not found.' }, { status: 404 });
         }
@@ -299,7 +299,7 @@ export async function GET(req, { params }) {
             .select()
             .from(USER_EDUCATION_STAGE)
             .where(eq(USER_EDUCATION_STAGE.user_id, userId));
-                      
+
         const educationStage = educationStageData[0]?.stage || 'completed';
 
         // Fetch scope-specific information
@@ -327,17 +327,17 @@ export async function GET(req, { params }) {
                         eq(USER_CAREER.career_group_id, scopeId)
                     )
                 );
-            
+
             if (!careerData.length) {
                 return NextResponse.json({ message: 'No career information found for this user.' }, { status: 404 });
             }
-            
+
             scopeInfo = careerData[0];
             scopeName = scopeInfo.careerName;
             country = scopeInfo.country;
             type1 = scopeInfo.type1;
             type2 = scopeInfo.type2;
-        } 
+        }
         else if (scopeType === 'cluster') {
             // Fetch cluster information
             const clusterData = await db
@@ -356,16 +356,16 @@ export async function GET(req, { params }) {
                         eq(USER_CLUSTER.cluster_id, scopeId)
                     )
                 );
-            
+
             if (!clusterData.length) {
                 return NextResponse.json({ message: 'No cluster information found for this user.' }, { status: 404 });
             }
-            
+
             scopeInfo = clusterData[0];
             scopeName = scopeInfo.clusterName;
             type1 = scopeInfo.mbtiType || '';
             type2 = scopeInfo.riasecCode || '';
-        } 
+        }
         else if (scopeType === 'sector') {
             // Fetch sector information
             const sectorData = await db
@@ -383,11 +383,11 @@ export async function GET(req, { params }) {
                         eq(USER_SECTOR.sector_id, scopeId)
                     )
                 );
-            
+
             if (!sectorData.length) {
                 return NextResponse.json({ message: 'No sector information found for this user.' }, { status: 404 });
             }
-            
+
             scopeInfo = sectorData[0];
             scopeName = scopeInfo.sectorName;
             type1 = scopeInfo.mbtiType || '';
@@ -399,7 +399,7 @@ export async function GET(req, { params }) {
             if (scopeType === "cluster") return `exploring the cluster "${scopeName}"`;
             if (scopeType === "sector") return `navigating the sector "${scopeName}"`;
         };
-        
+
         const getTitle = (scopeType) => {
             if (scopeType === "career") return "career";
             if (scopeType === "cluster") return "cluster";
@@ -407,13 +407,13 @@ export async function GET(req, { params }) {
         };
 
         // Generate the prompt based on scope type
-        const personalityInfo = type1 && type2 ? ` with a ${type1} personality type and ${type2} interest types` : 
-                               type1 ? ` with a ${type1} personality type` : '';
-        
+        const personalityInfo = type1 && type2 ? ` with a ${type1} personality type and ${type2} interest types` :
+            type1 ? ` with a ${type1} personality type` : '';
+
         const locationInfo = country ? ` in ${country}` : '';
-        
-        const educationInfo = (educationStage === 'school' || educationStage === 'college') 
-            ? ` in ${className} with ${percentageCompleted}% of the academic year completed, who is pursuing their education` 
+
+        const educationInfo = (educationStage === 'school' || educationStage === 'college')
+            ? ` in ${className} with ${percentageCompleted}% of the academic year completed, who is pursuing their education`
             : ` who has completed education`;
 
         const FINAL_PROMPT = `Provide a simple and concise feedback for an individual of age ${age} (currently in week ${currentAgeWeek} of this age)${educationInfo}${personalityInfo} who is ${getLabel(scopeType, scopeName)}${locationInfo}. The feedback should highlight key areas for improvement in this ${getTitle(scopeType)} and what the person needs to change in order to excel in this field. Avoid lengthy descriptions and complex formatting. Ensure the response is valid JSON and exclude the specific personality type terms from the data. Provide the output ${languageOptions[language] || 'in English'} as a single paragraph without additional wrapping other than {}.`;
@@ -422,9 +422,9 @@ export async function GET(req, { params }) {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4o-mini",
+                model: "gpt-5.4-mini",
                 messages: [{ role: "user", content: FINAL_PROMPT }],
-                max_tokens: 1500,
+                max_completion_tokens: 1500,
             },
             {
                 headers: {
@@ -433,7 +433,7 @@ export async function GET(req, { params }) {
                 },
             }
         );
-        
+
         console.log(`Input tokens of Initaial Feedback: ${response.data.usage.prompt_tokens}`);
         console.log(`Output tokens Initaial Feedback: ${response.data.usage.completion_tokens}`);
         console.log(`Total tokens Initaial Feedback: ${response.data.usage.total_tokens}`);
@@ -442,7 +442,7 @@ export async function GET(req, { params }) {
         let responseText = response.data.choices[0].message.content.trim();
         responseText = responseText.replace(/```json|```/g, "").trim();
         console.log("responseText", responseText);
-        
+
         const parsedFeedback = JSON.parse(responseText);
         console.log(parsedFeedback);
 
@@ -456,10 +456,10 @@ export async function GET(req, { params }) {
             });
 
         // Return the generated feedback
-        return NextResponse.json({ 
+        return NextResponse.json({
             feedback: parsedFeedback.feedback,
             feedback_type: scopeType,
-            scope_name: scopeName 
+            scope_name: scopeName
         }, { status: 200 });
 
     } catch (error) {

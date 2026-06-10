@@ -31,9 +31,9 @@ export async function validateCareer(career) {
         const validationResponse = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4o-mini",
+                model: "gpt-5.4-mini",
                 messages: [{ role: "user", content: validationPrompt }],
-                max_tokens: 500, // Adjust the token limit as needed
+                max_completion_tokens: 500, // Adjust the token limit as needed
             },
             {
                 headers: {
@@ -50,7 +50,7 @@ export async function validateCareer(career) {
         validationResponseText = validationResponse.data.choices[0].message.content.trim();
         validationResponseText = validationResponseText.replace(/```json|```/g, "").trim();
         console.log(validationResponseText)
-        
+
     } catch (error) {
         throw new Error("Failed to validate career name");
     }

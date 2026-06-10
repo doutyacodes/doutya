@@ -12,39 +12,39 @@ export const dynamic = "force-dynamic";
 // Helper function to get age information
 const calculateAge = (birthDate) => {
   if (!birthDate) return { age: 25, currentAgeWeek: 0 }; // Default age if not available
-  
+
   const birthDateObj = new Date(birthDate);
   const now = new Date();
-  
+
   // Calculate age
   let age = now.getFullYear() - birthDateObj.getFullYear();
   const monthDiff = now.getMonth() - birthDateObj.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthDateObj.getDate())) {
     age--;
   }
-  
+
   // Calculate weeks into current age
-  const lastBirthday = new Date(now.getFullYear() - (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthDateObj.getDate()) ? 1 : 0), 
-                                birthDateObj.getMonth(), 
-                                birthDateObj.getDate());
-  
+  const lastBirthday = new Date(now.getFullYear() - (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthDateObj.getDate()) ? 1 : 0),
+    birthDateObj.getMonth(),
+    birthDateObj.getDate());
+
   const millisecondsPerWeek = 1000 * 60 * 60 * 24 * 7;
   const currentAgeWeek = Math.floor((now - lastBirthday) / millisecondsPerWeek);
-  
+
   return { age, currentAgeWeek };
 };
 
 // Function to generate clusters using OpenAI
 async function generateClusters(userData) {
-  const mbti = userData.personality_type ;
-  const riasec = userData.riasec_code ; 
+  const mbti = userData.personality_type;
+  const riasec = userData.riasec_code;
   const { age, currentAgeWeek } = calculateAge(userData.birth_date);
-  
-  // Construct the OpenAI prompt
-//   const prompt = `You are an expert career guidance counselor and psychologist with deep knowledge of MBTI personality types, RIASEC interest models, and age-appropriate career exploration. Generate a list of **exactly 8 suitable career clusters** for the following user: - MBTI Personality Type: ${mbti} - RIASEC Interest Types: ${riasec} (comma-separated) - Age: ${age} years old (currently in week ${currentAgeWeek} of this age) ### Objective: Identify 8 distinct career clusters that align with the user's MBTI and RIASEC types, and are developmentally appropriate for their current age. Each career cluster should represent a **broad professional or academic field** that includes multiple possible career paths. The goal is to guide the user toward areas of interest that suit their personality and stage of development. ### Guidelines: - All clusters must be **suitable for the user's current age** - Ensure alignment with both MBTI and RIASEC characteristics - Each cluster should be **clearly distinct** from the others - Use friendly, engaging, age-appropriate language - Include **10 example job roles** under each cluster ### Output Format: Return the result as a **valid JSON array** named \`career_clusters\`, with each item structured like this: \`\`\`json "career_clusters": [ { "title": "Cluster Name", "description": "Short, clear explanation tailored to this user's age, MBTI, and RIASEC type.", "related_jobs": [ "Job Title 1", "Job Title 2", ... "Job Title 10" ] }, ... // exactly 8 items in total ] \`\`\` ### Additional Instructions: - Return **exactly 8 clusters** - Each cluster must contain **exactly 10 unique job titles** - Ensure job titles are realistic, varied, and age-appropriate - Avoid repetition in cluster names or job titles - Ensure the entire response is a **valid JSON object**, using correct field names and no extra text or formatting Only return the JSON response, and nothing else.`;
 
-const prompt = `
+  // Construct the OpenAI prompt
+  //   const prompt = `You are an expert career guidance counselor and psychologist with deep knowledge of MBTI personality types, RIASEC interest models, and age-appropriate career exploration. Generate a list of **exactly 8 suitable career clusters** for the following user: - MBTI Personality Type: ${mbti} - RIASEC Interest Types: ${riasec} (comma-separated) - Age: ${age} years old (currently in week ${currentAgeWeek} of this age) ### Objective: Identify 8 distinct career clusters that align with the user's MBTI and RIASEC types, and are developmentally appropriate for their current age. Each career cluster should represent a **broad professional or academic field** that includes multiple possible career paths. The goal is to guide the user toward areas of interest that suit their personality and stage of development. ### Guidelines: - All clusters must be **suitable for the user's current age** - Ensure alignment with both MBTI and RIASEC characteristics - Each cluster should be **clearly distinct** from the others - Use friendly, engaging, age-appropriate language - Include **10 example job roles** under each cluster ### Output Format: Return the result as a **valid JSON array** named \`career_clusters\`, with each item structured like this: \`\`\`json "career_clusters": [ { "title": "Cluster Name", "description": "Short, clear explanation tailored to this user's age, MBTI, and RIASEC type.", "related_jobs": [ "Job Title 1", "Job Title 2", ... "Job Title 10" ] }, ... // exactly 8 items in total ] \`\`\` ### Additional Instructions: - Return **exactly 8 clusters** - Each cluster must contain **exactly 10 unique job titles** - Ensure job titles are realistic, varied, and age-appropriate - Avoid repetition in cluster names or job titles - Ensure the entire response is a **valid JSON object**, using correct field names and no extra text or formatting Only return the JSON response, and nothing else.`;
+
+  const prompt = `
 You are an expert career guidance counselor and psychologist with deep knowledge of MBTI personality types, RIASEC interest models, and age-appropriate career exploration.
 
 Generate a list of **exactly 8 suitable career clusters** for the following user:
@@ -98,9 +98,9 @@ Only return the JSON response, and nothing else.
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini",
+        model: "gpt-5.4-mini",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 5000,
+        max_completion_tokens: 5000,
       },
       {
         headers: {
@@ -117,7 +117,7 @@ Only return the JSON response, and nothing else.
     let responseText = response.data.choices[0].message.content.trim();
     responseText = responseText.replace(/`json|`/g, "").trim();
     console.log("responseText", responseText);
-    
+
     let parsedData;
     try {
       parsedData = JSON.parse(responseText);
@@ -161,7 +161,7 @@ async function saveClusters(clusters, userId, userData) {
             related_jobs: JSON.stringify(clusterData.related_jobs)
           })
           .execute();
-        
+
         // Get the inserted ID (depends on your DB driver)
         const lastInsertId = insertResult[0].insertId;
         clusterId = lastInsertId;
@@ -187,7 +187,7 @@ async function saveClusters(clusters, userId, userData) {
         .execute();
 
       savedClusters.push(fullCluster[0]);
-      
+
       // Get the user cluster association
       const userCluster = await db
         .select()
@@ -197,7 +197,7 @@ async function saveClusters(clusters, userId, userData) {
           eq(USER_CLUSTER.cluster_id, clusterId)
         ))
         .execute();
-        
+
       userClusters.push(userCluster[0]);
     } catch (error) {
       console.error("Error saving cluster:", error);
@@ -291,13 +291,13 @@ export async function GET(req) {
     if (existingUserClusters.length > 0) {
       // User already has clusters, fetch the full cluster details
       const clusterIds = existingUserClusters.map(uc => uc.cluster_id);
-      
+
       clusters = await db
         .select()
         .from(CLUSTER)
         .where(eq(CLUSTER.id, clusterIds[0]))
         .execute();
-        
+
       // Fetch all clusters
       clusters = await Promise.all(clusterIds.map(async (id) => {
         const result = await db
@@ -307,17 +307,17 @@ export async function GET(req) {
           .execute();
         return result[0];
       }));
-      
+
       userClusters = existingUserClusters;
     } else {
       // User doesn't have clusters yet, generate and save them
       try {
         // Generate clusters based on user data
         const generatedClusters = await generateClusters(fullUserData);
-        
+
         // Save to database and get full data
         const savedData = await saveClusters(generatedClusters, userId, fullUserData);
-        
+
         clusters = savedData.savedClusters;
         userClusters = savedData.userClusters;
       } catch (error) {

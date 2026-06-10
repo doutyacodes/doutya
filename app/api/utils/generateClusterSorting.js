@@ -108,15 +108,15 @@ Each interest type can appear in multiple clusters depending on the specific rol
 export async function generateClusterSorting(mbtiType, riasecCode, classLevel) {
   try {
     console.log(`Generating cluster sorting for MBTI: ${mbtiType}, RIASEC: ${riasecCode}, Class: ${classLevel}`);
-    
+
     const prompt = generateClusterSortingPrompt(mbtiType, riasecCode, classLevel);
     console.log("prompt", prompt)
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini",
+        model: "gpt-5.4-mini",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 4000,
+        max_completion_tokens: 4000,
         temperature: 0.7,
       },
       {
@@ -183,7 +183,7 @@ export function validateMBTI(mbtiType) {
   if (!mbtiType || typeof mbtiType !== 'string' || mbtiType.length !== 4) {
     return false;
   }
-  
+
   const validMBTI = /^[EI][SN][TF][JP]$/i;
   return validMBTI.test(mbtiType);
 }
@@ -193,7 +193,7 @@ export function validateRIASEC(riasecCode) {
   if (!riasecCode || typeof riasecCode !== 'string') {
     return false;
   }
-  
+
   const validChars = /^[RIASEC]+$/i;
   return validChars.test(riasecCode) && riasecCode.length >= 1 && riasecCode.length <= 6;
 }

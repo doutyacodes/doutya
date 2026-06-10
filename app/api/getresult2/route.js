@@ -115,15 +115,14 @@ export async function GET(req) {
           const duration =
             edu.start_date && edu.end_date
               ? `from ${formatDate(edu.start_date)} to ${formatDate(
-                  edu.end_date
-                )}`
+                edu.end_date
+              )}`
               : edu.is_currently_studying
-              ? `from ${formatDate(edu.start_date)} (currently studying)`
-              : "";
+                ? `from ${formatDate(edu.start_date)} (currently studying)`
+                : "";
 
-          return `${edu.degree} in ${edu.field}${
-            edu.institution ? ` from ${edu.institution}` : ""
-          }${duration ? ` ${duration}` : ""}`;
+          return `${edu.degree} in ${edu.field}${edu.institution ? ` from ${edu.institution}` : ""
+            }${duration ? ` ${duration}` : ""}`;
         })
         .join(", ");
 
@@ -138,17 +137,16 @@ export async function GET(req) {
           const duration =
             work.start_date && work.end_date && !work.is_currently_working
               ? `from ${formatDate(work.start_date)} to ${formatDate(
-                  work.end_date
-                )}`
+                work.end_date
+              )}`
               : work.is_currently_working
-              ? `from ${formatDate(work.start_date)} (currently working)`
-              : work.start_date
-              ? `from ${formatDate(work.start_date)}`
-              : "";
+                ? `from ${formatDate(work.start_date)} (currently working)`
+                : work.start_date
+                  ? `from ${formatDate(work.start_date)}`
+                  : "";
 
-          let workDetail = `${work.job_title}${
-            work.company ? ` at ${work.company}` : ""
-          }${duration ? ` ${duration}` : ""}`;
+          let workDetail = `${work.job_title}${work.company ? ` at ${work.company}` : ""
+            }${duration ? ` ${duration}` : ""}`;
           if (work.skills) {
             workDetail += ` with skills in ${work.skills}`;
           }
@@ -274,9 +272,9 @@ export async function GET(req) {
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
-      model: "gpt-4o-mini",
+      model: "gpt-5.4-mini",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 8000, // Adjust the token limit as needed
+      max_completion_tokens: 8000, // Adjust the token limit as needed
     },
     {
       headers: {
@@ -301,33 +299,33 @@ export async function GET(req) {
 
   console.log(responseText)
 
-// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  // const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// // USE THE LATEST SERIES 3 MODELS:
-// const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+  // // USE THE LATEST SERIES 3 MODELS:
+  // const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
-// const result = await model.generateContent(prompt);
-// const response = await result.response;
+  // const result = await model.generateContent(prompt);
+  // const response = await result.response;
 
-// console.log("Gemini 3 Result:", response.text());
+  // console.log("Gemini 3 Result:", response.text());
 
-// New Gemini 3 Feature: Precise Token Counting
-// const usage = response.usageMetadata;
+  // New Gemini 3 Feature: Precise Token Counting
+  // const usage = response.usageMetadata;
 
-// if (usage) {
-//   console.log("--- Token Usage Details ---");
-//   console.log(`Input (Prompt) Tokens:   ${usage.promptTokenCount}`);
-//   console.log(`Output (Response) Tokens: ${usage.candidatesTokenCount}`);
-  
-//   // New for Gemini 3: Reasoning/Thinking tokens
-//   if (usage.thoughtsTokenCount) {
-//     console.log(`Thinking Tokens:         ${usage.thoughtsTokenCount}`);
-//   }
-  
-//   console.log(`Total Tokens:            ${usage.totalTokenCount}`);
-//   console.log("---------------------------");
-// }
-// const responseText =  response.text()
+  // if (usage) {
+  //   console.log("--- Token Usage Details ---");
+  //   console.log(`Input (Prompt) Tokens:   ${usage.promptTokenCount}`);
+  //   console.log(`Output (Response) Tokens: ${usage.candidatesTokenCount}`);
+
+  //   // New for Gemini 3: Reasoning/Thinking tokens
+  //   if (usage.thoughtsTokenCount) {
+  //     console.log(`Thinking Tokens:         ${usage.thoughtsTokenCount}`);
+  //   }
+
+  //   console.log(`Total Tokens:            ${usage.totalTokenCount}`);
+  //   console.log("---------------------------");
+  // }
+  // const responseText =  response.text()
 
   // Store the new result in the user_results table
   await db

@@ -15,8 +15,8 @@ const languageOptions = {
   ben: 'in Bengali',
   assa: 'in Assamese',
   ge: 'in German',
-  mal:'in malayalam',
-  tam:'in Tamil'
+  mal: 'in malayalam',
+  tam: 'in Tamil'
 };
 export const maxDuration = 40; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
@@ -74,15 +74,15 @@ export async function GET(req) {
   //   } for an individual with RIASEC interest types of ${type2}${type3 ? " and Gallup Strengths types of " + type3 : ""
   //   }. For each industry, include the following information:
   //           industry_name: A brief title of the industry?.
-            
+
   //           Ensure that the response is valid JSON, using the specified field names, but do not include the terms 'RIASEC' in the data.
   //           Provide the response ${languageOptions[language] || 'in English'} keeping the keys in english only. Give it as a single JSON data without any wrapping other than []`;
 
   const prompt = await generateIndustryPrompt(
-    userId, 
-    type2, 
-    country, 
-    language, 
+    userId,
+    type2,
+    country,
+    language,
     languageOptions
   );
 
@@ -91,9 +91,9 @@ export async function GET(req) {
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
-      model: "gpt-4o-mini",
+      model: "gpt-5.4-mini",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 1500, // Adjust the token limit as needed
+      max_completion_tokens: 1500, // Adjust the token limit as needed
     },
     {
       headers: {

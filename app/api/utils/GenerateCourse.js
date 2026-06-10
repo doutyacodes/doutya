@@ -15,15 +15,15 @@ import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 import { generateCourseTestPrompt } from '../services/promptService';
 
 export async function GenerateCourse(
-    userId, 
-    age, 
-    level, 
-    course, 
+    userId,
+    age,
+    level,
+    course,
     scopeName, // Changed from 'career' to the more generic 'scopeName'
-    courseId, 
-    birthDate, 
-    className, 
-    type1, 
+    courseId,
+    birthDate,
+    className,
+    type1,
     type2,
     scopeType = 'career' // Added scopeType parameter with default for backward compatibility
 ) {
@@ -32,25 +32,25 @@ export async function GenerateCourse(
 
         // Pass scopeType to the prompt generation function
         const prompt = await generateCourseTestPrompt(
-            userId, 
-            scopeName, 
-            course, 
-            type1, 
-            type2, 
-            age, 
-            level, 
+            userId,
+            scopeName,
+            course,
+            type1,
+            type2,
+            age,
+            level,
             currentAgeWeek,
             scopeType // Add scope type to prompt generation
         );
 
         console.log("prompt", prompt);
-        
+
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4o-mini", 
+                model: "gpt-5.4-mini",
                 messages: [{ role: "user", content: prompt }],
-                max_tokens: 5000,
+                max_completion_tokens: 5000,
             },
             {
                 headers: {
@@ -63,11 +63,11 @@ export async function GenerateCourse(
         console.log(`Input tokens Course generation: ${response.data.usage.prompt_tokens}`);
         console.log(`Output tokens Course generation: ${response.data.usage.completion_tokens}`);
         console.log(`Total tokens Course generation: ${response.data.usage.total_tokens}`);
-        
+
         let responseText = response.data.choices[0].message.content.trim();
         responseText = responseText.replace(/```json|```/g, "").trim();
         console.log("responseText", responseText);
-        
+
         let parsedData;
 
         try {

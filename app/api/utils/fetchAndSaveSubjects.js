@@ -18,9 +18,8 @@ const generateKeyHash = (
   type1,
   type2
 ) => {
-  const keyString = `${scopeId}-${scopeType}-${className}-${country}-${
-    type1 || ""
-  }-${type2 || ""}`;
+  const keyString = `${scopeId}-${scopeType}-${className}-${country}-${type1 || ""
+    }-${type2 || ""}`;
   return crypto.createHash("sha256").update(keyString).digest("hex");
 };
 
@@ -64,9 +63,9 @@ const fetchSubjectsFromOpenAI = async (
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini",
+        model: "gpt-5.4-mini",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 1500,
+        max_completion_tokens: 1500,
       },
       {
         headers: {

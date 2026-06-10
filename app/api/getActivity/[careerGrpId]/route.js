@@ -66,11 +66,11 @@ export async function GET(req, { params }) {
                 updated_at: USER_ACTIVITIES.updated_at
             })
             .from(USER_ACTIVITIES)
-            .innerJoin(ACTIVITIES, eq(USER_ACTIVITIES.activity_id, ACTIVITIES.activity_id)) 
+            .innerJoin(ACTIVITIES, eq(USER_ACTIVITIES.activity_id, ACTIVITIES.activity_id))
             .where(
                 and(
                     eq(ACTIVITIES.career_id, careerGrpId),
-                    eq(USER_ACTIVITIES.user_id, userId) 
+                    eq(USER_ACTIVITIES.user_id, userId)
                 )
             );
         console.log(userProgress)
@@ -97,9 +97,9 @@ export async function GET(req, { params }) {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4o-mini",
+                model: "gpt-5.4-mini",
                 messages: [{ role: "user", content: prompt }],
-                max_tokens: 1500, // Adjust the token limit as needed
+                max_completion_tokens: 1500, // Adjust the token limit as needed
             },
             {
                 headers: {

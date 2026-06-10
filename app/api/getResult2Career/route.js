@@ -79,8 +79,8 @@ export async function GET(req) {
     //   console.log("Existing career result:", existingCareer); // Log the result from the query
 
     if (existingCareer.length > 0) {
-      
-        const userCareers = await db
+
+      const userCareers = await db
         .select({
           career_name: CAREER_GROUP.career_name,
         })
@@ -88,15 +88,15 @@ export async function GET(req) {
         .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id))
         .where(eq(USER_CAREER.user_id, userId))
         .execute();
-        const userCareerNames = userCareers.map(career => career.career_name);
+      const userCareerNames = userCareers.map(career => career.career_name);
 
 
-        const parsedResult =  JSON.parse(existingCareer[0].description)
+      const parsedResult = JSON.parse(existingCareer[0].description)
 
-        const updatedResults = parsedResult.map(career => ({
-          ...career,
-          isCareerMoved: userCareerNames.includes(career.career_name), // Add isCareerMoved field
-        }));
+      const updatedResults = parsedResult.map(career => ({
+        ...career,
+        isCareerMoved: userCareerNames.includes(career.career_name), // Add isCareerMoved field
+      }));
 
       return NextResponse.json(
         {
@@ -141,9 +141,9 @@ export async function GET(req) {
   // Adjust the prompt based on whether a specific career name was passed
   let prompt;
   if (careerName && type1) {
-    
+
     prompt = await generateCareerDetailsPrompt(
-     userId, careerName, type1, type2, country, education_country, currentYear
+      userId, careerName, type1, type2, country, education_country, currentYear
     );
 
   } else {
@@ -153,15 +153,15 @@ export async function GET(req) {
     );
   }
 
-    console.log("prompt", prompt);
+  console.log("prompt", prompt);
 
   try {
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini",
+        model: "gpt-5.4-mini",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 5000, // Adjust the token limit as needed
+        max_completion_tokens: 5000, // Adjust the token limit as needed
       },
       {
         headers: {
