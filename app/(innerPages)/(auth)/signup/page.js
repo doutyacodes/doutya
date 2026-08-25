@@ -10,6 +10,7 @@ import { calculateAge } from "@/lib/ageCalculate";
 import countryList from "react-select-country-list";
 import Select from "react-select";
 import { useTranslations } from "next-intl";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 const languageMapping = {
   en: "English",
@@ -25,13 +26,25 @@ const languageMapping = {
 };
 
 function SignUp() {
+  const router = useRouter();
+  const t = useTranslations("SignupPage");
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    reset,
+    setError,
+    setValue,
+  } = useForm();
+
   const getSixYearsAgo = () => {
     const date = new Date();
     date.setFullYear(date.getFullYear() - 6);
     return date.toISOString().split("T")[0]; // Format it as YYYY-MM-DD
   };
 
-  // Add these new state variables after line 33
   const [institutionType, setInstitutionType] = useState(""); // "School" or "College"
   const [institutions, setInstitutions] = useState([]);
   const [filteredInstitutions, setFilteredInstitutions] = useState([]);
@@ -54,28 +67,83 @@ function SignUp() {
   const [educationLevel, setEducationLevel] = useState(0);
   const [reason, setReason] = useState(0);
   const [dobError, setDobError] = useState("");
-  const [ageCategory, setAgeCategory] = useState(""); // New state for age category
+  const [ageCategory, setAgeCategory] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
+  const [showStreamInput, setShowStreamInput] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [isSubmittingGoogle, setIsSubmittingGoogle] = useState(false);
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
 
-const [showStreamInput, setShowStreamInput] = useState(false);
-const [checking, setChecking] = useState(true);
+  // Restore Google signup state if user came from /login or refreshed
+  useEffect(() => {
+    try {
+      const isGoogleAuth = sessionStorage.getItem("isGoogleAuth") === "true";
+      const stored = sessionStorage.getItem("googleAuthProfile");
+      if (isGoogleAuth) {
+        setIsGoogleUser(true);
+      }
+      if (stored) {
+        const profile = JSON.parse(stored);
+        sessionStorage.removeItem("googleAuthProfile");
+        sessionStorage.setItem("isGoogleAuth", "true");
+        setIsGoogleUser(true);
+        if (profile?.name) setValue("name", profile.name);
+        if (profile?.email) setValue("username", profile.email);
+        const randomPass = "G@" + Math.random().toString(36).slice(-8) + "!9A";
+        setValue("password", randomPass);
+        setValue("confirmPassword", randomPass);
+        setStep("dob");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [setValue]);
 
-  // const [institutions, setInstitutions] = useState([]);
-  // const [childClassOptions, setChildClassOptions] = useState([]);
-  // const [childDivisionOptions, setChildDivisionOptions] = useState([]);
+  const handleGoogleSuccess = async (credential) => {
+    setIsSubmittingGoogle(true);
+    try {
+      const res = await fetch("/api/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken: credential }),
+      });
 
-  const router = useRouter();
-  const t = useTranslations("SignupPage");
+      const data = await res.json();
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-    reset,
-    setError,
-    setValue,
-  } = useForm();
+      if (!res.ok) {
+        throw new Error(data.message || "Google authentication failed");
+      }
+
+      if (data.status === "LOGGED_IN") {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+        const isJunior = ["5", "6", "7"].includes(data.class);
+        const targetUrl = data.navigateUrl || (isJunior ? "/dashboard_junior" : "/dashboard");
+        localStorage.setItem("dashboardUrl", isJunior ? "/dashboard_junior" : "/dashboard");
+        localStorage.setItem("navigateUrl", targetUrl);
+        toast.success("Logged in successfully!");
+        router.push(targetUrl);
+      } else if (data.status === "NEW_USER") {
+        // Mark as Google Auth user and persist state
+        sessionStorage.setItem("isGoogleAuth", "true");
+        setIsGoogleUser(true);
+
+        if (data.googleProfile?.name) setValue("name", data.googleProfile.name);
+        if (data.googleProfile?.email) setValue("username", data.googleProfile.email);
+        const randomPass = "G@" + Math.random().toString(36).slice(-8) + "!9A";
+        setValue("password", randomPass);
+        setValue("confirmPassword", randomPass);
+
+        // Move to DOB step -> user enters DOB -> then enters real School/College form!
+        setStep("dob");
+      }
+    } catch (err) {
+      toast.error(err.message || "Google sign up failed");
+    } finally {
+      setIsSubmittingGoogle(false);
+    }
+  };
 
   const educationLevelMapping = {
     0: "School",
@@ -445,7 +513,7 @@ const handleBackButton = () => {
   );
 }
 
-  // Eligibility Info Step
+    // Eligibility Info Step
   if (step === "eligibility_info") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center pt-8 pb-8 px-4">
@@ -476,26 +544,39 @@ const handleBackButton = () => {
                 {t("eligibilityDetails") || "By continuing, you confirm that you are a college student or a working professional."}
               </p>
             </div>
+
+            {/* Google Sign Up Button */}
+            <div className="mb-5">
+              <GoogleAuthButton
+                text="Sign up with Google"
+                onSuccess={handleGoogleSuccess}
+                onError={(err) => toast.error(err)}
+                disabled={isSubmittingGoogle}
+              />
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3 my-5">
+              <div className="flex-1 h-px bg-gray-700/80" />
+              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                or continue manually
+              </span>
+              <div className="flex-1 h-px bg-gray-700/80" />
+            </div>
             
             <button
               onClick={handleNext}
-              className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
             >
               {t("continue") || "Continue"}
             </button>
-            {/* <button
-                onClick={handleQuickSignup}
-                className="w-full py-2 px-6 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white font-medium rounded-xl border border-gray-600/50 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-500/50 mt-3"
-              >
-                Quick Signup (Testing)
-              </button> */}
 
-              <button
-                onClick={handleBackButton}
-                className="w-full py-2 px-6 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white font-medium rounded-xl border border-gray-600/50 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-500/50 mt-3"
-              >
-                Back
-              </button>
+            <button
+              onClick={handleBackButton}
+              className="w-full py-2 px-6 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white font-medium rounded-xl border border-gray-600/50 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-500/50 mt-3 cursor-pointer"
+            >
+              Back
+            </button>
           </div>
         </div>
       </div>
@@ -762,123 +843,148 @@ const handleBackButton = () => {
               required
             />
           </div>
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-200 mb-2"
-            >
-              {t("username")}
-            </label>
-            <input
-              type="text"
-              {...register("username")}
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-              placeholder="Choose a username"
-              required
-            />
-          </div>
-          {errors.username && (
-            <p className="text-red-400 text-sm mt-1">
-              {errors.username.message}
-            </p>
+          {(isGoogleUser || (watch("username") && watch("username").includes("@"))) ? (
+            <div>
+              <label className="block text-sm font-medium text-gray-200 mb-2">
+                Google Account
+              </label>
+              <div className="flex items-center gap-3 px-4 py-3 bg-gray-700/30 border border-gray-600/40 rounded-xl text-gray-200">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                </svg>
+                <span className="text-sm font-medium text-white break-all">{watch("username")}</span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-gray-200 mb-2"
+                >
+                  {t("username")}
+                </label>
+                <input
+                  type="text"
+                  {...register("username", { required: true })}
+                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                  placeholder="Choose a username"
+                  required
+                />
+              </div>
+              {errors.username && (
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.username.message}
+                </p>
+              )}
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-200 mb-2"
+                >
+                  {t("password")}
+                </label>
+                <input
+                  type="password"
+                  {...register("password", {
+                    required: t("passwordRequired"),
+                    minLength: {
+                      value: 6,
+                      message: t("passwordMinLength"),
+                    },
+                    pattern: {
+                      value: /(?=.*[!@#$%^&*])/,
+                      message: t("passwordPattern"),
+                    },
+                  })}
+                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                  placeholder="Create a password"
+                  required
+                />
+                {errors.password && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-200 mb-2"
+                >
+                  {t("confirmPassword")}
+                </label>
+                <input
+                  type="password"
+                  {...register("confirmPassword")}
+                  className={`w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200 ${
+                    errors.confirmPassword ? "border-red-500" : ""
+                  }`}
+                  placeholder="Confirm your password"
+                  required
+                />
+                {errors.confirmPassword && (
+                  <p className="mt-2 text-sm text-red-400">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+                <div className="md:text-sm text-xs text-gray-400 mt-2">{t("passWord")}</div>
+              </div>
+            </>
           )}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-200 mb-2"
-            >
-              {t("password")}
-            </label>
-            <input
-              type="password"
-              {...register("password", {
-                required: t("passwordRequired"),
-                minLength: {
-                  value: 6,
-                  message: t("passwordMinLength"),
-                },
-                pattern: {
-                  value: /(?=.*[!@#$%^&*])/,
-                  message: t("passwordPattern"),
-                },
-              })}
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-              placeholder="Create a password"
-              required
-            />
-            {errors.password && (
-              <p className="text-red-400 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-200 mb-2"
-            >
-              {t("confirmPassword")}
-            </label>
-            <input
-              type="password"
-              {...register("confirmPassword")}
-              className={`w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200 ${
-                errors.confirmPassword ? "border-red-500" : ""
-              }`}
-              placeholder="Confirm your password"
-              required
-            />
-            {errors.confirmPassword && (
-              <p className="mt-2 text-sm text-red-400">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-            <div className="md:text-sm text-xs text-gray-400 mt-2">{t("passWord")}</div>
-          </div>
-          <div className="flex gap-4 mb-4">
-            <div className="">
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="sm:col-span-1">
               <label
                 htmlFor="gender"
-                className="block text-sm font-medium text-gray-300"
+                className="block text-sm font-medium text-gray-200 mb-2"
               >
-                Gender
+                {t("gender") || "Gender"}
               </label>
               <select
                 id="gender"
-                name="gender"
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                {...register("gender", { required: t("genderRequired") })}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
+                {...register("gender", { required: t("genderRequired") || "Gender is required" })}
+                required
               >
-                <option value="">{t("gender")}</option>
-                <option value="Mr">{t("genderOptions.mr")}</option>
-                <option value="Miss">{t("genderOptions.miss")}</option>
-                <option value="Mrs">{t("genderOptions.mrs")}</option>
+                <option value="">Select</option>
+                <option value="Mr">{t("genderOptions.mr") || "Mr"}</option>
+                <option value="Miss">{t("genderOptions.miss") || "Miss"}</option>
+                <option value="Mrs">{t("genderOptions.mrs") || "Mrs"}</option>
               </select>
               {errors.gender && (
-                <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>
+                <p className="text-red-400 text-sm mt-1">{errors.gender.message}</p>
               )}
             </div>
 
-            <div className="flex-1">
+            <div className="sm:col-span-2">
               <label
                 htmlFor="mobile"
-                className="block text-sm font-medium text-gray-300"
+                className="block text-sm font-medium text-gray-200 mb-2"
               >
-                {t("mobile")}
+                {t("mobile") || "Mobile Number"}
               </label>
               <input
-                type="tel" 
+                type="tel"
+                id="mobile"
                 {...register("mobile", {
+                  required: true,
                   minLength: {
                     value: 10,
-                    message: t("mobileMinLength"),
+                    message: t("mobileMinLength") || "Enter a valid 10-digit number",
                   },
                 })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="10-digit mobile number"
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
                 required
               />
               {errors.mobile && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red-400 text-sm mt-1">
                   {errors.mobile.message}
                 </p>
               )}
