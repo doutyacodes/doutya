@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
-// const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
+// const CareerGuideExplanation = ({ forceShow = false, onClose = () => {} }) => {
 //     const [currentStep, setCurrentStep] = useState(0);
 //     const [showExplanation, setShowExplanation] = useState(true);
 //     const [dontShowAgain, setDontShowAgain] = useState(false);
@@ -376,7 +376,7 @@ import { X } from 'lucide-react';
 //   );
 // };
 
-const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
+const CareerGuideExplanation = ({ forceShow = false, onClose = () => {} }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showExplanation, setShowExplanation] = useState(true);
   const [dontShowAgain, setDontShowAgain] = useState(false);
@@ -400,8 +400,7 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
       
       // Close the explanation
       setShowExplanation(false);
-
-      onClose()
+      if (typeof onClose === "function") onClose();
   };
 
   const toggleDontShowAgain = () => {
@@ -411,7 +410,7 @@ const CareerGuideExplanation = ({ forceShow = false, onClose}) => {
 
   const handleClose = () => {
       setShowExplanation(false);
-      onClose()
+      if (typeof onClose === "function") onClose();
   };
 
   const handleNext = () => {

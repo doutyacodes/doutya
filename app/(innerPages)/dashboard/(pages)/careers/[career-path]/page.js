@@ -163,9 +163,13 @@ function Page() {
       ? [{ key: "careerOverview", label: "Career Overview" }]
       : []),
     { key: "assessment", label: t("assessment") },
+    { key: "certification", label: t("certification") },
+    ...(scopeType === "career"
+      ? [{ key: "mentor", label: t("mentor") }]
+      : []),
+    { key: "community", label: t("community") },
     { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
-    // { key: "community", label: t("community") },
   ];
 
   useEffect(() => {

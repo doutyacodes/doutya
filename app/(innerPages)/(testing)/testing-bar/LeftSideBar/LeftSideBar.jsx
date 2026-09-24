@@ -11,6 +11,8 @@ import {
   FaInfoCircle,
   FaVial,
   FaUsers,
+  FaUserTie,
+  FaGraduationCap,
 } from "react-icons/fa";
 import { PiCompassRoseFill } from "react-icons/pi";
 import { AlertCircle, CheckCircle, ChevronLeft, Clock } from "lucide-react";
@@ -166,12 +168,42 @@ const LeftSideBar = () => {
         { name: "Career Guide", link: "/dashboard/careers/career-guide" },
       ],
     },
-    ...(userRoleType !== "Individual" ? [{
+    {
       name: "Community",
       icon: <FaUsers className="text-base" />,
       link: "/community",
-      submenus: [],
-    }] : []),
+      submenus: [
+        { name: "All Communities", link: "/community" },
+        { name: "My Community", link: "/my-community" },
+      ],
+    },
+    {
+      name: "Mentorship",
+      icon: <FaUserTie className="text-base" />,
+      link: "/mentors/1/browse",
+      submenus: [
+        { name: "Browse Mentors", link: "/mentors/1/browse" },
+      ],
+    },
+    {
+      name: "Certifications",
+      icon: <FaGraduationCap className="text-base" />,
+      link: "#",
+      submenus: [
+        { name: "Course Certifications", link: "/dashboard/careers/career-guide?tab=certification" },
+        { name: "Verify Certificate", link: "/verify" },
+      ],
+    },
+    {
+      name: "School Activities",
+      icon: <FaBuilding className="text-base" />,
+      link: "#",
+      submenus: [
+        { name: "Challenges", link: "/institution/challenges" },
+        { name: "Tests", link: "/institution/tests" },
+        { name: "Community", link: "/institution/community" },
+      ],
+    },
     // {
     //   name: "Companies",
     //   icon: <FaSuitcase className="text-xl" />,
@@ -187,16 +219,6 @@ const LeftSideBar = () => {
       link: "/dashboard/user-profile",
       submenus: [],
     },
-    // {
-    //   name: "School Activities",
-    //   icon: <FaBuilding className="text-base" />,
-    //   link: "#",
-    //   submenus: [
-    //     { name: "Challenges", link: "/institution/challenges" },
-    //     { name: "Tests", link: "/institution/tests" },
-    //     { name: "Community", link: "/institution/community" },
-    //   ],
-    // },
     {
       name: "Sign Out",
       icon: <FaCog className="text-base" />,
@@ -211,16 +233,6 @@ const LeftSideBar = () => {
       submenus: [],
       onClick: handleOpenModal,
     },
-    // {
-    //   name: "Instructions",
-    //   icon: <FaInfoCircle className="text-xl" />, // Use an info or help icon
-    //   link: "#",
-    //   submenus: [],
-    //   onClick: () => {
-    //     // When clicked, open instructions
-    //     openInstructions('initial');
-    //   },
-    // }
   ];
 
   const toggleDropdown = (menuName) => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const CareerOnboarding = ({ forceShow = false, onClose}) => {
+const CareerOnboarding = ({ forceShow = false, onClose = () => {} }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [dontShowAgain, setDontShowAgain] = useState(false);
@@ -27,12 +27,12 @@ const CareerOnboarding = ({ forceShow = false, onClose}) => {
   const handleDismiss = () => {
     localStorage.setItem('onboardingDontShowAgain', dontShowAgain.toString());
     setShowOnboarding(false);
-    onClose()
+    if (typeof onClose === "function") onClose();
   };
 
   const handleClose = () => {
     setShowOnboarding(false);
-    onClose()
+    if (typeof onClose === "function") onClose();
   };
 
 
