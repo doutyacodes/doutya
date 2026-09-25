@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { db } from "@/utils"; // Ensure this path is correct
+import { db } from "@/utils";
 import {
     CERTIFICATIONS,
     CERTIFICATION_QUIZ,
@@ -9,7 +9,7 @@ import {
     ASSIGNMENTS,
     LEARNING_OUTCOMES,
     COURSE_OVERVIEW
-} from "@/utils/schema"; // Ensure this path is correct
+} from "@/utils/schema";
 import { and, eq } from "drizzle-orm";
 import { getCurrentWeekOfAge } from '@/lib/getCurrentWeekOfAge';
 import { generateCourseTestPrompt } from '../services/promptService';
@@ -19,13 +19,13 @@ export async function GenerateCourse(
     age,
     level,
     course,
-    scopeName, // Changed from 'career' to the more generic 'scopeName'
+    scopeName,
     courseId,
     birthDate,
     className,
     type1,
     type2,
-    scopeType = 'career' // Added scopeType parameter with default for backward compatibility
+    scopeType = 'career'
 ) {
     try {
         const currentAgeWeek = getCurrentWeekOfAge(birthDate);
@@ -40,10 +40,10 @@ export async function GenerateCourse(
             age,
             level,
             currentAgeWeek,
-            scopeType // Add scope type to prompt generation
+            scopeType
         );
 
-        console.log("prompt", prompt);
+        console.log("Generating course quiz prompt for scope:", scopeType, scopeName);
 
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
@@ -60,63 +60,78 @@ export async function GenerateCourse(
             }
         );
 
-        console.log(`Input tokens Course generation: ${response.data.usage.prompt_tokens}`);
-        console.log(`Output tokens Course generation: ${response.data.usage.completion_tokens}`);
-        console.log(`Total tokens Course generation: ${response.data.usage.total_tokens}`);
+        console.log(`Input tokens Course generation: ${response.data?.usage?.prompt_tokens}`);
+        console.log(`Output tokens Course generation: ${response.data?.usage?.completion_tokens}`);
+        console.log(`Total tokens Course generation: ${response.data?.usage?.total_tokens}`);
 
-        let responseText = response.data.choices[0].message.content.trim();
-        responseText = responseText.replace(/```json|```/g, "").trim();
-        console.log("responseText", responseText);
+        let responseText = response.data?.choices?.[0]?.message?.content?.trim() || "";
+        responseText = responseText.replace(/^\`\`\`json\s*/i, "").replace(/^\`\`\`\s*/, "").replace(/\s*\`\`\`$/, "").trim();
+        
+        const firstBrace = responseText.indexOf('{');
+        const lastBrace = responseText.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace !== -1) {
+            responseText = responseText.substring(firstBrace, lastBrace + 1);
+        }
 
         let parsedData;
-
         try {
             parsedData = JSON.parse(responseText);
         } catch (error) {
-            throw new Error("Failed to parse response data");
+            console.error("Failed to parse response data:", responseText);
+            throw new Error("Failed to parse response data from AI");
         }
 
-        console.log("parsedData", parsedData);
+        // Insert topics covered
+        if (parsedData.topics_covered && Array.isArray(parsedData.topics_covered)) {
+            const existingTopics = await db
+                .select({ id: TOPICS_COVERED.id })
+                .from(TOPICS_COVERED)
+                .where(eq(TOPICS_COVERED.certification_id, courseId))
+                .limit(1);
 
-        // Insert topics covered in a single batch
-        await Promise.all(
-            parsedData.topics_covered.map(async (topic) => {
-                await db.insert(TOPICS_COVERED).values({
-                    certification_id: courseId,
-                    topic_name: topic
-                });
-            })
-        );
+            if (existingTopics.length === 0) {
+                for (const topic of parsedData.topics_covered) {
+                    if (!topic) continue;
+                    await db.insert(TOPICS_COVERED).values({
+                        certification_id: courseId,
+                        topic_name: String(topic)
+                    });
+                }
+            }
+        }
 
         // Process quiz questions and options
-        for (const questionData of parsedData.final_quiz) {
-            // Insert question
-            const questionInsert = await db.insert(CERTIFICATION_QUIZ).values({
-                question: questionData.question,
-                certification_id: courseId,
-                age: age,
-                class_name: className,
-                level: level
-            });
+        if (parsedData.final_quiz && Array.isArray(parsedData.final_quiz)) {
+            for (const questionData of parsedData.final_quiz) {
+                if (!questionData.question || !questionData.options) continue;
 
-            const questionId = questionInsert[0].insertId;
+                // Insert question
+                const questionInsert = await db.insert(CERTIFICATION_QUIZ).values({
+                    question: questionData.question,
+                    certification_id: courseId,
+                    age: (age && !isNaN(age)) ? Number(age) : 18,
+                    class_name: className || 'completed',
+                    level: level || 'beginner'
+                });
 
-            // Insert options for each question
-            await Promise.all(
-                questionData.options.map(async (option) => {
+                const questionId = questionInsert[0].insertId;
+
+                // Insert options for each question
+                for (const option of questionData.options) {
+                    if (!option || !option.text) continue;
                     await db.insert(CERTIFICATION_QUIZ_OPTIONS).values({
                         question_id: questionId,
                         option_text: option.text,
-                        is_answer: option.is_answer
+                        is_answer: option.is_answer === 'yes' ? 'yes' : 'no'
                     });
-                })
-            );
+                }
+            }
         }
 
         return { success: true, message: "Course generated and saved successfully" };
 
     } catch (error) {
-        console.error("Error in GenerateCourse:", error);
+        console.error("Error in GenerateCourse:", error?.response?.data || error.message);
         throw new Error(`Failed to generate course: ${error.message}`);
     }
 }

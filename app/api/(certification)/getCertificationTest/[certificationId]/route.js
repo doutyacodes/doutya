@@ -1,7 +1,22 @@
 import { db } from '@/utils';
-import { CERTIFICATION_QUIZ, CERTIFICATION_QUIZ_OPTIONS, CERTIFICATION_USER_PROGRESS, CERTIFICATIONS, USER_CERTIFICATION_COMPLETION, USER_DETAILS, CAREER_GROUP, TOPICS_COVERED, USER_CAREER, QUIZ_SEQUENCES, CLUSTER, SECTOR } from '@/utils/schema';
+import { 
+    CERTIFICATION_QUIZ, 
+    CERTIFICATION_QUIZ_OPTIONS, 
+    CERTIFICATION_USER_PROGRESS, 
+    CERTIFICATIONS, 
+    USER_CERTIFICATION_COMPLETION, 
+    USER_DETAILS, 
+    CAREER_GROUP, 
+    TOPICS_COVERED, 
+    QUIZ_SEQUENCES, 
+    CLUSTER, 
+    SECTOR,
+    USER_CAREER,
+    USER_CLUSTER,
+    USER_SECTOR
+} from '@/utils/schema';
 import { NextResponse } from 'next/server';
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql, desc } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
 import { GenerateCourse } from '@/app/api/utils/GenerateCourse';
@@ -9,7 +24,7 @@ import { GenerateCourse } from '@/app/api/utils/GenerateCourse';
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
-async function fetchAndFormatQuestions(certificationId, age, className, level) {
+async function fetchAndFormatQuestions(certificationId, level) {
     const existingQuestions = await db
         .select({
             questionId: CERTIFICATION_QUIZ.id,
@@ -23,29 +38,24 @@ async function fetchAndFormatQuestions(certificationId, age, className, level) {
         .where(
             and(
                 eq(CERTIFICATION_QUIZ.certification_id, certificationId),
-                eq(CERTIFICATION_QUIZ.age, age),
-                eq(CERTIFICATION_QUIZ.class_name, className),
                 eq(CERTIFICATION_QUIZ.level, level) 
             )
         );
 
-    // If existing questions are found, format them
     if (existingQuestions.length > 0) {
         const formattedQuestions = existingQuestions.reduce((acc, row) => {
             const { questionId, question, optionId, option_text, is_answer } = row;
 
-            // Find or create a question entry in the accumulator
             let questionEntry = acc.find(q => q.question === question);
             if (!questionEntry) {
                 questionEntry = { id: questionId, question, options: [] };
                 acc.push(questionEntry);
             }
 
-            // Push the option to the options array
             questionEntry.options.push({
                 id: optionId,
                 text: option_text,
-                is_answer: is_answer === "yes" ? "yes" : "no", // Ensure is_answer is correctly set
+                is_answer: is_answer === "yes" ? "yes" : "no",
             });
 
             return acc;
@@ -54,12 +64,98 @@ async function fetchAndFormatQuestions(certificationId, age, className, level) {
         return { questions: formattedQuestions };
     }
 
-    // Return default values if no questions are found
     return { questions: [] };
 }
 
+// Helper to resolve scope name across career, cluster, or sector
+async function resolveScopeName(scopeType, scopeId, userId) {
+    try {
+        if (scopeType === 'career') {
+            const cg = await db
+                .select({ name: CAREER_GROUP.career_name })
+                .from(CAREER_GROUP)
+                .where(eq(CAREER_GROUP.id, scopeId))
+                .limit(1);
+            if (cg.length && cg[0].name) return cg[0].name;
+
+            const uc = await db
+                .select({ name: CAREER_GROUP.career_name })
+                .from(USER_CAREER)
+                .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id))
+                .where(eq(USER_CAREER.id, scopeId))
+                .limit(1);
+            if (uc.length && uc[0].name) return uc[0].name;
+
+            if (userId) {
+                const uac = await db
+                    .select({ name: CAREER_GROUP.career_name })
+                    .from(USER_CAREER)
+                    .innerJoin(CAREER_GROUP, eq(USER_CAREER.career_group_id, CAREER_GROUP.id))
+                    .where(eq(USER_CAREER.user_id, userId))
+                    .orderBy(desc(USER_CAREER.id))
+                    .limit(1);
+                if (uac.length && uac[0].name) return uac[0].name;
+            }
+        } else if (scopeType === 'cluster') {
+            const cl = await db
+                .select({ name: CLUSTER.name })
+                .from(CLUSTER)
+                .where(eq(CLUSTER.id, scopeId))
+                .limit(1);
+            if (cl.length && cl[0].name) return cl[0].name;
+
+            const ucl = await db
+                .select({ name: CLUSTER.name })
+                .from(USER_CLUSTER)
+                .innerJoin(CLUSTER, eq(USER_CLUSTER.cluster_id, CLUSTER.id))
+                .where(eq(USER_CLUSTER.id, scopeId))
+                .limit(1);
+            if (ucl.length && ucl[0].name) return ucl[0].name;
+
+            if (userId) {
+                const uacl = await db
+                    .select({ name: CLUSTER.name })
+                    .from(USER_CLUSTER)
+                    .innerJoin(CLUSTER, eq(USER_CLUSTER.cluster_id, CLUSTER.id))
+                    .where(eq(USER_CLUSTER.user_id, userId))
+                    .orderBy(desc(USER_CLUSTER.id))
+                    .limit(1);
+                if (uacl.length && uacl[0].name) return uacl[0].name;
+            }
+        } else if (scopeType === 'sector') {
+            const sc = await db
+                .select({ name: SECTOR.name })
+                .from(SECTOR)
+                .where(eq(SECTOR.id, scopeId))
+                .limit(1);
+            if (sc.length && sc[0].name) return sc[0].name;
+
+            const usc = await db
+                .select({ name: SECTOR.name })
+                .from(USER_SECTOR)
+                .innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id))
+                .where(eq(USER_SECTOR.id, scopeId))
+                .limit(1);
+            if (usc.length && usc[0].name) return usc[0].name;
+
+            if (userId) {
+                const uasc = await db
+                    .select({ name: SECTOR.name })
+                    .from(USER_SECTOR)
+                    .innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id))
+                    .where(eq(USER_SECTOR.user_id, userId))
+                    .orderBy(desc(USER_SECTOR.id))
+                    .limit(1);
+                if (uasc.length && uasc[0].name) return uasc[0].name;
+            }
+        }
+    } catch (err) {
+        console.error("Error resolving scope name:", err);
+    }
+    return '';
+}
+
 export async function GET(request, { params }) {
-    // Authenticate user
     const authResult = await authenticate(request);
     if (!authResult.authenticated) {
         return authResult.response;
@@ -69,27 +165,27 @@ export async function GET(request, { params }) {
     const userId = userData.userId;
     const { certificationId } = params;
     const { searchParams } = new URL(request.url);
-    const level = searchParams.get("level");
+    const level = searchParams.get("level") || "beginner";
 
-    if (!certificationId || !level) {
+    if (!certificationId) {
         return NextResponse.json({ message: 'Invalid certificationId' }, { status: 400 });
     }
 
     try {
         // Step 1: Check if certification is already completed
         const certificationStatus = await db
-        .select({ completed: USER_CERTIFICATION_COMPLETION.completed })
-        .from(USER_CERTIFICATION_COMPLETION)
-        .where(and(
-            eq(USER_CERTIFICATION_COMPLETION.user_id, userId),
-            eq(USER_CERTIFICATION_COMPLETION.certification_id, certificationId)
-        ));
+            .select({ completed: USER_CERTIFICATION_COMPLETION.completed })
+            .from(USER_CERTIFICATION_COMPLETION)
+            .where(and(
+                eq(USER_CERTIFICATION_COMPLETION.user_id, userId),
+                eq(USER_CERTIFICATION_COMPLETION.certification_id, certificationId)
+            ));
 
         if (certificationStatus.length > 0 && certificationStatus[0].completed === 'yes') {
             return NextResponse.json({ isCompleted: true }, { status: 200 });
         }
 
-        // Get user details including scope_type from USER_DETAILS
+        // Get user details
         const userDetailsResult = await db
             .select({ 
                 birth_date: USER_DETAILS.birth_date,
@@ -97,7 +193,7 @@ export async function GET(request, { params }) {
                 academicYearStart: USER_DETAILS.academicYearStart,
                 academicYearEnd: USER_DETAILS.academicYearEnd,
                 className: USER_DETAILS.class_name,
-                scope_type: USER_DETAILS.scope_type  // Get user's scope_type
+                scope_type: USER_DETAILS.scope_type
             })
             .from(USER_DETAILS)
             .where(eq(USER_DETAILS.id, userId));
@@ -108,11 +204,16 @@ export async function GET(request, { params }) {
 
         const userDetails = userDetailsResult[0];
         const birth_date = userDetails.birth_date;
-        const age = calculateAge(birth_date);
+        let age = 18;
+        if (birth_date) {
+            const calculated = calculateAge(birth_date);
+            if (!isNaN(calculated) && calculated > 0) {
+                age = calculated;
+            }
+        }
         const className = userDetails.className || 'completed';
-        const userScopeType = userDetails.scope_type || 'career'; // Default to 'career' if not specified
 
-        // Get certification details including scope type and scope id
+        // Get certification details
         const certificationDetails = await db
             .select({
                 certificationName: CERTIFICATIONS.certification_name,
@@ -128,40 +229,15 @@ export async function GET(request, { params }) {
 
         const certificationName = certificationDetails[0].certificationName;
         const scopeId = certificationDetails[0].scopeId;
-        const scopeType = certificationDetails[0].scopeType;
+        const scopeType = certificationDetails[0].scopeType || userDetails.scope_type || 'career';
 
         // Get scope name based on scope type (career, cluster, or sector)
-        let scopeName = '';
-
-        if (scopeType === 'career') {
-            // Get career name
-            const careerResult = await db
-                .select({ careerName: CAREER_GROUP.career_name })
-                .from(CAREER_GROUP)
-                .where(eq(CAREER_GROUP.id, scopeId));
-                
-            scopeName = careerResult.length ? careerResult[0].careerName : '';
-        } 
-        else if (scopeType === 'cluster') {
-            // Get cluster name
-            const clusterResult = await db
-                .select({ clusterName: CLUSTER.name })
-                .from(CLUSTER)
-                .where(eq(CLUSTER.id, scopeId));
-                
-            scopeName = clusterResult.length ? clusterResult[0].clusterName : '';
-        } 
-        else if (scopeType === 'sector') {
-            // Get sector name
-            const sectorResult = await db
-                .select({ sectorName: SECTOR.name })
-                .from(SECTOR)
-                .where(eq(SECTOR.id, scopeId));
-                
-            scopeName = sectorResult.length ? sectorResult[0].sectorName : '';
+        let scopeName = await resolveScopeName(scopeType, scopeId, userId);
+        if (!scopeName) {
+            scopeName = certificationName; // Fallback to avoid empty prompt string
         }
 
-        // Get the type1 and type2 from the QUIZ_SEQUENCES table
+        // Get personality sequences
         const personalities = await db
             .select({
                 quizId: QUIZ_SEQUENCES.quiz_id,
@@ -170,8 +246,8 @@ export async function GET(request, { params }) {
             .from(QUIZ_SEQUENCES)
             .where(
                 and(
-                eq(QUIZ_SEQUENCES.user_id, userId),
-                inArray(QUIZ_SEQUENCES.quiz_id, [1, 2])
+                    eq(QUIZ_SEQUENCES.user_id, userId),
+                    inArray(QUIZ_SEQUENCES.quiz_id, [1, 2])
                 )
             );
 
@@ -183,9 +259,28 @@ export async function GET(request, { params }) {
             else if (p.quizId === 2) type2 = p.typeSequence;
         }
 
+        // Fallbacks for personality types if missing
+        if (!type1 || !type2) {
+            if (scopeType === 'career') {
+                const uc = await db.select({ type1: USER_CAREER.type1, type2: USER_CAREER.type2 }).from(USER_CAREER).where(eq(USER_CAREER.user_id, userId)).limit(1);
+                if (uc.length) {
+                    type1 = type1 || uc[0].type1;
+                    type2 = type2 || uc[0].type2;
+                }
+            } else if (scopeType === 'cluster') {
+                const ucl = await db.select({ mbti_type: USER_CLUSTER.mbti_type, riasec_code: USER_CLUSTER.riasec_code }).from(USER_CLUSTER).where(eq(USER_CLUSTER.user_id, userId)).limit(1);
+                if (ucl.length) {
+                    type1 = type1 || ucl[0].mbti_type;
+                    type2 = type2 || ucl[0].riasec_code;
+                }
+            }
+        }
+        type1 = type1 || 'ENTP';
+        type2 = type2 || 'RIA';
+
         let totalAnswered = 0;
         
-        // Check if isStarted is true in the USER_CERTIFICATION_COMPLETION table
+        // Check progress
         const checkProgress = await db
             .select({
                 isStarted: USER_CERTIFICATION_COMPLETION.isStarted
@@ -198,9 +293,7 @@ export async function GET(request, { params }) {
                 )
             );
     
-        // Proceed only if a progress exists and isStarted is true
         if (checkProgress.length > 0 && checkProgress[0].isStarted) {
-            // Get the total number of saved quiz from CERTIFICATION_USER_PROGRESS if isStarted is true
             const totalQuestionsAnswered = await db
                 .select({
                     countQuestionIds: sql`COUNT(${CERTIFICATION_USER_PROGRESS.quiz_id})`
@@ -213,12 +306,11 @@ export async function GET(request, { params }) {
                     )
                 );
     
-            // The total number of questions answered
             totalAnswered = totalQuestionsAnswered[0]?.countQuestionIds || 0;
         }
 
         // Check existing questions and fetch quiz progress
-        let { questions } = await fetchAndFormatQuestions(certificationId, age, className, level);
+        let { questions } = await fetchAndFormatQuestions(certificationId, level);
 
         // If no questions are found, generate new course data
         if (questions.length === 0) {
@@ -229,19 +321,17 @@ export async function GET(request, { params }) {
                 certificationName, 
                 scopeName, 
                 certificationId, 
-                birth_date, 
+                birth_date || new Date().toISOString(), 
                 className, 
                 type1, 
                 type2, 
-                scopeType // Pass scope type to GenerateCourse
+                scopeType
             );
             
-            // Fetch the questions again after generation
-            ({ questions } = await fetchAndFormatQuestions(certificationId, age, className, level));
+            ({ questions } = await fetchAndFormatQuestions(certificationId, level));
         }
 
-        // Only fetch topics after ensuring questions exist
-        // Fetch topics covered in this certification
+        // Fetch topics covered
         const topicsCovered = await db
             .select({
                 topicName: TOPICS_COVERED.topic_name
@@ -249,18 +339,16 @@ export async function GET(request, { params }) {
             .from(TOPICS_COVERED)
             .where(eq(TOPICS_COVERED.certification_id, certificationId));
 
-        // Format topics into an array
         const topics = topicsCovered.map(topic => topic.topicName);
 
-        // Create certification overview object
         const certificationOverview = {
             certificationName,
-            scopeName, // Use more generic scopeName instead of careerName
-            scopeType, // Include scope type in the response
+            scopeName,
+            careerName: scopeName, // Backwards compatibility for frontend
+            scopeType,
             topics
         };
 
-        // Prepare the response with certification overview, quiz progress and questions
         return NextResponse.json({ 
             certificationOverview, 
             quizProgress: totalAnswered, 
@@ -269,6 +357,6 @@ export async function GET(request, { params }) {
 
     } catch (error) {
         console.error("Error fetching questions and answers:", error);
-        return NextResponse.json({ message: 'Error fetching questions and answers' }, { status: 500 });
+        return NextResponse.json({ message: 'Error fetching questions and answers', error: error.message }, { status: 500 });
     }
 }

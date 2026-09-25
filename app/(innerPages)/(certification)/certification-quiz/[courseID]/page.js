@@ -238,13 +238,20 @@ function Page({ params }) {
   
   // Show certification overview
   if (showOverview && certificationInfo) {
+    const scopeLabel = 
+      certificationInfo.scopeType === 'cluster' ? 'Cluster' : 
+      certificationInfo.scopeType === 'sector' ? 'Sector' : 'Career';
+    const displayName = certificationInfo.scopeName || certificationInfo.careerName || "";
+
     return (
       <div className="min-h-screen bg-gray-900 p-8 text-white">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Header Section */}
           <div className="text-center space-y-4">
             <h1 className="text-4xl font-bold text-white">{certificationInfo.certificationName}</h1>
-            <p className="text-lg text-gray-300">Validate your skills and boost your career prospects as a {certificationInfo.careerName}</p>
+            <p className="text-lg text-gray-300">
+              Validate your skills and boost your prospects {displayName ? `in ${displayName}` : ""}
+            </p>
           </div>
 
           {/* Main Info Card */}
@@ -268,7 +275,7 @@ function Page({ params }) {
                 </div>
                 <div className="flex items-center space-x-2">
                   <GraduationCap className="w-5 h-5 text-blue-400" />
-                  <span>Career: {certificationInfo.careerName}</span>
+                  <span>{scopeLabel}: {displayName || "General"}</span>
                 </div>
               </div>
 
