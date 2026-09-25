@@ -60,20 +60,36 @@ const fetchSubjectsFromOpenAI = async (
   console.log("prompt", prompt);
 
   try {
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 1500,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
+    let retries = 3;
+    let response;
+    while (retries > 0) {
+      try {
+        response = await axios.post(
+          "https://api.openai.com/v1/chat/completions",
+          {
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 1500,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            timeout: 60000,
+          }
+        );
+        break;
+      } catch (err) {
+        retries--;
+        const status = err.response?.status;
+        if (retries === 0 || (status && status < 500 && status !== 429)) {
+          throw err;
+        }
+        console.warn(`OpenAI call error (${status || err.message}). Retrying in 2s... (${retries} attempts left)`);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
-    );
+    }
 
     console.log(`Input tokens Subjects: ${response.data.usage.prompt_tokens}`);
     console.log(`Output tokens Subjects: ${response.data.usage.completion_tokens}`);

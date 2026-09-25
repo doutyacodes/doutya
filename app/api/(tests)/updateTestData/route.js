@@ -38,12 +38,12 @@ export async function POST(req) {
             .where(
                 and(
                     eq(TEST_PROGRESS.user_id, userId),
-                    eq(TEST_PROGRESS.test_id, testId)
+                    eq(TEST_PROGRESS.test_id, testId),
+                    eq(TEST_PROGRESS.is_answer, 'yes')
                 )
-            )
-            .groupBy(TEST_PROGRESS.is_answer);
+            );
 
-        const totalMarks = quizTotal[0]?.totalMarks || 0;
+        const totalMarks = parseFloat(quizTotal[0]?.totalMarks || 0);
 
 
         // Step 2: Calculate the user's birth date and current age
@@ -61,20 +61,27 @@ export async function POST(req) {
 
         console.log("yesCount", yesCount);
 
-        // Step 4: Determine skilled_age based on yesCount  
+        // Step 4: Determine skilled_age based on yesCount and total questions
+        const totalQuestions = quizResults.length || 10;
         let skilled_age;
 
-        if (yesCount >= 0 && yesCount <= 5) {             // Range 1 (0-5)
-            console.log("in1");
-            skilled_age = age - 1;
-        } else if (yesCount >= 6 && yesCount <= 14) {     // Range 2 (6-14)
-            console.log("in2");
-            skilled_age = age;
-        } else if (yesCount >= 15 && yesCount <= 20) {    // Range 3 (15-20)
-            console.log("in3");
-            skilled_age = age + 1;
+        if (totalQuestions <= 10) {
+            if (yesCount <= 4) {
+                skilled_age = age - 1;
+            } else if (yesCount <= 7) {
+                skilled_age = age;
+            } else {
+                skilled_age = age + 1;
+            }
         } else {
-            console.log("Invalid yesCount");
+            const ratio = yesCount / totalQuestions;
+            if (ratio < 0.5) {
+                skilled_age = age - 1;
+            } else if (ratio < 0.8) {
+                skilled_age = age;
+            } else {
+                skilled_age = age + 1;
+            }
         }
         
         console.log("skilled_age", skilled_age);
@@ -100,7 +107,7 @@ export async function POST(req) {
             stars = 1;
         } else if (totalMarks >= 6000 && totalMarks < 8000) {
             stars = 2;
-        } else if (totalMarks >= 8000 && totalMarks <= 10000) {
+        } else if (totalMarks >= 8000) {
             stars = 3;
         } else {
             stars = 0;

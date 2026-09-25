@@ -3,7 +3,7 @@ import LoadingOverlay from "@/app/_components/LoadingOverlay";
 import QuizProgressAlert from "@/app/_components/QuizProgressAlert";
 import GlobalApi from "@/app/_services/GlobalApi";
 import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
@@ -17,8 +17,8 @@ function Page({ params }) {
   const [shuffledChoices, setShuffledChoices] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [timer, setTimer] = useState(0);
-  const [timerValue, setTimerValue] = useState(null)
-  const [subjectName, setSubjectName] = useState(null)
+  const [timerValue, setTimerValue] = useState(15);
+  const [subjectName, setSubjectName] = useState(null);
   const [challengeId, setChallengeId] = useState(null);
   const [progressSubmitted, setProgressSubmitted] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
@@ -28,6 +28,7 @@ function Page({ params }) {
   const router = useRouter();
   const subjectId = params.subjectId;
   const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const nextQuestionTimeoutRef = useRef(null);
 
   useEffect(() => {
     const authCheck = () => {
@@ -50,13 +51,16 @@ function Page({ params }) {
       try {
         const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
-          console.log("subjectId Id froionmsection", subjectId);
+        console.log("subjectId Id from section", subjectId);
           
         const resp = await GlobalApi.GetTestsData(subjectId, token);
-        setQuestions(resp.data.questions);
-        setTimer(resp.data.timer * 1000);
-        setTimerValue(resp.data.timer);
-        setSubjectName(resp.data.subjectName)
+        setQuestions(resp.data.questions || []);
+        
+        // Standardize question timer to 15 seconds
+        const questionSeconds = 15;
+        setTimer(questionSeconds * 1000);
+        setTimerValue(questionSeconds);
+        setSubjectName(resp.data.subjectName);
 
         if (resp.data.quizProgress > 0) {
           setShowAlert(true);
@@ -68,71 +72,89 @@ function Page({ params }) {
       }
     };
     getQuizData();
-  }, []);
+  }, [subjectId]);
 
   useEffect(() => {
-    if(questions?.length > 0){
-        const choices = questions[currentQuestionIndex].answers
-        setShuffledChoices(choices.sort(() => Math.random() - 0.5));
+    if (questions?.length > 0 && questions[currentQuestionIndex]) {
+      const choices = questions[currentQuestionIndex].answers || [];
+      setShuffledChoices([...choices].sort(() => Math.random() - 0.5));
     }
   }, [currentQuestionIndex, questions]);
 
-useEffect(() => {
-  if (quizCompleted) {
-    const interval = setInterval(() => {
-      setSecondsRemaining((prevSeconds) => prevSeconds - 1);
-    }, 1000);
+  useEffect(() => {
+    if (quizCompleted) {
+      const interval = setInterval(() => {
+        setSecondsRemaining((prevSeconds) => prevSeconds - 1);
+      }, 1000);
 
-    const timer = setTimeout(() => {
-      router.replace("/dashboard/careers/career-guide?testCompleted=true&subjectName=" + encodeURIComponent(subjectName));
-    }, 5000);
+      const timer = setTimeout(() => {
+        router.replace("/dashboard/careers/career-guide?testCompleted=true&subjectName=" + encodeURIComponent(subjectName || ''));
+      }, 5000);
 
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timer);
-    };
-  }
-}, [quizCompleted, router]);
-
-  const handleChoiceSelect = (choice) => {
-  
-    if (selectedChoice || progressSubmitted || timeExpired) return;
-
-    setSelectedChoice(choice);
-    let earnedMarks = 0;
-    if (choice.isCorrect == 'yes') {
-      const maxMarks = 1000;
-      const marks = (maxMarks / (timerValue * 1000)) * timer;
-      earnedMarks = Math.max(0, marks.toFixed(3));
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timer);
+      };
     }
+  }, [quizCompleted, router, subjectName]);
 
-    const answer = {
-      questionId: questions[currentQuestionIndex].id,
-      answerId: choice.id,
-      isAnswer: choice.isCorrect,
-      marks: earnedMarks,
-      testId: questions[currentQuestionIndex].testId,
+  // Clean up any pending transition timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (nextQuestionTimeoutRef.current) {
+        clearTimeout(nextQuestionTimeoutRef.current);
+      }
     };
-    quizProgressSubmit(answer);
-    setProgressSubmitted(true);
-    console.log("answer", answer);
-  };
+  }, []);
 
-  console.log("questions", questions);
-  const handleNext = () => {
-
+  const moveToNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setTimeout(() => {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedChoice(null);
-        setProgressSubmitted(false);
-        setTimeExpired(false);
-        setTimer(timerValue * 1000);
-      }, 3000);
+      setCurrentQuestionIndex((prev) => prev + 1);
+      setSelectedChoice(null);
+      setProgressSubmitted(false);
+      setTimeExpired(false);
+      setTimer(timerValue * 1000);
     } else {
       setQuizCompleted(true);
       quizSubmit();
     }
+  };
+
+  const handleChoiceSelect = (choice) => {
+    if (selectedChoice || progressSubmitted || timeExpired) return;
+
+    setSelectedChoice(choice);
+    setProgressSubmitted(true);
+
+    // Calculate marks immediately using remaining milliseconds at click instant
+    const remainingMs = timer;
+    let earnedMarks = 0;
+    if (choice.isCorrect === 'yes') {
+      const maxMarks = 1000;
+      const marks = (maxMarks / (timerValue * 1000)) * remainingMs;
+      earnedMarks = Math.max(0, Number(marks.toFixed(3)));
+    }
+
+    const currentQ = questions[currentQuestionIndex];
+    if (currentQ) {
+      const answer = {
+        questionId: currentQ.id,
+        answerId: choice.id,
+        isAnswer: choice.isCorrect,
+        marks: earnedMarks,
+        testId: currentQ.testId,
+      };
+      quizProgressSubmit(answer);
+      console.log("answer", answer);
+    }
+
+    // Show feedback (green/red) for 1 second, then move to next question
+    if (nextQuestionTimeoutRef.current) {
+      clearTimeout(nextQuestionTimeoutRef.current);
+    }
+    nextQuestionTimeoutRef.current = setTimeout(() => {
+      moveToNextQuestion();
+    }, 1000);
   };
 
   const quizProgressSubmit = async (data) => {
@@ -142,7 +164,7 @@ useEffect(() => {
       const resp = await GlobalApi.SaveTestProgress(data, token);
 
       if (resp && resp.status === 201) {
-        console.log("Response");
+        console.log("Progress saved");
       } else {
         console.error("Failed to save progress. Status code:", resp.status);
         toast.error(
@@ -162,7 +184,8 @@ useEffect(() => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("token") : null;
     try {
-      const resp = await GlobalApi.UpdateTestData(token, questions[currentQuestionIndex].testId);
+      const testId = questions[currentQuestionIndex]?.testId;
+      const resp = await GlobalApi.UpdateTestData(token, testId);
       if (resp && resp.status === 201) {
         toast.success("Quiz Completed successfully!");
       } else {
@@ -170,55 +193,71 @@ useEffect(() => {
       }
     } catch (error) {
       console.error("Error submitting quiz", error);
-      toast.error("Error Error: Failed to submit quiz.");
+      toast.error("Error: Failed to submit quiz.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleTimeOut = async () => {
+  const handleTimeOut = () => {
+    if (progressSubmitted || selectedChoice || timeExpired) return;
+
     setTimeExpired(true);
-    
-    if (progressSubmitted) {
-      handleNext();
-      return;
+    setProgressSubmitted(true);
+
+    const currentQ = questions[currentQuestionIndex];
+    if (currentQ) {
+      const answer = {
+        questionId: currentQ.id,
+        answerId: 0,
+        testId: currentQ.testId,
+        isAnswer: "no",
+        marks: 0,
+      };
+      quizProgressSubmit(answer);
     }
-  
-    const answer = {
-      questionId: questions[currentQuestionIndex].id,
-      answerId: selectedChoice ? selectedChoice.id : 0,
-      testId: questions[currentQuestionIndex].testId,
-      isAnswer: "no",
-      marks: 0,
-    };
-    quizProgressSubmit(answer);
-    handleNext();
+
+    // Show correct answer feedback for 1 second on timeout, then move to next question
+    if (nextQuestionTimeoutRef.current) {
+      clearTimeout(nextQuestionTimeoutRef.current);
+    }
+    nextQuestionTimeoutRef.current = setTimeout(() => {
+      moveToNextQuestion();
+    }, 1000);
   };
 
+  // Timer interval: active only while question is waiting for an answer
   useEffect(() => {
-    if (!timer) return;
+    if (progressSubmitted || timeExpired || quizCompleted || !timerValue || questions.length === 0) {
+      return;
+    }
 
-    setTimeExpired(false);
-  
     const intervalId = setInterval(() => {
       setTimer((prevTimer) => {
-        const newTime = Math.max(prevTimer - 100, 0);
-        if (newTime === 0) {
-          handleTimeOut();
+        if (prevTimer <= 100) {
           clearInterval(intervalId);
+          return 0;
         }
-        return newTime;
+        return prevTimer - 100;
       });
     }, 100);
-  
+
     return () => clearInterval(intervalId);
-  }, [timer, currentQuestionIndex]);
-  
+  }, [progressSubmitted, timeExpired, quizCompleted, timerValue, currentQuestionIndex, questions.length]);
+
+  // When timer hits 0 and question was not answered, trigger timeout
+  useEffect(() => {
+    if (timer === 0 && !progressSubmitted && !timeExpired && questions.length > 0 && !quizCompleted) {
+      handleTimeOut();
+    }
+  }, [timer, progressSubmitted, timeExpired, questions.length, quizCompleted]);
+
   const removeHtmlTags = (html) => {
+    if (!html) return "";
     const doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || "";
   };
-  
+
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center text-white">
@@ -311,7 +350,7 @@ useEffect(() => {
               <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-2xl p-6 lg:p-8 shadow-2xl">
                 <div className="text-center">
                   <h2 className="text-xl lg:text-3xl font-bold text-white leading-relaxed mb-6">
-                    {removeHtmlTags(questions[currentQuestionIndex].question)}
+                    {removeHtmlTags(questions[currentQuestionIndex]?.question)}
                   </h2>
                 </div>
 

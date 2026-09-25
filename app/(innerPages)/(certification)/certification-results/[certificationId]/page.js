@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Star, Download, Share2, Badge, Calendar, XCircle, ArrowLeft } from 'lucide-react';
+import { Star, Download, Share2, Badge, Calendar, XCircle, ArrowLeft, RotateCcw } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import GlobalApi from '@/app/_services/GlobalApi';
 import toast from 'react-hot-toast';
@@ -285,8 +285,12 @@ const CertificateDisplay = ({ params }) => {
     }
   };
 
-  // Show ineligible message if score is 0
-  if (certificateData.ratingStars === 0) {
+  // Show ineligible message if score is below passing
+  if (certificateData.ratingStars === 0 || Number(certificateData.scorePercentage) < 70) {
+    const attemptsUsed = certificateData.attempts || 1;
+    const remainingAttempts = certificateData.remainingAttempts != null ? certificateData.remainingAttempts : Math.max(0, 3 - attemptsUsed);
+    const canRetry = remainingAttempts > 0;
+
     return (
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="max-w-2xl mx-auto">
@@ -302,23 +306,32 @@ const CertificateDisplay = ({ params }) => {
               <p>To earn this certificate, you need to:</p>
               <ul className="list-disc list-inside">
                 <li>Complete all required questions</li>
-                <li>Achieve a passing score</li>
+                <li>Achieve a passing score of 70%</li>
                 <li>Meet all certification requirements</li>
               </ul>
             </div>
-            <Button 
-              variant="secondary"
-              onClick={() => router.replace("/dashboard/careers/career-guide")}
-              className="mt-4"
-            >
-              Return to Career Guide
-            </Button>
+            <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+              {canRetry && (
+                <Button 
+                  onClick={() => router.push(`/certification-quiz/${certificationId}?level=${certificateData.level || 'beginner'}`)}
+                  className="bg-orange-500 hover:bg-orange-600 text-white gap-2 font-medium"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  Retry ({remainingAttempts} {remainingAttempts === 1 ? 'attempt' : 'attempts'} left)
+                </Button>
+              )}
+              <Button 
+                variant="secondary"
+                onClick={() => router.replace("/dashboard/careers/career-guide")}
+              >
+                Return to Career Guide
+              </Button>
+            </div>
           </Card>
         </div>
       </div>
     );
   }
-
 
   // Regular certificate display
   return (
@@ -547,15 +560,7 @@ const CertificateDisplay = ({ params }) => {
             <Download className="w-4 h-4" />
             Download Certificate
           </Button>
-          <Button 
-            variant="secondary"
-            className="gap-2"
-            onClick={handlePost}
-            disabled={isCertificateLoading}
-          >
-            <Share2 className="w-4 h-4" />
-            Share to Community
-          </Button>
+          
           <Button 
             variant="outline"
             className="gap-2"

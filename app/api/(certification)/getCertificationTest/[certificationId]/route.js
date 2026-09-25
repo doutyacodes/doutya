@@ -172,17 +172,66 @@ export async function GET(request, { params }) {
     }
 
     try {
-        // Step 1: Check if certification is already completed
+        // Step 1: Check certification completion, attempts, and eligibility
         const certificationStatus = await db
-            .select({ completed: USER_CERTIFICATION_COMPLETION.completed })
+            .select({ 
+                completed: USER_CERTIFICATION_COMPLETION.completed,
+                attempts: USER_CERTIFICATION_COMPLETION.attempts,
+                status: USER_CERTIFICATION_COMPLETION.status,
+                score_percentage: USER_CERTIFICATION_COMPLETION.score_percentage
+            })
             .from(USER_CERTIFICATION_COMPLETION)
             .where(and(
                 eq(USER_CERTIFICATION_COMPLETION.user_id, userId),
                 eq(USER_CERTIFICATION_COMPLETION.certification_id, certificationId)
             ));
 
-        if (certificationStatus.length > 0 && certificationStatus[0].completed === 'yes') {
-            return NextResponse.json({ isCompleted: true }, { status: 200 });
+        let currentAttempt = 1;
+
+        if (certificationStatus.length > 0) {
+            const certStatus = certificationStatus[0];
+
+            // If user has already passed
+            if (certStatus.completed === 'yes') {
+                return NextResponse.json({ isCompleted: true }, { status: 200 });
+            }
+
+            // If user failed and has exhausted all 3 attempts
+            if (certStatus.completed === 'no' && certStatus.score_percentage !== null && (certStatus.attempts || 1) >= 3) {
+                return NextResponse.json({ 
+                    isCompleted: false, 
+                    ineligible: true, 
+                    attempts: certStatus.attempts || 3,
+                    message: 'Maximum attempts (3) reached. You are ineligible to retake this certification.' 
+                }, { status: 200 });
+            }
+
+            // If user failed previous attempt and is retrying (attempts < 3)
+            if (certStatus.completed === 'no' && certStatus.score_percentage !== null && (certStatus.attempts || 1) < 3) {
+                currentAttempt = (certStatus.attempts || 1) + 1;
+                // Delete previous answers so the user takes a fresh test
+                await db.delete(CERTIFICATION_USER_PROGRESS).where(
+                    and(
+                        eq(CERTIFICATION_USER_PROGRESS.user_id, userId),
+                        eq(CERTIFICATION_USER_PROGRESS.certification_id, certificationId)
+                    )
+                );
+                // Reset completion row for the new attempt
+                await db.update(USER_CERTIFICATION_COMPLETION).set({
+                    attempts: currentAttempt,
+                    score_percentage: null,
+                    rating_stars: null,
+                    isStarted: true,
+                    status: 'invalid'
+                }).where(
+                    and(
+                        eq(USER_CERTIFICATION_COMPLETION.user_id, userId),
+                        eq(USER_CERTIFICATION_COMPLETION.certification_id, certificationId)
+                    )
+                );
+            } else {
+                currentAttempt = certStatus.attempts || 1;
+            }
         }
 
         // Get user details
@@ -346,7 +395,9 @@ export async function GET(request, { params }) {
             scopeName,
             careerName: scopeName, // Backwards compatibility for frontend
             scopeType,
-            topics
+            topics,
+            attempts: currentAttempt,
+            remainingAttempts: Math.max(0, 3 - currentAttempt)
         };
 
         return NextResponse.json({ 

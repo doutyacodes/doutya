@@ -168,23 +168,23 @@ const LeftSideBar = () => {
         { name: "Career Guide", link: "/dashboard/careers/career-guide" },
       ],
     },
-    {
-      name: "Community",
-      icon: <FaUsers className="text-base" />,
-      link: "/community",
-      submenus: [
-        { name: "All Communities", link: "/community" },
-        { name: "My Community", link: "/my-community" },
-      ],
-    },
-    {
-      name: "Mentorship",
-      icon: <FaUserTie className="text-base" />,
-      link: "/mentors/1/browse",
-      submenus: [
-        { name: "Browse Mentors", link: "/mentors/1/browse" },
-      ],
-    },
+    // {
+    //   name: "Community",
+    //   icon: <FaUsers className="text-base" />,
+    //   link: "/community",
+    //   submenus: [
+    //     { name: "All Communities", link: "/community" },
+    //     { name: "My Community", link: "/my-community" },
+    //   ],
+    // },
+    // {
+    //   name: "Mentorship",
+    //   icon: <FaUserTie className="text-base" />,
+    //   link: "/mentors/1/browse",
+    //   submenus: [
+    //     { name: "Browse Mentors", link: "/mentors/1/browse" },
+    //   ],
+    // },
     {
       name: "Certifications",
       icon: <FaGraduationCap className="text-base" />,
@@ -194,16 +194,16 @@ const LeftSideBar = () => {
         { name: "Verify Certificate", link: "/verify" },
       ],
     },
-    {
-      name: "School Activities",
-      icon: <FaBuilding className="text-base" />,
-      link: "#",
-      submenus: [
-        { name: "Challenges", link: "/institution/challenges" },
-        { name: "Tests", link: "/institution/tests" },
-        { name: "Community", link: "/institution/community" },
-      ],
-    },
+    // {
+    //   name: "School Activities",
+    //   icon: <FaBuilding className="text-base" />,
+    //   link: "#",
+    //   submenus: [
+    //     { name: "Challenges", link: "/institution/challenges" },
+    //     { name: "Tests", link: "/institution/tests" },
+    //     { name: "Community", link: "/institution/community" },
+    //   ],
+    // },
     // {
     //   name: "Companies",
     //   icon: <FaSuitcase className="text-xl" />,

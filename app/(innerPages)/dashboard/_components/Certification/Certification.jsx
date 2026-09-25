@@ -1,5 +1,5 @@
 import GlobalApi from '@/app/_services/GlobalApi';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, RotateCcw } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
@@ -21,8 +21,8 @@ function Certification({ selectedCareer }) {
   });
 
   // state variables inside your component
-    const [showLevelModal, setShowLevelModal] = useState(false);
-    const [currentCertificationId, setCurrentCertificationId] = useState(null);
+  const [showLevelModal, setShowLevelModal] = useState(false);
+  const [currentCertificationId, setCurrentCertificationId] = useState(null);
 
   const router = useRouter();
   const [selectedMilestoneData, setSelectedMilestoneData] = useState(null);
@@ -156,12 +156,12 @@ function Certification({ selectedCareer }) {
       )}
 
       {/* Level Selection Modal */}
-        <TestLevelModal
-            isOpen={showLevelModal}
-            onClose={() => setShowLevelModal(false)}
-            onSelect={handleSelectLevel}
-            testType="certification"
-        />
+      <TestLevelModal
+        isOpen={showLevelModal}
+        onClose={() => setShowLevelModal(false)}
+        onSelect={handleSelectLevel}
+        testType="certification"
+      />
 
       {/* Certifications Content */}
       <div className="bg-gray-800 p-3 p-4 md:p-6 shadow-lg min-h-[300px]">
@@ -172,58 +172,75 @@ function Certification({ selectedCareer }) {
             <p className="text-gray-400 text-sm md:text-base">{loadMessage}</p>
           </div>
         ) : (
-          certificationData.map((item) => (
-            <div key={item.milestoneId} className="mb-4 mb-6 flex flex-col sm:flex-row gap-2 gap-3 sm:gap-0 sm:items-start justify-between border border-gray-700 rounded-lg p-3 p-4">
-              <div className="flex-1 sm:pr-4">
-                <h3 className="font-bold text-base text-lg text-white">
-                  <span className="font-normal break-words text-sm md:text-base">{item.milestoneDescription}</span>
-                </h3>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-2">
-              {item.certificationCompletedStatus === 'yes' ? (
-                <button
-                    onClick={() => router.push(`/certification-results/${item.certificationId}`)}
-                    className="w-full sm:w-[150px] px-3  py-2 font-semibold text-xs text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-green-500"
-                >
-                    View Certification
-                </button>
-                ) : (
-                <button
-                    onClick={() => handleStartCertification(item.certificationId)}
-                    className="w-full sm:w-[150px] px-3 px-4 py-1.5 py-2 font-semibold text-xs text-sm text-white rounded-lg flex items-center justify-center flex-shrink-0 bg-orange-500"
-                >
-                    Get Certified
-                </button>
-                )}
+          certificationData.map((item) => {
+            const isPassed = item.certificationCompletedStatus === 'yes' || (Number(item.certificationScore) >= 70);
+            const hasAttempted = item.certificationCompletedStatus === 'yes' || 
+                                 (item.certificationScore !== null && item.certificationScore !== undefined) || 
+                                 (item.certificationCompletedStatus === 'no' && item.certificationStatus === 'invalid');
+            const attemptsUsed = item.certificationAttempts != null ? Number(item.certificationAttempts) : (hasAttempted ? 1 : 0);
+            const remainingAttempts = Math.max(0, 3 - attemptsUsed);
+            const isFailed = !isPassed && hasAttempted;
+            const isExhausted = isFailed && attemptsUsed >= 3;
+            const canRetry = isFailed && attemptsUsed < 3;
 
-                {/* Commented course-related buttons
-                {
-                  item.courseStatus === 'in_progress' ? (
-                  <button
-                    onClick={() => router.push(`/certification-course/${item.certificationId}`)}
-                    className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-blue-500"
-                  >
-                    Continue Course
-                  </button>
-                ) : item.courseStatus === null ? (
-                  <button
-                    onClick={() => router.push(`/course-overview/${item.certificationId}`)}
-                    className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-blue-500"
-                  >
-                    Get Course
-                  </button>
-                ) : item.courseStatus === "completed" ? (
-                  <button
-                    disabled
-                    className="ml-4 px-4 py-2 font-semibold text-sm text-white rounded-lg flex items-center justify-center w-[150px] flex-shrink-0 bg-gray-300"
-                  >
-                    Course Completed
-                  </button>
-                ) : null
-              } */}
+            return (
+              <div 
+                key={item.milestoneId} 
+                className="mb-3 flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-gray-900/40 border border-gray-700/60 rounded-lg p-4 transition-colors hover:border-gray-600/70"
+              >
+                <div className="flex-1 sm:pr-4">
+                  <span className="text-sm md:text-base font-normal text-gray-200 leading-snug break-words">
+                    {item.milestoneDescription}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  {isPassed ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <button
+                        onClick={() => router.push(`/certification-results/${item.certificationId}`)}
+                        className="w-full sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-white rounded-md flex items-center justify-center flex-shrink-0 bg-emerald-600 hover:bg-emerald-500 transition-colors shadow-sm whitespace-nowrap"
+                      >
+                        View Certificate
+                      </button>
+                    </>
+                  ) : canRetry ? (
+                    <>
+                      <XCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                      <button
+                        onClick={() => handleStartCertification(item.certificationId)}
+                        className="w-full sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-white rounded-md flex items-center justify-center gap-1.5 flex-shrink-0 bg-amber-600 hover:bg-amber-500 transition-colors shadow-sm whitespace-nowrap"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span>Retry ({remainingAttempts} {remainingAttempts === 1 ? 'attempt' : 'attempts'} left)</span>
+                      </button>
+                    </>
+                  ) : isExhausted ? (
+                    <>
+                      <XCircle className="w-4 h-4 text-rose-400/60 flex-shrink-0" />
+                      <button
+                        disabled
+                        className="w-full sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-gray-400 rounded-md flex items-center justify-center flex-shrink-0 bg-gray-800 border border-gray-700/60 cursor-not-allowed whitespace-nowrap"
+                      >
+                        Attempts Exhausted
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-4 h-4 flex-shrink-0 hidden sm:block" />
+                      <button
+                        onClick={() => handleStartCertification(item.certificationId)}
+                        className="w-full sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-white rounded-md flex items-center justify-center flex-shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-sm whitespace-nowrap"
+                      >
+                        Get Certified
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

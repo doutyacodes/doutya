@@ -1396,6 +1396,7 @@ export const USER_CERTIFICATION_COMPLETION = mysqlTable(
     completed: mysqlEnum("completed", ["yes", "no"]).notNull(),
     score_percentage: decimal("score_percentage", 5, 2).default(null),
     rating_stars: int("rating_stars").default(null),
+    attempts: int("attempts").notNull().default(1),
     created_at: timestamp("created_at").defaultNow(),
     updated_at: timestamp("updated_at").defaultNow().onUpdateNow(), // Timestamp for updates
   }

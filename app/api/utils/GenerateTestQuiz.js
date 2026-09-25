@@ -149,7 +149,7 @@ export async function GenerateTestQuiz(userId, subjectId, subjectName, className
         // Step 3: Insert questions and answers into TEST_QUESTIONS and TEST_ANSWERS
         for (const questionData of parsedData) {
             const [questionResult] = await db.insert(TEST_QUESTIONS).values({
-                timer: 40, // 15 seconds for each question
+                timer: 15, // 15 seconds for each question
                 question: questionData.question,
                 test_id: testId,
             }).execute();

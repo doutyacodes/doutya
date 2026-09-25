@@ -666,6 +666,10 @@ export async function GET(req, { params }) {
         certificationId: CERTIFICATIONS.id,
         certificationName: CERTIFICATIONS.certification_name,
         certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
+        certificationScore: USER_CERTIFICATION_COMPLETION.score_percentage,
+        certificationStatus: USER_CERTIFICATION_COMPLETION.status,
+        certificationRatingStars: USER_CERTIFICATION_COMPLETION.rating_stars,
+        certificationAttempts: USER_CERTIFICATION_COMPLETION.attempts,
         courseStatus: USER_COURSE_PROGRESS.status,
       })
       .from(MILESTONES)
@@ -760,6 +764,10 @@ export async function GET(req, { params }) {
                   certificationName: CERTIFICATIONS.certification_name,
                   certificationCompletedStatus:
                     USER_CERTIFICATION_COMPLETION.completed,
+                  certificationScore: USER_CERTIFICATION_COMPLETION.score_percentage,
+                  certificationStatus: USER_CERTIFICATION_COMPLETION.status,
+                  certificationRatingStars: USER_CERTIFICATION_COMPLETION.rating_stars,
+                  certificationAttempts: USER_CERTIFICATION_COMPLETION.attempts,
                   courseStatus: USER_COURSE_PROGRESS.status,
                 })
                 .from(MILESTONES)
@@ -842,6 +850,10 @@ export async function GET(req, { params }) {
                 certificationName: CERTIFICATIONS.certification_name,
                 certificationCompletedStatus:
                   USER_CERTIFICATION_COMPLETION.completed,
+                certificationScore: USER_CERTIFICATION_COMPLETION.score_percentage,
+                certificationStatus: USER_CERTIFICATION_COMPLETION.status,
+                certificationRatingStars: USER_CERTIFICATION_COMPLETION.rating_stars,
+                certificationAttempts: USER_CERTIFICATION_COMPLETION.attempts,
                 courseStatus: USER_COURSE_PROGRESS.status,
               })
               .from(MILESTONES)
@@ -1028,6 +1040,10 @@ export async function GET(req, { params }) {
           certificationId: CERTIFICATIONS.id,
           certificationName: CERTIFICATIONS.certification_name,
           certificationCompletedStatus: USER_CERTIFICATION_COMPLETION.completed,
+          certificationScore: USER_CERTIFICATION_COMPLETION.score_percentage,
+          certificationStatus: USER_CERTIFICATION_COMPLETION.status,
+          certificationRatingStars: USER_CERTIFICATION_COMPLETION.rating_stars,
+          certificationAttempts: USER_CERTIFICATION_COMPLETION.attempts,
           courseStatus: USER_COURSE_PROGRESS.status,
         })
         .from(USER_MILESTONES)

@@ -9,7 +9,7 @@ import toast, { LoaderIcon, Toaster } from "react-hot-toast";
 import 'react-circular-progressbar/dist/styles.css'; // Make sure to import the CSS
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Award, BookOpen, GraduationCap } from "lucide-react";
+import { ArrowLeft, ArrowRight, Award, BookOpen, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ContentGenerationLoading from "@/app/_components/ContentGenerationLoading";
@@ -27,6 +27,8 @@ function Page({ params }) {
   // New state variables for certification overview
   const [certificationInfo, setCertificationInfo] = useState(null);
   const [showOverview, setShowOverview] = useState(true);
+  const [isIneligible, setIsIneligible] = useState(false);
+  const [ineligibleMessage, setIneligibleMessage] = useState("");
   
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingQuiz, setIsFetchingQuiz] = useState(false);
@@ -237,147 +239,335 @@ function Page({ params }) {
   }
   
   // Show certification overview
-  if (showOverview && certificationInfo) {
-    const scopeLabel = 
-      certificationInfo.scopeType === 'cluster' ? 'Cluster' : 
-      certificationInfo.scopeType === 'sector' ? 'Sector' : 'Career';
-    const displayName = certificationInfo.scopeName || certificationInfo.careerName || "";
-
+  if (isIneligible) {
     return (
-      <div className="min-h-screen bg-gray-900 p-8 text-white">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Header Section */}
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold text-white">{certificationInfo.certificationName}</h1>
-            <p className="text-lg text-gray-300">
-              Validate your skills and boost your prospects {displayName ? `in ${displayName}` : ""}
-            </p>
-          </div>
-
-          {/* Main Info Card */}
-          <Card className="shadow-lg bg-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">About This Certification</CardTitle>
-              <CardDescription className="text-gray-300">
-                Please review the information below before starting the test
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Key Information */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-300">
-                <div className="flex items-center space-x-2">
-                  <Award className="w-5 h-5 text-blue-400" />
-                  <span>Passing Score: 70%</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <BookOpen className="w-5 h-5 text-blue-400" />
-                  <span>{questions.length} Questions</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <GraduationCap className="w-5 h-5 text-blue-400" />
-                  <span>{scopeLabel}: {displayName || "General"}</span>
-                </div>
-              </div>
-
-              {/* Topics Covered */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-lg text-white">Topics Covered:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {certificationInfo.topics.map((topic, index) => (
-                    <Badge key={index} variant="secondary" className="bg-blue-900 text-blue-100 hover:bg-blue-800">
-                      {topic}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Important Notes */}
-              <div className="bg-gray-700 p-4 rounded-lg">
-                <h3 className="font-semibold mb-2 text-white">Important Notes:</h3>
-                <ul className="list-disc list-inside space-y-2 text-sm text-gray-300">
-                  <li>Ensure you have a stable internet connection</li>
-                  <li>You cannot pause the test once started</li>
-                  <li>All questions must be attempted</li>
-                  <li>Results will be shown immediately after completion</li>
-                </ul>
-              </div>
-            </CardContent>
-            <CardFooter className="justify-end">
-              <Button 
-                onClick={handleStartTest}
-                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700" 
-                size="lg">
-                Start Certification Test
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
+      <div className="min-h-full py-8 px-4 sm:px-8 max-w-4xl mx-auto text-gray-100">
+        <button
+          onClick={() => router.back()}
+          className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-white transition-colors mb-6"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" /> Back
+        </button>
+        <div className="bg-gray-800/60 border border-rose-500/30 rounded-xl p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-white mb-2">Certification Ineligible</h2>
+          <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+            {ineligibleMessage || "You have reached the maximum number of attempts (3) and are permanently ineligible to retake this certification."}
+          </p>
+          <button
+            onClick={() => router.replace("/dashboard/careers/career-guide")}
+            className="px-5 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
+          >
+            Return to Career Guide
+          </button>
         </div>
       </div>
     );
   }
 
-  // Show the quiz
+  if (showOverview && certificationInfo) {
+    const scopeLabel = 
+      certificationInfo.scopeType === 'cluster' ? 'Cluster' : 
+      certificationInfo.scopeType === 'sector' ? 'Sector' : 'Career';
+    const displayName = certificationInfo.scopeName || certificationInfo.careerName || "";
+    const currentAttempt = certificationInfo.attempts || 1;
+    const remainingAttempts = certificationInfo.remainingAttempts != null 
+      ? certificationInfo.remainingAttempts 
+      : Math.max(0, 3 - currentAttempt);
+
+    return (
+      <div className="min-h-full py-6 px-4 sm:px-8 max-w-5xl mx-auto text-gray-100">
+        <Toaster position="top-center" reverseOrder={false} />
+        
+        {/* Navigation */}
+        <div className="mb-4">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
+          </button>
+        </div>
+
+        {/* Page Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            Certification: {certificationInfo.certificationName}
+          </h1>
+          <p className="text-sm text-gray-400 mt-1">
+            {scopeLabel}: <span className="text-gray-200 font-medium">{displayName || "General"}</span>
+            <span className="mx-2 text-gray-600">•</span>
+            Level: <span className="capitalize text-gray-200 font-medium">{level || "beginner"}</span>
+          </p>
+        </div>
+
+        {/* Two-Column Integrated Layout (Fits comfortably above the fold) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          {/* Left Column: Star Criteria, Rules & Topics */}
+          <div className="lg:col-span-8 space-y-4">
+            
+            {/* Star Rating Criteria */}
+            <div className="rounded-lg bg-gray-800/40 border border-gray-700/60 p-4">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">
+                Star Rating Criteria
+              </h2>
+              <div className="grid grid-cols-3 gap-2 text-center sm:text-left">
+                <div className="p-2.5 rounded bg-gray-900/60 border border-gray-700/40">
+                  <div className="text-yellow-400 text-xs font-semibold tracking-wide">★★★ 3 Stars</div>
+                  <div className="text-white text-sm font-bold mt-0.5">90% – 100%</div>
+                  <div className="text-[11px] text-gray-400 mt-0.5 leading-tight">Distinction</div>
+                </div>
+                <div className="p-2.5 rounded bg-gray-900/60 border border-gray-700/40">
+                  <div className="text-yellow-400 text-xs font-semibold tracking-wide">★★☆ 2 Stars</div>
+                  <div className="text-white text-sm font-bold mt-0.5">70% – 89%</div>
+                  <div className="text-[11px] text-gray-400 mt-0.5 leading-tight">Passing Standard</div>
+                </div>
+                <div className="p-2.5 rounded bg-gray-900/60 border border-gray-700/40">
+                  <div className="text-gray-400 text-xs font-semibold tracking-wide">☆☆☆ 0 Stars</div>
+                  <div className="text-rose-400 text-sm font-bold mt-0.5">Below 70%</div>
+                  <div className="text-[11px] text-gray-400 mt-0.5 leading-tight">Did Not Pass</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Attempt Rules */}
+            <div className="rounded-lg bg-gray-800/40 border border-gray-700/60 p-4">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5">
+                Attempt Rules & Guidelines
+              </h2>
+              <ul className="space-y-2 text-xs sm:text-sm text-gray-300 leading-relaxed">
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-500 font-bold select-none">•</span>
+                  <span><strong className="text-white">Maximum 3 Attempts:</strong> You are allowed up to 3 total attempts to pass this certification.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-500 font-bold select-none">•</span>
+                  <span><strong className="text-white">Passing Standard:</strong> A minimum score of <strong className="text-white">70%</strong> is strictly required to earn the certificate.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-500 font-bold select-none">•</span>
+                  <span><strong className="text-white">Permanent Ineligibility:</strong> If you fail all 3 attempts (under 70% each), you become permanently <strong className="text-rose-400">ineligible</strong> to retake.</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Topics Covered */}
+            {certificationInfo.topics && certificationInfo.topics.length > 0 && (
+              <div className="rounded-lg bg-gray-800/40 border border-gray-700/60 p-4">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5">
+                  Assessed Topics
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm text-gray-300">
+                  {certificationInfo.topics.map((topic, index) => (
+                    <div key={index} className="flex items-start gap-2.5">
+                      <span className="text-gray-500 font-mono text-xs select-none shrink-0 pt-0.5">
+                        {(index + 1).toString().padStart(2, '0')}.
+                      </span>
+                      <span className="text-gray-200 leading-snug break-words">{topic}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </div>
+
+          {/* Right Column: Sticky Summary & Action Panel (Always Visible Without Scrolling) */}
+          <div className="lg:col-span-4">
+            <div className="rounded-lg bg-gray-800/70 border border-gray-700/80 p-5 space-y-4">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Exam Details
+              </h2>
+              
+              <div className="space-y-2.5 text-sm">
+                <div className="flex justify-between items-center py-1.5 border-b border-gray-700/50">
+                  <span className="text-gray-400">Passing Score</span>
+                  <span className="font-semibold text-white">70%</span>
+                </div>
+                <div className="flex justify-between items-center py-1.5 border-b border-gray-700/50">
+                  <span className="text-gray-400">Total Questions</span>
+                  <span className="font-semibold text-white">{questions.length > 0 ? questions.length : 18} Questions</span>
+                </div>
+                <div className="flex justify-between items-center py-1.5 border-b border-gray-700/50">
+                  <span className="text-gray-400">Current Attempt</span>
+                  <span className="font-semibold text-white">Attempt {currentAttempt} of 3</span>
+                </div>
+                <div className="flex justify-between items-center py-1.5">
+                  <span className="text-gray-400">Retries Remaining</span>
+                  <span className={`font-semibold ${remainingAttempts === 0 ? "text-rose-400" : "text-emerald-400"}`}>
+                    {remainingAttempts} {remainingAttempts === 1 ? 'attempt' : 'attempts'} left
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2 space-y-2.5">
+                <button
+                  type="button"
+                  onClick={handleStartTest}
+                  className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-md transition-colors shadow-sm text-center"
+                >
+                  Start Certification Test
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.replace("/dashboard/careers/career-guide")}
+                  className="w-full py-1 text-center text-xs text-gray-400 hover:text-white transition-colors"
+                >
+                  Return to Career Guide
+                </button>
+              </div>
+
+              <div className="pt-1 border-t border-gray-700/40 text-[11px] text-gray-500 text-center">
+                Single session • Answers submitted upon completion
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    );
+  }
+
+  // Completed state
+  if (quizCompleted) {
+    return (
+      <div className="min-h-full py-12 px-4 flex items-center justify-center text-white text-center">
+        <div className="max-w-md w-full bg-gray-800/60 border border-gray-700/60 rounded-xl p-8 shadow-2xl">
+          <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-5">
+            <Award className="w-7 h-7 text-emerald-400" />
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+            Certification Test Completed
+          </h2>
+          <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+            Your answers have been submitted. Calculating score and generating results...
+          </p>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-gray-900/60 border border-gray-700/50 rounded-full text-xs text-gray-300">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+            Redirecting to results in {secondsRemaining}s
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show the quiz (Human-designed, anti-AI-slop, clean aesthetic)
   return (
-    <div className="h-screen">
+    <div className="min-h-full py-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-gray-100">
       <Toaster position="top-center" reverseOrder={false} />
 
       {showAlert && <QuizProgressAlert />}
 
       {questions.length > 0 && (
-        <div className="mt-4 pt-5 flex w-4/5 flex-col gap-8 justify-center items-center mx-auto py-4  text-white rounded-2xl">
-          {
-            progressLoading ? (
-              <div className="inset-0 flex items-center my-16 justify-center z-50">
-                <div className="flex items-center space-x-2">
-                  <LoaderIcon className="w-10 h-10 text-white text-4xl animate-spin" />
-                  <span className="text-white">{t('loading')}</span>
-                </div>
+        <div className="space-y-6">
+          {/* Header Bar */}
+          <div className="bg-gray-800/40 border border-gray-700/60 rounded-xl p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Certification Examination
+                </span>
+                <h1 className="text-lg sm:text-xl font-bold text-white mt-0.5">
+                  {certificationInfo?.certificationName || "Certification Assessment"}
+                </h1>
               </div>
-            ) : (
-              <>
-                <div>
-                  <p className="font">{currentQuestionIndex + 1}/{questions.length}</p>
-                </div>
-                
-                <div>
-                  <p className="font-bold p-2 text-xl md:text-3xl">
-                    {removeHtmlTags(questions[currentQuestionIndex].question)}
-                  </p>
-                </div>
-                
-                <div className="flex flex-col gap-2 w-full text-white">
-                  {shuffledChoices.map((choice, index) => (
-                    <button
-                      key={index}
-                      className={`py-2 px-4 rounded-md hover:cursor-pointer
-                        hover:bg-purple-300 hover:text-black transition duration-300 ease-in-out ${
-                          selectedChoice?.id === choice.id
-                            ? "bg-green-500"
-                            : "bg-slate-400"
-                        }`}
-                      onClick={() => handleChoiceSelect(choice)}
-                    >
-                      {removeHtmlTags(choice.text)}
-                    </button>
-                  ))}
-                </div>
-      
-                <div>
-                  <button
-                    className={`bg-green-600 py-2 px-5 rounded-lg text-white ${
-                      selectedChoice ? "" : "opacity-50 cursor-not-allowed"
-                    }`}
-                    onClick={handleNext}
-                    disabled={!selectedChoice || progressLoading}
-                  >
-                    Next
-                  </button>
-                </div>
-              </>
-            )
-          }
+              <div className="flex items-center gap-3">
+                <span className="text-xs sm:text-sm font-semibold text-gray-300 bg-gray-900/60 border border-gray-700/50 px-3 py-1.5 rounded-md">
+                  Question {currentQuestionIndex + 1} of {questions.length}
+                </span>
+              </div>
+            </div>
 
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-900/80 h-1.5 rounded-full overflow-hidden mt-4">
+              <div
+                className="bg-blue-600 h-full rounded-full transition-all duration-300"
+                style={{
+                  width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Question & Choices Card */}
+          <div className="bg-gray-800/40 border border-gray-700/60 rounded-xl p-6 sm:p-8">
+            <div className="mb-6">
+              <h2 className="text-lg sm:text-2xl font-medium text-white leading-relaxed">
+                {removeHtmlTags(questions[currentQuestionIndex].question)}
+              </h2>
+            </div>
+
+            {/* Choices */}
+            <div className="space-y-3">
+              {shuffledChoices.map((choice, index) => {
+                const isSelected = selectedChoice?.id === choice.id;
+                const letter = String.fromCharCode(65 + index);
+                return (
+                  <button
+                    key={choice.id || index}
+                    type="button"
+                    disabled={progressLoading}
+                    onClick={() => handleChoiceSelect(choice)}
+                    className={`w-full flex items-start gap-3.5 p-4 rounded-lg text-left transition-all duration-150 border ${
+                      isSelected
+                        ? "bg-blue-600/15 border-blue-500 text-white shadow-sm ring-1 ring-blue-500/50"
+                        : "bg-gray-900/40 border-gray-700/60 text-gray-300 hover:bg-gray-800/70 hover:border-gray-600 hover:text-white"
+                    }`}
+                  >
+                    <span
+                      className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-semibold shrink-0 transition-colors ${
+                        isSelected
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-800 text-gray-400 border border-gray-700"
+                      }`}
+                    >
+                      {letter}
+                    </span>
+                    <span className="text-sm sm:text-base leading-snug pt-0.5">
+                      {removeHtmlTags(choice.text)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Footer / Actions */}
+            <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 pt-6 border-t border-gray-700/60 mt-8">
+              <span className="text-xs text-gray-400">
+                {selectedChoice
+                  ? "Choice selected. Proceed to next question."
+                  : "Please select an answer to continue."}
+              </span>
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={!selectedChoice || progressLoading}
+                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-semibold text-sm transition-colors shadow-sm ${
+                  selectedChoice && !progressLoading
+                    ? "bg-blue-600 hover:bg-blue-500 text-white cursor-pointer"
+                    : "bg-gray-800 text-gray-500 border border-gray-700/60 cursor-not-allowed"
+                }`}
+              >
+                {progressLoading ? (
+                  <>
+                    <LoaderIcon className="w-4 h-4 animate-spin text-white" />
+                    <span>Saving answer...</span>
+                  </>
+                ) : currentQuestionIndex === questions.length - 1 ? (
+                  <>
+                    <span>Submit Certification</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                ) : (
+                  <>
+                    <span>Next Question</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

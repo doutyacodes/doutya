@@ -481,7 +481,7 @@ export async function GET(request, { params }) {
         }, {});
 
         return NextResponse.json({
-            timer: timer,
+            timer: 15,
             subjectName: subject_name,
             questions: Object.values(result),
         });

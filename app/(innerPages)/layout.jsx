@@ -16,13 +16,11 @@ export default function RootLayout({ children }) {
   const shouldHideSidebar = pathname === '/login' || pathname === '/signup' || pathname === '/open-signup' || pathname === '/activation';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <div className="flex h-screen">
+    <div className="h-screen w-full overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <div className="flex h-full w-full overflow-hidden">
         {isAuthenticated && !shouldHideSidebar && <LeftSideBar />}
-        <main className="flex-1 overflow-auto">
-          <div className="h-full">
-            {children}
-          </div>
+        <main className="flex-1 h-full overflow-y-auto overflow-x-hidden">
+          {children}
         </main>
       </div>
     </div>

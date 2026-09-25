@@ -336,10 +336,9 @@ export async function GET(req, { params }) {
 
             console.log("Subject generation completed successfully");
           } catch (error) {
-            // Mark generation as failed
+            // Delete record so it does not leave a permanently stuck 'failed' row
             await db
-              .update(GENERATION_STATUS)
-              .set({ status: "failed" })
+              .delete(GENERATION_STATUS)
               .where(
                 and(
                   eq(GENERATION_STATUS.key_hash, keyHash),
@@ -347,7 +346,7 @@ export async function GET(req, { params }) {
                 )
               );
 
-            console.error("Subject generation failed:", error);
+            console.error("Subject generation failed, removed blocking record:", error);
             throw error;
           }
         } else {
@@ -513,11 +512,13 @@ const handleFailedGeneration = async (
   scopeType,
   sectorDescription,
   userStream,
-  userSchoolSubjects
+  userSchoolSubjects,
+  userCourse = null,
+  userUniversity = null
 ) => {
   try {
     // Use atomic update to claim the retry
-    const updateResult = await db
+    await db
       .update(GENERATION_STATUS)
       .set({
         status: "in_progress",
@@ -527,12 +528,10 @@ const handleFailedGeneration = async (
         and(
           eq(GENERATION_STATUS.key_hash, keyHash),
           eq(GENERATION_STATUS.generation_type, "subject"),
-          eq(GENERATION_STATUS.status, "failed") // Only update if still failed
+          eq(GENERATION_STATUS.status, "failed")
         )
       );
 
-    // Check if we successfully claimed the retry (updateResult should indicate affected rows)
-    // Note: The exact way to check affected rows depends on your DB library
     console.log("Attempting to retry failed generation...");
 
     await processCareerSubjects(
@@ -564,9 +563,9 @@ const handleFailedGeneration = async (
 
     console.log("Retry generation completed successfully");
   } catch (error) {
+    // Delete record on failure so it does not get permanently stuck in 'failed'
     await db
-      .update(GENERATION_STATUS)
-      .set({ status: "failed" })
+      .delete(GENERATION_STATUS)
       .where(
         and(
           eq(GENERATION_STATUS.key_hash, keyHash),
@@ -574,7 +573,7 @@ const handleFailedGeneration = async (
         )
       );
 
-    console.error("Retry generation failed:", error);
+    console.error("Retry generation failed, removed blocking record:", error);
     throw error;
   }
 };

@@ -164,12 +164,8 @@ function Page() {
       : []),
     { key: "assessment", label: t("assessment") },
     { key: "certification", label: t("certification") },
-    ...(scopeType === "career"
-      ? [{ key: "mentor", label: t("mentor") }]
-      : []),
-    { key: "community", label: t("community") },
-    { key: "feedback", label: t("feedback") },
     { key: "challenges", label: t("challenges") },
+    { key: "feedback", label: t("feedback") },
   ];
 
   useEffect(() => {
@@ -421,7 +417,7 @@ function Page() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+    <div className="w-full min-h-full text-white">
       <Toaster />
       {step === 2 && (
         <CareerStripe
@@ -583,20 +579,20 @@ function Page() {
                         (scopeType === "cluster" || scopeType === "career") && (
                           <Certification selectedCareer={selectedCareer} />
                         )}
-                      {activeTab === "feedback" && (
-                        <Feedback selectedCareer={selectedCareer} />
-                      )}
                       {activeTab === "challenges" && (
                         <Challenge selectedCareer={selectedCareer} />
                       )}
-                      {activeTab === "mentor" && scopeType === "career" && (
-                        <Mentorship selectedCareer={selectedCareer} />
+                      {activeTab === "feedback" && (
+                        <Feedback selectedCareer={selectedCareer} />
                       )}
-                      {activeTab === "community" && (
+                      {/* {activeTab === "mentor" && scopeType === "career" && (
+                        <Mentorship selectedCareer={selectedCareer} />
+                      )} */}
+                      {/* {activeTab === "community" && (
                         <CommunityList
                           careerId={selectedCareer?.scope_grp_id}
                         />
-                      )}
+                      )} */}
                     </div>
                   </div>
                 </div>

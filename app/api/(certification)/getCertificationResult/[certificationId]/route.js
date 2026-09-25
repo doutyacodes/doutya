@@ -29,6 +29,8 @@ export async function GET(request, { params }) {
                 scorePercentage: USER_CERTIFICATION_COMPLETION.score_percentage,
                 level: USER_CERTIFICATION_COMPLETION.level,       
                 issuedAt: USER_CERTIFICATION_COMPLETION.issued_at,
+                attempts: USER_CERTIFICATION_COMPLETION.attempts,
+                completed: USER_CERTIFICATION_COMPLETION.completed,
                 updatedAt: USER_CERTIFICATION_COMPLETION.updated_at,
                 scopeId: CERTIFICATIONS.scope_id,
                 scopeType: CERTIFICATIONS.scope_type,
@@ -89,7 +91,10 @@ export async function GET(request, { params }) {
             updatedAt: cert.updatedAt,
             careerField: careerField || "Professional Development",
             scopeType: cert.scopeType,
-            level: cert.level
+            level: cert.level,
+            attempts: cert.attempts || 1,
+            remainingAttempts: Math.max(0, 3 - (cert.attempts || 1)),
+            completed: cert.completed
         }, { status: 200 });
 
     } catch (error) {
