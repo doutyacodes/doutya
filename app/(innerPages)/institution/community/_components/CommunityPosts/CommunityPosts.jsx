@@ -24,7 +24,7 @@ const CommunityPosts = ({ communityPosts }) => {
 
   // Render different post types
   const renderPostContent = (post) => {
-    const baseUrl = 'https://wowfy.in/testusr/images/';
+    const baseUrl = 'https://wowfy.in/xortcut/images/';
     
     switch(post.type) {
       case 'Video':

@@ -85,7 +85,14 @@ function Page() {
       let url = '/dashboard';
       let type = 'senior';
 
-      if (["5", "6", "7"].includes(userData.grade)) {
+      const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+      const clusterGrades = ["8", "9", "10"];
+      const g = userData.grade ? String(userData.grade).trim() : "";
+
+      if (sectorGrades.includes(g)) {
+        url = '/dashboard_kids';
+        type = 'kids';
+      } else if (clusterGrades.includes(g)) {
         url = '/dashboard_junior';
         type = 'junior';
       }

@@ -6,10 +6,12 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import GoogleAuthButton from "@/components/GoogleAuthButton";
+import { requestPhoneOtp, verifyPhoneOtp } from "@/lib/phoneAuth";
+import { Loader2, CheckCircle2 } from "lucide-react";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const SCHOOL_GRADES = ["5", "6", "7", "8", "9", "10", "11", "12"];
+const SCHOOL_GRADES = ["LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 
 const STREAM_SUGGESTIONS = [
   "Science (PCM) – Physics, Chemistry, Maths",
@@ -236,6 +238,61 @@ function IndividualSignup() {
   const [streamInput, setStreamInput] = useState("");
   const [courseInput, setCourseInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Phone OTP verification states
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  const [otpCountdown, setOtpCountdown] = useState(0);
+
+  useEffect(() => {
+    if (otpCountdown <= 0) return;
+    const interval = setInterval(() => {
+      setOtpCountdown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [otpCountdown]);
+
+  const handleSendOtp = async () => {
+    const mobileVal = getValues("mobile") || "";
+    if (!mobileVal || mobileVal.trim().length < 10) {
+      toast.error("Please enter a valid 10-digit mobile number");
+      return;
+    }
+    setIsSendingOtp(true);
+    try {
+      const { confirmation } = await requestPhoneOtp(mobileVal, "open-signup-recaptcha-container");
+      setConfirmationResult(confirmation);
+      setIsOtpSent(true);
+      setOtpCountdown(30);
+      toast.success("Verification code sent to your phone");
+    } catch (err) {
+      console.error("OTP send error:", err);
+      toast.error(err.message || "Failed to send OTP. Please check your phone number.");
+    } finally {
+      setIsSendingOtp(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otpCode || otpCode.length !== 6) {
+      toast.error("Please enter the 6-digit OTP code");
+      return;
+    }
+    setIsVerifyingOtp(true);
+    try {
+      await verifyPhoneOtp(confirmationResult, otpCode);
+      setIsPhoneVerified(true);
+      toast.success("Mobile number verified successfully!");
+    } catch (err) {
+      console.error("OTP verification error:", err);
+      toast.error(err.message || "Invalid OTP code. Please try again.");
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
   const [isSubmittingGoogle, setIsSubmittingGoogle] = useState(false);
   const [isGoogleUser, setIsGoogleUser] = useState(false);
 
@@ -290,7 +347,8 @@ function IndividualSignup() {
 
   const getScopeType = () => {
     if (institutionType === "School") {
-      if (["5", "6", "7"].includes(selectedGrade)) return "sector";
+      const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+      if (sectorGrades.includes(selectedGrade)) return "sector";
       if (["8", "9", "10"].includes(selectedGrade)) return "cluster";
     }
     return "career";
@@ -298,6 +356,10 @@ function IndividualSignup() {
 
   const onSubmit = async (data) => {
     const isGoogleAuth = isGoogleUser || (typeof window !== "undefined" && sessionStorage.getItem("isGoogleAuth") === "true");
+    if (!isPhoneVerified) {
+      toast.error("Please verify your mobile number with OTP before completing registration.");
+      return;
+    }
     if (!isGoogleAuth && data.password !== data.confirmPassword) {
       setError("confirmPassword", { type: "manual", message: "Passwords do not match" });
       return;
@@ -337,9 +399,13 @@ function IndividualSignup() {
         localStorage.setItem("token", result.data.token);
         toast.success("Account created successfully!");
         reset();
-        if (["5", "6", "7"].includes(selectedGrade)) {
+        const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+        if (sectorGrades.includes(selectedGrade)) {
+          localStorage.setItem("dashboardUrl", "/dashboard_kids");
+          router.push("/dashboard_kids/sector-suggestion");
+        } else if (["8", "9", "10"].includes(selectedGrade)) {
           localStorage.setItem("dashboardUrl", "/dashboard_junior");
-          router.push("/dashboard_junior");
+          router.push("/dashboard_junior/cluster-suggestion");
         } else {
           localStorage.setItem("dashboardUrl", "/dashboard");
           router.push("/dashboard");
@@ -380,7 +446,8 @@ function IndividualSignup() {
         if (data.token) {
           localStorage.setItem("token", data.token);
         }
-        const isJunior = ["5", "6", "7"].includes(data.class);
+        const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+    const isJunior = sectorGrades.includes(data.class);
         const targetUrl = data.navigateUrl || (isJunior ? "/dashboard_junior" : "/dashboard");
         localStorage.setItem("dashboardUrl", isJunior ? "/dashboard_junior" : "/dashboard");
         localStorage.setItem("navigateUrl", targetUrl);
@@ -536,9 +603,82 @@ function IndividualSignup() {
             {errors.gender && <p className="text-red-400 text-sm mt-1">{errors.gender.message}</p>}
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-200 mb-2">Mobile Number</label>
-            <input type="tel" {...register("mobile", { required: "Mobile number is required", minLength: { value: 10, message: "Enter a valid 10-digit number" } })} placeholder="10-digit mobile number" className={inputCls} required />
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-200">
+                Mobile Number <span className="text-orange-400">*</span>
+              </label>
+              {isPhoneVerified && (
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Verified
+                </span>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="tel"
+                disabled={isPhoneVerified}
+                {...register("mobile", {
+                  required: "Mobile number is required",
+                  minLength: { value: 10, message: "Enter a valid 10-digit number" },
+                  onChange: () => {
+                    if (isPhoneVerified) setIsPhoneVerified(false);
+                  }
+                })}
+                placeholder="10-digit mobile number"
+                className={`${inputCls} flex-1 ${isPhoneVerified ? "border-emerald-500/50 text-emerald-300" : ""}`}
+                required
+              />
+              {!isPhoneVerified && (
+                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  disabled={isSendingOtp || otpCountdown > 0}
+                  className="px-4 py-3 bg-orange-600 hover:bg-orange-500 active:bg-orange-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-medium text-xs rounded-xl transition-colors flex items-center justify-center shrink-0 min-w-[95px]"
+                >
+                  {isSendingOtp ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : otpCountdown > 0 ? (
+                    `${otpCountdown}s`
+                  ) : isOtpSent ? (
+                    "Resend"
+                  ) : (
+                    "Get OTP"
+                  )}
+                </button>
+              )}
+            </div>
             {errors.mobile && <p className="text-red-400 text-sm mt-1">{errors.mobile.message}</p>}
+
+            {/* OTP Input box */}
+            {isOtpSent && !isPhoneVerified && (
+              <div className="mt-3 p-3 rounded-xl bg-gray-900/80 border border-gray-700 space-y-2">
+                <p className="text-xs text-gray-300">Enter 6-digit verification code sent to your mobile:</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                    placeholder="• • • • • •"
+                    className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white tracking-widest text-center text-sm font-mono placeholder-gray-500 focus:outline-none focus:border-orange-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleVerifyOtp}
+                    disabled={isVerifyingOtp || otpCode.length !== 6}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center shrink-0 min-w-[95px]"
+                  >
+                    {isVerifyingOtp ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "Verify OTP"
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+            <div id="open-signup-recaptcha-container"></div>
           </div>
         </div>
 
@@ -546,7 +686,7 @@ function IndividualSignup() {
           <label className="block text-sm font-medium text-gray-200 mb-2">I am currently in</label>
           <select value={institutionType} onChange={(e) => setInstitutionType(e.target.value)} className={inputCls} required>
             <option value="">Select option</option>
-            <option value="School">School (Class 5–12)</option>
+            <option value="School">School (LKG – Class 12)</option>
             <option value="College">College / University</option>
             <option value="Other">Completed Education / Working</option>
           </select>
@@ -558,7 +698,7 @@ function IndividualSignup() {
             <select value={selectedGrade} onChange={(e) => setSelectedGrade(e.target.value)} className={inputCls} required>
               <option value="">Select grade</option>
               {SCHOOL_GRADES.map((g) => (
-                <option key={g} value={g}>Class {g}</option>
+                <option key={g} value={g}>{["LKG", "UKG"].includes(g) ? g : `Class ${g}`}</option>
               ))}
             </select>
           </div>

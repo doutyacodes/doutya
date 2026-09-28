@@ -11,7 +11,7 @@ import LoadingOverlay from "@/app/_components/LoadingOverlay";
 // const companyDetails = {
 //   id: 1,
 //   name: "Apple Inc.",
-//   image: "https://wowfy.in/testusr/images/apple-logo.jpg",
+//   image: "https://wowfy.in/xortcut/images/apple-logo.jpg",
 //   description: `Apple Inc. designs, manufactures, and markets mobile communication and media devices, personal computers, and portable digital music players. The company also offers a variety of software, services, accessories, networking solutions, and third-party digital content and applications.`,
 //   departments: [
 //     "Finance",
@@ -66,7 +66,7 @@ export default function CompanyDetailsPage() {
       <div className="max-w-4xl mx-auto bg-[#1f1f1b] rounded-lg shadow-md p-6 mb-8">
         <div className="flex flex-col md:flex-row items-center md:items-start">
           <img
-            src={`https://wowfy.in/testusr/images/${companyDetails.image}`}
+            src={`https://wowfy.in/xortcut/images/${companyDetails.image}`}
             alt={companyDetails.name}
             className="w-48 h-48 object-cover rounded-md mb-6 md:mb-0 md:mr-6"
           />

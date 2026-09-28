@@ -1,5 +1,5 @@
 import { db } from '@/utils';
-import { USER_CERTIFICATION_COMPLETION, CERTIFICATIONS, USER_DETAILS, CAREER_GROUP, CLUSTER, SECTOR, USER_CAREER, USER_CLUSTER, USER_SECTOR } from '@/utils/schema';
+import { USER_CERTIFICATION_COMPLETION, CERTIFICATIONS, USER_DETAILS, INSTITUTION, CAREER_GROUP, CLUSTER, SECTOR, USER_CAREER, USER_CLUSTER, USER_SECTOR } from '@/utils/schema';
 import { NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
@@ -15,6 +15,27 @@ export async function GET(request, { params }) {
     const { certificationId } = params;
     
     if (!certificationId) {
+        
+        let institution = null;
+        if (cert.institutionId) {
+            try {
+                const [inst] = await db
+                    .select({
+                        id: INSTITUTION.id,
+                        name: INSTITUTION.name,
+                        logo: INSTITUTION.logo,
+                        type: INSTITUTION.type,
+                        board: INSTITUTION.board,
+                        city: INSTITUTION.city,
+                    })
+                    .from(INSTITUTION)
+                    .where(eq(INSTITUTION.id, cert.institutionId));
+                if (inst) institution = inst;
+            } catch (instErr) {
+                console.error("Error fetching institution for cert:", instErr);
+            }
+        }
+
         return NextResponse.json({ message: 'Invalid certificationId' }, { status: 400 });
     }
 
@@ -34,6 +55,7 @@ export async function GET(request, { params }) {
                 updatedAt: USER_CERTIFICATION_COMPLETION.updated_at,
                 scopeId: CERTIFICATIONS.scope_id,
                 scopeType: CERTIFICATIONS.scope_type,
+                institutionId: USER_DETAILS.institution_id,
             })
             .from(USER_CERTIFICATION_COMPLETION)
             .innerJoin(CERTIFICATIONS, eq(USER_CERTIFICATION_COMPLETION.certification_id, CERTIFICATIONS.id))
@@ -94,7 +116,8 @@ export async function GET(request, { params }) {
             level: cert.level,
             attempts: cert.attempts || 1,
             remainingAttempts: Math.max(0, 3 - (cert.attempts || 1)),
-            completed: cert.completed
+            completed: cert.completed,
+            institution: institution
         }, { status: 200 });
 
     } catch (error) {

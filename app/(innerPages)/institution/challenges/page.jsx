@@ -79,7 +79,7 @@ const Challenges = () => {
                 {/* Image */}
                 <motion.img
                   // src={challenge.image}
-                  src={`https://wowfy.in/testusr/images/${challenge.image}`}
+                  src={`https://wowfy.in/xortcut/images/${challenge.image}`}
                   alt={challenge.title}
                   className="w-full h-40 object-cover"
                   whileHover={{ scale: 1.05 }}

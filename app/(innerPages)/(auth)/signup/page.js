@@ -1,1170 +1,856 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
-import { encryptText } from "@/utils/encryption";
-import GlobalApi from "@/app/_services/GlobalApi";
-import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { calculateAge } from "@/lib/ageCalculate";
-import countryList from "react-select-country-list";
-import Select from "react-select";
-import { useTranslations } from "next-intl";
-import GoogleAuthButton from "@/components/GoogleAuthButton";
+import Image from "next/image";
+import toast, { Toaster } from "react-hot-toast";
+import { Loader2, CheckCircle2 } from "lucide-react";
+import GlobalApi from "@/app/_services/GlobalApi";
+import { requestPhoneOtp, verifyPhoneOtp } from "@/lib/phoneAuth";
+import { encryptText } from "@/utils/encryption";
 
-const languageMapping = {
-  en: "English",
-  hi: "Hindi",
-  mar: "Marathi",
-  ur: "Urdu",
-  sp: "Spanish",
-  ben: "Bengali",
-  assa: "Assamese",
-  ge: "German",
-  tam: "Tamil",
-  mal: "Malayalam",
-};
-
-function SignUp() {
+function SignUpContent() {
   const router = useRouter();
-  const t = useTranslations("SignupPage");
+  const searchParams = useSearchParams();
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
     reset,
     setError,
     setValue,
   } = useForm();
 
-  const getSixYearsAgo = () => {
-    const date = new Date();
-    date.setFullYear(date.getFullYear() - 6);
-    return date.toISOString().split("T")[0]; // Format it as YYYY-MM-DD
+  // Invite & Institution state
+  const [inviteToken, setInviteToken] = useState(null);
+  const [institution, setInstitution] = useState(null);
+  const [classes, setClasses] = useState([]);
+  const [divisions, setDivisions] = useState([]);
+  const [streams, setStreams] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [isLoadingSchool, setIsLoadingSchool] = useState(true);
+  const [inviteError, setInviteError] = useState(null);
+
+  // Form selections
+  const [selectedClassId, setSelectedClassId] = useState("");
+  const [selectedClassGrade, setSelectedClassGrade] = useState("");
+  const [selectedDivisionId, setSelectedDivisionId] = useState("");
+  const [selectedStreamId, setSelectedStreamId] = useState("");
+  const [selectedCourseId, setSelectedCourseId] = useState("");
+  const [selectedGender, setSelectedGender] = useState("");
+  const [selectedDOB, setSelectedDOB] = useState("");
+  const [dobError, setDobError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Phone OTP state
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [otpCountdown, setOtpCountdown] = useState(0);
+
+  // Countdown timer for resend OTP
+  useEffect(() => {
+    if (otpCountdown <= 0) return;
+    const timer = setInterval(() => {
+      setOtpCountdown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [otpCountdown]);
+
+  const handleSendSignupOtp = async () => {
+    if (!phoneNumber || phoneNumber.trim().length < 10) {
+      toast.error("Please enter a valid 10-digit mobile phone number");
+      return;
+    }
+    setIsSendingOtp(true);
+    try {
+      const { confirmation } = await requestPhoneOtp(phoneNumber, "signup-recaptcha-container");
+      setConfirmationResult(confirmation);
+      setIsOtpSent(true);
+      setOtpCountdown(30);
+      toast.success("Verification code sent to your phone");
+    } catch (err) {
+      console.error("Signup OTP error:", err);
+      toast.error(err.message || "Failed to send OTP. Please check the number.");
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
-  const [institutionType, setInstitutionType] = useState(""); // "School" or "College"
-  const [institutions, setInstitutions] = useState([]);
-  const [filteredInstitutions, setFilteredInstitutions] = useState([]);
-  const [institutionSearch, setInstitutionSearch] = useState("");
-  const [selectedInstitution, setSelectedInstitution] = useState(null);
-  const [classOptions, setClassOptions] = useState([]);
-  const [divisionOptions, setDivisionOptions] = useState([]);
-  const [streamOptions, setStreamOptions] = useState([]);
-  const [courseOptions, setCourseOptions] = useState([]);
-  const [selectedClassGrade, setSelectedClassGrade] = useState("");
-  const [selectedStream, setSelectedStream] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState("");
-
-  const [selectedDOB, setSelectedDOB] = useState(null);
-  const [step, setStep] = useState("eligibility_info");
-  const [isCollegeStudent, setIsCollegeStudent] = useState(false);
-  const [countryOptions] = useState(countryList().getData());
-  const [selectedCountry, setSelectedCountry] = useState("India");
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
-  const [educationLevel, setEducationLevel] = useState(0);
-  const [reason, setReason] = useState(0);
-  const [dobError, setDobError] = useState("");
-  const [ageCategory, setAgeCategory] = useState("");
-  const [selectedClass, setSelectedClass] = useState("");
-  const [showStreamInput, setShowStreamInput] = useState(false);
-  const [checking, setChecking] = useState(true);
-  const [isSubmittingGoogle, setIsSubmittingGoogle] = useState(false);
-  const [isGoogleUser, setIsGoogleUser] = useState(false);
-
-  // Restore Google signup state if user came from /login or refreshed
-  useEffect(() => {
-    try {
-      const isGoogleAuth = sessionStorage.getItem("isGoogleAuth") === "true";
-      const stored = sessionStorage.getItem("googleAuthProfile");
-      if (isGoogleAuth) {
-        setIsGoogleUser(true);
-      }
-      if (stored) {
-        const profile = JSON.parse(stored);
-        sessionStorage.removeItem("googleAuthProfile");
-        sessionStorage.setItem("isGoogleAuth", "true");
-        setIsGoogleUser(true);
-        if (profile?.name) setValue("name", profile.name);
-        if (profile?.email) setValue("username", profile.email);
-        const randomPass = "G@" + Math.random().toString(36).slice(-8) + "!9A";
-        setValue("password", randomPass);
-        setValue("confirmPassword", randomPass);
-        setStep("dob");
-      }
-    } catch (e) {
-      console.error(e);
+  const handleVerifySignupOtp = async () => {
+    if (!otpCode || otpCode.length !== 6) {
+      toast.error("Please enter the 6-digit OTP code");
+      return;
     }
-  }, [setValue]);
-
-  const handleGoogleSuccess = async (credential) => {
-    setIsSubmittingGoogle(true);
+    setIsVerifyingOtp(true);
     try {
-      const res = await fetch("/api/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken: credential }),
-      });
+      await verifyPhoneOtp(confirmationResult, otpCode);
+      setIsPhoneVerified(true);
+      setValue("mobile", phoneNumber.trim());
+      toast.success("Mobile number verified successfully!");
+    } catch (err) {
+      console.error("OTP verification error:", err);
+      toast.error(err.message || "Invalid OTP code. Please try again.");
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
 
-      const data = await res.json();
+  // 1. Extract invite token from URL or sessionStorage
+  useEffect(() => {
+    let token = searchParams ? searchParams.get("invite") : null;
+    if (!token && typeof window !== "undefined") {
+      token = new URLSearchParams(window.location.search).get("invite");
+    }
 
-      if (!res.ok) {
-        throw new Error(data.message || "Google authentication failed");
+    if (token) {
+      setInviteToken(token);
+      try {
+        sessionStorage.setItem("school_invite_token", token);
+      } catch (e) {
+        console.error(e);
       }
+    } else if (typeof window !== "undefined") {
+      const stored = sessionStorage.getItem("school_invite_token");
+      if (stored) {
+        setInviteToken(stored);
+      } else {
+        setIsLoadingSchool(false);
+      }
+    }
+  }, [searchParams]);
 
-      if (data.status === "LOGGED_IN") {
-        if (data.token) {
-          localStorage.setItem("token", data.token);
+  // 2. Fetch institution and classes using invite token
+  useEffect(() => {
+    if (!inviteToken) return;
+
+    const fetchSchoolInfo = async () => {
+      setIsLoadingSchool(true);
+      setInviteError(null);
+      try {
+        const res = await GlobalApi.GetInstitutionInfoByInvite(inviteToken);
+        if (res.data?.success && res.data?.institution) {
+          setInstitution(res.data.institution);
+          setClasses(res.data.classes || []);
+          setValue("instituteId", res.data.institution.id);
+        } else {
+          setInviteError("Invalid or expired school invitation link.");
         }
-        const isJunior = ["5", "6", "7"].includes(data.class);
-        const targetUrl = data.navigateUrl || (isJunior ? "/dashboard_junior" : "/dashboard");
-        localStorage.setItem("dashboardUrl", isJunior ? "/dashboard_junior" : "/dashboard");
-        localStorage.setItem("navigateUrl", targetUrl);
-        toast.success("Logged in successfully!");
-        router.push(targetUrl);
-      } else if (data.status === "NEW_USER") {
-        // Mark as Google Auth user and persist state
-        sessionStorage.setItem("isGoogleAuth", "true");
-        setIsGoogleUser(true);
+      } catch (err) {
+        console.error("Error loading institution:", err);
+        setInviteError("Could not verify school invitation link.");
+      } finally {
+        setIsLoadingSchool(false);
+      }
+    };
 
-        if (data.googleProfile?.name) setValue("name", data.googleProfile.name);
-        if (data.googleProfile?.email) setValue("username", data.googleProfile.email);
-        const randomPass = "G@" + Math.random().toString(36).slice(-8) + "!9A";
-        setValue("password", randomPass);
-        setValue("confirmPassword", randomPass);
+    fetchSchoolInfo();
+  }, [inviteToken, setValue]);
 
-        // Move to DOB step -> user enters DOB -> then enters real School/College form!
-        setStep("dob");
+  // 3. Handle class selection
+  const handleClassChange = async (e) => {
+    const classId = e.target.value;
+    setSelectedClassId(classId);
+    setValue("classId", classId);
+    setSelectedDivisionId("");
+    setValue("divisionId", "");
+    setDivisions([]);
+    setStreams([]);
+    setCourses([]);
+
+    if (!classId) return;
+
+    const chosenClass = classes.find((c) => c.id.toString() === classId.toString());
+    const grade = chosenClass?.standard_grade || "";
+    setSelectedClassGrade(grade);
+    setValue("classGrade", grade);
+
+    try {
+      const divRes = await GlobalApi.GetDivisionsByClass(classId);
+      if (divRes.status === 200) {
+        setDivisions(divRes.data.divisions || []);
       }
     } catch (err) {
-      toast.error(err.message || "Google sign up failed");
-    } finally {
-      setIsSubmittingGoogle(false);
+      console.error("Failed to load divisions:", err);
     }
-  };
 
-  const educationLevelMapping = {
-    0: "School",
-    1: "College",
-    2: "Completed Education",
-  };
-
-  const reasonMapping = {
-    0: "New Job",
-    1: "Career Change",
-  };
-
-  useEffect(() => {
-    localStorage.setItem("language", selectedLanguage);
-    document.cookie = `locale=${selectedLanguage}; path=/`;
-    console.log("document.cookie", document.cookie);
-    router.refresh();
-  }, [selectedLanguage]);
-
-  const handleLanguageChange = (e) => {
-    const newLanguage = e.target.value;
-    console.log("newLanguage", newLanguage);
-    setSelectedLanguage(newLanguage);
-  };
-
-  // Fetch institutions when type is selected
-  useEffect(() => {
-    if (institutionType) {
-      fetchInstitutions();
-    }
-  }, [institutionType]);
-
-  // Filter institutions based on search
-  useEffect(() => {
-    if (institutionSearch) {
-      const filtered = institutions.filter(inst =>
-        inst.name.toLowerCase().includes(institutionSearch.toLowerCase())
-      );
-      setFilteredInstitutions(filtered);
-    } else {
-      setFilteredInstitutions(institutions);
-    }
-  }, [institutionSearch, institutions]);
-
-    useEffect(() => {
-      const checkAuth = async () => {
-        try {
-          const res = await fetch('/api/check');
-          if (res.ok) {
-            const url = localStorage.getItem("navigateUrl") || "/dashboard";
-            router.replace(url);
-          } else {
-            setChecking(false);
-          }
-        } catch (err) {
-          setChecking(false);
+    if (["11", "12"].includes(grade) && institution?.id) {
+      try {
+        const strRes = await GlobalApi.GetStreamsByInstitution(institution.id);
+        if (strRes.status === 200) {
+          setStreams(strRes.data.streams || []);
         }
-      };
-      checkAuth();
-    }, []);
-
-  const fetchInstitutions = async () => {
-    try {
-      const response = await GlobalApi.GetInstitutionsByType(institutionType);
-      if (response.status === 200) {
-        setInstitutions(response.data.institutions);
-        setFilteredInstitutions(response.data.institutions);
+      } catch (err) {
+        console.error("Failed to load streams:", err);
       }
-    } catch (error) {
-      toast.error("Failed to fetch institutions");
     }
-  };
 
-  const fetchClassesByInstitution = async (instituteId) => {
-    try {
-      const response = await GlobalApi.GetClassesByInstitute(instituteId);
-      if (response.status === 200) {
-        setClassOptions(response.data.classes);
-        // Reset dependent fields
-        setValue('classId', '');
-        setValue('divisionId', '');
-        setSelectedClassGrade("");
-        setDivisionOptions([]);
-        setStreamOptions([]);
-        setCourseOptions([]);
-      }
-    } catch (error) {
-      toast.error("Failed to fetch classes");
-    }
-  };
-
-  const fetchDivisionsByClass = async (classId) => {
-    try {
-      const response = await GlobalApi.GetDivisionsByClass(classId);
-      if (response.status === 200) {
-        setDivisionOptions(response.data.divisions);
-        setValue('divisionId', '');
-      }
-    } catch (error) {
-      toast.error("Failed to fetch divisions");
-    }
-  };
-
-  const fetchStreamsByInstitution = async (instituteId) => {
-    try {
-      const response = await GlobalApi.GetStreamsByInstitution(instituteId);
-      if (response.status === 200) {
-        setStreamOptions(response.data.streams);
-      }
-    } catch (error) {
-      toast.error("Failed to fetch streams");
-    }
-  };
-
-  const fetchCoursesByInstitution = async (instituteId) => {
-    try {
-      const response = await GlobalApi.GetCoursesByInstitution(instituteId);
-      if (response.status === 200) {
-        setCourseOptions(response.data.courses);
-      }
-    } catch (error) {
-      toast.error("Failed to fetch courses");
-    }
-  };
-
-  const handleInstitutionChange = (instituteId) => {
-    const institute = institutions.find(inst => inst.id === parseInt(instituteId));
-    setSelectedInstitution(institute);
-    fetchClassesByInstitution(instituteId);
-  };
-
-  const handleClassChange = (classId) => {
-    const selectedClass = classOptions.find(cls => cls.id === parseInt(classId));
-    if (selectedClass) {
-      setSelectedClassGrade(selectedClass.standard_grade);
-      
-      // Fetch divisions
-      fetchDivisionsByClass(classId);
-      
-      // If grade is 11 or 12, fetch streams
-      if (["11", "12"].includes(selectedClass.standard_grade)) {
-        fetchStreamsByInstitution(selectedInstitution.id);
-      }
-      
-      // If grade is college, fetch courses
-      if (selectedClass.standard_grade === "college") {
-        fetchCoursesByInstitution(selectedInstitution.id);
+    if (grade === "college" && institution?.id) {
+      try {
+        const crsRes = await GlobalApi.GetCoursesByInstitution(institution.id);
+        if (crsRes.status === 200) {
+          setCourses(crsRes.data.courses || []);
+        }
+      } catch (err) {
+        console.error("Failed to load courses:", err);
       }
     }
   };
 
-  console.log("setLanguageSelected", selectedLanguage);
-  console.log("selectedDOB", selectedDOB);
-
+  // 4. DOB Validation
   const handleDOBChange = (e) => {
-    const selectedDate = new Date(e.target.value);
+    const dateVal = e.target.value;
+    setSelectedDOB(dateVal);
+    if (!dateVal) {
+      setDobError("Date of birth is required");
+      return;
+    }
+
+    const selectedDate = new Date(dateVal);
     const today = new Date();
-    const minAllowedDate = new Date(
-      today.getFullYear() - 5,
-      today.getMonth(),
-      today.getDate()
-    );
+    const minAllowedDate = new Date(today.getFullYear() - 3, today.getMonth(), today.getDate());
 
     if (selectedDate > minAllowedDate) {
-      setDobError(t("dobValidation"));
-      setSelectedDOB("");
-      setAgeCategory(""); // Reset age category if DOB is invalid
+      setDobError("Please enter a valid birth date");
     } else {
       setDobError("");
-      setSelectedDOB(e.target.value);
-
-      // Calculate age and set age category
-      const age = calculateAge(e.target.value);
-      if (age <= 9) {
-        setAgeCategory("kids");
-      } else if (age <= 13) {
-        setAgeCategory("junior");
-      } else {
-        setAgeCategory("senior");
-      }
     }
   };
 
-  const handleNext = () => {
-    if (step === "eligibility_info") {
-      setStep("dob");
-    } else if (step === "language") {
-      setStep("dob");
-    } else if (step === "dob") {
-      setStep("signup");
-    }
-  };
-
+  // 5. Submit Registration
   const onSubmit = async (data) => {
-    if (!data.gender) {
-      setError("gender", {
-        type: "manual",
-        message: t("genderRequired"),
-      });
+    if (!institution?.id) {
+      toast.error("Registration requires a valid school invite link.");
+      return;
+    }
+
+    if (!data.name || !data.name.trim()) {
+      setError("name", { type: "manual", message: "Student name is required" });
+      return;
+    }
+
+    if (!data.parentName || !data.parentName.trim()) {
+      setError("parentName", { type: "manual", message: "Parent / Guardian name is required" });
+      return;
+    }
+
+    if (!selectedGender) {
+      setError("gender", { type: "manual", message: "Please select gender" });
+      return;
+    }
+
+    if (!selectedDOB || dobError) {
+      setDobError("Please provide a valid date of birth");
       return;
     }
 
     if (data.password !== data.confirmPassword) {
-      setError("confirmPassword", {
-        type: "manual",
-        message: t("passwordMismatch"),
-      });
+      setError("confirmPassword", { type: "manual", message: "Passwords do not match" });
       return;
     }
 
-    if (!institutionType) {
-      toast.error("Please select institution type (School/College)");
+    if (data.password.length < 6) {
+      setError("password", { type: "manual", message: "Password must be at least 6 characters" });
       return;
     }
 
-    if (!data.instituteId) {
-      toast.error("Please select your institution");
+    if (!selectedClassId) {
+      toast.error("Please select your class / grade.");
       return;
     }
 
-    if (!data.classId) {
-      toast.error("Please select your class");
+    if (!selectedDivisionId) {
+      toast.error("Please select your section / division.");
       return;
     }
 
-    if (!data.divisionId) {
-      toast.error("Please select your division");
-      return;
-    }
-
-    // Validate stream for grades 11, 12
-    if (["11", "12"].includes(selectedClassGrade) && !selectedStream) {
+    if (["11", "12"].includes(selectedClassGrade) && !selectedStreamId) {
       toast.error("Please select your stream");
       return;
     }
 
-    // Validate course for college
-    if (selectedClassGrade === "college" && !selectedCourse) {
-      toast.error("Please select your course");
+    if (selectedClassGrade === "college" && !selectedCourseId) {
+      toast.error("Please select your degree course");
       return;
     }
 
-    const encryptedPassword = encryptText(data.password);
-    data.password = encryptedPassword;
-    data.dob = selectedDOB;
-    data.language = languageMapping[selectedLanguage] || selectedLanguage;
-    data.classGrade = selectedClassGrade; // Add grade to data
-    data.country = selectedCountry;
-    // Add stream_id or course_id based on grade
-    if (["11", "12"].includes(selectedClassGrade)) {
-      data.streamId = parseInt(selectedStream);
-    }
-    if (selectedClassGrade === "college") {
-      data.courseId = parseInt(selectedCourse);
-      data.country = selectedCountry?.label;
-      data.educationLevel = educationLevelMapping[educationLevel];
+    if (!isPhoneVerified) {
+      toast.error("Please verify your mobile phone number with OTP before completing registration.");
+      return;
     }
 
+    setIsSubmitting(true);
+
+    const encryptedPassword = encryptText(data.password);
+
+    const payload = {
+      name: data.name.trim(),
+      parentName: data.parentName.trim(),
+      username: data.username.trim(),
+      password: encryptedPassword,
+      gender: selectedGender,
+      dob: selectedDOB,
+      mobile: phoneNumber.trim(),
+      instituteId: institution.id,
+      classId: parseInt(selectedClassId),
+      divisionId: parseInt(selectedDivisionId),
+      classGrade: selectedClassGrade,
+      streamId: selectedStreamId ? parseInt(selectedStreamId) : null,
+      courseId: selectedCourseId ? parseInt(selectedCourseId) : null,
+      country: institution.country || "India",
+      language: "English",
+      inviteToken: inviteToken,
+    };
+
     try {
-      const response = await GlobalApi.CreateNewUser(data);
+      const response = await GlobalApi.CreateNewUser(payload);
 
       if (response.status === 201) {
         const { token } = response.data.data;
-        localStorage.setItem("token", token);
+        if (token) {
+          localStorage.setItem("token", token);
+        }
+
+        try {
+          localStorage.setItem("user_institution", JSON.stringify(institution));
+        } catch (e) {
+          console.error(e);
+        }
+
+        toast.success("Account created successfully");
         reset();
 
-        toast.success(t("successMessage"));
-        
-        // Route based on class selection
-        if (["5", "6", "7"].includes(selectedClass)) {
-          localStorage.setItem('dashboardUrl', '/dashboard_junior');
-          localStorage.setItem('navigateUrl', '/dashboard_junior');
-          response.data.quizCompleted ? router.push('/dashboard/careers') : router.push('/dashboard_junior');
-        } else {
-          localStorage.setItem('dashboardUrl', '/dashboard');
-          localStorage.setItem('navigateUrl', '/dashboard');
-          response.data.quizCompleted ? router.push('/dashboard/careers') : router.push('/dashboard');
-        }
-      } else {
-        const errorMessage = response.data?.message || t("defaultErrorMessage");
-        toast.error(`Error: ${errorMessage}`);
-      }
-      } catch (err) {
-      console.error("Error:", err);
+        const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+        const clusterGrades = ["8", "9", "10"];
+        const normalizedSelectedGrade = selectedClassGrade ? String(selectedClassGrade).trim() : "";
 
-      if (err.response?.status === 400 && err.response?.data?.message) {
-        const errorMsg = err.response.data.message;
-        if (errorMsg.includes("Username")) {
-          setError("username", {
-            type: "manual",
-            message: t("usernameExists"),
-          });
-        } else if (errorMsg.includes("Phone number")) {
-          setError("mobile", {
-            type: "manual",
-            message: t("phoneExists"),
-          });
+        if (sectorGrades.includes(normalizedSelectedGrade)) {
+          localStorage.setItem("dashboardUrl", "/dashboard_kids");
+          localStorage.setItem("navigateUrl", "/dashboard_kids/sector-suggestion");
+          router.push("/dashboard_kids/sector-suggestion");
+        } else if (clusterGrades.includes(normalizedSelectedGrade)) {
+          localStorage.setItem("dashboardUrl", "/dashboard_junior");
+          localStorage.setItem("navigateUrl", "/dashboard_junior/cluster-suggestion");
+          router.push("/dashboard_junior/cluster-suggestion");
         } else {
-          toast.error(`Error: ${errorMsg}`);
+          localStorage.setItem("dashboardUrl", "/dashboard");
+          localStorage.setItem("navigateUrl", "/dashboard/careers/career-suggestions");
+          router.push("/dashboard");
         }
-      } else {
-        toast.error(`Error: ${err.message}`);
       }
+    } catch (error) {
+      const msg = error?.response?.data?.message || error?.message || "Registration failed";
+      if (msg.includes("Username") || msg.includes("email")) {
+        setError("username", { type: "manual", message: "This email or username is already registered." });
+      } else if (msg.includes("Mobile") || msg.includes("phone")) {
+        setError("mobile", { type: "manual", message: "This phone number is already registered." });
+      } else {
+        toast.error(msg);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleQuickSignup = () => {
-    router.push('/quick-signup');
-  };
-
-const handleBackButton = () => {
-  if (window.history.length > 1) {
-    router.back();
-  } else {
-    router.push('/login');
-  }
-};
-  if (checking) return null;
-
-  const collegeStudent = watch("student");
-  // Language Step
-  if (step === "language") {
+  // ----------------------------------------------------------------------
+  // SCENARIO 1: Loading
+  // ----------------------------------------------------------------------
+  if (isLoadingSchool) {
     return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center pt-8 pb-8 px-4">
-      <Toaster />
-      <div className="relative w-full max-w-lg">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
-        <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Choose Your Language
-            </h1>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-300">
-              You won't be able to modify it later, so choose wisely.
-            </p>
-          </div>
-          <div className="space-y-6">
-            <div>
-              <select
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                value={selectedLanguage}
-                onChange={(e) => handleLanguageChange(e)}
-              >
-                <option value="en">English</option>
-                <option value="hi">Hindi</option>
-                <option value="mar">Marathi</option>
-                <option value="ur">Urdu</option>
-                <option value="sp">Spanish</option>
-                <option value="ben">Bengali</option>
-                <option value="assa">Assamese</option>
-                <option value="ge">German</option>
-                <option value="tam">Tamil</option>
-                <option value="mal">Malayalam</option>
-              </select>
-            </div>
-            <button
-              onClick={handleNext}
-              className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500/50"
-            >
-              Next
-            </button>
-          </div>
+      <div className="min-h-screen bg-gray-900 text-gray-300 flex items-center justify-center p-4">
+        <div className="text-center space-y-3">
+          <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto" />
+          <p className="text-sm font-medium text-gray-400">Loading registration page...</p>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-    // Eligibility Info Step
-  if (step === "eligibility_info") {
+  // ----------------------------------------------------------------------
+  // SCENARIO 2: No Invite Link or Verification Error
+  // ----------------------------------------------------------------------
+  if (!inviteToken || inviteError || !institution) {
+    const isError = Boolean(inviteError);
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center pt-8 pb-8 px-4">
-        <div className="relative w-full max-w-lg">
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
-          <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-6">
-                {t("eligibilityTitle") || "Welcome to Xortcut"}
-              </h1>
-              
-              <div className="relative mb-6">
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-3xl blur-xl"></div>
-                <div className="relative p-4">
-                  <img 
-                    src={"/assets/images/logo-full.png"}
-                    alt="Xortcut Logo" 
-                    className="w-32 md:w-48 h-auto mx-auto object-contain filter drop-shadow-2xl"
-                  />
-                </div>
-              </div>
-              
-              <p className="text-gray-200 mb-4 leading-relaxed">
-                {t("eligibilityInfo") || "Xortcut is designed for college students and working professionals."}
-              </p>
-              
-              <p className="text-gray-400 text-sm mb-8 leading-relaxed">
-                {t("eligibilityDetails") || "By continuing, you confirm that you are a college student or a working professional."}
-              </p>
-            </div>
+      <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4 sm:p-6">
+        <Toaster position="top-center" />
+        <div className="w-full max-w-md bg-gray-800 border border-gray-700 rounded-2xl p-6 sm:p-8 space-y-5 shadow-xl">
+          <div className="text-center space-y-2">
+            <h1 className="text-xl font-bold text-white">
+              {isError ? "Unable to Verify Registration Link" : "Registration Link Required"}
+            </h1>
+            <p className="text-sm text-gray-300 leading-relaxed">
+              {isError
+                ? (inviteError || "The registration link provided is invalid or expired.")
+                : "Student registration on this platform is accessible only through an invite link provided by your school or college."}
+            </p>
+            <p className="text-xs text-gray-400 pt-1">
+              Please contact your school teacher or administrator to receive an invitation link.
+            </p>
+          </div>
 
-            {/* Google Sign Up Button */}
-            <div className="mb-5">
-              <GoogleAuthButton
-                text="Sign up with Google"
-                onSuccess={handleGoogleSuccess}
-                onError={(err) => toast.error(err)}
-                disabled={isSubmittingGoogle}
-              />
-            </div>
-
-            {/* Divider */}
-            <div className="flex items-center gap-3 my-5">
-              <div className="flex-1 h-px bg-gray-700/80" />
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                or continue manually
-              </span>
-              <div className="flex-1 h-px bg-gray-700/80" />
-            </div>
-            
-            <button
-              onClick={handleNext}
-              className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
+          <div className="pt-2 flex flex-col gap-2">
+            {isError && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (inviteToken) {
+                    setIsLoadingSchool(true);
+                    setInviteError(null);
+                    GlobalApi.GetInstitutionInfoByInvite(inviteToken)
+                      .then((res) => {
+                        if (res.data?.success && res.data?.institution) {
+                          setInstitution(res.data.institution);
+                          setClasses(res.data.classes || []);
+                          setValue("instituteId", res.data.institution.id);
+                        } else {
+                          setInviteError("Invalid or expired school invitation link.");
+                        }
+                      })
+                      .catch((err) => {
+                        console.error(err);
+                        setInviteError("Could not verify school invitation link.");
+                      })
+                      .finally(() => setIsLoadingSchool(false));
+                  }
+                }}
+                className="w-full py-2.5 px-4 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl text-xs transition-colors"
+              >
+                Try Again
+              </button>
+            )}
+            <Link
+              href="/login"
+              className="block w-full text-center py-3 px-4 bg-orange-600 hover:bg-orange-500 text-white font-semibold rounded-xl text-sm transition-colors"
             >
-              {t("continue") || "Continue"}
-            </button>
-
-            <button
-              onClick={handleBackButton}
-              className="w-full py-2 px-6 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white font-medium rounded-xl border border-gray-600/50 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-500/50 mt-3 cursor-pointer"
-            >
-              Back
-            </button>
+              Sign In to Existing Account
+            </Link>
           </div>
         </div>
       </div>
     );
   }
 
- // DOB Step
- if (step === "dob") {
-  // Calculate age if selectedDOB exists
-  const age = selectedDOB ? calculateAge(selectedDOB) : null;
-  // const showCollegeConfirmation = age !== null && age <= 16;
-  
+  // ----------------------------------------------------------------------
+  // SCENARIO 3: Clean, Unified School Registration Form
+  // ----------------------------------------------------------------------
+  const schoolLogo = institution?.logo;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center pt-8 pb-8 px-4">
-      <Toaster />
-      <div className="relative w-full max-w-lg">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
-        <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Enter Your Date of Birth
-            </h1>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-300">
-              You won't be able to modify it later, so enter carefully.
-            </p>
-          </div>
-          <div className="space-y-6">
-            <div>
-              <input
-                type="date"
-                value={selectedDOB}
-                placeholder="Enter your Date of Birth"
-                onChange={handleDOBChange}
-                max={new Date().toISOString().split("T")[0]}
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                required
+    <div className="min-h-screen bg-gray-900 text-gray-100 py-10 px-4 sm:px-6 flex items-center justify-center">
+      <Toaster position="top-center" />
+
+      <div className="w-full max-w-2xl bg-gray-800 border border-gray-700 rounded-2xl p-6 sm:p-10 shadow-xl my-6">
+
+        {/* ======================================================== */}
+        {/* HERO: School Logo (Main thing at top) & School Name      */}
+        {/* ======================================================== */}
+        <div className="text-center mb-8">
+          {schoolLogo && (
+            <div className="mx-auto w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-2xl p-3 shadow-md flex items-center justify-center mb-4">
+              <img
+                src={schoolLogo}
+                alt={institution.name}
+                className="max-h-full max-w-full object-contain"
               />
-              {dobError && (
-                <p className="mt-2 text-sm text-red-400">{dobError}</p>
-              )}
             </div>
-            <button
-              onClick={handleNext}
-              className={`w-full py-3 px-6 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-orange-500/50 ${
-                !selectedDOB || dobError
-                  ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-orange-500/25 hover:scale-[1.02]'
-              }`}
-              disabled={!selectedDOB || dobError }
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
- // Education Level Step
-  if (step === "education_level") {
-    return (
-    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
-      <Toaster />
-      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
-        <h1 className="text-xl font-bold mb-4 text-center text-white">
-          Choose Your Education Level
-        </h1>
-        <p className="text-center mb-4 text-gray-300">
-          You won't be able to modify it later, so choose wisely.
-        </p>
-        <div className="mb-4">
-          <label
-            htmlFor="educationLevelSlider"
-            className="block text-sm font-medium text-gray-300"
-          >
-            Education Level
-          </label>
-          <input
-            type="range"
-            id="educationLevelSlider"
-            min="0"
-            max="2"
-            step="1"
-            value={educationLevel}
-            onChange={(e) => {
-              if (e.target.value == 1) {
-                setIsCollegeStudent(true);
-              } else {
-                setIsCollegeStudent(false);
-              }
-              setEducationLevel(e.target.value);
-            }}
-            className="w-full mt-2 accent-blue-600"
-          />
-          <div className="flex justify-between mt-2 gap-1">
-            <span
-              className={
-                educationLevel == 0
-                  ? "font-bold text-wrap w-1/3 text-left text-white"
-                  : "text-wrap w-1/3 text-left text-gray-400"
-              }
-            >
-              School
-            </span>
-            <span
-              className={
-                educationLevel == 1
-                  ? "font-bold text-wrap w-1/3 text-center text-white"
-                  : "text-wrap w-1/3 text-center text-gray-400"
-              }
-            >
-              College
-            </span>
-            <span
-              className={
-                educationLevel == 2
-                  ? "font-bold text-wrap w-1/3 text-end text-white"
-                  : "text-wrap w-1/3 text-end text-gray-400"
-              }
-            >
-              Completed Education
-            </span>
-          </div>
-        </div>
-        <button
-          onClick={handleNext}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  )}
-
-  if (step === "reason") {
-    return (
-    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
-      <Toaster />
-      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
-        <h1 className="text-xl font-bold mb-4 text-center text-white">
-          Why are you here?
-        </h1>
-        <div className="mb-4">
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="1"
-            value={reason}
-            onChange={(e) => setReason(parseInt(e.target.value))}
-            className="w-full mt-2 accent-blue-600"
-          />
-          <div className="flex justify-between mt-2 gap-1">
-            <span
-              className={
-                reason == 0
-                  ? "font-bold text-wrap w-1/2 text-left text-white"
-                  : "text-wrap w-1/2 text-left text-gray-400"
-              }
-            >
-              New Job
-            </span>
-            <span
-              className={
-                reason == 1
-                  ? "font-bold text-wrap w-1/2 text-end text-white"
-                  : "text-wrap w-1/2 text-end text-gray-400"
-              }
-            >
-              Career Change
-            </span>
-          </div>
-        </div>
-        <button
-          onClick={handleNext}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  )}
-
-  if (step === "additional_info") {
-    return (
-    <div className="flex items-center justify-center min-h-screen pt-8 pb-8 px-3 bg-black bg-opacity-90">
-      <Toaster />
-      <div className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-lg">
-        <h1 className="text-xl font-bold mb-4 text-center text-white">
-          Additional Information
-        </h1>
-        <form>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300">Education Qualification</label>
-            <input
-              {...register("educationQualification", { required: true })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300">University</label>
-            <input
-              {...register("university", { required: true })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
-          {reason === 1 && (
-            <>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-300">Experience (Years)</label>
-                <input
-                  type="number"
-                  {...register("experience", { required: true, min: 0 })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-300">Current Job</label>
-                <input
-                  {...register("currentJob", { required: true })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </>
           )}
-          <button
-            type="submit"
-            onClick={handleNext}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
-          >
-            Submit
-          </button>
-        </form>
-      </div>
-    </div>
-  )}
 
-   return (
-    // Main Signup Form
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center pt-8 pb-8 px-4">
-      <Toaster />
-      <div className="relative w-full max-w-lg">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
-        <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 p-8 rounded-2xl shadow-2xl">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">{t("title")}</h1>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto"></div>
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            {institution.name}
+          </h1>
+
+          <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto my-3" />
+
+          <p className="text-sm text-gray-400">
+            Student Account Registration
+          </p>
+        </div>
+
+        {/* ======================================================== */}
+        {/* FORM: Section 1 (Student Details), Section 2 (Class/Div) */}
+        {/* ======================================================== */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+
+          {/* ────────────────────────────────────────────────────── */}
+          {/* SECTION 1: Student Account Details (FIRST)             */}
+          {/* ────────────────────────────────────────────────────── */}
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-200 mb-2"
-            >
-              {t("name")}
-            </label>
-            <input
-              type="text"
-              {...register("name")}
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-              placeholder="Enter your full name"
-              required
-            />
-          </div>
-          {(isGoogleUser || (watch("username") && watch("username").includes("@"))) ? (
-            <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">
-                Google Account
-              </label>
-              <div className="flex items-center gap-3 px-4 py-3 bg-gray-700/30 border border-gray-600/40 rounded-xl text-gray-200">
-                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                </svg>
-                <span className="text-sm font-medium text-white break-all">{watch("username")}</span>
-              </div>
-            </div>
-          ) : (
-            <>
+            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+              Student Details
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Student Full Name */}
               <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-200 mb-2"
-                >
-                  {t("username")}
+                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                  Student Full Name <span className="text-orange-400">*</span>
                 </label>
                 <input
                   type="text"
-                  {...register("username", { required: true })}
-                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                  placeholder="Choose a username"
+                  {...register("name", { required: "Student name is required" })}
+                  placeholder="e.g. Alex Johnson"
+                  className={`w-full px-3.5 py-2.5 bg-gray-900/60 border ${errors.name ? 'border-red-500' : 'border-gray-600'} rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm`}
+                />
+                {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>}
+              </div>
+
+              {/* Parent Name */}
+              <div>
+                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                  Parent / Guardian Name <span className="text-orange-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  {...register("parentName", { required: "Parent name is required" })}
+                  placeholder="e.g. Robert Johnson"
+                  className={`w-full px-3.5 py-2.5 bg-gray-900/60 border ${errors.parentName ? 'border-red-500' : 'border-gray-600'} rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm`}
+                />
+                {errors.parentName && <p className="text-red-400 text-xs mt-1">{errors.parentName.message}</p>}
+              </div>
+
+              {/* Gender */}
+              <div>
+                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                  Gender <span className="text-orange-400">*</span>
+                </label>
+                <select
+                  value={selectedGender}
+                  onChange={(e) => setSelectedGender(e.target.value)}
+                  className={`w-full px-3.5 py-2.5 bg-gray-900/60 border ${errors.gender ? 'border-red-500' : 'border-gray-600'} rounded-lg text-white focus:outline-none focus:border-orange-500 text-sm`}
+                  required
+                >
+                  <option value="" className="bg-gray-800 text-gray-400">-- Select Gender --</option>
+                  <option value="Male" className="bg-gray-800 text-white">Male</option>
+                  <option value="Female" className="bg-gray-800 text-white">Female</option>
+                  <option value="Other" className="bg-gray-800 text-white">Other</option>
+                </select>
+                {errors.gender && <p className="text-red-400 text-xs mt-1">{errors.gender.message}</p>}
+              </div>
+
+              {/* Date of Birth */}
+              <div>
+                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                  Date of Birth <span className="text-orange-400">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={selectedDOB}
+                  onChange={handleDOBChange}
+                  className={`w-full px-3.5 py-2.5 bg-gray-900/60 border ${dobError ? 'border-red-500' : 'border-gray-600'} rounded-lg text-white focus:outline-none focus:border-orange-500 text-sm`}
                   required
                 />
+                {dobError && <p className="text-red-400 text-xs mt-1">{dobError}</p>}
               </div>
-              {errors.username && (
-                <p className="text-red-400 text-sm mt-1">
-                  {errors.username.message}
-                </p>
-              )}
 
+              {/* Username or Email */}
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-200 mb-2"
-                >
-                  {t("password")}
+                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                  Username or Email <span className="text-orange-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  {...register("username", { required: "Username or email is required" })}
+                  placeholder="alex.johnson or alex@email.com"
+                  className={`w-full px-3.5 py-2.5 bg-gray-900/60 border ${errors.username ? 'border-red-500' : 'border-gray-600'} rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm`}
+                />
+                {errors.username && <p className="text-red-400 text-xs mt-1">{errors.username.message}</p>}
+              </div>
+
+              {/* Mobile Phone (Mandatory with OTP verification) */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-medium text-gray-300">
+                    Mobile Phone <span className="text-orange-400">*</span>
+                  </label>
+                  {isPhoneVerified && (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Verified
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    type="tel"
+                    disabled={isPhoneVerified}
+                    value={phoneNumber}
+                    onChange={(e) => {
+                      setPhoneNumber(e.target.value);
+                      if (isPhoneVerified) setIsPhoneVerified(false);
+                    }}
+                    placeholder="e.g. 98765 43210"
+                    className={`flex-1 px-3.5 py-2.5 bg-gray-900/60 border ${
+                      isPhoneVerified
+                        ? "border-emerald-500/50 text-emerald-300"
+                        : "border-gray-600 text-white"
+                    } rounded-lg placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm`}
+                  />
+
+                  {!isPhoneVerified && (
+                    <button
+                      type="button"
+                      onClick={handleSendSignupOtp}
+                      disabled={isSendingOtp || otpCountdown > 0}
+                      className="px-4 py-2.5 bg-orange-600 hover:bg-orange-500 active:bg-orange-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center shrink-0 min-w-[90px]"
+                    >
+                      {isSendingOtp ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : otpCountdown > 0 ? (
+                        `${otpCountdown}s`
+                      ) : isOtpSent ? (
+                        "Resend"
+                      ) : (
+                        "Get OTP"
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                {/* OTP Input section */}
+                {isOtpSent && !isPhoneVerified && (
+                  <div className="mt-2.5 p-3 rounded-lg bg-gray-900/80 border border-gray-700 space-y-2">
+                    <p className="text-xs text-gray-400">
+                      Enter 6-digit OTP code sent to your phone:
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                        placeholder="Enter 6-digit OTP"
+                        className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white tracking-widest text-center text-sm font-mono placeholder-gray-500 focus:outline-none focus:border-orange-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleVerifySignupOtp}
+                        disabled={isVerifyingOtp || otpCode.length !== 6}
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center shrink-0 min-w-[95px]"
+                      >
+                        {isVerifyingOtp ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          "Verify OTP"
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div id="signup-recaptcha-container"></div>
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                  Password <span className="text-orange-400">*</span>
                 </label>
                 <input
                   type="password"
-                  {...register("password", {
-                    required: t("passwordRequired"),
-                    minLength: {
-                      value: 6,
-                      message: t("passwordMinLength"),
-                    },
-                    pattern: {
-                      value: /(?=.*[!@#$%^&*])/,
-                      message: t("passwordPattern"),
-                    },
-                  })}
-                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                  placeholder="Create a password"
-                  required
+                  {...register("password", { required: "Password is required" })}
+                  placeholder="At least 6 characters"
+                  className={`w-full px-3.5 py-2.5 bg-gray-900/60 border ${errors.password ? 'border-red-500' : 'border-gray-600'} rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm`}
                 />
-                {errors.password && (
-                  <p className="text-red-400 text-sm mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
+                {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>}
               </div>
 
+              {/* Confirm Password */}
               <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-200 mb-2"
-                >
-                  {t("confirmPassword")}
+                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                  Confirm Password <span className="text-orange-400">*</span>
                 </label>
                 <input
                   type="password"
-                  {...register("confirmPassword")}
-                  className={`w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200 ${
-                    errors.confirmPassword ? "border-red-500" : ""
-                  }`}
-                  placeholder="Confirm your password"
-                  required
+                  {...register("confirmPassword", { required: "Confirm password is required" })}
+                  placeholder="Re-enter password"
+                  className={`w-full px-3.5 py-2.5 bg-gray-900/60 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-600'} rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm`}
                 />
-                {errors.confirmPassword && (
-                  <p className="mt-2 text-sm text-red-400">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
-                <div className="md:text-sm text-xs text-gray-400 mt-2">{t("passWord")}</div>
+                {errors.confirmPassword && <p className="text-red-400 text-xs mt-1">{errors.confirmPassword.message}</p>}
               </div>
-            </>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="sm:col-span-1">
-              <label
-                htmlFor="gender"
-                className="block text-sm font-medium text-gray-200 mb-2"
-              >
-                {t("gender") || "Gender"}
-              </label>
-              <select
-                id="gender"
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                {...register("gender", { required: t("genderRequired") || "Gender is required" })}
-                required
-              >
-                <option value="">Select</option>
-                <option value="Mr">{t("genderOptions.mr") || "Mr"}</option>
-                <option value="Miss">{t("genderOptions.miss") || "Miss"}</option>
-                <option value="Mrs">{t("genderOptions.mrs") || "Mrs"}</option>
-              </select>
-              {errors.gender && (
-                <p className="text-red-400 text-sm mt-1">{errors.gender.message}</p>
-              )}
             </div>
+          </div>
 
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="mobile"
-                className="block text-sm font-medium text-gray-200 mb-2"
-              >
-                {t("mobile") || "Mobile Number"}
-              </label>
-              <input
-                type="tel"
-                id="mobile"
-                {...register("mobile", {
-                  required: true,
-                  minLength: {
-                    value: 10,
-                    message: t("mobileMinLength") || "Enter a valid 10-digit number",
-                  },
-                })}
-                placeholder="10-digit mobile number"
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                required
-              />
-              {errors.mobile && (
-                <p className="text-red-400 text-sm mt-1">
-                  {errors.mobile.message}
-                </p>
+          {/* ────────────────────────────────────────────────────── */}
+          {/* SECTION 2: Academic Placement (SECOND)                 */}
+          {/* ────────────────────────────────────────────────────── */}
+          <div className="pt-6 border-t border-gray-700">
+            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+              Academic Placement
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Class Selection */}
+              <div>
+                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                  Class / Grade <span className="text-orange-400">*</span>
+                </label>
+                <select
+                  value={selectedClassId}
+                  onChange={handleClassChange}
+                  className="w-full px-3.5 py-2.5 bg-gray-900/60 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500"
+                  required
+                >
+                  <option value="" className="bg-gray-800 text-gray-400">-- Select Class / Grade --</option>
+                  {classes.map((cls) => (
+                    <option key={cls.id} value={cls.id} className="bg-gray-800 text-white">
+                      {cls.name} {cls.standard_grade ? (["LKG", "UKG"].includes(String(cls.standard_grade).toUpperCase()) ? `(${cls.standard_grade})` : `(Grade ${cls.standard_grade})`) : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Section / Division */}
+              <div>
+                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                  Section / Division <span className="text-orange-400">*</span>
+                </label>
+                <select
+                  value={selectedDivisionId}
+                  onChange={(e) => {
+                    setSelectedDivisionId(e.target.value);
+                    setValue("divisionId", e.target.value);
+                  }}
+                  disabled={!selectedClassId || divisions.length === 0}
+                  className="w-full px-3.5 py-2.5 bg-gray-900/60 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  required
+                >
+                  <option value="" className="bg-gray-800 text-gray-400">
+                    {!selectedClassId 
+                      ? "-- Select Class First --" 
+                      : divisions.length === 0 
+                      ? "No sections available" 
+                      : "-- Select Section --"}
+                  </option>
+                  {divisions.map((div) => (
+                    <option key={div.id} value={div.id} className="bg-gray-800 text-white">
+                      Section {div.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Streams for Grades 11 and 12 */}
+              {["11", "12"].includes(selectedClassGrade) && (
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                    Academic Stream <span className="text-orange-400">*</span>
+                  </label>
+                  <select
+                    value={selectedStreamId}
+                    onChange={(e) => {
+                      setSelectedStreamId(e.target.value);
+                      setValue("streamId", e.target.value);
+                    }}
+                    className="w-full px-3.5 py-2.5 bg-gray-900/60 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500"
+                    required
+                  >
+                    <option value="" className="bg-gray-800 text-gray-400">-- Select Stream --</option>
+                    {streams.map((str) => (
+                      <option key={str.id} value={str.id} className="bg-gray-800 text-white">
+                        {str.stream_name} {str.description ? `- ${str.description}` : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Courses for College */}
+              {selectedClassGrade === "college" && (
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                    Degree Course <span className="text-orange-400">*</span>
+                  </label>
+                  <select
+                    value={selectedCourseId}
+                    onChange={(e) => {
+                      setSelectedCourseId(e.target.value);
+                      setValue("courseId", e.target.value);
+                    }}
+                    className="w-full px-3.5 py-2.5 bg-gray-900/60 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500"
+                    required
+                  >
+                    <option value="" className="bg-gray-800 text-gray-400">-- Select Degree Course --</option>
+                    {courses.map((crs) => (
+                      <option key={crs.id} value={crs.id} className="bg-gray-800 text-white">
+                        {crs.course_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               )}
             </div>
           </div>
 
-          {/* Institution Type Selection */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Institution Type
-            </label>
-            <select
-              value={institutionType}
-              onChange={(e) => {
-                setInstitutionType(e.target.value);
-                setSelectedInstitution(null);
-                setInstitutions([]);
-                setFilteredInstitutions([]);
-                setInstitutionSearch("");
-                setValue('instituteId', '');
-              }}
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-              required
+          {/* ────────────────────────────────────────────────────── */}
+          {/* SUBMIT BUTTON                                          */}
+          {/* ────────────────────────────────────────────────────── */}
+          <div className="pt-4">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              <option value="">Select Type</option>
-              <option value="School">School</option>
-              <option value="College">College</option>
-            </select>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Creating Account...</span>
+                </>
+              ) : (
+                <span>Complete Registration</span>
+              )}
+            </button>
           </div>
 
-          {/* Institution Selection with Search */}
-          {institutionType && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Search & Select Your Institution
-              </label>
-              <input
-                type="text"
-                placeholder="Search institution..."
-                value={institutionSearch}
-                onChange={(e) => setInstitutionSearch(e.target.value)}
-                className="w-full px-4 py-3 mb-2 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-              />
-              <select
-                {...register("instituteId", { required: "Institution is required" })}
-                onChange={(e) => handleInstitutionChange(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200 max-h-48 overflow-y-auto"
-                required
-                size="5"
-              >
-                <option value="">Select Institution</option>
-                {filteredInstitutions.map((institution) => (
-                  <option key={institution.id} value={institution.id}>
-                    {institution.name}
-                  </option>
-                ))}
-              </select>
-              {errors.instituteId && (
-                <p className="text-red-400 text-sm mt-1">{errors.instituteId.message}</p>
-              )}
-            </div>
-          )}
+          {/* Footer Link */}
+          <div className="text-center pt-2">
+            <span className="text-xs text-gray-400">Already registered with your school? </span>
+            <Link
+              href={`/login?invite=${encodeURIComponent(inviteToken || "")}`}
+              className="text-xs font-semibold text-orange-400 hover:text-orange-300 hover:underline transition-colors"
+            >
+              Sign In
+            </Link>
+          </div>
 
-          {/* Class Selection */}
-          {selectedInstitution && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Class
-              </label>
-              <select
-                {...register("classId", { 
-                  required: "Class is required",
-                  onChange: (e) => handleClassChange(e.target.value)
-                })}
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                disabled={!classOptions || classOptions.length === 0}
-                required
-              >
-                <option value="">Select Class</option>
-                {classOptions.map((classItem) => (
-                  <option key={classItem.id} value={classItem.id}>
-                    {classItem.name} {classItem.standard_grade && `(Grade ${classItem.standard_grade})`}
-                  </option>
-                ))}
-              </select>
-              {errors.classId && (
-                <p className="text-red-400 text-sm mt-1">{errors.classId.message}</p>
-              )}
-            </div>
-          )}
+          {/* Subtle Powered by Xortcut */}
+          <div className="flex items-center justify-center gap-1.5 text-[11px] text-gray-500 pt-5 mt-5 border-t border-gray-700/60">
+            <span>Powered by</span>
+            <Image
+              src="/assets/images/xortcut-icon-small.png"
+              width={14}
+              height={14}
+              alt="Xortcut"
+              className="h-3 w-auto opacity-70"
+            />
+            <span className="font-medium text-gray-400">Xortcut</span>
+          </div>
 
-          {/* Division Selection */}
-          {selectedClassGrade && divisionOptions.length > 0 && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Division
-              </label>
-              <select
-                {...register("divisionId", { required: "Division is required" })}
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                required
-              >
-                <option value="">Select Division</option>
-                {divisionOptions.map((division) => (
-                  <option key={division.id} value={division.id}>
-                    {division.name}
-                  </option>
-                ))}
-              </select>
-              {errors.divisionId && (
-                <p className="text-red-400 text-sm mt-1">{errors.divisionId.message}</p>
-              )}
-            </div>
-          )}
-
-          {/* Stream Selection for Grades 11, 12 */}
-          {["11", "12"].includes(selectedClassGrade) && streamOptions.length > 0 && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Stream
-              </label>
-              <select
-                value={selectedStream}
-                onChange={(e) => setSelectedStream(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                required
-              >
-                <option value="">Select Stream</option>
-                {streamOptions.map((stream) => (
-                  <option key={stream.id} value={stream.id}>
-                    {stream.name}
-                    {stream.description && ` - ${stream.description}`}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Course Selection for College */}
-          {selectedClassGrade === "college" && courseOptions.length > 0 && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Course
-              </label>
-              <select
-                value={selectedCourse}
-                onChange={(e) => setSelectedCourse(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-200"
-                required
-              >
-                <option value="">Select Course</option>
-                {courseOptions.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.course_name}
-                    {course.duration_years && ` (${course.duration_years} years)`}
-                    {course.description && ` - ${course.description}`}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-
-          <button
-            type="submit"
-            className="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500/50"
-          >
-            {t("submit")}
-          </button>
         </form>
-        <div className="text-center mt-6">
-          <span className="text-gray-300">{t("alreadyRegistered")} </span>
-          <Link href="/login" className="text-orange-400 hover:text-orange-300 font-medium transition-colors duration-200">
-            {t("login")}
-          </Link>
-        </div>
-        </div>
+
       </div>
     </div>
   );
 }
 
-export default SignUp;
+export default function SignUpPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-900 text-gray-400 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        </div>
+      }
+    >
+      <SignUpContent />
+    </Suspense>
+  );
+}

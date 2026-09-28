@@ -109,7 +109,7 @@
 //         password: 'Wowfyuser#123',
 //       });
 
-//       const cPanelDirectory = '/home/devusr/public_html/testusr/images';
+//       const cPanelDirectory = '/home/devusr/public_html/xortcut/images';
 //       await sftp.put(localFilePath, `${cPanelDirectory}/${fileName}`);
 
 //       // Close SFTP connection

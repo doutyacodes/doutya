@@ -1,43 +1,214 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Star, Download, Share2, Badge, Calendar, XCircle, ArrowLeft, RotateCcw } from 'lucide-react';
+import { Download, ArrowLeft, RotateCcw, XCircle } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import GlobalApi from '@/app/_services/GlobalApi';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import LoadingOverlay from '@/app/_components/LoadingOverlay';
-import SelectCommunity from '@/app/(innerPages)/dashboard/_components/SelectCommunityModal/SelectCommunity';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
+// Reusable Certificate Template Component (rendered at 1200x900)
+const CertificateTemplateContent = ({ certificateData, formatDate, renderStars, assetDataUris }) => {
+  const schoolLogo = certificateData?.institution?.logo;
+  const schoolName = certificateData?.institution?.name;
+  const logoSrc = schoolLogo || assetDataUris?.logo || "/assets/images/doutya4.png";
+  const signatureSrc = assetDataUris?.signature || "/assets/images/md-signature.png";
+  const sealSrc = assetDataUris?.seal || "/assets/images/small-logo.png";
+
+  return (
+    <Card 
+      className="w-[1200px] h-[900px] overflow-hidden border-0 relative shadow-none"
+      style={{ 
+        background: "linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)",
+        width: '1200px',
+        height: '900px',
+        boxSizing: 'border-box'
+      }}
+    >
+      {/* Outer Double Border */}
+      <div 
+        className="absolute inset-0 pointer-events-none" 
+        style={{ 
+          border: '16px double rgba(26, 54, 93, 0.25)', 
+          margin: '16px' 
+        }}
+      />
+
+      {/* Decorative Corner Accents */}
+      <div className="absolute left-7 top-7 w-24 h-24 border-t-4 border-l-4 border-blue-900 opacity-50"></div>
+      <div className="absolute right-7 top-7 w-24 h-24 border-t-4 border-r-4 border-blue-900 opacity-50"></div>
+      <div className="absolute left-7 bottom-7 w-24 h-24 border-b-4 border-l-4 border-blue-900 opacity-50"></div>
+      <div className="absolute right-7 bottom-7 w-24 h-24 border-b-4 border-r-4 border-blue-900 opacity-50"></div>
+
+      {/* Certificate Content Flex */}
+      <div className="relative z-10 flex flex-col justify-between h-full p-14 pt-12 pb-14 box-border">
+        {/* Header with Logo & Meta */}
+        <div className="w-full flex justify-between items-center">
+          <div className="flex items-center">
+            <img 
+              src={logoSrc} 
+              alt="XORTCUT" 
+              className="h-20 object-contain"
+              crossOrigin="anonymous"
+            />
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-gray-700 font-semibold tracking-wide">
+              Certificate ID: <span className="font-mono text-blue-950 font-bold">{certificateData?.certificateID || 'XTC-CERT'}</span>
+            </p>
+            <p className="text-sm text-gray-600 mt-0.5">
+              Issue Date: {formatDate(certificateData?.issueDate)}
+            </p>
+          </div>
+        </div>
+
+        {/* Main Body Content */}
+        <div className="space-y-4 text-center w-full max-w-3xl mx-auto my-auto">
+          <h1 className="text-4xl font-extrabold text-blue-950 tracking-wider uppercase font-serif">
+            Certificate of Achievement
+          </h1>
+          
+          <div className="h-0.5 w-56 mx-auto bg-gradient-to-r from-transparent via-blue-900 to-transparent my-1"></div>
+          
+          <p className="text-base text-gray-600 italic">This is proudly presented to</p>
+          
+          <h2 className="text-3xl font-bold text-blue-900 uppercase tracking-widest py-1 border-b-2 border-blue-200 inline-block px-8">
+            {certificateData?.userName || certificateData?.username || "Student"}
+          </h2>
+          
+          <p className="text-base text-gray-600">for successfully completing the requirements of</p>
+          
+          <div className="space-y-1">
+            <h3 className="text-2xl font-bold text-blue-950 tracking-tight">
+              {certificateData?.certificationName}
+            </h3>
+            {certificateData?.level && (
+              <p className="text-lg font-semibold text-blue-700">
+                {certificateData.level.charAt(0).toUpperCase() + certificateData.level.slice(1)} Level
+              </p>
+            )}
+          </div>
+          
+          <p className="text-base text-gray-600">
+            demonstrating domain knowledge and proficiency in
+          </p>
+
+          <p className="text-xl font-bold text-blue-900">
+            {certificateData?.careerField || "Professional Development"}
+          </p>
+                    
+          {/* Stars and Score */}
+          <div className="flex flex-col items-center space-y-1 pt-1">
+            {renderStars(certificateData?.ratingStars)}
+            <p className="text-lg font-semibold text-blue-950">
+              Score: {certificateData?.scorePercentage}%
+            </p>
+          </div>
+        </div>
+
+        {/* Footer with Signature & Verification */}
+        <div className="w-full flex justify-between items-end pt-4">
+          <div className="text-left space-y-1">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-gray-500 font-medium">Powered by</span>
+              <img src="/assets/images/small-logo.png" alt="XORTCUT" className="h-4 object-contain opacity-70" />
+              <span className="text-xs font-semibold text-gray-600">XORTCUT</span>
+            </div>
+            <p className="text-[11px] text-gray-400">Institutional Certification Program</p>
+          </div>
+          
+          <div className="text-center">
+            <div className="flex justify-center mb-1">
+              <img 
+                src={signatureSrc} 
+                alt="Digital Signature" 
+                className="h-14 object-contain"
+                crossOrigin="anonymous"
+              />
+            </div>
+            <div className="h-px w-44 bg-gray-400 mb-1 mx-auto"></div>
+            <p className="text-sm font-semibold text-gray-800">Managing Director</p>
+            <p className="text-xs text-gray-500">Authorized Signature</p>
+          </div>
+          
+          <div className="text-right">
+            <div className="flex justify-end items-center">
+              <img 
+                src={sealSrc} 
+                alt="Seal" 
+                className="h-16 w-16 object-contain"
+                crossOrigin="anonymous"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+};
 
 const CertificateDisplay = ({ params }) => {
   const { certificationId } = params;
   const [certificateData, setCertificateData] = useState({});
-  const [showCommunityModal, setShowCommunityModal] = useState(false);
   const certificateRef = useRef(null);
+  const previewContainerRef = useRef(null);
   const [certificateImage, setCertificateImage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCertificateLoading, setCertificateIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [previewScale, setPreviewScale] = useState(0.85);
+  const [previewHeight, setPreviewHeight] = useState(600);
   const router = useRouter();
-  const [selectedCommunities, setSelectedCommunities] = useState({
-    global: false,
-    countrySpecific: false
+  const [assetDataUris, setAssetDataUris] = useState({
+    logo: "/assets/images/doutya4.png",
+    signature: "/assets/images/md-signature.png",
+    seal: "/assets/images/small-logo.png",
+    loaded: false
   });
 
+  // Preload local image assets to base64 Data URIs to eliminate CORS/taint canvas issues
+  useEffect(() => {
+    const loadAssets = async () => {
+      const toDataUri = async (url) => {
+        try {
+          const res = await fetch(url);
+          const blob = await res.blob();
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = () => resolve(url);
+            reader.readAsDataURL(blob);
+          });
+        } catch {
+          return url;
+        }
+      };
+
+      try {
+        const [logo, signature, seal] = await Promise.all([
+          toDataUri("/assets/images/doutya4.png"),
+          toDataUri("/assets/images/md-signature.png"),
+          toDataUri("/assets/images/small-logo.png")
+        ]);
+        setAssetDataUris({ logo, signature, seal, loaded: true });
+      } catch (err) {
+        console.error("Error preloading asset data URIs:", err);
+        setAssetDataUris((prev) => ({ ...prev, loaded: true }));
+      }
+    };
+
+    loadAssets();
+  }, []);
 
   const getCertification = async () => {
-    console.log("Starting getCertification");
     setIsLoading(true);
-    setCertificateIsLoading(true)
     try {
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
       if (!token) {
-        console.log("No token found");
         setIsLoading(false);
-        setCertificateIsLoading(false)
         return;
       }
       const response = await GlobalApi.GetCertificationResult(token, certificationId);
@@ -47,7 +218,7 @@ const CertificateDisplay = ({ params }) => {
         toast.error("No certificate data available at the moment.");
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast.error("Failed to fetch certificate data. Please try again later.");
     } finally {
       setIsLoading(false);
@@ -56,119 +227,77 @@ const CertificateDisplay = ({ params }) => {
 
   useEffect(() => {
     getCertification();
-  }, []);
+  }, [certificationId]);
 
+  // Dynamically calculate responsive scale based on current container width
   useEffect(() => {
-    const generateCertificate = async () => {
-      setCertificateIsLoading(true)
-      if (!certificateData || Object.keys(certificateData).length === 0 || !certificateRef.current) {
-        console.log("No certificate data yet, skipping generation");
-        return;
-      }
-      
-      if (!certificateRef.current) {
-        console.log("Certificate ref not attached yet, skipping generation");
-        return;
-      }
-          
-      // First make sure all images are loaded
-      await preloadImages();
-      
-      // Wait for DOM to be fully rendered
-      await new Promise(resolve => setTimeout(resolve, 1500));
-            
-      try {
-        const options = {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          logging: true, // Enable logging
-          onclone: (clonedDoc) => {
-            const clonedElement = clonedDoc.querySelector('#certificate-template');
-            if (clonedElement) {
-              // Make the cloned element visible for rendering
-              clonedElement.style.opacity = '1';
-              clonedElement.style.visibility = 'visible';
-              clonedElement.style.position = 'absolute';
-              clonedElement.style.left = '0';
-              clonedElement.style.top = '0';
-
-            } else {
-              console.error("Could not find cloned element");
-            }
-          }
-        };
-        const canvas = await html2canvas(certificateRef.current, options);
-        const image = canvas.toDataURL('image/png', 1.0);
-        console.log("image Ready",)
-        setCertificateImage(image);
-        console.log("image", image)
-        setCertificateIsLoading(false);
-      } catch (error) {
-        console.error("Error generating certificate:", error);
-        setCertificateIsLoading(false);
+    const updateDimensions = () => {
+      if (previewContainerRef.current) {
+        const width = previewContainerRef.current.offsetWidth;
+        if (width > 0) {
+          setPreviewScale(width / 1200);
+          setPreviewHeight(Math.round(width * 0.75));
+        }
       }
     };
-    
-    if (!isLoading && certificateData && Object.keys(certificateData).length > 0) {
-      // Allow DOM to fully render before generating
-      const timer = setTimeout(generateCertificate, 3000);
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    const timer = setTimeout(updateDimensions, 100);
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+      clearTimeout(timer);
+    };
+  }, [isLoading, certificateData]);
+
+  // Robust html2canvas generator using fixed 1200x900 viewport and taint-safe data URIs
+  const generateCertificateImage = useCallback(async () => {
+    if (!certificateRef.current) return null;
+    try {
+      const options = {
+        scale: 2,
+        useCORS: true,
+        allowTaint: false, // Must be false so canvas.toDataURL() never throws SecurityError
+        backgroundColor: '#ffffff',
+        width: 1200,
+        height: 900,
+        windowWidth: 1200,
+        windowHeight: 900,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0,
+        logging: false
+      };
+      const canvas = await html2canvas(certificateRef.current, options);
+      const image = canvas.toDataURL('image/png', 1.0);
+      setCertificateImage(image);
+      return image;
+    } catch (error) {
+      console.error("Error generating certificate image:", error);
+      return null;
+    }
+  }, []);
+
+  // Generate certificate image in the background once data & assets are ready
+  useEffect(() => {
+    if (!isLoading && certificateData && Object.keys(certificateData).length > 0 && assetDataUris.loaded) {
+      const timer = setTimeout(() => {
+        generateCertificateImage();
+      }, 500);
       return () => clearTimeout(timer);
     }
-  }, [certificateData, isLoading]);
-
-  const handleCheckboxChange = (community, isChecked) => {
-    if (community === 'global') {
-      setSelectedCommunities((prevState) => ({ ...prevState, global: isChecked }));
-    } else if (community === 'countrySpecific') {
-      setSelectedCommunities((prevState) => ({ ...prevState, countrySpecific: isChecked }));
-    }
-  };
-
-  // Add this function at the beginning of your component
-  const preloadImages = async () => {
-    console.log("Preloading images...");
-    const imagePaths = [
-      "/assets/images/doutya4.png",
-      "/assets/images/small-logo.png"
-    ];
-    
-    const promises = imagePaths.map(src => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-          console.log(`Image loaded: ${src}`);
-          resolve();
-        };
-        img.onerror = () => {
-          console.error(`Failed to load image: ${src}`);
-          reject();
-        };
-        img.src = src;
-      });
-    });
-    
-    try {
-      await Promise.all(promises);
-      console.log("All images preloaded successfully");
-      return true;
-    } catch (err) {
-      console.error("Error preloading images:", err);
-      return false;
-    }
-  };
+  }, [certificateData, isLoading, assetDataUris.loaded, generateCertificateImage]);
 
   const renderStars = (count) => {
     return (
-      <div className="flex gap-2 star-container">
+      <div className="flex gap-1.5 star-container">
         {[1, 2, 3].map((starNumber) => (
           <span
             key={starNumber}
-            className={`text-4xl ${
+            className={`text-3xl ${
               starNumber <= count
                 ? 'text-yellow-400'
-                : 'text-gray-200'
+                : 'text-gray-300'
             }`}
             style={{
               display: 'inline-block',
@@ -183,107 +312,41 @@ const CertificateDisplay = ({ params }) => {
     );
   };
 
-  const handlePost = () => {
-    setShowCommunityModal(true);
-  };
+  const downloadCertificate = async () => {
+    let img = certificateImage;
+    if (!img) {
+      setIsDownloading(true);
+      const toastId = toast.loading("Generating certificate image...");
+      img = await generateCertificateImage();
+      setIsDownloading(false);
+      toast.dismiss(toastId);
+    }
 
-  const downloadCertificate = () => {
-    // Use the already generated image
-    if (certificateImage) {
+    if (img) {
       const link = document.createElement('a');
-      link.download = `XORTCUT_${certificateData.certificationName}_Certificate_${(certificateData.userName || certificateData.username).replace(/\s+/g, '_')}.png`;
-      link.href = certificateImage;
+      const studentName = (certificateData.userName || certificateData.username || 'Student').replace(/\s+/g, '_');
+      link.download = `XORTCUT_${certificateData.certificationName || 'Certification'}_Certificate_${studentName}.png`;
+      link.href = img;
       link.click();
+      toast.success("Certificate downloaded!");
+    } else {
+      toast.error("Could not generate certificate image. Please try again.");
     }
   };
 
-  // Format the date in a more formal way
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const uploadImageToCPanel = async (file) => {
-    if (!file) return null;
-  
-    const formData = new FormData();
-    formData.append('coverImage', file);
-    formData.append('type', 'photo');
-  
-    try {
-      const response = await axios.post(
-        'https://wowfy.in/doutya-api/upload.php',
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
-  
-      if (response.data.success) {
-        return response.data.filePath;
-      }
-      throw new Error(response.data.error);
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload certificate');
-      return null;
-    }
-  };
-  
-  const handleShareComplete = async () => {
-    // Close the community modal first
-    setShowCommunityModal(false);
-
-    console.log("log 1");
-    
-  
-    // Check if an image is available
-    if (!certificateImage) {
-      console.log("log 2");
-
-      toast.error('Certificate image not available');
-      return;
-    }
-  
-    // Convert base64 to file
-    const base64Response = await fetch(certificateImage);
-    const blob = await base64Response.blob();
-    const file = new File([blob], 'certificate.png', { type: 'image/png' });
-  
-    // Upload image to CPanel
-    const uploadedFileName = await uploadImageToCPanel(file);
-    
-    if (!uploadedFileName) {
-      console.log("log 3");
-
-      toast.error('Failed to upload certificate');
-      return;
-    }
-  
-    try {
-      console.log("log 4");
-
-      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      
-      const response = await GlobalApi.ShareCertificateToCommunity(
-        token, 
-        certificationId, 
-        {
-          global: selectedCommunities.global,
-          countrySpecific: selectedCommunities.countrySpecific
-        },
-        uploadedFileName
-      );
-  
-      if (response.status === 201) {
-        toast.success('Certificate shared successfully!');
-      } else {
-        toast.error('Failed to share certificate');
-      }
-    } catch (error) {
-      console.error('Share error:', error);
-      toast.error('An error occurred while sharing the certificate');
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">
+        <LoadingOverlay loadText={"Loading Certificate..."} />
+      </div>
+    );
+  }
 
   // Show ineligible message if score is below passing
   if (certificateData.ratingStars === 0 || Number(certificateData.scorePercentage) < 70) {
@@ -292,29 +355,29 @@ const CertificateDisplay = ({ params }) => {
     const canRetry = remainingAttempts > 0;
 
     return (
-      <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-2xl mx-auto">
-          <Card className="p-8 text-center space-y-6">
+      <div className="min-h-screen bg-gray-900 p-4 sm:p-8 flex items-center justify-center">
+        <div className="max-w-xl w-full mx-auto">
+          <Card className="p-6 sm:p-8 text-center space-y-6 bg-gray-800 border-gray-700 text-gray-100 shadow-xl rounded-xl">
             <div className="flex justify-center">
-              <XCircle className="w-20 h-20 text-red-500" />
+              <XCircle className="w-16 h-16 text-rose-500" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Not Eligible for Certificate</h2>
-            <p className="text-gray-600">
-              Unfortunately, you haven't achieved the minimum required score to receive this certification.
+            <h2 className="text-2xl font-bold text-white">Not Eligible for Certificate</h2>
+            <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+              Unfortunately, you haven't achieved the minimum required score (70%) to receive this certification.
             </p>
-            <div className="space-y-2 text-sm text-gray-500">
-              <p>To earn this certificate, you need to:</p>
-              <ul className="list-disc list-inside">
+            <div className="space-y-2 text-sm text-gray-400 bg-gray-900/60 p-4 rounded-lg text-left">
+              <p className="font-semibold text-gray-300">To earn this certificate, you need to:</p>
+              <ul className="list-disc list-inside space-y-1">
                 <li>Complete all required questions</li>
-                <li>Achieve a passing score of 70%</li>
-                <li>Meet all certification requirements</li>
+                <li>Achieve a passing score of at least 70%</li>
+                <li>Have remaining certification attempts available</li>
               </ul>
             </div>
             <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
               {canRetry && (
                 <Button 
                   onClick={() => router.push(`/certification-quiz/${certificationId}?level=${certificateData.level || 'beginner'}`)}
-                  className="bg-orange-500 hover:bg-orange-600 text-white gap-2 font-medium"
+                  className="bg-amber-600 hover:bg-amber-500 text-white gap-2 font-medium"
                 >
                   <RotateCcw className="w-4 h-4" />
                   Retry ({remainingAttempts} {remainingAttempts === 1 ? 'attempt' : 'attempts'} left)
@@ -322,6 +385,7 @@ const CertificateDisplay = ({ params }) => {
               )}
               <Button 
                 variant="secondary"
+                className="bg-gray-700 hover:bg-gray-600 text-white"
                 onClick={() => router.replace("/dashboard/careers/career-guide")}
               >
                 Return to Career Guide
@@ -335,235 +399,87 @@ const CertificateDisplay = ({ params }) => {
 
   // Regular certificate display
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-8 flex items-center justify-center">
+    <div className="min-h-screen bg-gray-900 text-gray-200 p-3 sm:p-6 md:p-8 flex items-center justify-center">
+      <Toaster position="top-center" />
 
-      {/* Modal for community selection */}
-      {showCommunityModal && (
-        <SelectCommunity
-          handleComplete={() => handleShareComplete()}
-          handleCheckboxChange={handleCheckboxChange}
-          selectedCommunities={selectedCommunities}
-        />
-      )}
       
-      <div className="max-w-5xl w-full mx-auto space-y-6">
+      <div className="max-w-4xl w-full mx-auto space-y-6">
 
+        {/* Off-screen Full-Resolution 1200x900 Template for html2canvas Export */}
         <div 
           id="certificate-template"
-          ref={certificateRef} 
-          className="absolute left-0 top-0 opacity-0"
+          ref={certificateRef}
           style={{ 
+            position: 'fixed',
+            left: '-9999px',
+            top: '0',
             width: '1200px', 
             height: '900px', 
-            zIndex: -1,
-            position: 'absolute',
-            visibility: 'hidden',
+            zIndex: -999,
+            pointerEvents: 'none',
             overflow: 'hidden',
           }}
         >
-        <Card 
-          className="w-full h-full overflow-hidden border-0"
-          style={{ 
-            background: "linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)"
-          }}
-        >
-          {/* Border Design */}
-          <div className="absolute inset-0 border-16 border-double border-opacity-20 pointer-events-none" style={{ borderColor: '#1a365d', padding: "24px" }}></div>
-
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-0">
-            <div className="absolute inset-0" style={{
-              backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%231a365d' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E\")",
-              backgroundSize: "120px 120px"
-            }} />
-          </div>
-
-          {/* Decorative Corner Designs */}
-          <div className="absolute left-0 top-0 w-24 h-24 border-t-4 border-l-4 border-blue-800 opacity-40"></div>
-          <div className="absolute right-0 top-0 w-24 h-24 border-t-4 border-r-4 border-blue-800 opacity-40"></div>
-          <div className="absolute left-0 bottom-0 w-24 h-24 border-b-4 border-l-4 border-blue-800 opacity-40"></div>
-          <div className="absolute right-0 bottom-0 w-24 h-24 border-b-4 border-r-4 border-blue-800 opacity-40"></div>
-
-          {/* Certificate Content */}
-          <div className="relative z-10 flex flex-col h-full p-10 pt-8 pb-12"
-              style={{ justifyContent: "space-between" }}>
-            {/* Header with Logo */}
-            <div className="w-full flex justify-between items-center">
-              <div className="flex items-center">
-                {/* Company Logo */}
-                <img 
-                    src="/assets/images/doutya4.png" 
-                    alt="XORTCUT" 
-                    className="h-24 object-contain"
-                  />
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-600 font-semibold">Certificate ID: {certificateData.certificateID}</p>
-                <p className="text-sm text-gray-600">Issue Date: {formatDate(certificateData.issuedAt)}</p>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="space-y-6 text-center w-full max-w-3xl mx-auto" 
-              style={{ marginTop: "-140px" }}>
-              <h1 className="text-4xl font-bold text-blue-900 tracking-tight">
-                CERTIFICATE OF ACHIEVEMENT
-              </h1>
-              
-              <div className="h-px w-48 mx-auto bg-gradient-to-r from-transparent via-blue-900 to-transparent"></div>
-              
-              <p className="text-lg text-gray-700">This certifies that</p>
-              
-              <h2 className="text-3xl font-bold text-blue-800 uppercase tracking-wider py-2">
-                {certificateData.userName || certificateData.username}
-              </h2>
-              
-              <p className="text-lg text-gray-700">has successfully completed the</p>
-              
-              {/* Certification name with level directly incorporated */}
-              <div className="space-y-1">
-                <h3 className="text-2xl font-bold text-blue-900 tracking-tight">
-                  {certificateData.certificationName}
-                </h3>
-                <p className="text-xl font-semibold text-blue-700">
-                  {certificateData?.level?.charAt(0).toUpperCase() + certificateData?.level?.slice(1)} Level
-                </p>
-              </div>
-              
-              <p className="text-lg text-gray-700 mt-2">
-                and is recognized for demonstrating proficiency in the field of
-              </p>
-
-              <p className="text-xl font-semibold text-blue-800">
-                {certificateData?.careerField || "Professional Development"}
-              </p>
-                        
-              {/* Stars and Score */}
-              <div className="flex flex-col items-center space-y-2 py-3">
-                {renderStars(certificateData?.ratingStars)}
-                <p className="text-xl font-semibold text-blue-900">
-                  With a score of {certificateData?.scorePercentage}%
-                </p>
-              </div>
-            </div>
-
-            {/* Footer with Signature */}
-            <div className="w-full flex justify-between items-end">
-              <div className="text-left">
-                <p className="text-sm text-gray-600">
-                  Verify this certificate at:<br />
-                  <span className="font-medium">xortcut.com/verify</span>
-                </p>
-              </div>
-              
-              <div className="text-center me-16">
-                <div className="flex justify-center mb-2">
-                  <img 
-                    src="/assets/images/md-signature.png" 
-                    alt="Digital Signature" 
-                    className="h-16 object-contain"
-                  />
-                </div>
-                <div className="h-px w-40 bg-gray-400 mb-2"></div>
-                <p className="text-sm font-medium text-gray-700">Managing Director</p>
-              </div>
-              
-              <div className="text-right">
-                <div className="flex justify-end mb-1">
-                  {/* Company seal/emblem */}
-                  <div className="w-16 h-16 flex items-center">
-                    <img 
-                      src="/assets/images/small-logo.png" 
-                      alt="XORTCUT" 
-                      className="h-16 object-contain"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-
+          <CertificateTemplateContent 
+            certificateData={certificateData} 
+            formatDate={formatDate} 
+            renderStars={renderStars}
+            assetDataUris={assetDataUris}
+          />
         </div>
 
-        {/* Certificate Display as Image */}
-        <div className="relative w-full mb-8">
-          {isCertificateLoading ? (
-            // <div className="flex items-center justify-center bg-gray-100 rounded-lg" style={{ aspectRatio: "4/3" }}>
-            //   <div className="text-gray-600 animate-pulse">Generating Certificate...</div>
-            // </div>
-            <div className="bg-white shadow-lg rounded-lg overflow-hidden" style={{ aspectRatio: "4/3" }}>
-              {/* Certificate skeleton */}
-              <div className="w-full h-full bg-gray-100 p-6 animate-pulse">
-                {/* Header skeleton */}
-                <div className="flex justify-between mb-8">
-                  <div className="h-16 w-32 bg-gray-200 rounded"></div>
-                  <div className="space-y-2">
-                    <div className="h-4 w-40 bg-gray-200 rounded"></div>
-                    <div className="h-4 w-32 bg-gray-200 rounded"></div>
-                  </div>
-                </div>
-                
-                {/* Title skeleton */}
-                <div className="flex flex-col items-center space-y-6 mb-8">
-                  <div className="h-8 w-72 bg-gray-300 rounded mx-auto"></div>
-                  <div className="h-1 w-32 bg-gray-200 rounded"></div>
-                  
-                  {/* Name and content skeleton */}
-                  <div className="space-y-4 w-full max-w-md mx-auto">
-                    <div className="h-4 w-40 bg-gray-200 rounded mx-auto"></div>
-                    <div className="h-8 w-64 bg-gray-300 rounded mx-auto"></div>
-                    <div className="h-4 w-48 bg-gray-200 rounded mx-auto"></div>
-                    <div className="h-6 w-80 bg-gray-200 rounded mx-auto"></div>
-                    <div className="h-4 w-56 bg-gray-200 rounded mx-auto"></div>
-                    <div className="h-6 w-40 bg-gray-300 rounded mx-auto"></div>
-                  </div>
-                  
-                  {/* Stars skeleton */}
-                  <div className="flex justify-center space-x-2 mt-4">
-                    <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
-                    <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
-                    <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
-                  </div>
-                  <div className="h-4 w-32 bg-gray-200 rounded"></div>
-                </div>
-                
-                {/* Footer skeleton */}
-                <div className="flex justify-between items-end mt-12">
-                  <div className="h-12 w-24 bg-gray-200 rounded"></div>
-                  <div className="flex flex-col items-center">
-                    <div className="h-12 w-32 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-1 w-24 bg-gray-300 rounded"></div>
-                  </div>
-                  <div className="h-12 w-12 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="shadow-2xl rounded-lg overflow-hidden">
+        {/* Responsive Live Screen Certificate Display */}
+        <div className="relative w-full">
+          <div 
+            ref={previewContainerRef}
+            className="w-full shadow-2xl rounded-xl overflow-hidden bg-white border border-gray-700/60 relative"
+            style={{ 
+              height: previewHeight > 0 ? `${previewHeight}px` : 'auto',
+              minHeight: '220px'
+            }}
+          >
+            {certificateImage ? (
               <img 
                 src={certificateImage} 
                 alt="Your Certificate" 
-                className="w-full h-auto object-contain"
+                className="w-full h-full object-contain"
               />
-            </div>
-          )}
+            ) : (
+              <div 
+                style={{
+                  width: '1200px',
+                  height: '900px',
+                  transform: `scale(${previewScale})`,
+                  transformOrigin: 'top left',
+                  pointerEvents: 'none'
+                }}
+              >
+                <CertificateTemplateContent 
+                  certificateData={certificateData} 
+                  formatDate={formatDate} 
+                  renderStars={renderStars}
+                  assetDataUris={assetDataUris}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 pt-1">
           <Button 
             onClick={downloadCertificate}
-            className="gap-2 bg-blue-700 hover:bg-blue-800"
-            disabled={isCertificateLoading}
+            className="gap-2 bg-blue-600 hover:bg-blue-500 text-white font-medium px-5 h-10 shadow-sm"
+            disabled={isDownloading}
           >
             <Download className="w-4 h-4" />
-            Download Certificate
+            {isDownloading ? "Generating..." : "Download Certificate"}
           </Button>
+
           
           <Button 
             variant="outline"
-            className="gap-2"
+            className="gap-2 bg-transparent hover:bg-gray-800 text-gray-300 border-gray-700 h-10"
             onClick={() => router.replace("/dashboard/careers/career-guide")}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -571,10 +487,10 @@ const CertificateDisplay = ({ params }) => {
           </Button>
         </div>
 
-        {/* Additional Information */}
-        <div className="text-center text-sm text-gray-600 mt-4 max-w-2xl mx-auto">
-          <p className="mb-2">This certificate is issued by XORTCUT to verify the successful completion and proficiency in the {certificateData.certificationName} program.</p>
-          <p>To verify the authenticity of this certificate, please visit xortcut.com/verify and enter the certificate ID shown on the document.</p>
+        {/* Verification Info */}
+        <div className="text-center text-xs sm:text-sm text-gray-400 mt-4 max-w-xl mx-auto space-y-1">
+          <p>This certificate is issued by XORTCUT to verify the successful completion of the {certificateData.certificationName} program.</p>
+          <p className="text-gray-500">To verify authenticity, visit <span className="text-blue-400 font-mono">xortcut.com/verify</span> with your certificate ID.</p>
         </div>
       </div>
     </div>

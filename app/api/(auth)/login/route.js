@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 export async function POST(req) {
   try {
     const data = await req.json();
-    const { username, password } = data;
+    const { username, password, action, mobile } = data;
 
     // Find the user in USER_DETAILS
     const [existingUser] = await db
@@ -27,14 +27,42 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Invalid username or password.' }, { status: 401 });
     }
 
+    // Step 1: Pre-check credentials and return registered mobile for OTP verification
+    if (action === 'pre-check') {
+      return NextResponse.json({
+        success: true,
+        mobile: existingUser.mobile || null,
+        message: 'Credentials valid. Proceed to OTP verification.'
+      }, { status: 200 });
+    }
+
+    // If mobile was provided for a user without mobile, link it
+    if (!existingUser.mobile && mobile) {
+      try {
+        await db.update(USER_DETAILS).set({ mobile }).where(eq(USER_DETAILS.id, existingUser.id)).execute();
+      } catch (e) {}
+    }
+
+    // Ensure institutional users have plan access
+    let userPlan = existingUser.plan_type;
+    const isInstitutional = existingUser.user_role === 'Institutional' || !!existingUser.institution_id;
+    if (!userPlan && isInstitutional) {
+      userPlan = 'pro';
+      try {
+        await db.update(USER_DETAILS).set({ plan_type: 'pro' }).where(eq(USER_DETAILS.id, existingUser.id)).execute();
+      } catch (e) {}
+    }
+
     // Generate JWT token
     const token = jwt.sign(
       { 
         userId: existingUser.id, 
         birth_date: existingUser.birth_date, 
         isVerified: existingUser.is_verified,
-        plan: existingUser.plan_type,
-        scope_type: existingUser.scope_type,  
+        plan: userPlan || (isInstitutional ? 'pro' : null),
+        scope_type: existingUser.scope_type,
+        user_role: existingUser.user_role,
+        institutionId: existingUser.institution_id,
       },
       process.env.JWT_SECRET_KEY
     );
@@ -124,7 +152,7 @@ export async function POST(req) {
     const response = NextResponse.json({
       token,
       birth_date: existingUser.birth_date,
-      planType: existingUser.plan_type,
+      planType: userPlan,
       class: existingUser.grade,
       navigateUrl
     }, { status: 200 });

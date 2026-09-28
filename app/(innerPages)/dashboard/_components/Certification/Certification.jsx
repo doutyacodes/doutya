@@ -164,8 +164,8 @@ function Certification({ selectedCareer }) {
       />
 
       {/* Certifications Content */}
-      <div className="bg-gray-800 p-3 p-4 md:p-6 shadow-lg min-h-[300px]">
-        <h2 className="text-lg text-xl md:text-2xl font-bold text-white mb-4 mb-6">Certifications</h2>
+      <div className="bg-gray-800 p-4 md:p-6 shadow-lg min-h-[300px] rounded-xl pb-24 sm:pb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-white mb-4 sm:mb-6">Certifications</h2>
         
         {certificationData.length === 0 ? (
           <div className="flex items-center justify-center h-[200px]">
@@ -186,7 +186,7 @@ function Certification({ selectedCareer }) {
             return (
               <div 
                 key={item.milestoneId} 
-                className="mb-3 flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-gray-900/40 border border-gray-700/60 rounded-lg p-4 transition-colors hover:border-gray-600/70"
+                className="mb-3 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center justify-between bg-gray-900/40 border border-gray-700/60 rounded-lg p-3.5 sm:p-4 transition-colors hover:border-gray-600/70"
               >
                 <div className="flex-1 sm:pr-4">
                   <span className="text-sm md:text-base font-normal text-gray-200 leading-snug break-words">
@@ -194,13 +194,13 @@ function Certification({ selectedCareer }) {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 flex-shrink-0">
+                <div className="w-full sm:w-auto flex items-center gap-2.5 sm:gap-3 flex-shrink-0 pt-1 sm:pt-0">
                   {isPassed ? (
                     <>
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                       <button
                         onClick={() => router.push(`/certification-results/${item.certificationId}`)}
-                        className="w-full sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-white rounded-md flex items-center justify-center flex-shrink-0 bg-emerald-600 hover:bg-emerald-500 transition-colors shadow-sm whitespace-nowrap"
+                        className="flex-1 sm:flex-initial sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-white rounded-md flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 transition-colors shadow-sm whitespace-nowrap"
                       >
                         View Certificate
                       </button>
@@ -210,7 +210,7 @@ function Certification({ selectedCareer }) {
                       <XCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
                       <button
                         onClick={() => handleStartCertification(item.certificationId)}
-                        className="w-full sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-white rounded-md flex items-center justify-center gap-1.5 flex-shrink-0 bg-amber-600 hover:bg-amber-500 transition-colors shadow-sm whitespace-nowrap"
+                        className="flex-1 sm:flex-initial sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-white rounded-md flex items-center justify-center gap-1.5 bg-amber-600 hover:bg-amber-500 transition-colors shadow-sm whitespace-nowrap"
                       >
                         <RotateCcw className="w-3.5 h-3.5 flex-shrink-0" />
                         <span>Retry ({remainingAttempts} {remainingAttempts === 1 ? 'attempt' : 'attempts'} left)</span>
@@ -221,7 +221,7 @@ function Certification({ selectedCareer }) {
                       <XCircle className="w-4 h-4 text-rose-400/60 flex-shrink-0" />
                       <button
                         disabled
-                        className="w-full sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-gray-400 rounded-md flex items-center justify-center flex-shrink-0 bg-gray-800 border border-gray-700/60 cursor-not-allowed whitespace-nowrap"
+                        className="flex-1 sm:flex-initial sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-gray-400 rounded-md flex items-center justify-center bg-gray-800 border border-gray-700/60 cursor-not-allowed whitespace-nowrap"
                       >
                         Attempts Exhausted
                       </button>
@@ -231,7 +231,7 @@ function Certification({ selectedCareer }) {
                       <div className="w-4 h-4 flex-shrink-0 hidden sm:block" />
                       <button
                         onClick={() => handleStartCertification(item.certificationId)}
-                        className="w-full sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-white rounded-md flex items-center justify-center flex-shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-sm whitespace-nowrap"
+                        className="flex-1 sm:flex-initial sm:w-[210px] h-9 px-3.5 font-medium text-xs sm:text-sm text-white rounded-md flex items-center justify-center bg-blue-600 hover:bg-blue-500 transition-colors shadow-sm whitespace-nowrap"
                       >
                         Get Certified
                       </button>

@@ -833,6 +833,12 @@ const GetCareerNews = (token, communityId) => {
 
 
 
+const GetInstitutionInfoByInvite = (inviteToken) => {
+  return axios.get('/api/institution/info', {
+    params: { invite: inviteToken }
+  });
+};
+
 export default {
   CreateNewUser,
   LoginUser,
@@ -922,6 +928,7 @@ export default {
   GetInstitutionsByType,
   GetStreamsByInstitution,
   GetCoursesByInstitution,
+  GetInstitutionInfoByInvite,
 
   // Companies
 

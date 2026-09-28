@@ -6,13 +6,13 @@ const dummyData = [
   {
     id: 1,
     name: 'Apple Inc.',
-    image: 'https://wowfy.in/testusr/images/apple-logo.jpg',
+    image: 'https://wowfy.in/xortcut/images/apple-logo.jpg',
     description: 'Apple Inc. designs, manufactures, and markets mobile communication and media devices.',
   },
   {
     id: 2,
     name: 'Microsoft Corporation',
-    image: 'https://wowfy.in/testusr/images/microsoft.png',
+    image: 'https://wowfy.in/xortcut/images/microsoft.png',
     description: 'Microsoft develops, licenses, and supports a range of software products, services, and devices.',
   },
   // Add more dummy data if needed

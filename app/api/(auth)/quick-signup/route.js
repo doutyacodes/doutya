@@ -30,9 +30,12 @@ export async function POST(req) {
 
     // Determine scope_type based on class
     let scope_type = "career"; // default for 11th, 12th, college and completed-education
-    if (["5", "6", "7"].includes(data?.class)) {
+    const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+    const clusterGrades = ["8", "9", "10"];
+    const g = data?.class ? String(data.class).trim() : "";
+    if (sectorGrades.includes(g)) {
       scope_type = "sector";
-    } else if (["8", "9", "10"].includes(data?.class)) {
+    } else if (clusterGrades.includes(g)) {
       scope_type = "cluster";
     }
 

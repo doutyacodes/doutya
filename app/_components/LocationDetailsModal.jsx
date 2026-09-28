@@ -27,7 +27,7 @@ const LocationDetailsModal = ({
     if (!grade) return 'school';
     
     const gradeStr = grade.toString().toLowerCase();
-    if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].includes(gradeStr)) {
+    if (['lkg', 'ukg', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].includes(gradeStr)) {
       return 'school';
     } else if (gradeStr === 'college' || gradeStr === 'graduation') {
       return 'graduation';

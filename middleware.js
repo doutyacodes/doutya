@@ -115,12 +115,15 @@ export async function middleware(req) {
     /* =====================================================
        6️⃣ PLAN CHECK (EXISTING)
     ===================================================== */
-    if (!payload.plan) {
+    // Institutional users are covered by their institution license and do not purchase individual plans
+    const isInstitutional = payload.user_role === 'Institutional' || !!payload.institutionId;
+
+    if (!payload.plan && !isInstitutional) {
       if (
         !pathname.startsWith('/activation') &&
         !pathname.startsWith('/verification-pending')
       ) {
-        console.log("⚠️ No plan → redirecting");
+        console.log("⚠️ No plan → redirecting to /activation");
         return NextResponse.redirect(
           new URL('/activation', req.url)
         );

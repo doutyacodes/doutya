@@ -62,7 +62,7 @@ const CompanyPage = () => {
       <div className="max-w-4xl mx-auto bg-[#1f1f1b] rounded-lg shadow-md p-6 mb-8">
         <div className="flex flex-col md:flex-row items-center md:items-start">
           <img
-            src={`https://wowfy.in/testusr/images/${companyDetails.image}`}
+            src={`https://wowfy.in/xortcut/images/${companyDetails.image}`}
             alt={companyDetails.name}
             className="w-48 h-48 object-cover rounded-md mb-6 md:mb-0 md:mr-6"
           />
@@ -109,7 +109,7 @@ const CompanyPage = () => {
                 >
                   {/* Image */}
                   <motion.img
-                    src={`https://wowfy.in/testusr/images/${challenge.image}`}
+                    src={`https://wowfy.in/xortcut/images/${challenge.image}`}
                     alt={challenge.title}
                     className="w-full h-40 object-cover"
                     whileHover={{ scale: 1.05 }}

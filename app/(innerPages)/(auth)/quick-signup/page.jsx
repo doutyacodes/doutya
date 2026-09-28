@@ -48,13 +48,13 @@ function QuickSignUp() {
     const selectedDate = new Date(e.target.value);
     const today = new Date();
     const minAllowedDate = new Date(
-      today.getFullYear() - 5,
+      today.getFullYear() - 3,
       today.getMonth(),
       today.getDate()
     );
 
     if (selectedDate > minAllowedDate) {
-      setDobError("You must be at least 5 years old");
+      setDobError("You must be at least 3 years old");
       setSelectedDOB("");
     } else {
       setDobError("");
@@ -165,15 +165,22 @@ function QuickSignUp() {
         toast.success("Quick signup successful!");
 
         // Route based on class selection
-        if (["5", "6", "7"].includes(selectedClass)) {
-          localStorage.setItem("dashboardUrl", "/dashboard_junior");
-          localStorage.setItem("navigateUrl", "/dashboard_junior");
-          router.push("/dashboard_junior");
-        } else {
-          localStorage.setItem("dashboardUrl", "/dashboard");
-          localStorage.setItem("navigateUrl", "/dashboard");
-          router.push("/dashboard");
-        }
+        const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+    const clusterGrades = ["8", "9", "10"];
+    const g = selectedClass ? String(selectedClass).trim() : "";
+    if (sectorGrades.includes(g)) {
+      localStorage.setItem("dashboardUrl", "/dashboard_kids");
+      localStorage.setItem("navigateUrl", "/dashboard_kids/sector-suggestion");
+      router.push("/dashboard_kids/sector-suggestion");
+    } else if (clusterGrades.includes(g)) {
+      localStorage.setItem("dashboardUrl", "/dashboard_junior");
+      localStorage.setItem("navigateUrl", "/dashboard_junior/cluster-suggestion");
+      router.push("/dashboard_junior/cluster-suggestion");
+    } else {
+      localStorage.setItem("dashboardUrl", "/dashboard");
+      localStorage.setItem("navigateUrl", "/dashboard/careers/career-suggestions");
+      router.push("/dashboard/careers/career-suggestions");
+    }
       } else {
         const errorMessage = response.data?.message || "Quick signup failed";
         toast.error(`Error: ${errorMessage}`);
@@ -274,6 +281,12 @@ function QuickSignUp() {
                 required
               >
                 <option value="">Select Class/Grade</option>
+                <option value="LKG">LKG</option>
+                <option value="UKG">UKG</option>
+                <option value="1">1st</option>
+                <option value="2">2nd</option>
+                <option value="3">3rd</option>
+                <option value="4">4th</option>
                 <option value="5">5th</option>
                 <option value="6">6th</option>
                 <option value="7">7th</option>

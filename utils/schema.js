@@ -23,6 +23,7 @@ import { INSTITUTION_COURSES, INSTITUTION_STREAMS } from "./schema/institutional
 export const USER_DETAILS = mysqlTable("user_details", {
   id: int("id").autoincrement().notNull().primaryKey(),
   name: varchar("name", { length: 150 }).notNull(),
+  parent_name: varchar("parent_name", { length: 150 }).default(null),
   gender: varchar("gender", { length: 150 }).default(null),
   mobile: varchar("mobile", { length: 100 }).default(null),
   birth_date: date("birth_date").default(null),
@@ -1204,6 +1205,11 @@ export const INSTITUTION = mysqlTable("institution", {
   password: varchar("password", { length: 255 }).notNull(), // Hashed password
   type: mysqlEnum("type", ["School", "College"]).notNull(),
   created_at: timestamp("created_at").defaultNow(),
+  logo: varchar("logo", { length: 500 }).default(null),
+  website: varchar("website", { length: 255 }).default(null),
+  board: varchar("board", { length: 100 }).default(null),
+  city: varchar("city", { length: 100 }).default(null),
+  state: varchar("state", { length: 100 }).default(null),
 });
 
 export const MODERATOR = mysqlTable("moderator", {

@@ -103,7 +103,9 @@ export default function Dashboard() {
         //   router.replace("/country");
         // }
         // 2️⃣ Then check grade-based suggestions
-        else if (["8", "9", "10"].includes(gradeData)) {
+        else if (["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"].includes(gradeData)) {
+          router.replace("/dashboard_kids/sector-suggestion");
+        } else if (["8", "9", "10"].includes(gradeData)) {
           router.replace("/dashboard_junior/cluster-suggestion");
         } else if (["11", "12", "college", "completed-education"].includes(gradeData)) {
           router.replace("/dashboard/careers/career-suggestions");

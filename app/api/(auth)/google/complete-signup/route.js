@@ -45,9 +45,12 @@ export async function POST(req) {
     // 3. Determine scope_type & education_level
     let scope_type = "career";
     if (institutionType === "School" && grade) {
-      if (["5", "6", "7"].includes(grade)) {
+      const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+      const clusterGrades = ["8", "9", "10"];
+      const g = grade ? String(grade).trim() : "";
+      if (sectorGrades.includes(g)) {
         scope_type = "sector";
-      } else if (["8", "9", "10"].includes(grade)) {
+      } else if (clusterGrades.includes(g)) {
         scope_type = "cluster";
       }
     }
@@ -138,8 +141,9 @@ export async function POST(req) {
       jwtSecret
     );
 
-    const isJunior = ["5", "6", "7"].includes(grade);
-    const dashboardUrl = isJunior ? "/dashboard_junior" : "/dashboard";
+    const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+    const isJunior = sectorGrades.includes(grade);
+    const dashboardUrl = isJunior ? "/dashboard_kids" : (["8", "9", "10"].includes(grade) ? "/dashboard_junior" : "/dashboard");
 
     const response = NextResponse.json(
       {

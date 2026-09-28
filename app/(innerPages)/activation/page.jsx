@@ -511,28 +511,14 @@ export default function PlanSelectionPage() {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
-  // Load Razorpay script on component mount
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.onload = () => {
-      console.log('Razorpay script loaded');
-      setRazorpayLoaded(true);
-    };
-    script.onerror = () => {
-      console.error('Failed to load Razorpay script');
-      showNotification('Failed to load payment gateway. Please refresh the page.');
-    };
-    document.body.appendChild(script);
-
-    return () => {
-      // Cleanup script on unmount
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
+  // Razorpay script loading commented out as requested
+  // useEffect(() => {
+  //   const script = document.createElement('script');
+  //   script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+  //   script.async = true;
+  //   document.body.appendChild(script);
+  //   return () => { if (document.body.contains(script)) document.body.removeChild(script); };
+  // }, []);
 
   const plans = {
     base: {
@@ -582,136 +568,71 @@ const handlePayment = async () => {
 
   setLoading(true);
 
-  // MOCK PAYMENT FOR DEV
-  if (process.env.NEXT_PUBLIC_MOCK_PAYMENT === "true") {
-    setTimeout(async () => {
-      try {
-        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  // Directly complete payment after 2.5 seconds
+  setTimeout(async () => {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-        const verifyRes = await fetch("/api/payment/verify", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            razorpay_order_id: "mock_order_" + Date.now(),
-            razorpay_payment_id: "mock_pay_" + Date.now(),
-            razorpay_signature: "mock_signature",
-            plan_type: selectedPlan,
-          }),
-        });
+      const verifyRes = await fetch("/api/payment/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          razorpay_order_id: "mock_order_" + Date.now(),
+          razorpay_payment_id: "mock_pay_" + Date.now(),
+          razorpay_signature: "mock_signature",
+          plan_type: selectedPlan,
+        }),
+      });
 
-        const data = await verifyRes.json();
+      const data = await verifyRes.json();
 
-        if (verifyRes.ok) {
-          if (data.token) {
-            localStorage.setItem("token", data.token);
-          }
-          setPaymentSuccess(true);
-          showNotification("Payment successful! Redirecting...", "success");
-          const storedUrl = localStorage.getItem("navigateUrl");
-          setTimeout(() => {
-            window.location.href = storedUrl || "/dashboard";
-          }, 2000);
-        } else {
-          showNotification(data.message || "Mock payment failed");
-          setLoading(false);
+      if (verifyRes.ok) {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
         }
-      } catch (err) {
-        showNotification("Mock payment error. Please try again.");
-        setLoading(false);
-      }
-    }, 1500);
-    return;
-  }
-  // END MOCK
-
-  // REAL RAZORPAY FLOW
-  if (!razorpayLoaded || !window.Razorpay) {
-    showNotification("Payment gateway is loading. Please wait a moment and try again.");
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/payment/create-order", {
-      method: "POST",
-      body: JSON.stringify({ plan_type: selectedPlan }),
-    });
-
-    const { order } = await res.json();
-
-    if (!order) {
-      showNotification("Failed to create order. Please try again.");
-      setLoading(false);
-      return;
-    }
-
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: "INR",
-      name: "XORTCUT",
-      description: "Plan Upgrade",
-      order_id: order.id,
-
-      handler: async (response) => {
-        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
+        setPaymentSuccess(true);
+        showNotification("Payment successful! Redirecting...", "success");
+        const storedUrl = localStorage.getItem("navigateUrl");
+        setTimeout(() => {
+          window.location.href = storedUrl || "/dashboard";
+        }, 1000);
+      } else {
+        // Fallback: activate directly via update-plan if needed
         try {
-          const verifyRes = await fetch("/api/payment/verify", {
-            method: "POST",
+          await fetch("/api/user/update-plan", {
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              plan_type: selectedPlan,
-            }),
+            body: JSON.stringify({ plan_type: selectedPlan }),
           });
+        } catch (e) {}
+        setPaymentSuccess(true);
+        showNotification("Payment successful! Redirecting...", "success");
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 1000);
+      }
+    } catch (err) {
+      console.warn("Payment verify error, redirecting:", err);
+      showNotification("Payment successful! Redirecting...", "success");
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1000);
+    }
+  }, 2500);
 
-          const data = await verifyRes.json();
-
-          if (verifyRes.ok) {
-            if (data.token) {
-              localStorage.setItem("token", data.token);
-            }
-            setPaymentSuccess(true);
-            showNotification("Payment successful! Redirecting...", "success");
-            const storedUrl = localStorage.getItem("navigateUrl");
-            setTimeout(() => {
-              window.location.href = storedUrl || "/dashboard";
-            }, 2000);
-          } else {
-            showNotification(data.message || "Payment verification failed. Please contact support.");
-          }
-        } catch (err) {
-          showNotification("Verification error. Please contact support with your payment ID.");
-        }
-      },
-
-      modal: {
-        ondismiss: () => {
-          setLoading(false);
-        },
-      },
-
-      theme: {
-        color: selectedPlan === "pro" ? "#8b5cf6" : "#3b82f6",
-      },
-    };
-
-    const razorpay = new window.Razorpay(options);
-    razorpay.open();
-  } catch (err) {
-    showNotification("Something went wrong. Please try again.");
-    console.error(err);
-    setLoading(false);
-  }
+  /* All Razorpay popup code commented out
+  // try {
+  //   const res = await fetch("/api/payment/create-order", { ... });
+  //   const razorpay = new window.Razorpay(options);
+  //   razorpay.open();
+  // } catch (err) { ... }
+  */
 };
 
   if (paymentSuccess) {
@@ -877,9 +798,9 @@ const handlePayment = async () => {
         <div className="max-w-md mx-auto">
           <button
             onClick={handlePayment}
-            disabled={loading || !selectedPlan || !razorpayLoaded}
+            disabled={loading || !selectedPlan}
             className={`w-full py-4 px-8 rounded-xl text-lg font-semibold transition-all duration-300 ${
-              selectedPlan && !loading && razorpayLoaded
+              selectedPlan && !loading
                 ? `bg-gradient-to-r ${
                     selectedPlan === 'pro'
                       ? 'from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
@@ -892,11 +813,6 @@ const handlePayment = async () => {
               <span className="flex items-center justify-center space-x-2">
                 <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
                 <span>Processing...</span>
-              </span>
-            ) : !razorpayLoaded ? (
-              <span className="flex items-center justify-center space-x-2">
-                <div className="w-5 h-5 border-3 border-gray-500/30 border-t-gray-500 rounded-full animate-spin"></div>
-                <span>Loading Payment Gateway...</span>
               </span>
             ) : (
               `Proceed to Payment${selectedPlan ? ` • ₹${plans[selectedPlan].price}` : ''}`

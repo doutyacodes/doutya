@@ -11,14 +11,24 @@ export const decryptText = (cipherText) => {
   return bytes.toString(CryptoJS.enc.Utf8);
 };
 
-
+// Generates compact, URL-safe ciphertext (safe from query string + / = corruption)
 export const encryptURLText = (text) => {
   const cipherText = CryptoJS.AES.encrypt(text, secretKey).toString();
-  return encodeURIComponent(cipherText); // URL encode
+  return cipherText.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
 
+// Decrypts both URL-safe base64 and standard/legacy base64 (even if '+' became ' ' via URL decoding)
 export const decryptURLText = (cipherText) => {
-  const decodedCipherText = decodeURIComponent(cipherText); // URL decode
-  const bytes = CryptoJS.AES.decrypt(decodedCipherText, secretKey);
+  if (!cipherText || typeof cipherText !== 'string') return '';
+  let cleaned = decodeURIComponent(cipherText.trim());
+  // Normalize query param spaces back to pluses
+  cleaned = cleaned.replace(/ /g, '+');
+  // Normalize URL-safe base64 (- and _) back to standard base64 (+ and /)
+  cleaned = cleaned.replace(/-/g, '+').replace(/_/g, '/');
+  // Pad with '=' if necessary
+  while (cleaned.length % 4 !== 0) {
+    cleaned += '=';
+  }
+  const bytes = CryptoJS.AES.decrypt(cleaned, secretKey);
   return bytes.toString(CryptoJS.enc.Utf8);
 };

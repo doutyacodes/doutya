@@ -16,7 +16,7 @@ export async function POST(request) {
   const localTempDir = os.tmpdir();
   const fileName = `${Date.now()}-${challenge_id}.png`;
   const localFilePath = path.join(localTempDir, fileName);
-  const cPanelDirectory = "/home/devusr/public_html/testusr/images";
+  const cPanelDirectory = "/home/devusr/public_html/xortcut/images";
 
   // Authenticate user
   // const authResult = await authenticate(request, true);

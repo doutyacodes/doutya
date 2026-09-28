@@ -82,7 +82,7 @@ export default function CompanySearch() {
               >
                 <div className="w-full aspect-square bg-gray-800 rounded-lg flex items-center justify-center overflow-hidden">
                   <img
-                    src={`https://wowfy.in/testusr/images/${company.image}`}
+                    src={`https://wowfy.in/xortcut/images/${company.image}`}
                     alt={company.title}
                     className="h-full w-full object-cover"
                   />

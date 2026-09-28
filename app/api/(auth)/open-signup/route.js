@@ -42,9 +42,12 @@ export async function POST(req) {
     let scope_type = "career"; // default for college / working professional
 
     if (data.institutionType === "School" && data.grade) {
-      if (["5", "6", "7"].includes(data.grade)) {
+      const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+      const clusterGrades = ["8", "9", "10"];
+      const g = data.grade ? String(data.grade).trim() : "";
+      if (sectorGrades.includes(g)) {
         scope_type = "sector";
-      } else if (["8", "9", "10"].includes(data.grade)) {
+      } else if (clusterGrades.includes(g)) {
         scope_type = "cluster";
       }
       // grades 11, 12 → "career" (default)

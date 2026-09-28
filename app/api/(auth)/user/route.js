@@ -42,9 +42,13 @@ export async function POST(req) {
     let scope_type = "career"; // default
     const classGrade = data?.classGrade; // This will come from the selected class's standard_grade
 
-    if (["5", "6", "7"].includes(classGrade)) {
+    const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+    const clusterGrades = ["8", "9", "10"];
+    const normalizedGrade = classGrade ? String(classGrade).trim() : "";
+
+    if (sectorGrades.includes(normalizedGrade)) {
       scope_type = "sector";
-    } else if (["8", "9", "10"].includes(classGrade)) {
+    } else if (clusterGrades.includes(normalizedGrade)) {
       scope_type = "cluster";
     }
     console.log("scope_type", scope_type);
@@ -79,8 +83,16 @@ export async function POST(req) {
     //   // */
     // });
 
+    if (!data?.instituteId) {
+      return NextResponse.json(
+        { message: "Registration is restricted to authorized school and institutional invitation links only." },
+        { status: 403 }
+      );
+    }
+
     const result = await db.insert(USER_DETAILS).values({
       name: data?.name,
+      parent_name: data?.parentName || null,
       gender: data?.gender,
       mobile: data?.mobile,
       birth_date: new Date(data?.dob),
@@ -97,7 +109,8 @@ export async function POST(req) {
       division_id: data?.divisionId,
       stream_id: data?.streamId || null, // For grades 11, 12
       course_id: data?.courseId || null, // For college
-      user_role : 'Institutional'
+      user_role : 'Institutional',
+      plan_type: 'pro'
     });
 
       if (!result) {
@@ -125,8 +138,10 @@ export async function POST(req) {
         userId: user.id,
         birth_date: user.birth_date,
         isVerified: user.is_verified,
-        plan: user.plan_type,
+        plan: user.plan_type || 'pro',
         scope_type: user.scope_type,
+        user_role: user.user_role || 'Institutional',
+        institutionId: user.institution_id
        },
       process.env.JWT_SECRET_KEY
     );

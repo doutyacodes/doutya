@@ -2,7 +2,7 @@ import { db } from '@/utils';
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm'; // Ensure these imports match your ORM version
 import { authenticate } from '@/lib/jwtMiddleware';
-import { USER_DETAILS, USER_KEYS } from '@/utils/schema';
+import { USER_DETAILS, USER_KEYS, INSTITUTION } from '@/utils/schema';
 import { decryptText, encryptText } from '@/utils/encryption';
 import { generateUserKey } from '@/lib/generateUserKey';
 
@@ -62,8 +62,34 @@ export async function GET(req) {
             }
         }
 
-        // Include the unique key in the response
-        return NextResponse.json({ ...user, userKey }, { status: 201 });
+        // Fetch institution details if user belongs to an institution
+        let institution = null;
+        if (user.institution_id) {
+          try {
+            const [inst] = await db
+              .select({
+                id: INSTITUTION.id,
+                name: INSTITUTION.name,
+                logo: INSTITUTION.logo,
+                type: INSTITUTION.type,
+                address: INSTITUTION.address,
+                website: INSTITUTION.website,
+                board: INSTITUTION.board,
+                city: INSTITUTION.city,
+                state: INSTITUTION.state,
+              })
+              .from(INSTITUTION)
+              .where(eq(INSTITUTION.id, user.institution_id));
+            if (inst) {
+              institution = inst;
+            }
+          } catch (instErr) {
+            console.error("Error fetching institution for user:", instErr);
+          }
+        }
+
+        // Include unique key and institution details in the response
+        return NextResponse.json({ ...user, userKey, institution }, { status: 200 });
     } catch (error) {
         console.error("Error fetching user data", error);
         return NextResponse.json({ message: 'Error fetching user data' }, { status: 500 });
