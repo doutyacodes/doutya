@@ -11,21 +11,21 @@ const Principle = () => {
       id: 1,
       title: "INSIST ON GREAT TALENT",
       description:
-        "Only with excellent people can Xortcut be successful in the long run. We'd rather grow slower than lower the bar for hiring and maintaining exceptional talent. Ideally we are looking for people who are as good if not better than us.",
+        "Only with excellent people can Xortlist be successful in the long run. We'd rather grow slower than lower the bar for hiring and maintaining exceptional talent. Ideally we are looking for people who are as good if not better than us.",
       icon: StarIcon,
     },
     {
       id: 2,
       title: "CULTIVATE BELONGING AND DIVERSITY",
       description:
-        "Our responsibility transcends hitting our goals and KPIs. We know that Xortcut—and the world—will be a better place when people from diverse backgrounds, races, genders, cultures, sexual orientations, ages, and experiences thrive. We work hard to ensure that everyone feels they belong at Xortcut and make the extra effort to bring them in.",
+        "Our responsibility transcends hitting our goals and KPIs. We know that Xortlist—and the world—will be a better place when people from diverse backgrounds, races, genders, cultures, sexual orientations, ages, and experiences thrive. We work hard to ensure that everyone feels they belong at Xortlist and make the extra effort to bring them in.",
       icon: UsersIcon,
     },
     {
       id: 3,
       title: "EMPOWER YOUR TEAM",
       description:
-        "We hire, grow, and nurture great people so they can do great things at Xortcut. We provide our teams with direction and context, then trust and empower them to make it happen. Part of empowering your team is understanding that we all make mistakes. We see mistakes as opportunities for learning and development.",
+        "We hire, grow, and nurture great people so they can do great things at Xortlist. We provide our teams with direction and context, then trust and empower them to make it happen. Part of empowering your team is understanding that we all make mistakes. We see mistakes as opportunities for learning and development.",
       icon: RocketLaunchIcon,
     },
     {
@@ -53,28 +53,28 @@ const Principle = () => {
       id: 7,
       title: "GO BIG",
       description:
-        "We set ambitious goals that feel uncomfortable and are hard to achieve. We are aware we may not fully achieve them, but we'd rather strive for great things than take the easy route. We're willing to take calculated risks to yield those big outcomes and experiment with new ideas so we can make Xortcut exceptional.",
+        "We set ambitious goals that feel uncomfortable and are hard to achieve. We are aware we may not fully achieve them, but we'd rather strive for great things than take the easy route. We're willing to take calculated risks to yield those big outcomes and experiment with new ideas so we can make Xortlist exceptional.",
       icon: LightBulbIcon,
     },
     {
       id: 8,
-      title: "WE ARE ALL TEAM XORTCUT",
+      title: "WE ARE ALL TEAM XORTLIST",
       description:
-        "We're all part of the same team—Team Xortcut. Xortcut's long-term success will be determined by collaboration between teams. We won't get there by narrowly focusing on our own team goals. Instead, we operate as one team to help us win.",
+        "We're all part of the same team—Team Xortlist. Xortlist's long-term success will be determined by collaboration between teams. We won't get there by narrowly focusing on our own team goals. Instead, we operate as one team to help us win.",
       icon: HeartIcon,
     },
     {
       id: 9,
       title: "MAKE TOUGH CALLS",
       description:
-        "As leaders, we're often required to make uncomfortable decisions that may make us or others around us unhappy. Letting inertia guide us or following the path of least resistance may be easier in the short term, but will not get us to where we need to be. Instead, we act swiftly and decisively, making the best choice for Xortcut.",
+        "As leaders, we're often required to make uncomfortable decisions that may make us or others around us unhappy. Letting inertia guide us or following the path of least resistance may be easier in the short term, but will not get us to where we need to be. Instead, we act swiftly and decisively, making the best choice for Xortlist.",
       icon: ExclamationTriangleIcon,
     },
     {
       id: 10,
       title: "NO ROYALTY",
       description:
-        "Leadership is about responsibility, not superiority. We all play an important role in Xortcut's success. We act humbly and modestly, serving our team members, and building relationships as humans regardless of our titles.",
+        "Leadership is about responsibility, not superiority. We all play an important role in Xortlist's success. We act humbly and modestly, serving our team members, and building relationships as humans regardless of our titles.",
       icon: ShieldCheckIcon,
     },
     {
@@ -203,7 +203,7 @@ const Principle = () => {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="text-lg lg:text-xl text-white/70 mb-8 lg:mb-12 max-w-3xl mx-auto leading-relaxed font-light"
             >
-              The core values and beliefs that guide our leadership philosophy at Xortcut. 
+              The core values and beliefs that guide our leadership philosophy at Xortlist. 
               These principles shape how we build, lead, and grow together as we revolutionize career guidance through AI.
             </motion.p>
             
@@ -248,10 +248,10 @@ const Principle = () => {
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-500/10 via-transparent to-pink-500/10 opacity-50" />
               <div className="relative">
                 <h2 className="text-3xl lg:text-4xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
-                  What Does It Mean to Lead at Xortcut?
+                  What Does It Mean to Lead at Xortlist?
                 </h2>
                 <p className="text-lg lg:text-xl text-white/70 leading-relaxed font-light">
-                  We're on a mission to transform how students discover and pursue their career paths through AI-powered guidance. Leadership at Xortcut means empowering the next generation while building a culture of excellence, innovation, and belonging.
+                  We're on a mission to transform how students discover and pursue their career paths through AI-powered guidance. Leadership at Xortlist means empowering the next generation while building a culture of excellence, innovation, and belonging.
                 </p>
               </div>
             </div>

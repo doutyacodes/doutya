@@ -38,7 +38,7 @@ const Header = ({ dark = false }) => {
   const companyData = [
     {
       title: "About",
-      description: "Learn what binds us together at Xortcut",
+      description: "Learn what binds us together at Xortlist",
       href: "/about",
       icon: <FaInfoCircle className="w-4 h-4 text-purple-400" />,
     },
@@ -50,7 +50,7 @@ const Header = ({ dark = false }) => {
     },
     {
       title: "Leadership Principles",
-      description: "What it means to lead at Xortcut",
+      description: "What it means to lead at Xortlist",
       href: "/leadership-principles",
       icon: <FaUserTie className="w-4 h-4 text-purple-400" />,
     },
@@ -228,7 +228,7 @@ const Header = ({ dark = false }) => {
                 }
                 width={240}
                 height={80}
-                alt="Xortcut Logo"
+                alt="Xortlist Logo"
                 className="h-16 sm:h-20 w-auto"
               />
             </Link>

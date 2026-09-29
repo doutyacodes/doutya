@@ -468,7 +468,7 @@ const LeftSideBar = () => {
           </ul>
         </div>
 
-        {/* Powered by XORTCUT Pinned Footer */}
+        {/* Powered by XORTLIST Pinned Footer */}
         <div className="shrink-0 p-3 border-t border-gray-800/90 bg-gray-950/70 backdrop-blur-sm">
           {isOpen ? (
             <div className="flex items-center justify-center gap-2 py-0.5">
@@ -476,25 +476,25 @@ const LeftSideBar = () => {
                 Powered by
               </span>
               <img
-                src="/assets/images/xortcut-full-small.png"
+                src="/assets/images/xortlist-full-small.png"
                 onError={(e) => {
                   e.currentTarget.src = "/assets/images/small-logo.png";
                 }}
-                alt="XORTCUT"
+                alt="XORTLIST"
                 className="h-4 w-auto max-w-[90px] object-contain brightness-110"
               />
             </div>
           ) : (
             <div
               className="flex flex-col items-center justify-center gap-1 py-0.5 group cursor-pointer"
-              title="Powered by XORTCUT"
+              title="Powered by XORTLIST"
             >
               <span className="text-[8px] font-medium text-gray-400 tracking-tighter uppercase leading-none">
                 by
               </span>
               <img
                 src="/assets/images/small-logo.png"
-                alt="XORTCUT"
+                alt="XORTLIST"
                 className="h-4 w-4 object-contain group-hover:scale-110 transition-transform"
               />
             </div>

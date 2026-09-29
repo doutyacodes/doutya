@@ -11,6 +11,9 @@ import GlobalApi from "@/app/_services/GlobalApi";
 import { requestPhoneOtp, verifyPhoneOtp } from "@/lib/phoneAuth";
 import { encryptText } from "@/utils/encryption";
 
+// Feature flag to control Phone OTP verification on signup
+const ENABLE_SIGNUP_OTP = false; // Set to true to re-enable OTP on signup
+
 function SignUpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -281,7 +284,7 @@ function SignUpContent() {
       return;
     }
 
-    if (!isPhoneVerified) {
+    if (ENABLE_SIGNUP_OTP && !isPhoneVerified) {
       toast.error("Please verify your mobile phone number with OTP before completing registration.");
       return;
     }
@@ -564,13 +567,13 @@ function SignUpContent() {
                 {errors.username && <p className="text-red-400 text-xs mt-1">{errors.username.message}</p>}
               </div>
 
-              {/* Mobile Phone (Mandatory with OTP verification) */}
+              {/* Mobile Phone */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-xs font-medium text-gray-300">
-                    Mobile Phone <span className="text-orange-400">*</span>
+                    Mobile Phone {ENABLE_SIGNUP_OTP && <span className="text-orange-400">*</span>}
                   </label>
-                  {isPhoneVerified && (
+                  {ENABLE_SIGNUP_OTP && isPhoneVerified && (
                     <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Verified
@@ -578,45 +581,58 @@ function SignUpContent() {
                   )}
                 </div>
 
-                <div className="flex gap-2">
+                {ENABLE_SIGNUP_OTP ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="tel"
+                      disabled={isPhoneVerified}
+                      value={phoneNumber}
+                      onChange={(e) => {
+                        setPhoneNumber(e.target.value);
+                        if (isPhoneVerified) setIsPhoneVerified(false);
+                      }}
+                      placeholder="e.g. 98765 43210"
+                      className={`flex-1 px-3.5 py-2.5 bg-gray-900/60 border ${
+                        isPhoneVerified
+                          ? "border-emerald-500/50 text-emerald-300"
+                          : "border-gray-600 text-white"
+                      } rounded-lg placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm`}
+                    />
+
+                    {!isPhoneVerified && (
+                      <button
+                        type="button"
+                        onClick={handleSendSignupOtp}
+                        disabled={isSendingOtp || otpCountdown > 0}
+                        className="px-4 py-2.5 bg-orange-600 hover:bg-orange-500 active:bg-orange-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center shrink-0 min-w-[90px]"
+                      >
+                        {isSendingOtp ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : otpCountdown > 0 ? (
+                          `${otpCountdown}s`
+                        ) : isOtpSent ? (
+                          "Resend"
+                        ) : (
+                          "Get OTP"
+                        )}
+                      </button>
+                    )}
+                  </div>
+                ) : (
                   <input
                     type="tel"
-                    disabled={isPhoneVerified}
                     value={phoneNumber}
                     onChange={(e) => {
                       setPhoneNumber(e.target.value);
-                      if (isPhoneVerified) setIsPhoneVerified(false);
+                      setValue("mobile", e.target.value);
                     }}
                     placeholder="e.g. 98765 43210"
-                    className={`flex-1 px-3.5 py-2.5 bg-gray-900/60 border ${
-                      isPhoneVerified
-                        ? "border-emerald-500/50 text-emerald-300"
-                        : "border-gray-600 text-white"
-                    } rounded-lg placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm`}
+                    className="w-full px-3.5 py-2.5 bg-gray-900/60 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm transition-all"
                   />
+                )}
 
-                  {!isPhoneVerified && (
-                    <button
-                      type="button"
-                      onClick={handleSendSignupOtp}
-                      disabled={isSendingOtp || otpCountdown > 0}
-                      className="px-4 py-2.5 bg-orange-600 hover:bg-orange-500 active:bg-orange-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center shrink-0 min-w-[90px]"
-                    >
-                      {isSendingOtp ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : otpCountdown > 0 ? (
-                        `${otpCountdown}s`
-                      ) : isOtpSent ? (
-                        "Resend"
-                      ) : (
-                        "Get OTP"
-                      )}
-                    </button>
-                  )}
-                </div>
-
-                {/* OTP Input section */}
-                {isOtpSent && !isPhoneVerified && (
+                {/* OTP Input section (Enabled when ENABLE_SIGNUP_OTP = true) */}
+                {ENABLE_SIGNUP_OTP && isOtpSent && !isPhoneVerified && (
                   <div className="mt-2.5 p-3 rounded-lg bg-gray-900/80 border border-gray-700 space-y-2">
                     <p className="text-xs text-gray-400">
                       Enter 6-digit OTP code sent to your phone:
@@ -821,17 +837,17 @@ function SignUpContent() {
             </Link>
           </div>
 
-          {/* Subtle Powered by Xortcut */}
+          {/* Subtle Powered by Xortlist */}
           <div className="flex items-center justify-center gap-1.5 text-[11px] text-gray-500 pt-5 mt-5 border-t border-gray-700/60">
             <span>Powered by</span>
             <Image
-              src="/assets/images/xortcut-icon-small.png"
+              src="/assets/images/xortlist-icon-small.png"
               width={14}
               height={14}
-              alt="Xortcut"
+              alt="Xortlist"
               className="h-3 w-auto opacity-70"
             />
-            <span className="font-medium text-gray-400">Xortcut</span>
+            <span className="font-medium text-gray-400">Xortlist</span>
           </div>
 
         </form>

@@ -165,7 +165,7 @@ const AboutPage = () => {
                 <div className="bg-gradient-to-r from-purple-900/20 via-pink-900/10 to-purple-900/20 backdrop-blur-xl rounded-xl border border-white/10 p-6">
                   <h3 className="text-xl font-bold text-white mb-4">Our Solution</h3>
                   <p className="text-white/70 leading-relaxed text-base lg:text-lg">
-                    <span className="text-white font-semibold">We decided to fix this.</span> Xortcut is India's first AI-powered Career Guidance Cell that works.
+                    <span className="text-white font-semibold">We decided to fix this.</span> Xortlist is India's first AI-powered Career Guidance Cell that works.
                   </p>
                 </div>
               </div>
@@ -203,7 +203,7 @@ const AboutPage = () => {
     );
   };
 
-  const WhatXortcutDoesSection = () => {
+  const WhatXortlistDoesSection = () => {
     const features = [
       {
         icon: AcademicCapIcon,
@@ -232,7 +232,7 @@ const AboutPage = () => {
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="w-1.5 h-8 bg-gradient-to-b from-purple-400 to-pink-400 rounded-full" />
               <h2 className="text-2xl lg:text-3xl font-bold text-white">
-                Xortcut: More Than a Test
+                Xortlist: More Than a Test
               </h2>
             </div>
             <p className="text-white/70 max-w-3xl mx-auto leading-relaxed text-base lg:text-lg">
@@ -378,7 +378,7 @@ const AboutPage = () => {
               <div className="space-y-6">
                 <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-xl p-6">
                   <h4 className="text-lg font-semibold text-white mb-3">
-                    Xortcut is not another counselling service.
+                    Xortlist is not another counselling service.
                   </h4>
                   <p className="text-white/70 text-base leading-relaxed">
                     It is the <span className="text-white font-semibold">missing infrastructure of Indian education.</span>
@@ -459,7 +459,7 @@ const AboutPage = () => {
 
             <motion.div variants={fadeInUp} className="bg-gradient-to-r from-purple-900/20 via-pink-900/10 to-purple-900/20 backdrop-blur-xl rounded-2xl border border-white/10 p-6 lg:p-8 mb-8">
               <h3 className="text-xl lg:text-2xl font-bold text-white mb-4">
-                That Was the Birth of Xortcut
+                That Was the Birth of Xortlist
               </h3>
               <p className="text-white/70 leading-relaxed text-base lg:text-lg mb-4">
                 What started as an experiment grew into a full-fledged Career Guidance Cell: AI-powered tests to identify the right path, continuous mentorship plans, and direct industry connect through challenges, internships, and opportunities.
@@ -538,7 +538,7 @@ const AboutPage = () => {
       
       <HeroSection />
       <TheProblemSection />
-      <WhatXortcutDoesSection />
+      <WhatXortlistDoesSection />
       <ProvenAISection />
       <MissingInfrastructureSection />
       <OurStorySection />

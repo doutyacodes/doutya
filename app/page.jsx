@@ -10,25 +10,14 @@ import Header from "./_components/Header";
 
 const Page = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [checking, setChecking] = useState(true);  const { scrollY } = useScroll();
+  const { scrollY } = useScroll();
   const backgroundY = useTransform(scrollY, [0, 500], [0, 150]);
   const textY = useTransform(scrollY, [0, 500], [0, 200]);
   const router = useRouter();
 
   useEffect(() => {
     setIsVisible(true);
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      const url = localStorage.getItem("navigateUrl");
-      if (token && url) {
-        router.replace(url);
-      } else {
-        setChecking(false);
-      }
-    }
   }, []);
-
-  if (checking) return null;
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
@@ -817,7 +806,7 @@ const Page = () => {
               {
                 type: "Student",
                 quote:
-                  "Xortcut helped me discover my passion for UX design. The career roadmap was exactly what I needed!",
+                  "Xortlist helped me discover my passion for UX design. The career roadmap was exactly what I needed!",
                 name: "Priya S.",
                 role: "Class 12 Student",
               },
@@ -831,7 +820,7 @@ const Page = () => {
               {
                 type: "Principal",
                 quote:
-                  "Our students are more focused and parents are happier. Xortcut transformed our career guidance approach.",
+                  "Our students are more focused and parents are happier. Xortlist transformed our career guidance approach.",
                 name: "Dr. Meera Sharma",
                 role: "Principal, Delhi Public School",
               },
@@ -886,7 +875,7 @@ const Page = () => {
               {
                 question: "Is it only for Class 12?",
                 answer:
-                  "No! Xortcut works for students from Class 6 onwards, as well as graduates and young professionals looking to pivot their careers.",
+                  "No! Xortlist works for students from Class 6 onwards, as well as graduates and young professionals looking to pivot their careers.",
               },
               {
                 question: "Can parents access the report?",
@@ -899,9 +888,9 @@ const Page = () => {
                   "Career paths can evolve! Our monthly handholding service helps you adapt and pivot as your interests and market conditions change.",
               },
               {
-                question: "How is Xortcut different from a psychometric test?",
+                question: "How is Xortlist different from a psychometric test?",
                 answer:
-                  "Unlike static psychometric tests, Xortcut provides dynamic, AI-powered guidance with ongoing support, learning strategies, and real-world career insights.",
+                  "Unlike static psychometric tests, Xortlist provides dynamic, AI-powered guidance with ongoing support, learning strategies, and real-world career insights.",
               },
             ].map((faq, index) => (
               <motion.div

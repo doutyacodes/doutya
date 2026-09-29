@@ -93,7 +93,7 @@ const Footer = () => {
                   src="/assets/images/logo-full.png" 
                   width={150} 
                   height={50} 
-                  alt="Xortcut Logo" 
+                  alt="Xortlist Logo" 
                   className="h-10 sm:h-12 w-auto mb-4"
                 />
                 <p className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-md">
@@ -114,8 +114,8 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <FaEnvelope className="w-4 h-4 text-emerald-400" />
-                  <a href="mailto:hello@xortcut.com" className="text-sm text-gray-300 hover:text-emerald-400 transition-colors">
-                    hello@xortcut.com
+                  <a href="mailto:hello@xortlist.com" className="text-sm text-gray-300 hover:text-emerald-400 transition-colors">
+                    hello@xortlist.com
                   </a>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -196,7 +196,7 @@ const Footer = () => {
               {/* Copyright */}
               <div className="text-center md:text-left">
                 <p className="text-sm text-gray-400">
-                  Copyright © {new Date().getFullYear()} Xortcut Inc. All rights reserved.
+                  Copyright © {new Date().getFullYear()} Xortlist Inc. All rights reserved.
                 </p>
               </div>
 

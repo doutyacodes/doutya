@@ -586,7 +586,7 @@ const AssessmentResultsPage = () => {
           </p>
           <div className="space-y-2">
             <p className="text-gray-500 text-sm">
-              © 2025 Xortcut Professional Assessment Services. All rights reserved.
+              © 2025 Xortlist Professional Assessment Services. All rights reserved.
             </p>
             <p className="text-gray-600 text-xs">
               Report generated on {new Date().toLocaleDateString('en-US', { 

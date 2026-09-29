@@ -185,7 +185,7 @@ function DetailedReportModal({ careers, onClose }) {
         doc.line(M, PH - 30, PW - M, PH - 30);
         doc.setFontSize(7.5);
         doc.setTextColor(90, 95, 115);
-        doc.text("XortCut Career Report", M, PH - 18);
+        doc.text("XortList Career Report", M, PH - 18);
         doc.text(`Page ${doc.internal.getNumberOfPages()}  |  Confidential`, PW - M, PH - 18, { align: "right" });
       };
 
@@ -206,7 +206,7 @@ function DetailedReportModal({ careers, onClose }) {
       doc.rect(0, 0, PW, 5, "F");
 
       doc.setFontSize(32); doc.setFont("helvetica", "bold"); doc.setTextColor(249, 115, 22);
-      doc.text("XortCut", M, 90);
+      doc.text("XortList", M, 90);
       doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(110, 115, 135);
       doc.text("Career Intelligence Platform", M, 108);
       doc.setDrawColor(249, 115, 22); doc.setLineWidth(1);
@@ -359,14 +359,14 @@ function DetailedReportModal({ careers, onClose }) {
       doc.setFillColor(14, 18, 28); doc.rect(0, 0, PW, PH, "F");
       doc.setFillColor(249, 115, 22); doc.rect(0, PH - 5, PW, 5, "F");
       doc.setFontSize(28); doc.setFont("helvetica", "bold"); doc.setTextColor(249, 115, 22);
-      doc.text("XortCut", PW / 2, PH / 2 - 28, { align: "center" });
+      doc.text("XortList", PW / 2, PH / 2 - 28, { align: "center" });
       doc.setFontSize(11); doc.setFont("helvetica", "normal"); doc.setTextColor(110, 115, 135);
       doc.text("Career Intelligence Platform", PW / 2, PH / 2, { align: "center" });
       doc.text("This report is generated based on your unique profile.", PW / 2, PH / 2 + 22, { align: "center" });
       doc.text("Explore, reflect, and choose with confidence.", PW / 2, PH / 2 + 40, { align: "center" });
       drawPageChrome();
 
-      doc.save("XortCut_Career_Report.pdf");
+      doc.save("XortList_Career_Report.pdf");
       toast.success("PDF downloaded!");
     } catch (err) {
       console.error(err);

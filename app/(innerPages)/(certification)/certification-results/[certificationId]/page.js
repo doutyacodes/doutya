@@ -50,7 +50,7 @@ const CertificateTemplateContent = ({ certificateData, formatDate, renderStars, 
           <div className="flex items-center">
             <img 
               src={logoSrc} 
-              alt="XORTCUT" 
+              alt="XORTLIST" 
               className="h-20 object-contain"
               crossOrigin="anonymous"
             />
@@ -114,8 +114,8 @@ const CertificateTemplateContent = ({ certificateData, formatDate, renderStars, 
           <div className="text-left space-y-1">
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-gray-500 font-medium">Powered by</span>
-              <img src="/assets/images/small-logo.png" alt="XORTCUT" className="h-4 object-contain opacity-70" />
-              <span className="text-xs font-semibold text-gray-600">XORTCUT</span>
+              <img src="/assets/images/small-logo.png" alt="XORTLIST" className="h-4 object-contain opacity-70" />
+              <span className="text-xs font-semibold text-gray-600">XORTLIST</span>
             </div>
             <p className="text-[11px] text-gray-400">Institutional Certification Program</p>
           </div>
@@ -325,7 +325,7 @@ const CertificateDisplay = ({ params }) => {
     if (img) {
       const link = document.createElement('a');
       const studentName = (certificateData.userName || certificateData.username || 'Student').replace(/\s+/g, '_');
-      link.download = `XORTCUT_${certificateData.certificationName || 'Certification'}_Certificate_${studentName}.png`;
+      link.download = `XORTLIST_${certificateData.certificationName || 'Certification'}_Certificate_${studentName}.png`;
       link.href = img;
       link.click();
       toast.success("Certificate downloaded!");
@@ -489,8 +489,8 @@ const CertificateDisplay = ({ params }) => {
 
         {/* Verification Info */}
         <div className="text-center text-xs sm:text-sm text-gray-400 mt-4 max-w-xl mx-auto space-y-1">
-          <p>This certificate is issued by XORTCUT to verify the successful completion of the {certificateData.certificationName} program.</p>
-          <p className="text-gray-500">To verify authenticity, visit <span className="text-blue-400 font-mono">xortcut.com/verify</span> with your certificate ID.</p>
+          <p>This certificate is issued by XORTLIST to verify the successful completion of the {certificateData.certificationName} program.</p>
+          <p className="text-gray-500">To verify authenticity, visit <span className="text-blue-400 font-mono">xortlist.com/verify</span> with your certificate ID.</p>
         </div>
       </div>
     </div>

@@ -356,7 +356,7 @@ function IndividualSignup() {
 
   const onSubmit = async (data) => {
     const isGoogleAuth = isGoogleUser || (typeof window !== "undefined" && sessionStorage.getItem("isGoogleAuth") === "true");
-    if (!isPhoneVerified) {
+    if (ENABLE_OPEN_SIGNUP_OTP && !isPhoneVerified) {
       toast.error("Please verify your mobile number with OTP before completing registration.");
       return;
     }
@@ -477,10 +477,10 @@ function IndividualSignup() {
         <div className="text-center mb-6">
           <img
             src="/assets/images/logo-full.png"
-            alt="Xortcut"
+            alt="Xortlist"
             className="w-36 h-auto mx-auto mb-6 object-contain drop-shadow-2xl"
           />
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome to Xortcut</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Welcome to Xortlist</h1>
           <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mb-4" />
           <p className="text-gray-200 mb-3 leading-relaxed">
             Discover your career path with personalised guidance built for students and professionals.
@@ -605,53 +605,63 @@ function IndividualSignup() {
           <div className="sm:col-span-2">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-200">
-                Mobile Number <span className="text-orange-400">*</span>
+                Mobile Number
               </label>
-              {isPhoneVerified && (
+              {ENABLE_OPEN_SIGNUP_OTP && isPhoneVerified && (
                 <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   Verified
                 </span>
               )}
             </div>
-            <div className="flex gap-2">
+
+            {ENABLE_OPEN_SIGNUP_OTP ? (
+              <div className="flex gap-2">
+                <input
+                  type="tel"
+                  disabled={isPhoneVerified}
+                  {...register("mobile", {
+                    required: "Mobile number is required",
+                    minLength: { value: 10, message: "Enter a valid 10-digit number" },
+                    onChange: () => {
+                      if (isPhoneVerified) setIsPhoneVerified(false);
+                    }
+                  })}
+                  placeholder="10-digit mobile number"
+                  className={`${inputCls} flex-1 ${isPhoneVerified ? "border-emerald-500/50 text-emerald-300" : ""}`}
+                  required
+                />
+                {!isPhoneVerified && (
+                  <button
+                    type="button"
+                    onClick={handleSendOtp}
+                    disabled={isSendingOtp || otpCountdown > 0}
+                    className="px-4 py-3 bg-orange-600 hover:bg-orange-500 active:bg-orange-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-medium text-xs rounded-xl transition-colors flex items-center justify-center shrink-0 min-w-[95px]"
+                  >
+                    {isSendingOtp ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : otpCountdown > 0 ? (
+                      `${otpCountdown}s`
+                    ) : isOtpSent ? (
+                      "Resend"
+                    ) : (
+                      "Get OTP"
+                    )}
+                  </button>
+                )}
+              </div>
+            ) : (
               <input
                 type="tel"
-                disabled={isPhoneVerified}
-                {...register("mobile", {
-                  required: "Mobile number is required",
-                  minLength: { value: 10, message: "Enter a valid 10-digit number" },
-                  onChange: () => {
-                    if (isPhoneVerified) setIsPhoneVerified(false);
-                  }
-                })}
+                {...register("mobile")}
                 placeholder="10-digit mobile number"
-                className={`${inputCls} flex-1 ${isPhoneVerified ? "border-emerald-500/50 text-emerald-300" : ""}`}
-                required
+                className={inputCls}
               />
-              {!isPhoneVerified && (
-                <button
-                  type="button"
-                  onClick={handleSendOtp}
-                  disabled={isSendingOtp || otpCountdown > 0}
-                  className="px-4 py-3 bg-orange-600 hover:bg-orange-500 active:bg-orange-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-medium text-xs rounded-xl transition-colors flex items-center justify-center shrink-0 min-w-[95px]"
-                >
-                  {isSendingOtp ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : otpCountdown > 0 ? (
-                    `${otpCountdown}s`
-                  ) : isOtpSent ? (
-                    "Resend"
-                  ) : (
-                    "Get OTP"
-                  )}
-                </button>
-              )}
-            </div>
+            )}
             {errors.mobile && <p className="text-red-400 text-sm mt-1">{errors.mobile.message}</p>}
 
-            {/* OTP Input box */}
-            {isOtpSent && !isPhoneVerified && (
+            {/* OTP Input box (Preserved for ENABLE_OPEN_SIGNUP_OTP = true) */}
+            {ENABLE_OPEN_SIGNUP_OTP && isOtpSent && !isPhoneVerified && (
               <div className="mt-3 p-3 rounded-xl bg-gray-900/80 border border-gray-700 space-y-2">
                 <p className="text-xs text-gray-300">Enter 6-digit verification code sent to your mobile:</p>
                 <div className="flex gap-2">

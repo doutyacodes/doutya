@@ -26,13 +26,13 @@ const Principle = () => {
     {
       id: 2,
       title: "WANT MORE",
-      description: "We are never completely satisfied with our accomplishments. When we achieve new milestones, we celebrate, and then imagine new ones. Across the platform and company we're building, this applies to everything we do. Every individual and team at Xortcut strive to be the best at their craft.",
+      description: "We are never completely satisfied with our accomplishments. When we achieve new milestones, we celebrate, and then imagine new ones. Across the platform and company we're building, this applies to everything we do. Every individual and team at Xortlist strive to be the best at their craft.",
       icon: TrophyIcon,
     },
     {
       id: 3,
       title: "CHALLENGE CONVENTIONAL WISDOM",
-      description: "Conventional wisdom yields conventional results. We want extraordinary results. We encourage ourselves to question common assumptions about career guidance. This doesn't mean we're doing the opposite of conventional wisdom, but the notion that 'everybody is doing it that way' just doesn't cut it at Xortcut.",
+      description: "Conventional wisdom yields conventional results. We want extraordinary results. We encourage ourselves to question common assumptions about career guidance. This doesn't mean we're doing the opposite of conventional wisdom, but the notion that 'everybody is doing it that way' just doesn't cut it at Xortlist.",
       icon: LightBulbIcon,
     },
     {
@@ -184,7 +184,7 @@ const Principle = () => {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="text-lg lg:text-xl text-white/70 mb-8 lg:mb-12 max-w-3xl mx-auto leading-relaxed font-light"
             >
-              The fundamental operating principles that drive how we work, collaborate, and deliver exceptional career guidance experiences at Xortcut.
+              The fundamental operating principles that drive how we work, collaborate, and deliver exceptional career guidance experiences at Xortlist.
             </motion.p>
             
             <motion.div 
@@ -228,7 +228,7 @@ const Principle = () => {
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-500/10 via-transparent to-pink-500/10 opacity-50" />
               <div className="relative">
                 <h2 className="text-3xl lg:text-4xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
-                  How We Operate at Xortcut
+                  How We Operate at Xortlist
                 </h2>
                 <p className="text-lg lg:text-xl text-white/70 leading-relaxed font-light">
                   These operating principles define our day-to-day approach to building revolutionary career guidance technology. They guide our decisions, shape our culture, and ensure we deliver exceptional value to students and educators worldwide.

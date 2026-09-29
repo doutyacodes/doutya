@@ -29,7 +29,7 @@ const router = useRouter()
               Technology
             </p>
             <h3 className="font-bold md:text-white">
-            The Birth of Xortcut: A New Era in Career Guidance
+            The Birth of Xortlist: A New Era in Career Guidance
             </h3>
             <div className="flex gap-5 items-center">
               <div className="flex gap-2 items-center">

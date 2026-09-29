@@ -11,6 +11,9 @@ import { decryptURLText } from '@/utils/encryption';
 import { requestPhoneOtp, verifyPhoneOtp, maskPhoneNumber } from '@/lib/phoneAuth';
 import { Loader2, ArrowLeft, ShieldCheck, Phone } from 'lucide-react';
 
+// Feature flag to control two-step OTP verification on login
+const ENABLE_LOGIN_OTP = false; // Set to true to re-enable OTP on login
+
 function Login() {
   const router = useRouter();
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
@@ -122,6 +125,64 @@ function Login() {
   // Step 1: Pre-check credentials and initiate OTP send
   const onSubmitCredentials = async (data) => {
     setIsSubmitting(true);
+
+    // Direct Login without OTP when ENABLE_LOGIN_OTP is false
+    if (!ENABLE_LOGIN_OTP) {
+      try {
+        const resp = await GlobalApi.LoginUser({
+          username: data.username.trim(),
+          password: data.password,
+        });
+
+        if (resp.status === 200) {
+          const { birth_date, token, navigateUrl, class: userClass } = resp.data;
+
+          if (token) {
+            localStorage.setItem('token', token);
+          }
+
+          if (schoolInfo) {
+            try {
+              localStorage.setItem("user_institution", JSON.stringify(schoolInfo));
+            } catch (e) {}
+          }
+
+          let dashboardUrl = '/dashboard';
+          const sectorGrades = ["LKG", "UKG", "lkg", "ukg", "1", "2", "3", "4", "5", "6", "7"];
+          const clusterGrades = ["8", "9", "10"];
+          const normalizedUserClass = userClass ? String(userClass).trim() : "";
+
+          if (sectorGrades.includes(normalizedUserClass)) {
+            dashboardUrl = '/dashboard_kids';
+          } else if (clusterGrades.includes(normalizedUserClass)) {
+            dashboardUrl = '/dashboard_junior';
+          }
+          localStorage.setItem('dashboardUrl', dashboardUrl);
+
+          const isDefaultUrl = navigateUrl === '/default';
+          if (isDefaultUrl) {
+            localStorage.setItem('navigateUrl', dashboardUrl);
+            router.push(dashboardUrl);
+          } else {
+            localStorage.setItem('navigateUrl', navigateUrl || dashboardUrl);
+            router.push(navigateUrl || dashboardUrl);
+          }
+
+          toast.success("Logged in successfully");
+          reset();
+        } else {
+          toast.error(resp?.data?.message || 'Login failed');
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        const errMsg = err?.response?.data?.message || 'Invalid username or password.';
+        toast.error(errMsg);
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
@@ -361,7 +422,7 @@ function Login() {
                   {isSubmitting || isSendingOtp ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Verifying & Sending OTP...</span>
+                      <span>{ENABLE_LOGIN_OTP ? "Verifying & Sending OTP..." : "Signing in..."}</span>
                     </>
                   ) : (
                     t('LoginButton')
@@ -497,17 +558,17 @@ function Login() {
           {/* Invisible Recaptcha Container for Login */}
           <div id="login-recaptcha-container"></div>
 
-          {/* Subtle Powered by Xortcut Footer */}
+          {/* Subtle Powered by Xortlist Footer */}
           <div className="flex items-center justify-center gap-1.5 text-[11px] text-gray-500 pt-5 mt-5 border-t border-gray-700/60">
             <span>Powered by</span>
             <Image
-              src="/assets/images/xortcut-icon-small.png"
+              src="/assets/images/xortlist-icon-small.png"
               width={14}
               height={14}
-              alt="Xortcut"
+              alt="Xortlist"
               className="h-3 w-auto opacity-70"
             />
-            <span className="font-medium text-gray-400">Xortcut</span>
+            <span className="font-medium text-gray-400">Xortlist</span>
           </div>
 
         </div>

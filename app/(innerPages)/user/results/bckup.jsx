@@ -537,7 +537,7 @@
 //             This report is generated based on your personality and career interest assessments.
 //           </p>
 //           <p className="text-gray-400 text-xs mt-1">
-//             © 2025 Xortcut. All rights reserved.
+//             © 2025 Xortlist. All rights reserved.
 //           </p>
 //         </div>
 //       </div>
@@ -1301,7 +1301,7 @@ const AssessmentResultsPage = () => {
               providing you with actionable insights for your professional development.
             </p>
             <p className="text-slate-400 text-sm">
-              © 2025 Xortcut Professional Assessment Services. All rights reserved.
+              © 2025 Xortlist Professional Assessment Services. All rights reserved.
             </p>
             <div className="mt-6 pt-6 border-t border-slate-200">
               <p className="text-xs text-slate-400">

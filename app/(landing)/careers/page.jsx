@@ -280,10 +280,10 @@ const CareersPage = () => {
               <motion.a
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                href="#why-xortcut"
+                href="#why-xortlist"
                 className="px-6 py-3 bg-white/10 backdrop-blur-xl text-white rounded-xl font-semibold border border-white/20 hover:bg-white/20 transition-all duration-300 text-base"
               >
-                Why Xortcut?
+                Why Xortlist?
               </motion.a>
             </motion.div>
           </motion.div>
@@ -292,7 +292,7 @@ const CareersPage = () => {
     );
   };
 
-  const WhyXortcutSection = () => {
+  const WhyXortlistSection = () => {
     const benefits = [
       {
         icon: RocketLaunchIcon,
@@ -333,13 +333,13 @@ const CareersPage = () => {
     ];
 
     return (
-      <SectionWrapper id="why-xortcut" className="bg-gradient-to-r from-slate-900/20 to-gray-900/20">
+      <SectionWrapper id="why-xortlist" className="bg-gradient-to-r from-slate-900/20 to-gray-900/20">
         <div className="container mx-auto px-4 lg:px-6">
           <motion.div variants={fadeInUp} className="text-center mb-12 lg:mb-16">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="w-1.5 h-8 bg-gradient-to-b from-purple-400 to-pink-400 rounded-full" />
               <h2 className="text-2xl lg:text-3xl font-bold text-white">
-                Why Join Xortcut?
+                Why Join Xortlist?
               </h2>
             </div>
             <p className="text-white/70 max-w-3xl mx-auto leading-relaxed text-base lg:text-lg">
@@ -556,7 +556,7 @@ const CareersPage = () => {
               <motion.a
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                href="mailto:careers@xortcut.com"
+                href="mailto:careers@xortlist.com"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/25 text-base"
               >
                 📧 Send Your Resume
@@ -581,7 +581,7 @@ const CareersPage = () => {
       <Header dark={true} />
       
       <HeroSection />
-      <WhyXortcutSection />
+      <WhyXortlistSection />
       <OpenPositionsSection />
       <CTASection />
 

@@ -1,23 +1,23 @@
 {
   "General": [
     {
-      "question": "What is Xortcut?",
-      "answer": "Xortcut is an AI-powered Career Guidance Cell for schools and colleges. Instead of a one-time career test, it gives every learner a living roadmap with monthly milestones, knowledge assessments, real-world challenges, and bi-monthly feedback reports."
+      "question": "What is Xortlist?",
+      "answer": "Xortlist is an AI-powered Career Guidance Cell for schools and colleges. Instead of a one-time career test, it gives every learner a living roadmap with monthly milestones, knowledge assessments, real-world challenges, and bi-monthly feedback reports."
     },
     {
-      "question": "How is Xortcut different from a normal career test?",
-      "answer": "Traditional tests give static results. Xortcut is agentic AI — it tracks progress month by month, adapts to changes in interests, and ensures students stay on a guided path from Class 5 to 12."
+      "question": "How is Xortlist different from a normal career test?",
+      "answer": "Traditional tests give static results. Xortlist is agentic AI — it tracks progress month by month, adapts to changes in interests, and ensures students stay on a guided path from Class 5 to 12."
     },
     {
-      "question": "From what age can a student use Xortcut?",
+      "question": "From what age can a student use Xortlist?",
       "answer": "From Class 5 onwards.\n\nClasses 5–7: explore sectors (broad fields like Tech, Healthcare, Law, Arts).\n\nClasses 8–10: narrow into clusters (focused areas like Engineering, Design, Finance).\n\nClasses 11–12: decide on specific careers (e.g., Ethical Hacker, CA, IAS, Pilot)."
     },
     {
-      "question": "Does Xortcut replace school counselors?",
-      "answer": "No. It complements them. Most schools cannot afford full-time counselors. Xortcut automates 80% of structured guidance so teachers and parents can focus on mentoring and emotional support."
+      "question": "Does Xortlist replace school counselors?",
+      "answer": "No. It complements them. Most schools cannot afford full-time counselors. Xortlist automates 80% of structured guidance so teachers and parents can focus on mentoring and emotional support."
     },
     {
-      "question": "Is Xortcut aligned with CBSE/ICSE/NEP?",
+      "question": "Is Xortlist aligned with CBSE/ICSE/NEP?",
       "answer": "Yes. The progression from Sectors → Clusters → Careers matches the NEP 2020 emphasis on early exposure, stream alignment, and career readiness."
     }
   ],
@@ -32,15 +32,15 @@
     },
     {
       "question": "What if my child changes their career interest?",
-      "answer": "That’s expected. Xortcut supports multiple career slots. You can select 3 (standard) or upgrade to 6. Students can add or switch careers as they grow."
+      "answer": "That’s expected. Xortlist supports multiple career slots. You can select 3 (standard) or upgrade to 6. Students can add or switch careers as they grow."
     },
     {
       "question": "Can my child choose unusual careers (like Sports, Esports, Priest, NBA player)?",
-      "answer": "Yes. We allow custom careers in addition to curated ones. Xortcut adapts milestones and challenges to keep passion alive."
+      "answer": "Yes. We allow custom careers in addition to curated ones. Xortlist adapts milestones and challenges to keep passion alive."
     },
     {
       "question": "Can we plan for studying or working abroad?",
-      "answer": "Yes. You can set a country of education and a desired country of work. Xortcut adapts the roadmap (exams, licensing, scholarships, immigration notes)."
+      "answer": "Yes. You can set a country of education and a desired country of work. Xortlist adapts the roadmap (exams, licensing, scholarships, immigration notes)."
     },
     {
       "question": "How is progress measured?",
@@ -53,7 +53,7 @@
   ],
   "For Schools / Colleges": [
     {
-      "question": "What do schools/colleges get from Xortcut?",
+      "question": "What do schools/colleges get from Xortlist?",
       "answer": "Batch-level dashboards (how many aiming for Science, Commerce, Arts, Jobs, Exams, Higher Studies).\n\nParent-ready reports to show value during PTMs.\n\nPlug-and-play setup — no need to hire counselors.\n\nReputation boost — parents see your institution as future-ready."
     },
     {
@@ -62,11 +62,11 @@
     },
     {
       "question": "Can schools charge parents differently?",
-      "answer": "Yes. Schools collect the “Career Guidance Fee” from parents and pay Xortcut per student. Final fee may vary by institution."
+      "answer": "Yes. Schools collect the “Career Guidance Fee” from parents and pay Xortlist per student. Final fee may vary by institution."
     },
     {
-      "question": "Does Xortcut integrate with our existing placement/career cell?",
-      "answer": "Yes. For colleges, Xortcut strengthens the placement cell by:\n\nIdentifying early which students want jobs, exams, or higher studies.\n\nTracking employability milestones (projects, communication, internships).\n\nProviding readiness analytics for recruiters."
+      "question": "Does Xortlist integrate with our existing placement/career cell?",
+      "answer": "Yes. For colleges, Xortlist strengthens the placement cell by:\n\nIdentifying early which students want jobs, exams, or higher studies.\n\nTracking employability milestones (projects, communication, internships).\n\nProviding readiness analytics for recruiters."
     }
   ],
   "Privacy & Data": [
@@ -75,18 +75,18 @@
       "answer": "Data is encrypted in transit and at rest.\n\nWe comply with Indian IT laws and global best practices.\n\nParents can request export or deletion of student data at any time."
     },
     {
-      "question": "Does Xortcut sell student data?",
+      "question": "Does Xortlist sell student data?",
       "answer": "No. We do not sell or share student data with third parties. Insights are only for parents and institutions (in aggregate)."
     }
   ],
   "Vision": [
     {
-      "question": "What comes next in Xortcut?",
+      "question": "What comes next in Xortlist?",
       "answer": "Integration with Xortlist: age-appropriate corporate challenges & internships.\n\nMentorship: connect students with alumni & professionals.\n\nCertifications: skill badges from industry."
     },
     {
       "question": "Why “Agentic AI”?",
-      "answer": "Because Xortcut isn’t static. It plans, adapts, nudges, and tracks progress over years, not hours. It acts like a career agent for each student."
+      "answer": "Because Xortlist isn’t static. It plans, adapts, nudges, and tracks progress over years, not hours. It acts like a career agent for each student."
     }
   ]
 }

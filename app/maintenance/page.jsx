@@ -74,7 +74,7 @@ export default function MaintenancePage() {
 
           {/* Message */}
           <p className="text-gray-300 text-center text-lg mb-2">
-            We're currently upgrading <span className="text-orange-400 font-semibold">Xortcut</span> to serve you better
+            We're currently upgrading <span className="text-orange-400 font-semibold">Xortlist</span> to serve you better
             <span className="inline-block w-8 text-left text-orange-400">{dots}</span>
           </p>
           

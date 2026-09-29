@@ -49,18 +49,18 @@ const CareerOnboarding = ({ forceShow = false, onClose = () => {} }) => {
   };
   const steps = [
     {
-      title: "Welcome to Xortcut",
+      title: "Welcome to Xortlist",
       content: (
         <div className="flex flex-col items-center space-y-4 text-center">
           <img 
             src={"/assets/images/logo-full.png"}
-            alt="Xortcut Logo" 
+            alt="Xortlist Logo" 
             className="w-32 md:w-48 h-auto mb-2 object-contain"
           />
           <h1 className="text-xl md:text-3xl font-bold text-gray-800 md:text-white mb-2">Your AI-Powered Complete Career Companion</h1>
           <div className="space-y-2">
             <p className="text-gray-600 md:text-gray-300 text-base md:text-lg">
-              Welcome to Xortcut - Your Career Guidance Destination
+              Welcome to Xortlist - Your Career Guidance Destination
             </p>
             <p className="text-gray-600 md:text-gray-300 text-sm md:text-base">
               More than a career platform, we are your dedicated partner. We help you identify the perfect 

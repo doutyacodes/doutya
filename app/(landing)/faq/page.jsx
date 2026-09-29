@@ -307,7 +307,7 @@ const FaqPage = () => {
               variants={fadeInUp}
               className="text-lg lg:text-xl text-white/70 mb-8 lg:mb-12 max-w-3xl mx-auto leading-relaxed font-light"
             >
-              Everything you need to know about Xortcut's AI-powered career guidance platform. 
+              Everything you need to know about Xortlist's AI-powered career guidance platform. 
               Can't find what you're looking for? We're here to help.
             </motion.p>
             
@@ -404,7 +404,7 @@ const FaqPage = () => {
               Still need help?
             </h3>
             <p className="text-lg lg:text-xl text-white/70 mb-8 lg:mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-              Our team is ready to answer your questions and help you get started with Xortcut's career guidance platform.
+              Our team is ready to answer your questions and help you get started with Xortlist's career guidance platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center">
               <motion.a
