@@ -29,52 +29,89 @@ import LocationDetailsModal from "@/app/_components/LocationDetailsModal";
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const CATEGORY_LIST = [
-  "trending",
-  "offbeat",
   "traditional",
+  "trending",
   "futuristic",
-  "ai-proof",
+  "offbeat",
   "entrepreneurial",
-  "hybrid",
+  "independent / portfolio",
+  "tech-driven",
   "creative",
   "sustainable and green",
   "social impact",
-  "tech-driven",
   "experiential",
-  "digital and online",
+  "research-led",
 ];
 
+const CATEGORY_TITLE_MAP = {
+  "traditional":              "Traditional Careers",
+  "trending":                 "Trending Careers",
+  "futuristic":               "Futuristic Careers",
+  "offbeat":                  "Offbeat Careers",
+  "entrepreneurial":          "Entrepreneurial Careers",
+  "independent / portfolio":  "Independent / Portfolio Careers",
+  "tech-driven":              "Tech-Driven Careers",
+  "creative":                 "Creative Careers",
+  "sustainable and green":    "Sustainable & Green Careers",
+  "social impact":            "Social Impact Careers",
+  "experiential":             "Experiential Careers",
+  "research-led":             "Research-Led Careers",
+};
+
 const CATEGORY_COLOR_MAP = {
-  "trending":              "#f97316",
-  "offbeat":               "#ef4444",
-  "traditional":           "#3b82f6",
-  "futuristic":            "#22c55e",
-  "ai-proof":              "#f59e0b",
-  "entrepreneurial":       "#10b981",
-  "hybrid":                "#8b5cf6",
-  "creative":              "#ec4899",
-  "sustainable and green": "#22c55e",
-  "social impact":         "#ef4444",
-  "tech-driven":           "#06b6d4",
-  "experiential":          "#a78bfa",
-  "digital and online":    "#a855f7",
+  "traditional":              "#3b82f6",
+  "trending":                 "#f97316",
+  "futuristic":               "#10b981",
+  "offbeat":                  "#ef4444",
+  "entrepreneurial":          "#f59e0b",
+  "independent / portfolio":  "#8b5cf6",
+  "tech-driven":              "#06b6d4",
+  "creative":                 "#ec4899",
+  "sustainable and green":    "#22c55e",
+  "social impact":            "#f43f5e",
+  "experiential":             "#a78bfa",
+  "research-led":             "#6366f1",
 };
 
 const CAREER_DESCRIPTIONS = {
-  "trending":              "Currently in high demand due to new technologies, societal shifts, and evolving market needs.",
-  "offbeat":               "Unconventional paths that align with passion, creativity, and unique lifestyle preferences.",
-  "futuristic":            "Industries and technologies expected to grow significantly in the next 10–30 years.",
-  "traditional":           "Time-tested careers with established paths, consistent demand, and clear progression.",
-  "hybrid":                "Combine skills from multiple disciplines, blending traditional fields with modern tech.",
-  "creative":              "Innovation, self-expression, and new ideas linked to arts, design, and storytelling.",
-  "sustainable and green": "Environmental sustainability and renewable resources at the forefront.",
-  "social impact":         "Roles aimed at creating a positive difference in society and community well-being.",
-  "tech-driven":           "Heavily focused on AI, robotics, and automation across various industries.",
-  "experiential":          "Unique experiences in travel, entertainment, or immersive hands-on work.",
-  "digital and online":    "Revolve around technology and online platforms, offering flexible opportunities.",
-  "entrepreneurial":       "Starting and managing businesses requiring innovation, risk-taking, and resilience.",
-  "ai-proof":              "Roles relying on empathy, creativity, and critical thinking — resilient to automation.",
+  "traditional":
+    "Established roles with recognised education or training routes and familiar career progression. They tend to have a long-standing place in the workforce and clear entry pathways.",
+  "trending":
+    "Roles with rising demand now, driven by current technologies, industries or social needs. They are already real career options; their distinction is growing demand today.",
+  "futuristic":
+    "Roles expected to emerge or expand as technology and society change over the next 10–30 years. They should be grounded in credible developments, while recognising that their exact form may change.",
+  "offbeat":
+    "Viable but lesser-known roles that students may not usually encounter through standard career advice. They offer an unconventional route or specialism without relying on being new or rapidly growing.",
+  "entrepreneurial":
+    "Roles centred on creating, building or growing a business, product or venture. The defining feature is taking responsibility for developing an enterprise, rather than simply working independently.",
+  "independent / portfolio":
+    "Roles commonly pursued through freelance, self-employed or project-based work for different clients. The defining feature is building a body of work independently, rather than growing a company or following one employer’s career ladder.",
+  "tech-driven":
+    "Roles where designing, building or operating technology is central to the work. Using digital tools in a job does not by itself make that career tech-driven.",
+  "creative":
+    "Roles where the main output is original art, design, media, performance or storytelling. Creativity may help in any career; here, creating original work is the central purpose.",
+  "sustainable and green":
+    "Roles whose main purpose is protecting the environment, reducing harm or managing resources sustainably. Classify a career here when environmental outcomes define its work, rather than being only one consideration.",
+  "social impact":
+    "Roles whose primary aim is improving people’s wellbeing, communities or social conditions. If a role’s central purpose is environmental change, place it under Sustainable & Green instead.",
+  "experiential":
+    "Roles where the main value comes from creating or delivering live, immersive or hands-on experiences. The participant’s direct experience is central to the work—not simply content about an experience.",
+  "research-led":
+    "Roles centred on investigating questions, testing ideas and producing new findings or evidence. The defining work is systematic inquiry, rather than routinely applying existing knowledge or data.",
 };
+
+const normalizeCategory = (type) => {
+  if (!type) return "";
+  const s = String(type).toLowerCase().trim().replace(/ careers?$/i, "");
+  if (s === "independent / portfolio" || s === "independent/portfolio" || s === "independent" || s === "portfolio") return "independent / portfolio";
+  if (s === "sustainable and green" || s === "sustainable & green" || s === "sustainable") return "sustainable and green";
+  if (s === "research-led" || s === "research led") return "research-led";
+  if (s === "tech-driven" || s === "tech driven" || s === "tech") return "tech-driven";
+  if (s === "social impact" || s === "social") return "social impact";
+  return s;
+};
+
+const getCategoryTitle = (cat) => CATEGORY_TITLE_MAP[cat] || (cat.charAt(0).toUpperCase() + cat.slice(1) + " Careers");
 
 // ─── AI category config — only 3 types, subtle colors, no icons ───────────────
 
@@ -159,7 +196,7 @@ function DetailedReportModal({ careers, onClose }) {
   const [downloading, setDownloading] = useState(false);
 
   const grouped = CATEGORY_LIST
-    .map((cat) => ({ cat, items: careers.filter((c) => c.type === cat) }))
+    .map((cat) => ({ cat, items: careers.filter((c) => normalizeCategory(c.type) === cat) }))
     .filter((g) => g.items.length > 0);
 
   function h2r(hex) {
@@ -255,7 +292,7 @@ function DetailedReportModal({ careers, onClose }) {
 
         // Category heading
         doc.setFontSize(18); doc.setFont("helvetica", "bold"); doc.setTextColor(cr, cg, cb);
-        const catTitle = cat.charAt(0).toUpperCase() + cat.slice(1) + " Careers";
+        const catTitle = getCategoryTitle(cat);
         doc.text(catTitle, M, y);
         y += 8;
         doc.setDrawColor(cr, cg, cb); doc.setLineWidth(0.8);
@@ -543,7 +580,7 @@ export default function Results2({ step, setStep }) {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [pendingCareerData, setPendingCareerData] = useState(null);
   const [showDetailedReport, setShowDetailedReport] = useState(false);
-  const [activeTab, setActiveTab]             = useState("trending");
+  const [activeTab, setActiveTab]             = useState("traditional");
 
   const { triggerTopbarRefresh } = useTopbar();
   const t        = useTranslations("Result2");
@@ -559,7 +596,7 @@ export default function Results2({ step, setStep }) {
   }, [selectedCareers]);
 
   const getAvailableCats = () =>
-    CATEGORY_LIST.filter(cat => resultData && Array.isArray(resultData) && resultData.some(c => c.type === cat));
+    CATEGORY_LIST.filter(cat => resultData && Array.isArray(resultData) && resultData.some(c => normalizeCategory(c.type) === cat));
 
   const handleCategoryNav = (dir) => {
     const cats = getAvailableCats();
@@ -583,7 +620,7 @@ export default function Results2({ step, setStep }) {
         const parsed = JSON.parse(response.data.result);
         setResultData(parsed);
         // Set activeTab to first available category
-        const firstCat = CATEGORY_LIST.find(cat => parsed.some(c => c.type === cat));
+        const firstCat = CATEGORY_LIST.find(cat => parsed.some(c => normalizeCategory(c.type) === cat));
         if (firstCat) setActiveTab(firstCat);
         setStep(2);
       } else if (response.status === 204) {
@@ -826,7 +863,7 @@ export default function Results2({ step, setStep }) {
                   <div className="md:hidden px-4 mb-6">
                     <div className="flex overflow-x-auto pb-2 gap-2">
                       {CATEGORY_LIST.map(cat =>
-                        resultData.some(c => c.type === cat) ? (
+                        resultData.some(c => normalizeCategory(c.type) === cat) ? (
                           <button
                             key={cat}
                             onClick={() => setActiveTab(cat)}
@@ -853,13 +890,13 @@ export default function Results2({ step, setStep }) {
                       className="fixed left-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl px-3 py-2 shadow-lg z-50 flex items-center border border-orange-400/50"
                     >
                       <FaChevronLeft size={14} color="white" className="mr-1" />
-                      <span className="text-white text-[10px] font-medium capitalize max-w-[55px] truncate">{getAdjacentCat("prev")}</span>
+                      <span className="text-white text-[10px] font-medium capitalize max-w-[55px] truncate">{getCategoryTitle(getAdjacentCat("prev")).replace(" Careers", "")}</span>
                     </button>
                     <button
                       onClick={() => handleCategoryNav("next")}
                       className="fixed right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl px-3 py-2 shadow-lg z-50 flex items-center border border-orange-400/50"
                     >
-                      <span className="text-white text-[10px] font-medium capitalize max-w-[55px] truncate mr-1">{getAdjacentCat("next")}</span>
+                      <span className="text-white text-[10px] font-medium capitalize max-w-[55px] truncate mr-1">{getCategoryTitle(getAdjacentCat("next")).replace(" Careers", "")}</span>
                       <FaChevronRight size={14} color="white" />
                     </button>
                   </div>
@@ -869,14 +906,14 @@ export default function Results2({ step, setStep }) {
                     {CATEGORY_LIST.map(cat => {
                       const careersInCat = resultData
                         .map((c, i) => ({ career: c, originalIndex: i }))
-                        .filter(({ career }) => career.type === cat);
+                        .filter(({ career }) => normalizeCategory(career.type) === cat);
                       if (!careersInCat.length) return null;
                       const catColor = CATEGORY_COLOR_MAP[cat] || "#f97316";
                       return (
                         <div key={cat} className="mb-14">
                           <div className="flex items-center mb-1">
-                            <h2 className="text-xl font-bold capitalize tracking-tight" style={{ color: catColor }}>
-                              {cat} Careers
+                            <h2 className="text-xl font-bold tracking-tight" style={{ color: catColor }}>
+                              {getCategoryTitle(cat)}
                             </h2>
                             <div className="h-px flex-grow ml-4 rounded-full" style={{ background: `linear-gradient(90deg,${catColor}40,transparent)` }} />
                           </div>
@@ -902,12 +939,12 @@ export default function Results2({ step, setStep }) {
                       if (activeTab !== cat) return null;
                       const careersInCat = resultData
                         .map((c, i) => ({ career: c, originalIndex: i }))
-                        .filter(({ career }) => career.type === cat);
+                        .filter(({ career }) => normalizeCategory(career.type) === cat);
                       if (!careersInCat.length) return null;
                       const catColor = CATEGORY_COLOR_MAP[cat] || "#f97316";
                       return (
                         <div key={cat} className="mb-12">
-                          <h2 className="text-xl font-bold capitalize mb-1" style={{ color: catColor }}>{cat} Careers</h2>
+                          <h2 className="text-xl font-bold mb-1" style={{ color: catColor }}>{getCategoryTitle(cat)}</h2>
                           <p className="text-sm text-gray-500 mb-5">{CAREER_DESCRIPTIONS[cat]}</p>
                           <div className="grid grid-cols-1 gap-4">
                             {careersInCat.map(({ career, originalIndex }) => (

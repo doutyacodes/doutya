@@ -96,23 +96,23 @@ const AssessmentResultsPage = () => {
   const displayData = resultData;
 
   const getCareerTypeInfo = (type) => {
+    const norm = String(type || '').toLowerCase().trim().replace(/ careers?$/i, '');
     const typeInfo = {
       'traditional': { label: 'Traditional', color: 'bg-blue-600', bgColor: 'bg-blue-900/20 border-blue-700', borderColor: 'border-blue-700' },
-      'trending': { label: 'Trending', color: 'bg-green-600', bgColor: 'bg-green-900/20 border-green-700', borderColor: 'border-green-700' },
-      'offbeat': { label: 'Offbeat', color: 'bg-purple-600', bgColor: 'bg-purple-900/20 border-purple-700', borderColor: 'border-purple-700' },
-      'futuristic': { label: 'Futuristic', color: 'bg-indigo-600', bgColor: 'bg-indigo-900/20 border-indigo-700', borderColor: 'border-indigo-700' },
-      'ai-proof': { label: 'AI-Proof', color: 'bg-orange-600', bgColor: 'bg-orange-900/20 border-orange-700', borderColor: 'border-orange-700' },
-      'entrepreneurial': { label: 'Entrepreneurial', color: 'bg-red-600', bgColor: 'bg-red-900/20 border-red-700', borderColor: 'border-red-700' },
-      'normal': { label: 'Standard', color: 'bg-gray-600', bgColor: 'bg-gray-800/50 border-gray-600', borderColor: 'border-gray-600' },
-      'hybrid': { label: 'Hybrid', color: 'bg-teal-600', bgColor: 'bg-teal-900/20 border-teal-700', borderColor: 'border-teal-700' },
+      'trending': { label: 'Trending', color: 'bg-orange-600', bgColor: 'bg-orange-900/20 border-orange-700', borderColor: 'border-orange-700' },
+      'futuristic': { label: 'Futuristic', color: 'bg-emerald-600', bgColor: 'bg-emerald-900/20 border-emerald-700', borderColor: 'border-emerald-700' },
+      'offbeat': { label: 'Offbeat', color: 'bg-red-600', bgColor: 'bg-red-900/20 border-red-700', borderColor: 'border-red-700' },
+      'entrepreneurial': { label: 'Entrepreneurial', color: 'bg-amber-600', bgColor: 'bg-amber-900/20 border-amber-700', borderColor: 'border-amber-700' },
+      'independent / portfolio': { label: 'Independent / Portfolio', color: 'bg-purple-600', bgColor: 'bg-purple-900/20 border-purple-700', borderColor: 'border-purple-700' },
+      'tech-driven': { label: 'Tech-Driven', color: 'bg-cyan-600', bgColor: 'bg-cyan-900/20 border-cyan-700', borderColor: 'border-cyan-700' },
       'creative': { label: 'Creative', color: 'bg-pink-600', bgColor: 'bg-pink-900/20 border-pink-700', borderColor: 'border-pink-700' },
-      'sustainable': { label: 'Sustainable & Green', color: 'bg-emerald-600', bgColor: 'bg-emerald-900/20 border-emerald-700', borderColor: 'border-emerald-700' },
-      'social': { label: 'Social Impact', color: 'bg-yellow-600', bgColor: 'bg-yellow-900/20 border-yellow-700', borderColor: 'border-yellow-700' },
-      'tech': { label: 'Tech-Driven', color: 'bg-cyan-600', bgColor: 'bg-cyan-900/20 border-cyan-700', borderColor: 'border-cyan-700' },
-      'experiential': { label: 'Experiential', color: 'bg-rose-600', bgColor: 'bg-rose-900/20 border-rose-700', borderColor: 'border-rose-700' },
-      'digital': { label: 'Digital & Online', color: 'bg-violet-600', bgColor: 'bg-violet-900/20 border-violet-700', borderColor: 'border-violet-700' }
+      'sustainable and green': { label: 'Sustainable & Green', color: 'bg-green-600', bgColor: 'bg-green-900/20 border-green-700', borderColor: 'border-green-700' },
+      'social impact': { label: 'Social Impact', color: 'bg-rose-600', bgColor: 'bg-rose-900/20 border-rose-700', borderColor: 'border-rose-700' },
+      'experiential': { label: 'Experiential', color: 'bg-violet-600', bgColor: 'bg-violet-900/20 border-violet-700', borderColor: 'border-violet-700' },
+      'research-led': { label: 'Research-Led', color: 'bg-indigo-600', bgColor: 'bg-indigo-900/20 border-indigo-700', borderColor: 'border-indigo-700' },
+      'normal': { label: 'Standard', color: 'bg-gray-600', bgColor: 'bg-gray-800/50 border-gray-600', borderColor: 'border-gray-600' }
     };
-    return typeInfo[type] || typeInfo['normal'];
+    return typeInfo[norm] || typeInfo[type] || typeInfo['normal'];
   };
 
   if (isLoading) {

@@ -63,7 +63,18 @@ export const dynamic = 'force-dynamic';
         ${educationWorkDescription != null ? "Qualification: " + educationWorkDescription : ""}
 
         Include exactly 3 careers for each category:
-        traditional, trending, entrepreneurial, offbeat, creative, hybrid, sustainable and green, social impact, tech-driven, experiential, digital and online, and futuristic.
+        1. traditional (Traditional Careers: Established roles with recognised education or training routes and familiar career progression. They tend to have a long-standing place in the workforce and clear entry pathways.)
+        2. trending (Trending Careers: Roles with rising demand now, driven by current technologies, industries or social needs. They are already real career options; their distinction is growing demand today.)
+        3. futuristic (Futuristic Careers: Roles expected to emerge or expand as technology and society change over the next 10–30 years. They should be grounded in credible developments, while recognising that their exact form may change.)
+        4. offbeat (Offbeat Careers: Viable but lesser-known roles that students may not usually encounter through standard career advice. They offer an unconventional route or specialism without relying on being new or rapidly growing.)
+        5. entrepreneurial (Entrepreneurial Careers: Roles centred on creating, building or growing a business, product or venture. The defining feature is taking responsibility for developing an enterprise, rather than simply working independently.)
+        6. independent / portfolio (Independent / Portfolio Careers: Roles commonly pursued through freelance, self-employed or project-based work for different clients. The defining feature is building a body of work independently, rather than growing a company or following one employer’s career ladder.)
+        7. tech-driven (Tech-Driven Careers: Roles where designing, building or operating technology is central to the work. Using digital tools in a job does not by itself make that career tech-driven.)
+        8. creative (Creative Careers: Roles where the main output is original art, design, media, performance or storytelling. Creativity may help in any career; here, creating original work is the central purpose.)
+        9. sustainable and green (Sustainable & Green Careers: Roles whose main purpose is protecting the environment, reducing harm or managing resources sustainably. Classify a career here when environmental outcomes define its work, rather than being only one consideration.)
+        10. social impact (Social Impact Careers: Roles whose primary aim is improving people’s wellbeing, communities or social conditions. If a role’s central purpose is environmental change, place it under Sustainable & Green instead.)
+        11. experiential (Experiential Careers: Roles where the main value comes from creating or delivering live, immersive or hands-on experiences. The participant’s direct experience is central to the work—not simply content about an experience.)
+        12. research-led (Research-Led Careers: Roles centred on investigating questions, testing ideas and producing new findings or evidence. The defining work is systematic inquiry, rather than routinely applying existing knowledge or data.)
 
         CRITICAL AI CLASSIFICATION RULE:
         - In EACH category:
@@ -117,7 +128,7 @@ export const dynamic = 'force-dynamic';
         For each career, include:
         {
         "career_name": "Career Title",
-        "type": "career type",
+        "type": "exact category name in lowercase (one of: traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led)",
         "ai_proof": true/false,
         "ai_category": "AI Proof / AI Augmented / AI Risk",
         "ai_resilience_score": number,
@@ -134,7 +145,8 @@ export const dynamic = 'force-dynamic';
         - NO category can have less or more than 3 careers
         - Output is INVALID if any category is missing or has incorrect count
         - Maintain strict 1:1:1 ratio (AI Proof, AI Augmented, AI Risk) inside EACH category
-        - Ensure all 12 categories are present in the response
+        - Ensure all 12 categories are present in the response: traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led.
+        - CRITICAL: Category 8 (creative) MUST NEVER BE SKIPPED OR OMITTED under any circumstances, even if user has low Artistic scores. Suggest creative roles aligned with their technical or analytical strengths (e.g. UI/UX Designer, Game Designer, Industrial Product Designer, Architectural Designer, Creative Technologist).
         - Do NOT skip or merge categories
 
         OUTPUT STRUCTURE RULE:

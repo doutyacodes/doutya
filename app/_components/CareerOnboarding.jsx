@@ -153,7 +153,7 @@ const CareerOnboarding = ({ forceShow = false, onClose = () => {} }) => {
         <div className="space-y-3">
           <p className="text-gray-600 md:text-gray-300 text-sm md:text-base">
             Based on your selections, we&apos;ll present you with personalized career options categorized by type:
-            Trending, Offbeat, and Traditional Careers.
+            12 diverse career domains including Traditional, Trending, Futuristic, Offbeat, Entrepreneurial, Independent / Portfolio, and more.
           </p>
           <p className="text-gray-600 md:text-gray-300 text-sm md:text-base">
             You can select multiple careers that interest you and add them to your career list for further exploration.

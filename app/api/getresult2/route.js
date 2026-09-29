@@ -297,7 +297,84 @@ export async function GET(req) {
   let responseText = response.data.choices[0].message.content.trim();
   responseText = responseText.replace(/```json|```/g, "").trim();
 
-  console.log(responseText)
+  console.log(responseText);
+
+  // Validate all 12 categories are present, auto-fill any omitted category
+  const EXPECTED_CATEGORIES = [
+    "traditional",
+    "trending",
+    "futuristic",
+    "offbeat",
+    "entrepreneurial",
+    "independent / portfolio",
+    "tech-driven",
+    "creative",
+    "sustainable and green",
+    "social impact",
+    "experiential",
+    "research-led",
+  ];
+
+  try {
+    let parsedCareers = JSON.parse(responseText);
+    if (Array.isArray(parsedCareers)) {
+      const normalizeCat = (cat) => String(cat || "").toLowerCase().trim().replace(/ careers?$/i, "");
+      const presentCats = new Set(parsedCareers.map((c) => normalizeCat(c.type)));
+      const missingCats = EXPECTED_CATEGORIES.filter((cat) => !presentCats.has(cat));
+
+      if (missingCats.length > 0) {
+        console.log("Missing categories detected in career response:", missingCats);
+        for (const missingCat of missingCats) {
+          try {
+            const fillPrompt = `Generate exactly 3 careers for the category "${missingCat}" for an individual with personality type ${type1} and RIASEC interest types of ${type2}${country ? " in " + country : ""}.
+Follow this exact schema for each career (1 AI Proof, 1 AI Augmented, 1 AI Risk):
+[
+  {
+    "career_name": "Career Title",
+    "type": "${missingCat}",
+    "ai_proof": true/false,
+    "ai_category": "AI Proof / AI Augmented / AI Risk",
+    "ai_resilience_score": 85,
+    "compatibility_score": 85,
+    "Why AI Proof/ Augments/ Replaces": "Explanation",
+    "description": "Why suitable",
+    "brief_overview": "What it involves",
+    "future_potential": "Growth potential"
+  }
+]
+Return strictly valid JSON array only with 3 careers.`;
+
+            const fillResponse = await axios.post(
+              "https://api.openai.com/v1/chat/completions",
+              {
+                model: "gpt-4o-mini",
+                messages: [{ role: "user", content: fillPrompt }],
+                max_tokens: 2000,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            let fillText = fillResponse.data.choices[0].message.content.trim().replace(/```json|```/g, "").trim();
+            const fillArr = JSON.parse(fillText);
+            if (Array.isArray(fillArr) && fillArr.length > 0) {
+              parsedCareers.push(...fillArr);
+              console.log(`Successfully filled missing category: ${missingCat}`);
+            }
+          } catch (fillErr) {
+            console.error(`Failed to fill missing category ${missingCat}:`, fillErr.message);
+          }
+        }
+        responseText = JSON.stringify(parsedCareers);
+      }
+    }
+  } catch (parseErr) {
+    console.error("Error checking career categories completeness:", parseErr);
+  }
 
   // const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
