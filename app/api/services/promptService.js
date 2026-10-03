@@ -240,7 +240,7 @@ export const dynamic = 'force-dynamic';
 
         ${educationWorkDescription != null ? "Qualification: " + educationWorkDescription : ""}
 
-        Include exactly 3 careers for each category:
+        Include exactly 3 careers (Career 1: AI Proof, Career 2: AI Augmented, Career 3: AI Risk) for each of the 12 categories:
         1. traditional (Traditional Careers: Established roles with recognised education or training routes and familiar career progression. They tend to have a long-standing place in the workforce and clear entry pathways.)
         2. trending (Trending Careers: Roles with rising demand now, driven by current technologies, industries or social needs. They are already real career options; their distinction is growing demand today.)
         3. futuristic (Futuristic Careers: Roles expected to emerge or expand as technology and society change over the next 10–30 years. They should be grounded in credible developments, while recognising that their exact form may change.)
@@ -254,11 +254,12 @@ export const dynamic = 'force-dynamic';
         11. experiential (Experiential Careers: Roles where the main value comes from creating or delivering live, immersive or hands-on experiences. The participant’s direct experience is central to the work—not simply content about an experience.)
         12. research-led (Research-Led Careers: Roles centred on investigating questions, testing ideas and producing new findings or evidence. The defining work is systematic inquiry, rather than routinely applying existing knowledge or data.)
 
-        CRITICAL AI CLASSIFICATION GUIDELINES (MANDATORY 1:1:1 RATIO PER CATEGORY):
-        In EACH of the 12 categories, provide exactly 3 careers with a strict 1:1:1 ratio:
-        - Exactly 1 career MUST be "AI Proof"
-        - Exactly 1 career MUST be "AI Augmented"
-        - Exactly 1 career MUST be "AI Risk"
+        CRITICAL AI CLASSIFICATION & ORDERING GUIDELINES (MANDATORY 1:1:1 RATIO IN EXACT 1, 2, 3 SEQUENCE):
+        In EACH of the 12 categories, provide exactly 3 careers in this strict, numbered sequence:
+        - Career 1 (item_number: 1): MUST be "AI Proof" (ai_proof: true, ai_category: "AI Proof")
+        - Career 2 (item_number: 2): MUST be "AI Augmented" (ai_proof: false, ai_category: "AI Augmented")
+        - Career 3 (item_number: 3): MUST be "AI Risk" (ai_proof: false, ai_category: "AI Risk")
+        NEVER skip any number. Every category MUST contain item 1, item 2, and item 3 in order.
 
         HOW TO IDENTIFY AND ASSIGN EACH AI STATUS:
 
@@ -309,24 +310,27 @@ export const dynamic = 'force-dynamic';
         - Ensure all recommended careers align authentically with the user's personality profile and interest preferences.
         - Ensure recommended careers do not overlap across categories.
 
-        For each career, include:
+        For each career, include this exact structure:
         {
+        "category_number": 1, // Category index from 1 to 12
+        "item_number": 1, // Strict sequential count inside category: MUST be 1, 2, or 3 (1 = AI Proof, 2 = AI Augmented, 3 = AI Risk)
         "career_name": "Career Title",
         "type": "exact category name in lowercase (one of: traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led)",
-        "ai_proof": true/false,
-        "ai_category": "AI Proof / AI Augmented / AI Risk",
+        "ai_proof": true, // true ONLY for item_number 1 (AI Proof); false for item_number 2 and 3
+        "ai_category": "AI Proof", // item_number 1 MUST be "AI Proof", item_number 2 MUST be "AI Augmented", item_number 3 MUST be "AI Risk"
         "Why AI Proof/ Augments/ Replaces": "Concise 1-2 sentence explanation of why this role is AI Proof, AI Augmented, or AI Risk",
         "description": "Why suitable for this user based on their personality profile and strengths",
         "brief_overview": "Rich 2-3 sentence description explaining the career role specifically highlighting why it is AI Proof, AI Augmented, or AI Risk as mandated above",
         "future_potential": "Growth and opportunities"
         }
 
-        STRICT OUTPUT REQUIREMENTS (MANDATORY):
+        STRICT OUTPUT REQUIREMENTS & COUNT ENFORCEMENT (MANDATORY):
         - Total careers MUST be exactly 36 (12 categories × 3 each)
-        - EACH category MUST have exactly 3 careers
-        - NO category can have less or more than 3 careers
+        - EACH category MUST have exactly 3 careers, strictly numbered item_number: 1, 2, and 3
+        - NO category can have less than 3 careers (never 1 or 2)
+        - NO category can have more than 3 careers (never 4)
         - Output is INVALID if any category is missing or has incorrect count
-        - Maintain strict 1:1:1 ratio (AI Proof, AI Augmented, AI Risk) inside EACH category
+        - Maintain strict 1:1:1 ratio (1: AI Proof, 2: AI Augmented, 3: AI Risk) inside EACH category
         ${
           industry && industry !== "any"
             ? `- ALL 36 recommended careers must strictly belong to the "${industry}" industry without exception.\n        `
@@ -335,9 +339,14 @@ export const dynamic = 'force-dynamic';
         - CRITICAL: Category 8 (creative) MUST NEVER BE SKIPPED OR OMITTED under any circumstances, even if user has low Artistic scores. Suggest creative roles aligned with their technical or analytical strengths (e.g. UI/UX Designer, Game Designer, Industrial Product Designer, Architectural Designer, Creative Technologist).
         - Do NOT skip or merge categories
 
-        OUTPUT STRUCTURE RULE:
-        - Careers MUST be grouped logically by category
-        - Ensure each category clearly contains 3 careers before moving to next category
+        OUTPUT STRUCTURE & SEQUENCING RULE:
+        - Careers MUST be grouped by category and sequentially numbered from category 1 to 12.
+        - For each category, output exactly:
+            * Item 1: item_number: 1 (AI Proof)
+            * Item 2: item_number: 2 (AI Augmented)
+            * Item 3: item_number: 3 (AI Risk)
+        - Ensure each category clearly contains all 3 numbered careers (1, 2, 3) before moving to next category.
+        - NEVER stop a category after 1 or 2 careers. NEVER output a 4th career for any category.
 
         Do not include the terms MBTI or RIASEC and '${type1}' or '${type2}' in the response data.
 
