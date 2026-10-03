@@ -25,6 +25,179 @@ export const dynamic = 'force-dynamic';
     return enhancePromptWithEducation(basePrompt, educationData);
     };
 
+    /* =========================================================================
+       BACKUP OF PREVIOUS generateCareerPrompt (WITH FRS FORMULA & CALCULATIONS)
+       Preserved for easy restoration if ever requested:
+       =========================================================================
+    //     // Career suggestions prompt
+    //     export const generateCareerPrompt = async (userId, type1, type2, industry, country, finalAge, currentAgeWeek, language, languageOptions,educationWorkDescription=null) => {
+    //         const educationData = await getUserEducationPromptData(userId);
+    //         
+    //         // New logic for futuristic careers
+    //         let futuristicCareerPrompt;
+    //         if (finalAge < 19) {
+    //             futuristicCareerPrompt = "3 futuristic careers for individual aged 25 in the year " + (new Date().getFullYear() + (25 - finalAge));
+    //         } else {
+    //             const futureAge = finalAge + 10;
+    //             futuristicCareerPrompt = "3 futuristic careers for individual aged " + futureAge + " in the year " + (new Date().getFullYear() + 10);
+    //         }
+    //         
+    //         const basePrompt = `Provide a list of the most suitable careers ${
+    //             industry === "any" ? "" : `in the ${industry} industry`
+    //         } ${
+    //             country ? "in " + country : ""
+    //         } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}. 
+    //         ${
+    //           industry && industry !== "any"
+    //             ? `\n        **CRITICAL MANDATORY INDUSTRY DOMAIN CONSTRAINT:**\n        - The user has explicitly selected the "${industry}" industry.\n        - ALL 36 careers across ALL 12 categories MUST be genuine, authentic roles strictly within the "${industry}" industry.\n        - NEVER recommend careers from unrelated industries (for example, if the industry is "${industry}", do NOT suggest mechanical engineering, civil construction, automotive repair, or general medicine). Every single recommended career must be a legitimate career path directly operating within "${industry}".\n        - For each of the 12 categories (traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led), identify the authentic specializations that exist directly WITHIN "${industry}".\n`
+    //             : ""
+    //         }
+    // 
+    //         **RIASEC Interest Code Guidelines:**
+    //         - The interest code represents a ranked preference order based on assessment scores
+    //         - Each letter's position indicates preference strength (1st position = highest score, 2nd position = second highest, etc.)
+    //         - Sequences may be 3+ characters long due to tied scores in the assessment
+    //         - Primary interest (1st letter): Dominant preference - heavily weight in career matching
+    //         - Secondary interest (2nd letter): Strong preference - significant influence on career fit
+    //         - Tertiary interest (3rd letter): Moderate preference - notable consideration
+    //         - Additional letters (4th+): Emerging preferences - minor but relevant considerations
+    //         - R (Realistic): Hands-on, practical, mechanical, outdoors
+    //         - I (Investigative): Analytical, scientific, research-oriented
+    //         - A (Artistic): Creative, expressive, aesthetic, original
+    //         - S (Social): Helping people, teaching, counseling, community-focused
+    //         - E (Enterprising): Leadership, persuasion, business, competitive
+    //         - C (Conventional): Organized, detail-oriented, structured, systematic
+    //         - Weight career recommendations based on how well they align with the hierarchical interest pattern
+    // 
+    //         ${educationWorkDescription != null ? "Qualification: " + educationWorkDescription : ""}
+    // 
+    //         Include exactly 3 careers for each category:
+    //         1. traditional (Traditional Careers: Established roles with recognised education or training routes and familiar career progression. They tend to have a long-standing place in the workforce and clear entry pathways.)
+    //         2. trending (Trending Careers: Roles with rising demand now, driven by current technologies, industries or social needs. They are already real career options; their distinction is growing demand today.)
+    //         3. futuristic (Futuristic Careers: Roles expected to emerge or expand as technology and society change over the next 10–30 years. They should be grounded in credible developments, while recognising that their exact form may change.)
+    //         4. offbeat (Offbeat Careers: Viable but lesser-known roles that students may not usually encounter through standard career advice. They offer an unconventional route or specialism without relying on being new or rapidly growing.)
+    //         5. entrepreneurial (Entrepreneurial Careers: Roles centred on creating, building or growing a business, product or venture. The defining feature is taking responsibility for developing an enterprise, rather than simply working independently.)
+    //         6. independent / portfolio (Independent / Portfolio Careers: Roles commonly pursued through freelance, self-employed or project-based work for different clients. The defining feature is building a body of work independently, rather than growing a company or following one employer’s career ladder.)
+    //         7. tech-driven (Tech-Driven Careers: Roles where designing, building or operating technology is central to the work. Using digital tools in a job does not by itself make that career tech-driven.)
+    //         8. creative (Creative Careers: Roles where the main output is original art, design, media, performance or storytelling. Creativity may help in any career; here, creating original work is the central purpose.)
+    //         9. sustainable and green (Sustainable & Green Careers: Roles whose main purpose is protecting the environment, reducing harm or managing resources sustainably. Classify a career here when environmental outcomes define its work, rather than being only one consideration.)
+    //         10. social impact (Social Impact Careers: Roles whose primary aim is improving people’s wellbeing, communities or social conditions. If a role’s central purpose is environmental change, place it under Sustainable & Green instead.)
+    //         11. experiential (Experiential Careers: Roles where the main value comes from creating or delivering live, immersive or hands-on experiences. The participant’s direct experience is central to the work—not simply content about an experience.)
+    //         12. research-led (Research-Led Careers: Roles centred on investigating questions, testing ideas and producing new findings or evidence. The defining work is systematic inquiry, rather than routinely applying existing knowledge or data.)
+    // 
+    //         CRITICAL AI CLASSIFICATION RULE:
+    //         - In EACH of the 12 categories:
+    //         - Provide exactly 3 careers
+    //         - Maintain strict 1:1:1 ratio:
+    //             - 1 career must be AI Proof
+    //             - 1 career must be AI Augmented
+    //             - 1 career must be AI Risk
+    // 
+    //         CRITICAL MANDATORY GUIDELINES FOR THE "AI PROOF" CAREER (ABSOLUTE 100% IRREPLACEABILITY):
+    //         The single career selected as "AI Proof" in EACH of the 12 categories must represent an absolute, genuine 100% irreplaceability by Artificial Intelligence, LLMs, or autonomous software. It must be an exemplary career where human presence, agency, and intuition are fundamentally permanent and indispensable.
+    // 
+    //         Emphasize the "AI Proof" selection on careers that are 100% irreplaceable due to:
+    //         1. 100% Human In-Person Presence & Deep Relational Trust: High-touch human connection, acute emotional guidance, somatic therapy, complex human care, and empathetic leadership where a human being is irreplaceable and authentic human presence is the entire value.
+    //         2. Real-World Embodied Action & Physical Mastery: Skilled hands-on craft, live field operations, complex tactile manipulation, or specialized physical intervention in unpredictable, dynamic real-world environments.
+    //         3. Ultimate Legal, Moral & Fiduciary Responsibility: Roles where a human practitioner must carry direct ethical accountability, statutory sign-off, or life-or-death decisions that can never be delegated to an algorithm.
+    //         4. Live Real-Time Crisis Agency: High-stakes navigation of chaotic physical situations requiring instant, spontaneous human judgment and personal accountability.
+    // 
+    //         (Roles that focus on digital assistance, routine automation, or technology-assisted workflows should naturally be categorized under "AI Augmented" or "AI Risk", ensuring the "AI Proof" spot is reserved exclusively for careers that are 100% immune to AI replacement.)
+    // 
+    //         AI FUTURE RESILIENCE SCORING SYSTEM:
+    // 
+    //         For EACH career, calculate an AI Future Resilience Score (FRS) from 0 to 100 using:
+    // 
+    //         A. Task Automation Risk (40%)
+    //         B. Human Judgment Requirement (25%)
+    //         C. Creativity Requirement (15%)
+    //         D. Human Interaction Depth (10%)
+    //         E. Regulatory / Physical Constraints (10%)
+    // 
+    //         FRS FORMULA:
+    //         FRS =
+    //         (1 - Automation Risk)*40 +
+    //         Judgment*25 +
+    //         Creativity*15 +
+    //         Human Interaction*10 +
+    //         Constraints*10
+    // 
+    //         (All parameter values between 0 and 1)
+    // 
+    //         CLASSIFICATION BASED ON SCORE:
+    //         - 90–100 → AI Proof (Ensure this role is strictly 100% irreplaceable by AI as defined above)
+    //         - 60–89 → AI Augmented
+    //         - 0–59 → AI Risk
+    // 
+    //         IMPORTANT:
+    //         - Classification MUST match the calculated score
+    //         - Maintain strict 1:1:1 ratio per category
+    // 
+    //         CRITICAL CAREER DESCRIPTION & AI RATIONALE RULE (MANDATORY):
+    //         - The career description ("brief_overview") MUST NOT be a generic or simple textbook definition of what the job does (e.g., do NOT write generic one-liners like "Teachers develop curriculums and teach students" or "Developers write code and build software").
+    //         - INSTEAD, every career's "brief_overview" must describe the role while explicitly providing a clear, compelling explanation of WHY it holds its AI classification:
+    //             1. If AI Proof: Give a proper description explaining WHY this career is AI Proof (the essential human presence, somatic craft, emotional empathy, real-time crisis handling, dynamic mentorship, or ethical accountability that an AI model can never replace).
+    //             2. If AI Augmented: Give a proper description explaining WHY this career is AI Augmented (how human practitioners leverage AI tools and algorithms to amplify productivity, research, or execution while human strategy and judgment remain in control).
+    //             3. If AI Risk: Give a clear description explaining WHY this career is at AI Risk (which routine cognitive, drafting, analytical, or automated tasks make this role highly susceptible to AI automation or replacement).
+    // 
+    //         EXPLANATION RULE:
+    //         - "Why AI Proof/ Augments/ Replaces" must be written in simple, punchy natural language summarizing the core driver of its AI classification.
+    //         - DO NOT mention scores, formula, or parameters.
+    //         - Keep explanation human-readable, specific, and clear.
+    // 
+    //         CAREER COMPATIBILITY:
+    //         - For EACH career, assign a compatibility_score (0–100)
+    //         - Based on personality fit and interest alignment
+    //         - Ensure all careers are at least 80% compatible
+    // 
+    //         Ensure that the recommended careers align at least 80% compatibility and do not overlap.
+    // 
+    //         For each career, include:
+    //         {
+    //         "career_name": "Concise 1-3 word real-world job title (e.g. Teacher, Professor, School Counselor, Curriculum Developer - NEVER long compound phrases or titles with 'in', 'for', 'of', or 'and')",
+
+    //         "type": "exact category name in lowercase (one of: traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led)",
+    //         "ai_proof": true/false,
+    //         "ai_category": "AI Proof / AI Augmented / AI Risk",
+    //         "ai_resilience_score": number,
+    //         "compatibility_score": number,
+    //         "Why AI Proof/ Augments/ Replaces": "Concise 1-2 sentence explanation of why this role is AI Proof, AI Augmented, or AI Risk",
+    //         "description": "Why suitable for this user based on their personality profile and strengths",
+    //         "brief_overview": "Rich 2-3 sentence description explaining the career role specifically highlighting why it is AI Proof, AI Augmented, or AI Risk as mandated above",
+    //         "future_potential": "Growth and opportunities"
+    //         }
+    // 
+    //         STRICT OUTPUT REQUIREMENTS (MANDATORY):
+    //         - Total careers MUST be exactly 36 (12 categories × 3 each)
+    //         - EACH category MUST have exactly 3 careers
+    //         - NO category can have less or more than 3 careers
+    //         - Output is INVALID if any category is missing or has incorrect count
+    //         - Maintain strict 1:1:1 ratio (AI Proof, AI Augmented, AI Risk) inside EACH category
+    //         ${
+    //           industry && industry !== "any"
+    //             ? `- ALL 36 recommended careers must strictly belong to the "${industry}" industry without exception.\n        `
+    //             : ""
+    //         }        - Ensure all 12 categories are present in the response: traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led.
+    //         - CRITICAL: Category 8 (creative) MUST NEVER BE SKIPPED OR OMITTED under any circumstances, even if user has low Artistic scores. Suggest creative roles aligned with their technical or analytical strengths (e.g. UI/UX Designer, Game Designer, Industrial Product Designer, Architectural Designer, Creative Technologist).
+    //         - Do NOT skip or merge categories
+    // 
+    //         OUTPUT STRUCTURE RULE:
+    //         - Careers MUST be grouped logically by category
+    //         - Ensure each category clearly contains 3 careers before moving to next category
+    // 
+    //         Do not include the terms MBTI or RIASEC and '${type1}' or '${type2}' in the response data.
+    // 
+    //         Return the result strictly as a single JSON array without any wrapping other than [].
+    // 
+    //         languageOptions[language] || "in English"
+    //         }, keeping the keys in English only, but the career names should be ${
+    //             languageOptions[language] || "in English"
+    //         }.`;
+    //         
+    //         return enhancePromptWithEducation(basePrompt, educationData);
+    //     };
+       ========================================================================= */
+
     // Career suggestions prompt
     export const generateCareerPrompt = async (userId, type1, type2, industry, country, finalAge, currentAgeWeek, language, languageOptions,educationWorkDescription=null) => {
         const educationData = await getUserEducationPromptData(userId);
@@ -39,10 +212,15 @@ export const dynamic = 'force-dynamic';
         }
         
         const basePrompt = `Provide a list of the most suitable careers ${
-            industry === "any" ? "" : `in the ${industry}`
+            industry === "any" ? "" : `in the ${industry} industry`
         } ${
             country ? "in " + country : ""
         } for an individual who has an ${type1} personality type and RIASEC interest types of ${type2}. 
+        ${
+          industry && industry !== "any"
+            ? `\n        **CRITICAL MANDATORY INDUSTRY DOMAIN CONSTRAINT:**\n        - The user has explicitly selected the "${industry}" industry.\n        - ALL 36 careers across ALL 12 categories MUST be genuine, authentic roles strictly within the "${industry}" industry.\n        - NEVER recommend careers from unrelated industries (for example, if the industry is "${industry}", do NOT suggest mechanical engineering, civil construction, automotive repair, or general medicine). Every single recommended career must be a legitimate career path directly operating within "${industry}".\n        - For each of the 12 categories (traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led), identify the authentic specializations that exist directly WITHIN "${industry}".\n`
+            : ""
+        }
 
         **RIASEC Interest Code Guidelines:**
         - The interest code represents a ranked preference order based on assessment scores
@@ -76,54 +254,60 @@ export const dynamic = 'force-dynamic';
         11. experiential (Experiential Careers: Roles where the main value comes from creating or delivering live, immersive or hands-on experiences. The participant’s direct experience is central to the work—not simply content about an experience.)
         12. research-led (Research-Led Careers: Roles centred on investigating questions, testing ideas and producing new findings or evidence. The defining work is systematic inquiry, rather than routinely applying existing knowledge or data.)
 
-        CRITICAL AI CLASSIFICATION RULE:
-        - In EACH category:
-        - Provide exactly 3 careers
-        - Maintain strict 1:1:1 ratio:
-            - 1 career must be AI Proof
-            - 1 career must be AI Augmented
-            - 1 career must be AI Risk
+        CRITICAL AI CLASSIFICATION GUIDELINES (MANDATORY 1:1:1 RATIO PER CATEGORY):
+        In EACH of the 12 categories, provide exactly 3 careers with a strict 1:1:1 ratio:
+        - Exactly 1 career MUST be "AI Proof"
+        - Exactly 1 career MUST be "AI Augmented"
+        - Exactly 1 career MUST be "AI Risk"
 
-        AI FUTURE RESILIENCE SCORING SYSTEM:
+        HOW TO IDENTIFY AND ASSIGN EACH AI STATUS:
 
-        For EACH career, calculate an AI Future Resilience Score (FRS) from 0 to 100 using:
+        1. AI PROOF (ABSOLUTE 100% IRREPLACEABILITY BY AI):
+        The single career selected as "AI Proof" in EACH category must represent an absolute, genuine 100% irreplaceability by Artificial Intelligence, LLMs, or autonomous robotics. It must be an authentic, exemplary career where human presence, agency, physical mastery, dynamic intuition, and human empathy are fundamentally permanent and indispensable.
+        Emphasize roles that are 100% irreplaceable due to:
+        - 100% Human In-Person Presence & Deep Relational Trust: High-touch human connection, acute emotional guidance, somatic therapy, complex human care, and empathetic leadership where a human being is irreplaceable and authentic human presence is the entire value.
+        - Real-World Embodied Action & Physical Mastery: Skilled hands-on craft, live field operations, complex tactile manipulation, or specialized physical intervention in unpredictable, dynamic real-world environments.
+        - Ultimate Legal, Moral & Fiduciary Responsibility: Roles where a human practitioner must carry direct ethical accountability, statutory sign-off, or life-or-death decisions that can never be delegated to an algorithm.
+        - Live Real-Time Crisis Agency: High-stakes navigation of chaotic physical situations requiring instant, spontaneous human judgment and personal accountability.
+        (Note: Screen-only, routine digital, or software-assisted desk jobs MUST NOT be selected as AI Proof; place them under AI Augmented or AI Risk.)
 
-        A. Task Automation Risk (40%)
-        B. Human Judgment Requirement (25%)
-        C. Creativity Requirement (15%)
-        D. Human Interaction Depth (10%)
-        E. Regulatory / Physical Constraints (10%)
+        2. AI AUGMENTED (HUMAN-DIRECTED, AI-EMPOWERED):
+        Careers where human professionals actively leverage AI tools, LLMs, and automation as intelligent copilots to supercharge their productivity, research, data synthesis, and technical execution—while essential human strategic vision, creative taste, contextual judgment, and decision-making remain firmly in control.
 
-        FRS FORMULA:
-        FRS =
-        (1 - Automation Risk)*40 +
-        Judgment*25 +
-        Creativity*15 +
-        Human Interaction*10 +
-        Constraints*10
+        3. AI RISK (VULNERABLE TO AUTOMATION & REPLACEMENT):
+        Careers heavily comprised of routine cognitive tasks, standardized drafting, code generation, repetitive analysis, or structured data administration where AI models and autonomous systems can directly perform the primary work, putting traditional employment at substantial risk of displacement.
 
-        (All parameter values between 0 and 1)
-
-        CLASSIFICATION BASED ON SCORE:
-        - 90–100 → AI Proof
-        - 60–89 → AI Augmented
-        - 0–59 → AI Risk
-
-        IMPORTANT:
-        - Classification MUST match the calculated score
-        - Maintain strict 1:1:1 ratio per category
+        CRITICAL CAREER DESCRIPTION & AI RATIONALE RULE (MANDATORY):
+        - The career description ("brief_overview") MUST NOT be a generic or simple textbook definition of what the job does (e.g., do NOT write generic one-liners like "Teachers develop curriculums and teach students" or "Developers write code and build software").
+        - INSTEAD, every career's "brief_overview" must describe the role while explicitly providing a clear, compelling explanation of WHY it holds its AI classification:
+            1. If AI Proof: Give a proper description explaining WHY this career is AI Proof (the essential human presence, somatic craft, emotional empathy, real-time crisis handling, dynamic mentorship, or ethical accountability that an AI model can never replace).
+            2. If AI Augmented: Give a proper description explaining WHY this career is AI Augmented (how human practitioners leverage AI tools and algorithms to amplify productivity, research, or execution while human strategy and judgment remain in control).
+            3. If AI Risk: Give a clear description explaining WHY this career is at AI Risk (which routine cognitive, drafting, analytical, or automated tasks make this role highly susceptible to AI automation or replacement).
 
         EXPLANATION RULE:
-        - "Why AI Proof/ Augments/ Replaces" must be written in simple natural language
-        - DO NOT mention scores, formula, or parameters
-        - Keep explanation human-readable and clear
+        - "Why AI Proof/ Augments/ Replaces" must be written in simple, punchy natural language summarizing the core driver of its AI classification.
+        - Keep explanation human-readable, specific, and clear.
 
-        CAREER COMPATIBILITY:
-        - For EACH career, assign a compatibility_score (0–100)
-        - Based on personality fit and interest alignment
-        - Ensure all careers are at least 80% compatible
+        CRITICAL REAL-WORLD CAREER TITLE GUIDELINES (STRICT ENFORCEMENT):
+        - CAREER TITLES MUST BE SHORT, CLEAN, COMMONLY SPOKEN MAINSTREAM PROFESSIONS (STRICTLY 1 TO 3 WORDS, MAXIMUM 4 WORDS).
+        - ABSOLUTE BAN ON AWKWARD COMPOUND TITLES, PREPOSITIONAL PHRASES, AND DESCRIPTIVE CLAUSES:
+            * NEVER use titles containing "in [Field/Place]" (e.g. NEVER write "Lecturer in Academic Colleges", write "College Professor" or "Lecturer"; NEVER write "Data Analytics Instructor in Education", write "Data Science Instructor").
+            * NEVER use titles containing "for [Activity/Field]" (e.g. NEVER write "Workshop Leader for Hands-on STEM Activities", write "STEM Instructor"; NEVER write "Workshop Facilitator for Life Skills", write "Life Skills Coach").
+            * NEVER use titles containing "Founder of [Business]" or "Owner of [Store]" (e.g. NEVER write "Founder of Private Coaching Center", write "Education Entrepreneur"; NEVER write "Test Preparation Center Owner", write "Academy Director").
+            * NEVER chain multiple job titles with "and" or slash (e.g. NEVER write "Content Developer and Trainer", "Proofreader and Editor", or "Counselor Educator").
+            * NEVER invent clumsy, hyper-niche descriptors just to fit a category (e.g. NEVER write "Automated Grading System Developer Trainer", "Eco-Schools Program Coordinator", or "Augmented Reality (AR) Science Teacher").
+        - PREFER BROAD, ESTABLISHED PROFESSIONS:
+            * For teaching in school, use "Teacher" (NOT "School Teacher" or "Primary School Teacher").
+            * For higher education, use "Professor" or "Lecturer" (NOT "Lecturer in Academic Colleges").
+            * For student counseling, use "School Counselor" (NOT "School Counselor Educator").
+            * For curriculum design, use "Curriculum Developer" (NOT "Sustainability Curriculum Developer").
+        - ENSURE DIVERSITY OF REAL ROLES IN THE INDUSTRY:
+            * Do NOT repeat "Teacher", "Instructor", or "Educator" in every category. Real industries encompass diverse, recognized professions (for example, in Education: Teacher, Professor, School Principal, School Counselor, Speech Pathologist, Librarian, Education Consultant, Instructional Designer, Academic Advisor, School Psychologist, Admissions Officer, Archivist, Corporate Trainer, Museum Curator).
+            * Every recommended title must be an authentic, recognized profession that real people put on their resume or LinkedIn headline.
 
-        Ensure that the recommended careers align at least 80% compatibility and do not overlap.
+        CAREER RECOMMENDATION GUIDELINES:
+        - Ensure all recommended careers align authentically with the user's personality profile and interest preferences.
+        - Ensure recommended careers do not overlap across categories.
 
         For each career, include:
         {
@@ -131,11 +315,9 @@ export const dynamic = 'force-dynamic';
         "type": "exact category name in lowercase (one of: traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led)",
         "ai_proof": true/false,
         "ai_category": "AI Proof / AI Augmented / AI Risk",
-        "ai_resilience_score": number,
-        "compatibility_score": number,
-        "Why AI Proof/ Augments/ Replaces": "Simple explanation",
-        "description": "Why suitable for this user",
-        "brief_overview": "What the career involves",
+        "Why AI Proof/ Augments/ Replaces": "Concise 1-2 sentence explanation of why this role is AI Proof, AI Augmented, or AI Risk",
+        "description": "Why suitable for this user based on their personality profile and strengths",
+        "brief_overview": "Rich 2-3 sentence description explaining the career role specifically highlighting why it is AI Proof, AI Augmented, or AI Risk as mandated above",
         "future_potential": "Growth and opportunities"
         }
 
@@ -145,7 +327,11 @@ export const dynamic = 'force-dynamic';
         - NO category can have less or more than 3 careers
         - Output is INVALID if any category is missing or has incorrect count
         - Maintain strict 1:1:1 ratio (AI Proof, AI Augmented, AI Risk) inside EACH category
-        - Ensure all 12 categories are present in the response: traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led.
+        ${
+          industry && industry !== "any"
+            ? `- ALL 36 recommended careers must strictly belong to the "${industry}" industry without exception.\n        `
+            : ""
+        }        - Ensure all 12 categories are present in the response: traditional, trending, futuristic, offbeat, entrepreneurial, independent / portfolio, tech-driven, creative, sustainable and green, social impact, experiential, research-led.
         - CRITICAL: Category 8 (creative) MUST NEVER BE SKIPPED OR OMITTED under any circumstances, even if user has low Artistic scores. Suggest creative roles aligned with their technical or analytical strengths (e.g. UI/UX Designer, Game Designer, Industrial Product Designer, Architectural Designer, Creative Technologist).
         - Do NOT skip or merge categories
 

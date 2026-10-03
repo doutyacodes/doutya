@@ -155,9 +155,10 @@ function CareerCard({ career, catColor, onReadMore }) {
           {career.career_name}
         </h4>
 
-        {/* Chips — no decorative icons */}
+        {/* Chips — only AI category badge displayed (match % and resilience score hidden per boss request, easy to restore anytime) */}
         <div className="flex flex-wrap gap-2">
           <AiBadge category={career.ai_category} />
+          {/* Temporarily hidden per boss request (uncomment anytime to restore):
           <span
             className="text-xs font-medium px-2 py-0.5 rounded"
             style={{ color: "#93c5fd", background: "rgba(147,197,253,0.08)", border: "1px solid rgba(147,197,253,0.20)" }}
@@ -170,10 +171,13 @@ function CareerCard({ career, catColor, onReadMore }) {
           >
             {career.ai_resilience_score ?? "—"}% resilience
           </span>
+          */}
         </div>
 
-        {career.brief_overview && (
-          <p className="text-gray-400 text-sm leading-relaxed line-clamp-2">{career.brief_overview}</p>
+        {(career.brief_overview || career["Why AI Proof/ Augments/ Replaces"] || career.description) && (
+          <p className="text-gray-400 text-sm leading-relaxed">
+            {career.brief_overview || career["Why AI Proof/ Augments/ Replaces"] || career.description}
+          </p>
         )}
 
         <div className="mt-auto pt-2 flex justify-end">
@@ -573,6 +577,7 @@ export default function Results2({ step, setStep }) {
   const [fetchingIndustry, setFetchingIndustry] = useState(false);
   const [fetchingCareer, setFetchingCareer]   = useState(false);
   const [industries, setIndustries]           = useState([]);
+  const [customIndustry, setCustomIndustry]   = useState("");
   const [saveResultloading, setSaveResultLoading] = useState(false);
   const [showDialogue, setShowDialogue]       = useState(false);
   const [showAlert, setShowAlert]             = useState(false);
@@ -611,7 +616,14 @@ export default function Results2({ step, setStep }) {
     return dir === "next" ? cats[(idx + 1) % cats.length] : cats[(idx - 1 + cats.length) % cats.length];
   };
 
+  const isFetchingRef = useRef(false);
+
   const fetchResults = async (selectedIndustry = "") => {
+    if (isFetchingRef.current) {
+      console.log("Fetch already in progress, skipping duplicate call");
+      return;
+    }
+    isFetchingRef.current = true;
     setFetchingCareer(true);
     try {
       const token    = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -625,7 +637,7 @@ export default function Results2({ step, setStep }) {
         setStep(2);
       } else if (response.status === 204) {
         setStep(1);
-        fetchIndustry();
+        // fetchIndustry(); // Disabled: suggested industries hidden per request (backed up in suggestedIndustriesBackup.jsx)
       }
       const status = await GlobalApi.CheckFeedback(token);
       setPrevSelectCount(status.data.savedCareerCount);
@@ -633,6 +645,7 @@ export default function Results2({ step, setStep }) {
       console.error("Failed to fetch results:", err);
     } finally {
       setFetchingCareer(false);
+      isFetchingRef.current = false;
     }
   };
 
@@ -717,17 +730,14 @@ export default function Results2({ step, setStep }) {
       )}
 
       {/* ── Step 1 header ── */}
-      {step === 1 && industries.length > 0 && (
+      {step === 1 && (
         <>
           <InterestTestComplete />
-          <div className="relative mx-4 mb-6">
-            <div className="relative backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 rounded-xl p-6 shadow-2xl">
-              <div className="flex items-center justify-center gap-3">
-                <div className="p-3 bg-orange-500/10 rounded-full"><Sparkles className="w-8 h-8 text-orange-400" /></div>
-                <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">SELECT INDUSTRY</h1>
-              </div>
-              <div className="w-20 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto mt-4" />
-            </div>
+          <div className="text-center px-4 pt-2 pb-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Select Industry</h1>
+            <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+              Choose how you want your career recommendations generated. This is a one-time selection.
+            </p>
           </div>
         </>
       )}
@@ -788,68 +798,115 @@ export default function Results2({ step, setStep }) {
 
       <div className="flex flex-col md:px-6 lg:px-12 gap-6 w-full">
 
-        {/* ── STEP 1: Industry grid ── */}
-        {step === 1 && industries.length > 0 && (
-          <div className="p-6 rounded-lg text-white mt-6 w-full max-sm:pb-24">
-            <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-12 gap-6 max-w-6xl mx-auto">
-              {showAlert && <AlertDialogue fetchResults={fetchResults} setShowAlert={setShowAlert} />}
+        {/* ── STEP 1: Industry Selection ── */}
+        {step === 1 && (
+          <div className="w-full max-w-4xl mx-auto px-4 pt-6 pb-24 md:pb-10">
+            {showAlert && <AlertDialogue fetchResults={fetchResults} setShowAlert={setShowAlert} />}
 
-              <div className="sm:col-span-6 md:col-span-6 col-span-12 cursor-pointer" onClick={() => setShowAlert(true)}>
-                <div className="backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 hover:border-orange-500/50 rounded-2xl p-6 shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02]">
-                  <div className="text-center mb-4">
-                    <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full font-semibold text-sm">
-                      <Sparkles className="w-4 h-4" />{t("industryAgnostic")}
-                    </div>
+            <div className="flex flex-col md:flex-row items-stretch gap-5 md:gap-6">
+
+              {/* ── Card A: Industry Agnostic ── */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => !fetchingCareer && setShowAlert(true)}
+                onKeyDown={(e) => e.key === "Enter" && !fetchingCareer && setShowAlert(true)}
+                className={`flex-1 rounded-xl overflow-hidden transition-all duration-200 ${
+                  fetchingCareer
+                    ? "opacity-50 pointer-events-none"
+                    : "cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10"
+                }`}
+                style={{
+                  background: "rgba(30,37,50,0.95)",
+                  border: "1px solid rgba(75,85,99,0.5)",
+                  borderBottom: "3px solid #f97316",
+                }}
+              >
+                <div className="h-[2px]" style={{ background: "linear-gradient(90deg,rgba(249,115,22,0.5),rgba(249,115,22,0.1),transparent)" }} />
+                <div className="p-6 md:p-8 flex flex-col h-full">
+                  <div className="mb-5">
+                    <span className="inline-block text-xs font-semibold uppercase tracking-wider text-orange-400 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-md">
+                      {t("industryAgnostic")}
+                    </span>
                   </div>
-                  <div className="bg-gray-700/50 rounded-xl p-4 min-h-[120px] flex items-center justify-center">
-                    <p className="text-gray-200 text-sm text-center leading-relaxed">Explore career suggestions across various industries</p>
+                  <h3 className="text-white font-bold text-xl md:text-2xl mb-3">Explore All Industries</h3>
+                  <p className="text-gray-300 text-sm leading-relaxed flex-1">
+                    Get career recommendations from every field based on your personality and interests — no restrictions. Best if you're open to discovering unexpected career matches.
+                  </p>
+                  <div className="mt-6 pt-5 border-t border-gray-700/50">
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-orange-400">
+                      Get started →
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <div className="sm:col-span-6 md:col-span-6 col-span-12 cursor-pointer" onClick={() => setShowDialogue(true)}>
-                <div className="backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 hover:border-green-500/50 rounded-2xl p-6 shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02]">
-                  <div className="text-center mb-4">
-                    <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full font-semibold text-sm">
-                      <TrendingUp className="w-4 h-4" />{t("industrySpecific")}
-                    </div>
+              {/* ── OR Divider ── */}
+              <div className="flex md:flex-col items-center justify-center">
+                <div className="flex-1 h-px md:h-auto md:w-px bg-gray-600/50" />
+                <span className="mx-4 md:mx-0 md:my-3 text-gray-400 text-sm font-semibold px-2">or</span>
+                <div className="flex-1 h-px md:h-auto md:w-px bg-gray-600/50" />
+              </div>
+
+              {/* ── Card B: Specific Industry ── */}
+              <div
+                className="flex-1 rounded-xl overflow-hidden transition-all duration-200"
+                style={{
+                  background: "rgba(30,37,50,0.95)",
+                  border: "1px solid rgba(75,85,99,0.5)",
+                  borderBottom: "3px solid #10b981",
+                }}
+              >
+                <div className="h-[2px]" style={{ background: "linear-gradient(90deg,rgba(16,185,129,0.5),rgba(16,185,129,0.1),transparent)" }} />
+                <div className="p-6 md:p-8 flex flex-col h-full">
+                  <div className="mb-5">
+                    <span className="inline-block text-xs font-semibold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-md">
+                      {t("industrySpecific")}
+                    </span>
                   </div>
-                  <div className="bg-gray-700/50 rounded-xl p-4 min-h-[120px] flex items-center justify-center">
-                    <p className="text-gray-200 text-sm text-center leading-relaxed">Enter your preferred industry to discover tailored career options</p>
+                  <h3 className="text-white font-bold text-xl md:text-2xl mb-3">Choose a Specific Industry</h3>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-5">
+                    All 36 career recommendations will be tailored within your chosen industry.
+                  </p>
+                  <div className="flex gap-2 mt-auto pt-5 border-t border-gray-700/50">
+                    <input
+                      type="text"
+                      value={customIndustry}
+                      disabled={fetchingCareer}
+                      onChange={(e) => setCustomIndustry(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && customIndustry.trim() && !fetchingCareer) {
+                          fetchResults(customIndustry.trim());
+                        }
+                      }}
+                      placeholder="e.g. Healthcare, Education, Finance..."
+                      className="flex-1 px-4 py-3 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all disabled:opacity-50"
+                      style={{ background: "rgba(17,24,39,0.8)", border: "1px solid rgba(75,85,99,0.6)" }}
+                    />
+                    <button
+                      type="button"
+                      disabled={fetchingCareer || !customIndustry.trim()}
+                      onClick={() => {
+                        if (customIndustry.trim() && !fetchingCareer) {
+                          fetchResults(customIndustry.trim());
+                        }
+                      }}
+                      className={`px-5 py-3 text-sm font-semibold rounded-lg transition-all shrink-0 ${
+                        fetchingCareer || !customIndustry.trim()
+                          ? "text-gray-500 cursor-not-allowed"
+                          : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                      }`}
+                      style={fetchingCareer || !customIndustry.trim() ? { background: "rgba(55,65,81,0.6)" } : {}}
+                    >
+                      {fetchingCareer ? "Loading..." : "Go"}
+                    </button>
                   </div>
                 </div>
-                <AddIndustry isOpen={showDialogue} onClose={() => setShowDialogue(false)} fetchResults={fetchResults} />
               </div>
 
-              <div className="col-span-12 text-center py-8">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mb-2">
-                  {t("selectBelowIndustry")}
-                </h2>
-                <div className="w-24 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto" />
-              </div>
-
-              {industries.map((industry, index) => {
-                const color = getColorByIndex(index);
-                return (
-                  <div
-                    key={index}
-                    className="sm:col-span-6 md:col-span-4 col-span-6 cursor-pointer"
-                    onClick={() => fetchResults(industry.industry_name)}
-                  >
-                    <div className="backdrop-blur-sm bg-gray-800/60 border border-gray-700/50 hover:border-gray-600/50 rounded-2xl p-4 shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02]">
-                      <div className="text-center mb-3">
-                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-3" style={{ backgroundColor: `${color}20` }}>
-                          <div className="w-6 h-6 rounded-full" style={{ backgroundColor: color }} />
-                        </div>
-                      </div>
-                      <div className="bg-gray-700/50 rounded-xl p-4 min-h-[100px] flex items-center justify-center">
-                        <p className="text-gray-200 text-sm text-center font-medium leading-relaxed">{industry.industry_name}</p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
+
+            <AddIndustry isOpen={showDialogue} onClose={() => setShowDialogue(false)} fetchResults={fetchResults} />
           </div>
         )}
 
@@ -967,12 +1024,14 @@ export default function Results2({ step, setStep }) {
               {singleCareer && (
                 <div className="space-y-8 px-4 md:px-10">
                   <div className="grid grid-cols-12 gap-6">
-                    {/* Score strip */}
+                    {/* Score strip — scores hidden per request, only AI category and AI Proof shown */}
                     {(singleCareer.ai_category || singleCareer.compatibility_score != null) && (
-                      <div className="col-span-12 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      <div className="col-span-12 grid grid-cols-2 sm:grid-cols-2 gap-4">
                         {[
+                          /* Temporarily hidden per boss request:
                           { label: "Compatibility",  value: `${singleCareer.compatibility_score ?? "—"}%`,  color: "#93c5fd" },
                           { label: "AI Resilience",  value: `${singleCareer.ai_resilience_score ?? "—"}%`, color: getAiCfg(singleCareer.ai_category).color },
+                          */
                           { label: "AI Category",    value: singleCareer.ai_category || "—",               color: "#e2e8f0" },
                           { label: "AI Proof",       value: singleCareer.ai_proof ? "Yes" : "No",          color: singleCareer.ai_proof ? "#4ade80" : "#f87171" },
                         ].map(s => (

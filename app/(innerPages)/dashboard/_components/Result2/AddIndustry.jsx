@@ -11,11 +11,20 @@ function AddIndustry({ isOpen, onClose, fetchResults}) {
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = ()=>{
-        fetchResults(selectedIndustry)
+        if (loading || !selectedIndustry.trim()) return;
+        setLoading(true);
+        onClose();
+        fetchResults(selectedIndustry.trim());
+    }
+
+    const handleClose = () => {
+        if (!loading) {
+            onClose();
+        }
     }
 
     return (
-        <Dialog open={isOpen} onClose={onClose} className="relative z-[9999]">
+        <Dialog open={isOpen} onClose={handleClose} className="relative z-[9999]">
             <DialogBackdrop
                 transition
                 className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
@@ -43,8 +52,10 @@ function AddIndustry({ isOpen, onClose, fetchResults}) {
                                         <input
                                             type="text"
                                             value={selectedIndustry}
+                                            disabled={loading}
                                             onChange={(e) => setSelectedIndustry(e.target.value)}
-                                            className="block w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 text-white placeholder-gray-400 transition-all duration-200"
+                                            onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
+                                            className="block w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 text-white placeholder-gray-400 transition-all duration-200 disabled:opacity-50"
                                             placeholder="Enter Industry name"
                                         />
                                     </div>
@@ -54,8 +65,9 @@ function AddIndustry({ isOpen, onClose, fetchResults}) {
                         <div className="bg-gray-700/30 px-6 py-4 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:justify-end">
                             <button
                                 type="button"
-                                onClick={onClose}
-                                className="inline-flex justify-center items-center px-4 py-2.5 bg-gray-600/50 hover:bg-gray-600/70 border border-gray-500/50 text-gray-200 hover:text-white text-sm font-medium rounded-xl transition-all duration-200 sm:mr-3"
+                                disabled={loading}
+                                onClick={handleClose}
+                                className="inline-flex justify-center items-center px-4 py-2.5 bg-gray-600/50 hover:bg-gray-600/70 border border-gray-500/50 text-gray-200 hover:text-white text-sm font-medium rounded-xl transition-all duration-200 sm:mr-3 disabled:opacity-50"
                             >
                                 {t('cancel')}
                             </button>

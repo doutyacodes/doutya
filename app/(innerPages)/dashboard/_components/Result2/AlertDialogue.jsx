@@ -8,13 +8,16 @@ import { useTranslations } from 'next-intl'
 function AlertDialogue({fetchResults, setShowAlert}) {
     const t = useTranslations('IndustryAlert');
     const [open, setOpen] = useState(true)
+    const [submitting, setSubmitting] = useState(false)
 
     const handleContinue = ()=>{
-        setShowAlert(false)
-        fetchResults("any")
+        if (submitting) return;
+        setSubmitting(true);
+        setShowAlert(false);
+        fetchResults("any");
     }
     return (
-        <Dialog open={open} onClose={setOpen} className="relative z-[9999]">
+        <Dialog open={open} onClose={() => { if (!submitting) { setOpen(false); setShowAlert(false); } }} className="relative z-[9999]">
             <DialogBackdrop
                 transition
                 className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
@@ -44,17 +47,19 @@ function AlertDialogue({fetchResults, setShowAlert}) {
                         <div className="bg-gray-700/30 px-6 py-4 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:justify-end">
                             <button
                                 type="button"
-                                onClick={() => setOpen(false)}
-                                className="inline-flex justify-center items-center px-4 py-2.5 bg-gray-600/50 hover:bg-gray-600/70 border border-gray-500/50 text-gray-200 hover:text-white text-sm font-medium rounded-xl transition-all duration-200 sm:mr-3"
+                                disabled={submitting}
+                                onClick={() => { setShowAlert(false); setOpen(false); }}
+                                className="inline-flex justify-center items-center px-4 py-2.5 bg-gray-600/50 hover:bg-gray-600/70 border border-gray-500/50 text-gray-200 hover:text-white text-sm font-medium rounded-xl transition-all duration-200 sm:mr-3 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {t('cancel')}
                             </button>
                             <button
                                 type="button"
+                                disabled={submitting}
                                 onClick={handleContinue}
-                                className="inline-flex justify-center items-center px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200"
+                                className="inline-flex justify-center items-center px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {t('continue')}
+                                {submitting ? "Loading..." : t('continue')}
                             </button>
                         </div>
                     </DialogPanel>
