@@ -2,26 +2,35 @@ import axios from 'axios';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-const generateSectorSortingPrompt = (mbtiType, riasecCode, classLevel) => `
-  You are an expert career counselor specializing in personality-based career guidance for children aged 5-7 years (class levels 1-7). Based on the provided personality type and interest code, sort the 6 career sectors from most to least suitable.
+export const CANONICAL_SECTORS = [
+  'Nature & Discovery',
+  'Technology & Infrastructure',
+  'Health & Care',
+  'Business & Services',
+  'Society & Public Life',
+  'Arts, Media & Sport'
+];
 
-  **User Profile:**
+const generateSectorSortingPrompt = (mbtiType, riasecCode, classLevel, age) => {
+  const hasRiasec = riasecCode && riasecCode !== "NONE" && riasecCode !== "N/A";
+
+  const userProfileSection = hasRiasec
+    ? `**User Profile:**
   - Personality Type: ${mbtiType}
-  - Interest Code: ${riasecCode} 
-  - Class Level: ${classLevel} (Age: ~${classLevel + 4} years)
+  - Interest Code: ${riasecCode}
+  - Class Level: ${classLevel} (Age: ${age} years)`
+    : `**User Profile:**
+  - Personality Type: ${mbtiType}
+  - Class Level: ${classLevel} (Age: ${age} years)`;
 
-  **Available Sectors:**
-  1. **Nature** - Earth systems, agriculture, environmental conservation, renewable resources 
-  2. **Making** - Engineering, technology, manufacturing, building systems and infrastructure
-  3. **Life** - Healthcare, medicine, human wellbeing, biological sciences
-  4. **Knowledge** - Research, education, discovery, academic 
-  5. **Society** - Governance, business, law, economic systems, human organization
-  6. **Culture** - Arts, entertainment, creativity, sports, cultural expression
+  const introText = hasRiasec
+    ? `You are an expert career counselor specializing in personality-based career guidance for children of class 1 to 7. Based on the provided personality type and interest code, sort the 6 career sectors from most to least suitable.`
+    : `You are an expert career counselor specializing in personality-based career guidance for children of class 1 to 7. Based on the provided personality type, sort the 6 career sectors from most to least suitable for this child.`;
 
-  **Analysis Guidelines:**
-  - Consider age-appropriate career interests and developmental stage
-  - Match personality cognitive preferences with sector characteristics
-  - Align interest patterns with sector activities
+  const analysisGuidelines = hasRiasec
+    ? `**Analysis Guidelines:**
+  - Consider age-appropriate career interests and developmental stage for children of class ${classLevel}
+  - Match personality cognitive preferences and interest patterns with each sector's primary purpose and what it includes
   - Think about long-term personality-career fit
   - Consider introversion/extraversion needs
   - Factor in thinking vs feeling decision-making styles
@@ -29,23 +38,60 @@ const generateSectorSortingPrompt = (mbtiType, riasecCode, classLevel) => `
   - Consider judging vs perceiving lifestyle preferences
 
   **Interest Code Mapping:**
-  - R (Realistic): Hands-on, practical, mechanical, outdoors
-  - I (Investigative): Analytical, scientific, research-oriented
-  - A (Artistic): Creative, expressive, aesthetic, original
-  - S (Social): Helping and caring for individuals, counseling, healing people
-  - E (Enterprising): Leadership, persuasion, business management, organizing groups
-  - C (Conventional): Organized, detail-oriented, structured, systematic
+  - R (Realistic): Hands-on, practical, mechanical, outdoors (aligns strongly with Technology & Infrastructure, Nature & Discovery)
+  - I (Investigative): Analytical, scientific, research-oriented (aligns strongly with Nature & Discovery, Health & Care, Technology & Infrastructure)
+  - A (Artistic): Creative, expressive, aesthetic, original (aligns strongly with Arts, Media & Sport)
+  - S (Social): Helping, caring, counseling, healing, educating (aligns strongly with Health & Care, Society & Public Life)
+  - E (Enterprising): Leadership, persuasion, business management, organizing (aligns strongly with Business & Services, Society & Public Life)
+  - C (Conventional): Organized, detail-oriented, structured, systematic (aligns strongly with Business & Services, Technology & Infrastructure)`
+    : `**Analysis Guidelines:**
+  - Consider age-appropriate learning styles and developmental stage for children of class ${classLevel} (Age: ${age} years)
+  - Match the child's personality cognitive preferences and natural curiosity with each sector's primary purpose and what it includes:
+    * Nature & Discovery: exploring living systems, animals, earth, space, science, and nature
+    * Technology & Infrastructure: building, engineering, coding, machines, and practical problem-solving
+    * Health & Care: empathy, biology, helping others, healing, and personal wellbeing
+    * Business & Services: organizing, teamwork, commercial curiosity, planning, and customer services
+    * Society & Public Life: teaching, fairness, rules, community service, and public wellbeing
+    * Arts, Media & Sport: creative expression, visual arts, storytelling, music, and sports
+  - Consider introversion/extraversion needs (collaborative vs independent exploration)
+  - Factor in thinking vs feeling decision-making styles (logic/systems vs empathy/people)
+  - Account for sensing vs intuition information processing (concrete/hands-on vs imaginative/conceptual)
+  - Consider judging vs perceiving lifestyle preferences (structured projects vs open-ended discovery)`;
 
-  **Interest Code Hierarchy:**
-  - The interest code represents a ranked preference order based on assessment scores
-  - Primary interest (1st letter): Most important - should heavily influence sector choice
-  - Secondary interest (2nd letter): Important supporting factor
-  - Additional interests: Consider but don't override primary preference
-  - When personality and primary interest align → strong match
-  - When personality and primary interest conflict → consider secondary interests and personality fit
+  return `
+  ${introText}
+
+  ${userProfileSection}
+
+  **Available Sectors (6 total):**
+  1. **Nature & Discovery**
+     - Primary purpose: Understand the natural world, or cultivate, manage and protect its living resources.
+     - What it includes: Fundamental science, mathematics, space science, Earth science, agriculture, forestry, fisheries, animal care and conservation.
+
+  2. **Technology & Infrastructure**
+     - Primary purpose: Create, build, maintain or operate technical systems and physical infrastructure.
+     - What it includes: Engineering, software, AI systems, manufacturing, construction, utilities, telecommunications, transport operation and technical trades.
+
+  3. **Health & Care**
+     - Primary purpose: Protect, restore or support human health and personal functioning.
+     - What it includes: Medicine, nursing, dentistry, mental health, rehabilitation, clinical diagnostics, personal care and therapeutic services.
+
+  4. **Business & Services**
+     - Primary purpose: Conduct commercial exchange, manage organisational resources or deliver customer services.
+     - What it includes: Business, finance, accounting, sales, procurement, administration, hospitality, retail, property transactions and customer services.
+
+  5. **Society & Public Life**
+     - Primary purpose: Educate people, uphold rights and public order, or support collective wellbeing.
+     - What it includes: Education, law, government, public policy, diplomacy, defence, policing, social work and community development.
+
+  6. **Arts, Media & Sport**
+     - Primary purpose: Create expression, communicate stories and information, or deliver sporting performance and experiences.
+     - What it includes: Creative arts, design, publishing, journalism, entertainment, performance, heritage and professional sport.
+
+  ${analysisGuidelines}
 
   **Important Note:**
-  Each interest type can appear in multiple sectors depending on the specific role and context. Focus on finding the best overall fit rather than rigid category matching.
+  Focus on finding the best overall developmental fit for the child rather than rigid category matching. Rank all 6 sectors from rank 1 (most suitable) to rank 6 (least suitable).
 
   **Output Format (JSON only):**
   {
@@ -53,40 +99,66 @@ const generateSectorSortingPrompt = (mbtiType, riasecCode, classLevel) => `
       {
         "rank": 1,
         "sector": "Sector Name",
-        "suitability_score": 95,
-        "reasoning": "Why this sector is most suitable based on personality and interest profile"
+        "reasoning": "Why this sector is most suitable based on the child's personality profile and developmental interests"
       },
       {
         "rank": 2,
         "sector": "Sector Name", 
-        "suitability_score": 85,
         "reasoning": "Explanation for second choice"
       },
       // ... continue for all 6 sectors
     ],
-    "personality_summary": "Brief summary of how this personality and interest combination influences career preferences",
+    "personality_summary": "Brief summary of how this personality influences learning preferences and early career sector interests",
     "development_notes": "Age-appropriate guidance for class level ${classLevel} students"
   }
 
   **Important Instructions:**
   - Return ONLY valid JSON, no additional text
-  - Include all 6 sectors in ranking order
-  - Suitability scores should range 60-100 and be realistic
-  - Give primary interest significant weight but don't ignore personality fit
-  - Reasoning should be specific to the personality and interest combination
-  - Consider developmental appropriateness for the age group
+  - Include all 6 sectors in ranking order using these EXACT sector names:
+    * "Nature & Discovery"
+    * "Technology & Infrastructure"
+    * "Health & Care"
+    * "Business & Services"
+    * "Society & Public Life"
+    * "Arts, Media & Sport"
+  - Reasoning should be specific to the child's personality traits and reference what the sector includes in an age-appropriate way
+  - Consider developmental appropriateness for class level ${classLevel}
   - Focus on natural interests and personality tendencies
   - NEVER mention "MBTI", "RIASEC", or any assessment methodology terms in the response
-  - Use only generic terms like "personality traits", "interests", "preferences" in all descriptions
+  - Use only generic terms like "personality traits", "preferences", "strengths" in all descriptions
 `;
+};
 
-export async function generateSectorSorting(mbtiType, riasecCode, classLevel) {
+const normalizeSectorName = (name) => {
+  if (!name || typeof name !== 'string') return '';
+  const trimmed = name.trim();
+  const cleaned = trimmed.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9 ]/g, '').trim();
+
+  for (const canonical of CANONICAL_SECTORS) {
+    const canonicalClean = canonical.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9 ]/g, '').trim();
+    if (cleaned === canonicalClean || cleaned.includes(canonicalClean) || canonicalClean.includes(cleaned)) {
+      return canonical;
+    }
+  }
+
+  // Fallbacks for legacy/abbreviated sector names
+  if (cleaned.includes('nature')) return 'Nature & Discovery';
+  if (cleaned.includes('tech') || cleaned.includes('making') || cleaned.includes('infrastruct')) return 'Technology & Infrastructure';
+  if (cleaned.includes('health') || cleaned.includes('life') || cleaned.includes('care')) return 'Health & Care';
+  if (cleaned.includes('business') || cleaned.includes('service') || cleaned.includes('commerce')) return 'Business & Services';
+  if (cleaned.includes('society') || cleaned.includes('public') || cleaned.includes('law')) return 'Society & Public Life';
+  if (cleaned.includes('art') || cleaned.includes('media') || cleaned.includes('sport') || cleaned.includes('culture')) return 'Arts, Media & Sport';
+
+  return trimmed;
+};
+
+export async function generateSectorSorting(mbtiType, riasecCode = "NONE", classLevel, age) {
   try {
-    console.log(`Generating sector sorting for MBTI: ${mbtiType}, RIASEC: ${riasecCode}, Class: ${classLevel}`);
+    console.log(`Generating sector sorting for MBTI: ${mbtiType}, RIASEC: ${riasecCode}, Class: ${classLevel}, Age: ${age}`);
 
-    const prompt = generateSectorSortingPrompt(mbtiType, riasecCode, classLevel);
+    const prompt = generateSectorSortingPrompt(mbtiType, riasecCode, classLevel, age);
 
-    console.log("Prompt", prompt)
+    console.log("Prompt", prompt);
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
@@ -119,7 +191,7 @@ export async function generateSectorSorting(mbtiType, riasecCode, classLevel) {
     } catch (parseError) {
       console.warn(`Failed to parse response for ${mbtiType}+${riasecCode}. Retrying...`);
       // Retry once on parse failure
-      return await generateSectorSorting(mbtiType, riasecCode, classLevel);
+      return await generateSectorSorting(mbtiType, riasecCode, classLevel, age);
     }
 
     // Validate the response structure
@@ -127,13 +199,19 @@ export async function generateSectorSorting(mbtiType, riasecCode, classLevel) {
       throw new Error('Invalid response structure: missing or invalid sorted_sectors array');
     }
 
-    // Ensure all required sectors are present
-    const requiredSectors = ['Nature', 'Making', 'Life', 'Knowledge', 'Society', 'Culture'];
+    // Normalize sector names to canonical names
+    parsedData.sorted_sectors = parsedData.sorted_sectors.map(s => ({
+      ...s,
+      sector: normalizeSectorName(s.sector)
+    }));
+
+    // Ensure all required canonical sectors are present
     const responseSectors = parsedData.sorted_sectors.map(s => s.sector);
-    const missingSectors = requiredSectors.filter(s => !responseSectors.includes(s));
+    const missingSectors = CANONICAL_SECTORS.filter(s => !responseSectors.includes(s));
 
     if (missingSectors.length > 0) {
-      throw new Error(`Missing required sectors: ${missingSectors.join(', ')}`);
+      console.warn(`Missing required sectors: ${missingSectors.join(', ')}. Retrying...`);
+      return await generateSectorSorting(mbtiType, riasecCode, classLevel, age);
     }
 
     return parsedData;
@@ -155,15 +233,15 @@ export function validateMBTI(mbtiType) {
 
 // Helper function to validate RIASEC code
 export function validateRIASEC(riasecCode) {
-  if (!riasecCode || typeof riasecCode !== 'string') {
-    return false;
+  if (!riasecCode || riasecCode === "NONE" || riasecCode === "N/A") {
+    return true;
   }
 
   const validChars = /^[RIASEC]+$/i;
   return validChars.test(riasecCode) && riasecCode.length >= 1 && riasecCode.length <= 6;
 }
 
-// Helper function to validate class level (ages 5-7 typically in classes 1-7 in some systems)
+// Helper function to validate class level
 export function validateClassLevel(classLevel) {
   return Number.isInteger(classLevel) && classLevel >= 1 && classLevel <= 12;
 }

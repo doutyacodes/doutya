@@ -1,6 +1,7 @@
 // import { db } from '@/utils';
 // import { CAREER_GROUP, CAREER_SUBJECTS, SUBJECTS, TESTS, USER_CAREER, USER_DETAILS, USER_EDUCATION_STAGE, USER_TESTS } from '@/utils/schema';
 // import { NextResponse } from 'next/server';
+import { getSectorCanonicalInfo } from '@/lib/sectorCanonical';
 // import { and, eq, inArray } from 'drizzle-orm'; // Adjust based on your ORM version
 // import { authenticate } from '@/lib/jwtMiddleware';
 // import { calculateAge } from '@/lib/ageCalculate';
@@ -389,7 +390,8 @@ export async function GET(req, { params }) {
             }
 
             scopeInfo = sectorData[0];
-            scopeName = scopeInfo.sectorName;
+            const sectorCanon = getSectorCanonicalInfo(scopeInfo.sectorId || scopeInfo.sectorName);
+            scopeName = sectorCanon ? sectorCanon.name : scopeInfo.sectorName;
             type1 = scopeInfo.mbtiType || '';
         }
 

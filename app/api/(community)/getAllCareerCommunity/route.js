@@ -90,6 +90,7 @@ import {
   CLUSTER 
 } from "@/utils/schema";
 import { and, eq } from "drizzle-orm/expressions";
+import { getSectorCanonicalInfo } from "@/lib/sectorCanonical";
 
 export const dynamic = "force-dynamic";
 
@@ -180,7 +181,8 @@ export async function POST(req) {
         );
       }
       
-      scopeName = scopeData[0].name;
+      const canonicalInfo = getSectorCanonicalInfo(scopeData[0].id || scopeData[0].name);
+      scopeName = canonicalInfo ? canonicalInfo.name : scopeData[0].name;
     } 
     else {
       return NextResponse.json(

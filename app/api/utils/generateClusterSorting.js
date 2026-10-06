@@ -8,13 +8,13 @@ const getClusterNames = () => {
   return ALL_CLUSTERS.map(cluster => cluster.split(':')[0].trim());
 };
 
-const generateClusterSortingPrompt = (mbtiType, riasecCode, classLevel) => `
-You are an expert career counselor specializing in personality-based career guidance for children aged 5-7 years (class levels 1-7). Based on the provided personality type and interest code, select and rank the 5 most suitable career clusters from the 100 available clusters.
+const generateClusterSortingPrompt = (mbtiType, riasecCode, classLevel, age) => `
+You are an expert career counselor specializing in personality-based career guidance for children of class 8 to 10. Based on the provided personality type and interest code, select and rank the 5 most suitable career clusters from the 100 available clusters.
 
 **User Profile:**
 - Personality Type: ${mbtiType}
 - Interest Code: ${riasecCode} 
-- Class Level: ${classLevel} (Age: ~${classLevel + 4} years)
+- Class Level: ${classLevel} (Age: ${age} years)
 
 **Available Clusters (100 total):**
 ${ALL_CLUSTERS.map((cluster, index) => {
@@ -105,11 +105,11 @@ Each interest type can appear in multiple clusters depending on the specific rol
 - Ensure selected clusters represent diverse career paths that align with the personality profile
 `;
 
-export async function generateClusterSorting(mbtiType, riasecCode, classLevel) {
+export async function generateClusterSorting(mbtiType, riasecCode, classLevel, age) {
   try {
-    console.log(`Generating cluster sorting for MBTI: ${mbtiType}, RIASEC: ${riasecCode}, Class: ${classLevel}`);
+    console.log(`Generating cluster sorting for MBTI: ${mbtiType}, RIASEC: ${riasecCode}, Class: ${classLevel}, Age: ${age}`);
 
-    const prompt = generateClusterSortingPrompt(mbtiType, riasecCode, classLevel);
+    const prompt = generateClusterSortingPrompt(mbtiType, riasecCode, classLevel, age);
     console.log("prompt", prompt)
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
@@ -143,7 +143,7 @@ export async function generateClusterSorting(mbtiType, riasecCode, classLevel) {
     } catch (parseError) {
       console.warn(`Failed to parse response for ${mbtiType}+${riasecCode}. Retrying...`);
       // Retry once on parse failure
-      return await generateClusterSorting(mbtiType, riasecCode, classLevel);
+      return await generateClusterSorting(mbtiType, riasecCode, classLevel, age);
     }
 
     // Validate the response structure
@@ -161,14 +161,14 @@ export async function generateClusterSorting(mbtiType, riasecCode, classLevel) {
     if (invalidClusters.length > 0) {
       console.warn(`Invalid clusters returned: ${invalidClusters.join(', ')}. Retrying...`);
       // Retry once on invalid cluster names
-      return await generateClusterSorting(mbtiType, riasecCode, classLevel);
+      return await generateClusterSorting(mbtiType, riasecCode, classLevel, age);
     }
     // Validate that all clusters are unique
     const uniqueClusters = [...new Set(returnedClusters)];
     if (uniqueClusters.length !== 5) {
       console.warn(`Duplicate clusters returned. Retrying...`);
       // Retry once on duplicate clusters
-      return await generateClusterSorting(mbtiType, riasecCode, classLevel);
+      return await generateClusterSorting(mbtiType, riasecCode, classLevel, age);
     }
 
     return parsedData;

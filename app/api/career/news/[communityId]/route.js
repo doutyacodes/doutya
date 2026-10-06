@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getSectorCanonicalInfo } from "@/lib/sectorCanonical";
 import { db } from "@/utils";
 import { CAREER_NEWS, COMMUNITY, CAREER_GROUP, CLUSTER, SECTOR } from "@/utils/schema";
 import { eq, desc, and, gte } from "drizzle-orm";
@@ -278,11 +279,16 @@ async function getScopeName(scopeType, scopeId) {
         .execute();
     } else if (scopeType === "sector") {
       result = await db
-        .select({ name: SECTOR.name })
+        .select({ id: SECTOR.id, name: SECTOR.name })
         .from(SECTOR)
         .where(eq(SECTOR.id, scopeId))
         .limit(1)
         .execute();
+      if (result && result.length > 0) {
+        const canonicalInfo = getSectorCanonicalInfo(result[0].id || result[0].name);
+        return canonicalInfo ? canonicalInfo.name : result[0].name;
+      }
+      return null;
     }
 
     return result && result.length > 0 ? result[0].name : null;

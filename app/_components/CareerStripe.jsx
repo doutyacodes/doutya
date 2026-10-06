@@ -13,6 +13,7 @@ import PricingCard from "./PricingCard";
 import TestsNotCompltedWarning from "../(innerPages)/dashboard/_components/TestsNotCompltedWarning/TestsNotCompltedWarning";
 import { useTopbar } from "../context/TopbarContext";
 import LocationDetailsModal from "./LocationDetailsModal";
+import { formatSectorDisplay } from "@/lib/sectorCanonical";
 
 
 const CareerStripe = ({selectedItem, setSelectedItem}) => {
@@ -261,6 +262,18 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
           // Regular boxes for selected items
           if (item) {
             const isSelected = selectedItem?.id === item.id;
+            const isSectorScope = scopeType === "sector" || Boolean(item.legacy_name);
+            const sectorDisplay = isSectorScope
+              ? formatSectorDisplay(
+                  item.scope_grp_id ??
+                  item.legacy_name ??
+                  item.name ??
+                  item.career_name
+                )
+              : null;
+            const primaryTitle = sectorDisplay ? sectorDisplay.title : (item.career_name || item.name);
+            const legacySubtitle = sectorDisplay ? sectorDisplay.legacy : item.legacy_name;
+
             return (
               <div
                 key={item.id}
@@ -273,14 +286,19 @@ const CareerStripe = ({selectedItem, setSelectedItem}) => {
                     : 'bg-gradient-to-br from-gray-700/60 to-gray-800/60 border border-gray-600/40 group-hover:from-gray-600/60 group-hover:to-gray-700/60 group-hover:border-gray-500/60 group-hover:shadow-lg'
                 }`}></div>
                 
-                <div className="relative h-full flex items-center justify-center p-2 transition-all duration-300 group-hover:scale-105 overflow-hidden">
-                  <p className={`text-center text-xs lg:text-sm font-bold whitespace-nowrap transition-colors duration-300 px-1 overflow-x-auto scrollbar-hide max-w-full ${
+                <div className="relative h-full flex flex-col items-center justify-center p-2 transition-all duration-300 group-hover:scale-105 overflow-hidden text-center">
+                  <p className={`text-center text-xs lg:text-sm font-bold line-clamp-2 leading-tight transition-colors duration-300 px-1 max-w-full ${
                     isSelected 
                       ? 'text-blue-200' 
                       : 'text-gray-200 group-hover:text-white'
                   }`}>
-                    {item.career_name || item.name}
+                    {primaryTitle}
                   </p>
+                  {legacySubtitle && (
+                    <span className="text-[10px] lg:text-[11px] font-medium text-gray-400 mt-0.5 tracking-wide leading-tight">
+                      ({legacySubtitle})
+                    </span>
+                  )}
                 </div>
                 
                 {isSelected && (

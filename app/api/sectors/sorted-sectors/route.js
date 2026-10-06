@@ -8,15 +8,36 @@ import {
 } from "@/utils/schema";
 import { eq, and } from "drizzle-orm";
 import { authenticate } from "@/lib/jwtMiddleware";
+import { calculateAge } from "@/lib/ageCalculate";
 import {
   generateSectorSorting,
   validateMBTI,
   validateRIASEC,
   validateClassLevel,
+  CANONICAL_SECTORS,
 } from "@/app/api/utils/generateSectorSorting";
 
 export const maxDuration = 300;
 export const dynamic = "force-dynamic";
+
+// Helper function to check if cached data has the new 6-sector schema
+const hasNewSectors = (data) => {
+  if (!data) return false;
+  let parsed = data;
+  if (typeof parsed === "string") {
+    try {
+      parsed = JSON.parse(parsed);
+    } catch (e) {
+      return false;
+    }
+  }
+  const list = Array.isArray(parsed) ? parsed : parsed.sorted_sectors || [];
+  return list.some(
+    (s) =>
+      s.sector === "Nature & Discovery" ||
+      s.sector === "Technology & Infrastructure"
+  );
+};
 
 // Helper function to wait with exponential backoff
 const waitWithBackoff = (attempt) => {
@@ -56,13 +77,14 @@ const waitForGenerationCompletion = async (combinationId) => {
   throw new Error("Sector sorting generation timed out");
 };
 
-// Helper function to handle failed generation with atomic retry
+// Helper function to handle failed or outdated generation with atomic retry
 const handleFailedGeneration = async (
   combinationId,
   mbtiType,
   riasecCode,
   classLevel,
-  userId
+  userId,
+  age
 ) => {
   try {
     // Use atomic update to claim the retry
@@ -72,19 +94,15 @@ const handleFailedGeneration = async (
         generation_status: "in_progress",
         generated_by: userId,
       })
-      .where(
-        and(
-          eq(SECTOR_MBTI_RIASEC_COMBINATIONS.id, combinationId),
-          eq(SECTOR_MBTI_RIASEC_COMBINATIONS.generation_status, "failed")
-        )
-      );
+      .where(eq(SECTOR_MBTI_RIASEC_COMBINATIONS.id, combinationId));
 
-    console.log("Attempting to retry failed sector sorting generation...");
+    console.log("Attempting to retry/update sector sorting generation...");
 
     const sortingData = await generateSectorSorting(
       mbtiType,
       riasecCode,
-      classLevel
+      classLevel,
+      age
     );
 
     await db
@@ -124,6 +142,7 @@ export async function GET(req) {
       .select({
         grade: USER_DETAILS.grade,
         scope_type: USER_DETAILS.scope_type,
+        birth_date: USER_DETAILS.birth_date,
       })
       .from(USER_DETAILS)
       .where(eq(USER_DETAILS.id, userId));
@@ -134,6 +153,7 @@ export async function GET(req) {
 
     const classLevel = parseInt(userDetails[0].grade) || 5; // Default to class 5 if not set
     const scopeType = userDetails[0].scope_type;
+    const userAge = calculateAge(userDetails[0].birth_date);
 
     // Check if user is in sector scope
     if (scopeType !== "sector") {
@@ -250,7 +270,8 @@ export async function GET(req) {
         sortingData = await generateSectorSorting(
           mbtiType,
           riasecCode,
-          classLevel
+          classLevel,
+          userAge
         );
 
         // Update with completed data
@@ -280,20 +301,25 @@ export async function GET(req) {
               )
             );
 
-          if (existingRecord.generation_status === "completed") {
+          if (
+            existingRecord.generation_status === "completed" &&
+            hasNewSectors(existingRecord.sorted_sectors)
+          ) {
             sortingData = existingRecord.sorted_sectors;
           } else if (existingRecord.generation_status === "in_progress") {
             const completedRecord = await waitForGenerationCompletion(
               existingRecord.id
             );
             sortingData = completedRecord.sorted_sectors;
-          } else if (existingRecord.generation_status === "failed") {
+          } else {
+            // Outdated sectors or failed: regenerate
             sortingData = await handleFailedGeneration(
               existingRecord.id,
               mbtiType,
               riasecCode,
               classLevel,
-              userId
+              userId,
+              userAge
             );
           }
         } else {
@@ -304,28 +330,32 @@ export async function GET(req) {
       // Handle existing combination
       const combination = existingCombination[0];
 
-      if (combination.generation_status === "completed") {
+      // If existing combination has outdated sectors from old schema, regenerate it
+      if (
+        combination.generation_status === "completed" &&
+        hasNewSectors(combination.sorted_sectors)
+      ) {
         sortingData = combination.sorted_sectors;
       } else if (combination.generation_status === "in_progress") {
         const completedRecord = await waitForGenerationCompletion(
           combination.id
         );
         sortingData = completedRecord.sorted_sectors;
-      } else if (combination.generation_status === "failed") {
+      } else {
+        // Outdated sectors or failed: regenerate
         sortingData = await handleFailedGeneration(
           combination.id,
           mbtiType,
           riasecCode,
           classLevel,
-          userId
+          userId,
+          userAge
         );
       }
     }
 
-    // Get full sector data
+    // Get full sector data from DB
     const sectors = await db.select().from(SECTOR);
-
-    // Replace this section in your code (around line 206-220):
 
     let parsedSortingData;
     try {
@@ -341,25 +371,134 @@ export async function GET(req) {
       ? parsedSortingData
       : parsedSortingData?.sorted_sectors || [];
 
+    // Metadata for the 6 official sectors shared by leadership
+    const SECTOR_ID_MAP = {
+      "nature & discovery": 1,
+      "nature": 1,
+      "technology & infrastructure": 2,
+      "making": 2,
+      "health & care": 3,
+      "life": 3,
+      "business & services": 4,
+      "knowledge": 4,
+      "society & public life": 5,
+      "society": 5,
+      "arts, media & sport": 6,
+      "culture": 6,
+    };
+
+    const SECTOR_META = {
+      1: {
+        name: "Nature & Discovery",
+        primary_purpose:
+          "Understand the natural world, or cultivate, manage and protect its living resources.",
+        what_it_includes:
+          "Fundamental science, mathematics, space science, Earth science, agriculture, forestry, fisheries, animal care and conservation.",
+      },
+      2: {
+        name: "Technology & Infrastructure",
+        primary_purpose:
+          "Create, build, maintain or operate technical systems and physical infrastructure.",
+        what_it_includes:
+          "Engineering, software, AI systems, manufacturing, construction, utilities, telecommunications, transport operation and technical trades.",
+      },
+      3: {
+        name: "Health & Care",
+        primary_purpose:
+          "Protect, restore or support human health and personal functioning.",
+        what_it_includes:
+          "Medicine, nursing, dentistry, mental health, rehabilitation, clinical diagnostics, personal care and therapeutic services.",
+      },
+      4: {
+        name: "Business & Services",
+        primary_purpose:
+          "Conduct commercial exchange, manage organisational resources or deliver customer services.",
+        what_it_includes:
+          "Business, finance, accounting, sales, procurement, administration, hospitality, retail, property transactions and customer services.",
+      },
+      5: {
+        name: "Society & Public Life",
+        primary_purpose:
+          "Educate people, uphold rights and public order, or support collective wellbeing.",
+        what_it_includes:
+          "Education, law, government, public policy, diplomacy, defence, policing, social work and community development.",
+      },
+      6: {
+        name: "Arts, Media & Sport",
+        primary_purpose:
+          "Create expression, communicate stories and information, or deliver sporting performance and experiences.",
+        what_it_includes:
+          "Creative arts, design, publishing, journalism, entertainment, performance, heritage and professional sport.",
+      },
+    };
+
     // Map with sector details
     const sortedSectorsWithDetails = sortedSectorsArray.map((sortedSector) => {
-      const sectorDetails = sectors.find(
-        (s) =>
-          s.name.trim().toLowerCase() ===
-          String(sortedSector.sector).trim().toLowerCase()
+      const rawName = String(sortedSector.sector || "").trim();
+      const normKey = rawName
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/[^a-z0-9 ]/g, "")
+        .trim();
+
+      // Find by exact name match first
+      let sectorDetails = sectors.find(
+        (s) => s.name.trim().toLowerCase() === rawName.toLowerCase()
       );
+
+      // Or find by ID mapping
+      let matchedId = null;
+      for (const [key, id] of Object.entries(SECTOR_ID_MAP)) {
+        const keyNorm = key
+          .toLowerCase()
+          .replace(/&/g, "and")
+          .replace(/[^a-z0-9 ]/g, "")
+          .trim();
+        if (
+          normKey === keyNorm ||
+          normKey.includes(keyNorm) ||
+          keyNorm.includes(normKey)
+        ) {
+          matchedId = id;
+          break;
+        }
+      }
+
+      if (!sectorDetails && matchedId) {
+        sectorDetails = sectors.find((s) => s.id === matchedId);
+      }
+
+      const meta = matchedId ? SECTOR_META[matchedId] : null;
 
       return {
         ...sortedSector,
-        sector_details: sectorDetails || null,
+        sector_details: sectorDetails
+          ? {
+              ...sectorDetails,
+              name: meta?.name || sortedSector.sector || sectorDetails.name,
+              brief_overview:
+                meta?.primary_purpose || sectorDetails.brief_overview,
+              description: meta?.what_it_includes
+                ? meta.primary_purpose + " Includes: " + meta.what_it_includes
+                : sectorDetails.description,
+              primary_purpose: meta?.primary_purpose,
+              what_it_includes: meta?.what_it_includes,
+            }
+          : null,
       };
     });
 
     return NextResponse.json(
       {
         sorted_sectors: sortedSectorsWithDetails,
-        personality_summary: sortingData.personality_summary,
-        development_notes: sortingData.development_notes,
+        personality_summary:
+          parsedSortingData?.personality_summary ||
+          sortingData?.personality_summary ||
+          "",
+        development_notes:
+          parsedSortingData?.development_notes ||
+          sortingData?.development_notes ||
+          "",
         user_profile: {
           mbti_type: mbtiType,
           riasec_code: riasecCode,

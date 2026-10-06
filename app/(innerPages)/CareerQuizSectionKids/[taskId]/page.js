@@ -140,7 +140,8 @@ function Page({ params }) {
       }, 1000);
 
       const timer = setTimeout(() => {
-        router.replace('/dashboard_junior');
+        const url = typeof window !== "undefined" ? localStorage.getItem("dashboardUrl") : null;
+        router.replace(url || '/dashboard_junior');
       }, 5000);
 
       return () => {

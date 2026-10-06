@@ -16,6 +16,7 @@ import {
     SECTOR
 } from '@/utils/schema';
 import { NextResponse } from 'next/server';
+import { getSectorCanonicalInfo } from '@/lib/sectorCanonical';
 import { eq, and, gte, lte, inArray } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
@@ -253,6 +254,7 @@ export async function GET(request, { params }) {
         else if (scopeType === 'sector') {
             const sectorData = await db
                 .select({ 
+                    sectorId: USER_SECTOR.sector_id,
                     sectorName: SECTOR.name,
                     sectorDescription: SECTOR.description 
                 })
@@ -266,8 +268,9 @@ export async function GET(request, { params }) {
                 );
             
             if (sectorData.length) {
-                scopeName = sectorData[0].sectorName;
-                sectorDescription = sectorData[0].sectorDescription;
+                const sectorCanon = getSectorCanonicalInfo(sectorData[0].sectorId || sectorData[0].sectorName);
+                scopeName = sectorCanon ? sectorCanon.name : sectorData[0].sectorName;
+                sectorDescription = sectorCanon?.primary_purpose || sectorData[0].sectorDescription;
             }
         }
 

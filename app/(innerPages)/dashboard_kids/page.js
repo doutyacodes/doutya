@@ -11,15 +11,14 @@ export default function Dashboard() {
   const [showResults, setShowResults] = useState(false);
   const [showQuiz2Results, setShowQuiz2Results] = useState(false);
   
-  const [isTest1Completed, setIsTest1Completed] = useState(false);
+  const [isTest2Completed, setIsTest2Completed] = useState(false);
 
-    const [secondsRemaining, setSecondsRemaining] = useState(5);
-    const [isCountryAdded, setIsCountryAdded] = useState(null);
-    const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] = useState(null);
-    const [educationStageExists, setEducationStageExists] = useState(null);
-    const [resultPageShown, setResultPageShown] = useState(null);
-    const [gradeData, setGradeData] = useState(null);
-    
+  const [secondsRemaining, setSecondsRemaining] = useState(5);
+  const [isCountryAdded, setIsCountryAdded] = useState(null);
+  const [isInstitutionDetailsAdded, setIsInstitutionDetailsAdded] = useState(null);
+  const [educationStageExists, setEducationStageExists] = useState(null);
+  const [resultPageShown, setResultPageShown] = useState(null);
+  const [gradeData, setGradeData] = useState(null);
 
   useEffect(() => {
     const authCheck = () => {
@@ -37,32 +36,15 @@ export default function Dashboard() {
   }, [router]);
 
   useEffect(() => {
-    if (isTest1Completed) {
+    if (isTest2Completed) {
       const interval = setInterval(() => {
         setSecondsRemaining((prevSeconds) => prevSeconds - 1);
       }, 1000);
 
       const timer = setTimeout(() => {
-        // if (resultPageShown === false) {
-        //   router.replace("/user/results");
-        // } else if (!educationStageExists) {
-        //     router.replace("/user/education-profile");
-        // } else if (!isInstitutionDetailsAdded) {
-        //     router.replace("/education-details");
-        // } else if (!isCountryAdded) {
-        //     console.log("else if");
-        //     router.replace("/country");
-        // } else {
-        //     router.replace("/dashboard_kids/sector-suggestion");
-        // }
-
         if (!educationStageExists) {
           router.replace("/user/education-profile");
         } 
-        // else if (!isInstitutionDetailsAdded) {
-        //     router.replace("/education-details");
-        // } 
-        // 2️⃣ Then go to kids/junior/career suggestion
         else if (["8", "9", "10"].includes(gradeData)) {
           router.replace("/dashboard_junior/cluster-suggestion");
         } 
@@ -70,17 +52,17 @@ export default function Dashboard() {
           router.replace("/dashboard/careers/career-suggestions");
         }
         else {
-          // Default for younger kids
+          // Default for younger kids (sectors)
           router.replace("/dashboard_kids/sector-suggestion");
         }
-    }, 5000);
+      }, 5000);
 
       return () => {
         clearInterval(interval);
         clearTimeout(timer);
       };
     }
-  }, [isTest1Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, router, ]);
+  }, [isTest2Completed, isInstitutionDetailsAdded, isCountryAdded, educationStageExists, router, gradeData]);
 
   const toggleResults = () => {
     setShowResults(prevState => !prevState);
@@ -102,7 +84,7 @@ export default function Dashboard() {
     );
   }
 
-  if (isTest1Completed) {
+  if (isTest2Completed) {
     return (
       <div className="h-screen flex items-center justify-center text-white text-center">
         <div>
@@ -122,18 +104,14 @@ export default function Dashboard() {
 
   return (
     <div style={styles.dashboardContainer}>
-      
-      {/* <CareerStripe/> */}
-
-
-      {!isTest1Completed && (
+      {!isTest2Completed && (
         <>
           <Bannerkids
             onToggleResults={toggleResults}
             showResults={showResults} 
             onToggleQuiz2Results={toggleQuiz2Results} 
             showQuiz2Results={showQuiz2Results} 
-            setIsTest1Completed={setIsTest1Completed}
+            setIsTest2Completed={setIsTest2Completed}
             setIsCountryAdded={setIsCountryAdded}
             setIsInstitutionDetailsAdded={setIsInstitutionDetailsAdded}
             setEducationStageExists={setEducationStageExists}
@@ -153,13 +131,10 @@ export default function Dashboard() {
               }
             }
           `}</style>
-    
           <br />
           <br />
         </>
-      ) 
-    }
-    {/* <MobileNavigation /> */}
+      )}
     </div>
   );
 }
@@ -176,14 +151,12 @@ const styles = {
     fontWeight: "600",
   },
   dashboardContainer: {
-    // background: "linear-gradient(135deg, #ff0099 0%, #493240 100%)",
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
     color: "white",
-    // padding: "20px",
     position: "relative",
   },
   animatedImage: {

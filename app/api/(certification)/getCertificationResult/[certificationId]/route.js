@@ -1,6 +1,7 @@
 import { db } from '@/utils';
 import { USER_CERTIFICATION_COMPLETION, CERTIFICATIONS, USER_DETAILS, INSTITUTION, CAREER_GROUP, CLUSTER, SECTOR, USER_CAREER, USER_CLUSTER, USER_SECTOR } from '@/utils/schema';
 import { NextResponse } from 'next/server';
+import { getSectorCanonicalInfo } from '@/lib/sectorCanonical';
 import { and, eq } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
 
@@ -93,12 +94,16 @@ export async function GET(request, { params }) {
                 if (ucl.length && ucl[0].name) careerField = ucl[0].name;
             }
         } else if (cert.scopeType === 'sector') {
-            const sc = await db.select({ name: SECTOR.name }).from(SECTOR).where(eq(SECTOR.id, cert.scopeId)).limit(1);
+            const sc = await db.select({ id: SECTOR.id, name: SECTOR.name }).from(SECTOR).where(eq(SECTOR.id, cert.scopeId)).limit(1);
             if (sc.length && sc[0].name) {
-                careerField = sc[0].name;
+                const info = getSectorCanonicalInfo(sc[0].id || sc[0].name);
+                careerField = info ? info.name : sc[0].name;
             } else {
-                const usc = await db.select({ name: SECTOR.name }).from(USER_SECTOR).innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id)).where(eq(USER_SECTOR.id, cert.scopeId)).limit(1);
-                if (usc.length && usc[0].name) careerField = usc[0].name;
+                const usc = await db.select({ id: SECTOR.id, name: SECTOR.name }).from(USER_SECTOR).innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id)).where(eq(USER_SECTOR.id, cert.scopeId)).limit(1);
+                if (usc.length && usc[0].name) {
+                    const info = getSectorCanonicalInfo(usc[0].id || usc[0].name);
+                    careerField = info ? info.name : usc[0].name;
+                }
             }
         }
 

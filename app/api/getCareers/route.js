@@ -15,6 +15,7 @@ import { authenticate } from "@/lib/jwtMiddleware";
 import { and, eq } from "drizzle-orm";
 import { formattedAge } from "@/lib/formattedAge";
 import { calculateWeekFromTimestamp } from "../utils/calculateWeekFromTimestamp";
+import { enrichSectorItem } from "@/lib/sectorCanonical";
 
 export async function GET(req) {
   const authResult = await authenticate(req);
@@ -58,7 +59,7 @@ export async function GET(req) {
         .leftJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id))
         .where(eq(USER_SECTOR.user_id, userId));
     
-      scopeData = data;
+      scopeData = data.map((item) => enrichSectorItem(item));
     
     } else if (scopeType === "cluster") {
       tableName = "cluster";

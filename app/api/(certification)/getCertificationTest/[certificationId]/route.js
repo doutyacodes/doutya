@@ -16,6 +16,7 @@ import {
     USER_SECTOR
 } from '@/utils/schema';
 import { NextResponse } from 'next/server';
+import { getSectorCanonicalInfo } from '@/lib/sectorCanonical';
 import { and, eq, inArray, sql, desc } from 'drizzle-orm';
 import { authenticate } from '@/lib/jwtMiddleware';
 import { calculateAge } from '@/lib/ageCalculate';
@@ -124,29 +125,38 @@ async function resolveScopeName(scopeType, scopeId, userId) {
             }
         } else if (scopeType === 'sector') {
             const sc = await db
-                .select({ name: SECTOR.name })
+                .select({ id: SECTOR.id, name: SECTOR.name })
                 .from(SECTOR)
                 .where(eq(SECTOR.id, scopeId))
                 .limit(1);
-            if (sc.length && sc[0].name) return sc[0].name;
+            if (sc.length && sc[0].name) {
+                const info = getSectorCanonicalInfo(sc[0].id || sc[0].name);
+                return info ? info.name : sc[0].name;
+            }
 
             const usc = await db
-                .select({ name: SECTOR.name })
+                .select({ id: SECTOR.id, name: SECTOR.name })
                 .from(USER_SECTOR)
                 .innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id))
                 .where(eq(USER_SECTOR.id, scopeId))
                 .limit(1);
-            if (usc.length && usc[0].name) return usc[0].name;
+            if (usc.length && usc[0].name) {
+                const info = getSectorCanonicalInfo(usc[0].id || usc[0].name);
+                return info ? info.name : usc[0].name;
+            }
 
             if (userId) {
                 const uasc = await db
-                    .select({ name: SECTOR.name })
+                    .select({ id: SECTOR.id, name: SECTOR.name })
                     .from(USER_SECTOR)
                     .innerJoin(SECTOR, eq(USER_SECTOR.sector_id, SECTOR.id))
                     .where(eq(USER_SECTOR.user_id, userId))
                     .orderBy(desc(USER_SECTOR.id))
                     .limit(1);
-                if (uasc.length && uasc[0].name) return uasc[0].name;
+                if (uasc.length && uasc[0].name) {
+                    const info = getSectorCanonicalInfo(uasc[0].id || uasc[0].name);
+                    return info ? info.name : uasc[0].name;
+                }
             }
         }
     } catch (err) {

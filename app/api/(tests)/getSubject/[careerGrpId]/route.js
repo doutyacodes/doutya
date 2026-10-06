@@ -16,6 +16,7 @@ import {
   USER_SCHOOL_SUBJECTS, // Add this import
 } from "@/utils/schema";
 import { NextResponse } from "next/server";
+import { getSectorCanonicalInfo } from "@/lib/sectorCanonical";
 import { and, eq, gte, inArray, lte } from "drizzle-orm";
 import { authenticate } from "@/lib/jwtMiddleware";
 import { calculateAge } from "@/lib/ageCalculate";
@@ -208,9 +209,10 @@ export async function GET(req, { params }) {
       }
 
       scopeInfo = sectorData[0];
-      scopeName = scopeInfo.sectorName;
+      const sectorCanon = getSectorCanonicalInfo(scopeInfo.sectorId || scopeInfo.sectorName);
+      scopeName = sectorCanon ? sectorCanon.name : scopeInfo.sectorName;
       type1 = scopeInfo.mbtiType || "";
-      sectorDescription = sectorData.sectorDescription || null;
+      sectorDescription = sectorCanon?.primary_purpose || sectorData[0].sectorDescription || null;
     }
 
     // Get country from USER_DETAILS if not already set

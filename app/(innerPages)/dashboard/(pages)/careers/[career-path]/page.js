@@ -19,6 +19,7 @@ import RoadMap from "../../../_components/RoadMapTab/RoadMap";
 import Tests from "../../../_components/TestTab/Tests";
 
 import CareerStripe from "@/app/_components/CareerStripe";
+import { formatSectorDisplay } from "@/lib/sectorCanonical";
 import { useTopbar } from "@/app/context/TopbarContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -155,6 +156,20 @@ function Page() {
     };
     PathChange();
   }, [pathname]);
+
+  const selectedSectorInfo = (scopeType === "sector" || Boolean(selectedCareer?.legacy_name))
+    ? formatSectorDisplay(
+        selectedCareer?.scope_grp_id ??
+        selectedCareer?.legacy_name ??
+        selectedCareer?.name
+      )
+    : null;
+  const selectedCareerDisplayTitle = selectedSectorInfo
+    ? selectedSectorInfo.title
+    : (selectedCareer?.name || "");
+  const selectedCareerLegacyName = selectedSectorInfo
+    ? selectedSectorInfo.legacy
+    : selectedCareer?.legacy_name;
 
   const tabs = [
     // Career Overview: only for "career"
@@ -493,8 +508,13 @@ function Page() {
                     {/* Career Name and Progress Stats */}
                     <div className="text-center flex-1">
                       <h1 className="text-xl lg:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wide">
-                        {selectedCareer?.name}
+                        {selectedCareerDisplayTitle}
                       </h1>
+                      {selectedCareerLegacyName && (
+                        <p className="text-xs lg:text-sm font-semibold text-gray-400 mt-1 tracking-wide">
+                          ({selectedCareerLegacyName})
+                        </p>
+                      )}
                       <div className="w-16 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-2"></div>
                       
                       {/* Progress Stats Below Title */}

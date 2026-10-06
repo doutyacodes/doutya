@@ -2,9 +2,7 @@ import React from 'react';
 
 const ActionButtons = ({ 
   showViewReport = true, 
-  showGetCertificate = true, 
   onViewReportClick = null,
-  onCertificateClick = null,
   className = '',
   buttonSize = 'default' // 'small', 'default', 'large'
 }) => {
@@ -14,15 +12,6 @@ const ActionButtons = ({
       onViewReportClick();
     } else {
       console.log('View Report clicked - no handler provided');
-    }
-  };
-
-  const handleCertificateClick = () => {
-    if (onCertificateClick) {
-      onCertificateClick();
-    } else {
-      // Default action - you can add default behavior here later
-      console.log('Get Certificate clicked');
     }
   };
 
@@ -43,15 +32,6 @@ const ActionButtons = ({
           className={`${buttonBaseClasses} bg-[#7824f6] hover:bg-[#6420d4] text-white`}
         >
           View Report
-        </button>
-      )}
-      
-      {showGetCertificate && (
-        <button 
-          onClick={handleCertificateClick}
-          className={`${buttonBaseClasses} bg-transparent border-2 border-[#7824f6] text-[#7824f6] hover:bg-[#7824f6] hover:text-white`}
-        >
-          Get Certificate
         </button>
       )}
     </div>

@@ -17,6 +17,7 @@
 //   USER_SECTOR
 // } from "@/utils/schema"; // Ensure this path is correct
 // import { NextResponse } from "next/server";
+import { getSectorCanonicalInfo } from "@/lib/sectorCanonical";
 // import { authenticate } from "@/lib/jwtMiddleware"; // Ensure this path is correct
 // import { eq, and } from "drizzle-orm";
 // import { formattedAge } from "@/lib/formattedAge";
@@ -625,9 +626,10 @@ export async function GET(req, { params }) {
           );
         }
 
+        const sectorInfo = getSectorCanonicalInfo(userSectorData[0].sectorId || userSectorData[0].sectorName);
         scopeId = userSectorData[0].sectorId;
-        scopeName = userSectorData[0].sectorName;
-        sectorDescription = userSectorData[0].sectorDescription;
+        scopeName = sectorInfo ? sectorInfo.name : userSectorData[0].sectorName;
+        sectorDescription = sectorInfo?.primary_purpose || userSectorData[0].sectorDescription;
         type1 = userSectorData[0].mbtiType;
         type2 = null;
         break;

@@ -2,7 +2,8 @@
 // app/api/sector/user-sectors/route.js
 import { NextResponse } from "next/server";
 import { db } from "@/utils";
-import { eq, and } from "drizzle-orm/expressions";
+import { eq, and, or } from "drizzle-orm/expressions";
+import { enrichSectorItem, getSectorCanonicalInfo } from "@/lib/sectorCanonical";
 import { authenticate } from "@/lib/jwtMiddleware";
 import { 
   USER_SECTOR, 
@@ -20,11 +21,14 @@ export const dynamic = "force-dynamic";
 
   // Helper function to reduce repeated code for community creation
   const findOrCreateCommunity = async (isGlobal, name, country) => {
+    const info = getSectorCanonicalInfo(name);
+    const dbName = info ? info.legacy_name : name;
+
     // First, ensure we have the career group ID
     const [sectorGroup] = await db
       .select({ id: SECTOR.id })
       .from(SECTOR)
-      .where(eq(SECTOR.name, name))
+      .where(or(eq(SECTOR.name, name), eq(SECTOR.name, dbName)))
       .execute();
 
     if (!sectorGroup) {
@@ -36,7 +40,7 @@ export const dynamic = "force-dynamic";
       .from(COMMUNITY)
       .where(
         and(
-          eq(COMMUNITY.career, name),
+          or(eq(COMMUNITY.career, name), eq(COMMUNITY.career, dbName)),
           eq(COMMUNITY.global, isGlobal ? "yes" : "no"),
           isGlobal ? true : eq(COMMUNITY.country, country)
         )
@@ -94,7 +98,8 @@ export const dynamic = "force-dynamic";
         .where(eq(USER_SECTOR.user_id, userId))
         .execute();
 
-      return NextResponse.json(userSectors, { status: 200 });
+      const enrichedUserSectors = userSectors.map(enrichSectorItem);
+      return NextResponse.json(enrichedUserSectors, { status: 200 });
     } catch (error) {
       console.error("Error fetching user sectors:", error);
       return NextResponse.json(
@@ -341,7 +346,7 @@ export const dynamic = "force-dynamic";
 
       return NextResponse.json({
         message: "Sector added successfully",
-        sector: addedSector[0],
+        sector: enrichSectorItem(addedSector[0]),
         isFirstSector: existingUserSectors.length === 0
       }, { status: 200 });
     } catch (error) {

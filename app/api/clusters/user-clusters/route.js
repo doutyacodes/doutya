@@ -60,7 +60,7 @@ const waitForGenerationCompletion = async (combinationId) => {
 };
 
 // Helper function to handle failed generation with atomic retry
-const handleFailedGeneration = async (combinationId, mbtiType, riasecCode, classLevel, userId) => {
+const handleFailedGeneration = async (combinationId, mbtiType, riasecCode, classLevel, userId, age) => {
   try {
     // Use atomic update to claim the retry
     await db
@@ -78,7 +78,7 @@ const handleFailedGeneration = async (combinationId, mbtiType, riasecCode, class
 
     console.log('Attempting to retry failed cluster sorting generation...');
     
-    const sortingData = await generateClusterSorting(mbtiType, riasecCode, classLevel);
+    const sortingData = await generateClusterSorting(mbtiType, riasecCode, classLevel, age);
 
     await db
       .update(CLUSTER_MBTI_RIASEC_COMBINATIONS)
@@ -123,6 +123,7 @@ export async function GET(req) {
     }
     const classLevel = parseInt(userDetails[0].grade) || 5; // Default to class 5 if not set
     const scopeType = userDetails[0].scope_type;
+    const userAge = calculateAge(userDetails[0].birth_date);
 
     // Check if user is in cluster scope
     if (scopeType !== 'cluster') {
@@ -217,7 +218,7 @@ export async function GET(req) {
         console.log('Created new cluster combination record, starting generation...');
         
         // Generate sorting data
-        sortingData = await generateClusterSorting(mbtiType, riasecCode, classLevel);
+        sortingData = await generateClusterSorting(mbtiType, riasecCode, classLevel, userAge);
 
         // Update with completed data
         await db
@@ -251,7 +252,7 @@ export async function GET(req) {
             const completedRecord = await waitForGenerationCompletion(existingRecord.id);
             sortingData = completedRecord.sorted_clusters;
           } else if (existingRecord.generation_status === 'failed') {
-            sortingData = await handleFailedGeneration(existingRecord.id, mbtiType, riasecCode, classLevel, userId);
+            sortingData = await handleFailedGeneration(existingRecord.id, mbtiType, riasecCode, classLevel, userId, userAge);
           }
         } else {
           throw insertError;
@@ -267,7 +268,7 @@ export async function GET(req) {
         const completedRecord = await waitForGenerationCompletion(combination.id);
         sortingData = completedRecord.sorted_clusters;
       } else if (combination.generation_status === 'failed') {
-        sortingData = await handleFailedGeneration(combination.id, mbtiType, riasecCode, classLevel, userId);
+        sortingData = await handleFailedGeneration(combination.id, mbtiType, riasecCode, classLevel, userId, userAge);
       }
     }
 
