@@ -17,6 +17,7 @@
 // import path from 'path';
 // import fs from 'fs';
 // import axios from 'axios';
+import { enrichSectorItem } from '@/lib/sectorCanonical';
 
 // export const maxDuration = 300;
 // export const dynamic = 'force-dynamic';
@@ -461,6 +462,7 @@ import {
   CLUSTER,
   USER_SECTOR,
   SECTOR,
+  INSTITUTION,
   MBTI_SECTOR_MAP,
   PERSONALITY_PROFILES,
   CLUSTER_MBTI_RIASEC_COMBINATIONS
@@ -510,6 +512,9 @@ const normalizeReportData = (reportData) => {
         typeof reportData.detailed_results.personality_analysis === 'string') {
         reportData.detailed_results.personality_analysis = safeParse(reportData.detailed_results.personality_analysis);
       }
+      if (reportData.scope_data?.matching_sectors && Array.isArray(reportData.scope_data.matching_sectors)) {
+        reportData.scope_data.matching_sectors = reportData.scope_data.matching_sectors.map(s => enrichSectorItem(s));
+      }
       return reportData;
     }
 
@@ -519,6 +524,9 @@ const normalizeReportData = (reportData) => {
       if (parsed.detailed_results?.personality_analysis &&
         typeof parsed.detailed_results.personality_analysis === 'string') {
         parsed.detailed_results.personality_analysis = safeParse(parsed.detailed_results.personality_analysis);
+      }
+      if (parsed.scope_data?.matching_sectors && Array.isArray(parsed.scope_data.matching_sectors)) {
+        parsed.scope_data.matching_sectors = parsed.scope_data.matching_sectors.map(s => enrichSectorItem(s));
       }
       return parsed;
     }
@@ -549,11 +557,33 @@ export async function GET(req) {
       .select({
         name: USER_DETAILS.name,
         birthDate: USER_DETAILS.birth_date,
-        scopeType: USER_DETAILS.scope_type
+        scopeType: USER_DETAILS.scope_type,
+        institutionId: USER_DETAILS.institution_id
       })
       .from(USER_DETAILS)
       .where(eq(USER_DETAILS.id, userId))
       .execute();
+
+    let userInstitution = null;
+    if (userDetails[0]?.institutionId) {
+      try {
+        const [inst] = await db
+          .select({
+            id: INSTITUTION.id,
+            name: INSTITUTION.name,
+            logo: INSTITUTION.logo,
+            type: INSTITUTION.type
+          })
+          .from(INSTITUTION)
+          .where(eq(INSTITUTION.id, userDetails[0].institutionId))
+          .execute();
+        if (inst) {
+          userInstitution = inst;
+        }
+      } catch (instErr) {
+        console.error("Error fetching institution for report:", instErr);
+      }
+    }
 
     if (userDetails.length === 0) {
       return NextResponse.json(
@@ -634,6 +664,7 @@ export async function GET(req) {
           age: userAge, // Always use fresh age
           career_focus: scopeType, // Always use fresh scope
           assessment_date: existingReport[0].assessment_date,
+          institution: userInstitution || cachedReportData.user_profile?.institution || null,
           is_kid: false
         }
       };
@@ -679,7 +710,7 @@ export async function GET(req) {
       );
     }
 
-    if (!careerResult) {
+    if (!careerResult && scopeType !== 'sector') {
       return NextResponse.json(
         { message: 'Please complete the Career Assessment to view comprehensive results.' },
         { status: 202 }
@@ -687,7 +718,7 @@ export async function GET(req) {
     }
 
     const personalityType = personalityResult.typeSequence;
-    const careerType = careerResult.typeSequence;
+    const careerType = careerResult ? careerResult.typeSequence : 'NONE';
 
     console.log(`User Age: ${userAge}, Scope Type: ${scopeType}, Assessments completed: Personality: ${personalityType}, Career: ${careerType}`);
 
@@ -821,7 +852,7 @@ export async function GET(req) {
 
         console.log("matchingSectors", matchingSectors)
 
-        matchingSectors = matchingSectors.filter(Boolean);
+        matchingSectors = matchingSectors.filter(Boolean).map(s => enrichSectorItem(s));
       }
 
       // Structure the data
@@ -916,6 +947,7 @@ export async function GET(req) {
         age: userAge,
         career_focus: scopeType,
         assessment_date: new Date().toISOString().split('T')[0],
+        institution: userInstitution,
         is_kid: false
       },
       assessment_overview: {

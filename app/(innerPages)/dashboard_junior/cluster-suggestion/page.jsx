@@ -94,6 +94,9 @@ export default function ClusterSelectionPage() {
   };
 
   const handleViewReportClick = () => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("dashboardUrl", "/dashboard_junior/cluster-suggestion");
+    }
     router.push('/user/results');
   };
 

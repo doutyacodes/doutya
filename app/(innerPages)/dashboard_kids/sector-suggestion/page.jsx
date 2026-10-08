@@ -116,6 +116,9 @@ export default function SectorSelectionPage() {
   };
 
   const handleViewReportClick = () => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("dashboardUrl", "/dashboard_kids/sector-suggestion");
+    }
     router.push('/user/results');
   };
 
